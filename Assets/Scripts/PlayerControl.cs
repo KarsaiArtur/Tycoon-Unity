@@ -14,12 +14,12 @@ public class PlayerControll : MonoBehaviour
     public int maxLeft = 50;
     public int maxRight = 50;
     public int moveSpeed = 1;
-    public float angle = 45f;
+    public float angle;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        angle = 90 - transform.eulerAngles.y;
     }
 
     // Update is called once per frame
@@ -54,16 +54,9 @@ public class PlayerControll : MonoBehaviour
     void Move()
     {
         Vector2 move = new Vector2(Input.GetAxis("Vertical"), Input.GetAxis("Horizontal"));
-
-        //if (transform.position.x < maxLeft && move.x > 0)
-        //{
-        //    move = new Vector2(0, 0);
-        //}
-        //if (transform.position.z > maxRight && move.y > 0)
-        //{
-        //    move = new Vector2(0, 0);
-        //}                                                                  * 0.5773f
-        transform.position = transform.position + new Vector3(move.y+move.x*(angle/45f), 0, move.x-move.y*(angle/ 45f)) * cameraSpeed * Time.deltaTime;      
+        //                                                                    * 0.5773f
+        //transform.position = transform.position + new Vector3(move.y+move.x*(angle/45f), 0, move.x-move.y*(angle/ 45f)) * cameraSpeed * Time.deltaTime; 
+        transform.position = transform.position + new Vector3(move.x * (float)Math.Cos(angle * 0.0174532925) + move.y * (float)Math.Sin(angle * 0.0174532925), 0, move.x * (float)Math.Sin(angle * 0.0174532925) - move.y * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;      
 
         MovementSpeedChange();
     }
