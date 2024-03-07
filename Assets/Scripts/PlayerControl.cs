@@ -14,7 +14,7 @@ public class PlayerControll : MonoBehaviour
     public int maxLeft = 50;
     public int maxRight = 50;
     public int moveSpeed = 1;
-    public float angle;
+    private float angle;
 
     // Start is called before the first frame update
     void Start()
@@ -27,8 +27,16 @@ public class PlayerControll : MonoBehaviour
     {
         Move();
         Zoom();
+        RotateObject();
 
-        if (Input.GetMouseButtonDown(0))
+
+
+
+        if (Input.GetMouseButtonDown(0) && m_Selected != null)
+        {
+            m_Selected = null;
+        }
+        else if (Input.GetMouseButtonDown(0))
         {
             HandleSelection();
         }
@@ -40,9 +48,19 @@ public class PlayerControll : MonoBehaviour
             {
                 if (hit.collider.CompareTag("Terrain"))
                 {
-                    m_Selected.transform.position = new Vector3(Round(hit.point.x), 2, Round(hit.point.z));
+                    m_Selected.transform.position = new Vector3(Round(hit.point.x), hit.point.y+0.5f, Round(hit.point.z));
+                    Debug.Log(m_Selected.transform.position+ " selected");
+                    Debug.Log(new Vector3(Round(hit.point.x), hit.point.y + 0.5f, Round(hit.point.z)) + " hit");
                 }
             }
+        }
+    }
+
+    void RotateObject()
+    {
+        if (Input.GetKeyDown(KeyCode.R) && m_Selected != null)
+        {
+            m_Selected.RotateY(90);
         }
     }
 
@@ -54,8 +72,6 @@ public class PlayerControll : MonoBehaviour
     void Move()
     {
         Vector2 move = new Vector2(Input.GetAxis("Vertical"), Input.GetAxis("Horizontal"));
-        //                                                                    * 0.5773f
-        //transform.position = transform.position + new Vector3(move.y+move.x*(angle/45f), 0, move.x-move.y*(angle/ 45f)) * cameraSpeed * Time.deltaTime; 
         transform.position = transform.position + new Vector3(move.x * (float)Math.Cos(angle * 0.0174532925) + move.y * (float)Math.Sin(angle * 0.0174532925), 0, move.x * (float)Math.Sin(angle * 0.0174532925) - move.y * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;      
 
         MovementSpeedChange();
@@ -96,16 +112,13 @@ public class PlayerControll : MonoBehaviour
         {
             var grass = hit.collider.GetComponentInParent<Grass>();
             m_Selected = grass;
-
-            //m_Selected.transform.position = m_Selected.transform.position + new Vector3(Input.GetAxis("Mouse X"), 0, move.x);
-
         }
     }
 
-    public Grass cube;
+    public Grass[] prefabs;
 
-    public void Spawn()
+    public void Spawn(int index)
     {
-                m_Selected = Instantiate(cube, new Vector3(Round(Input.mousePosition.x), 2, Round(Input.mousePosition.z)), new Quaternion(0,0,0,0));
+        m_Selected = Instantiate(prefabs[index], new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0,0,0,0));
     }
 }

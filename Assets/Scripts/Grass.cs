@@ -17,7 +17,7 @@ public class Grass : MonoBehaviour
         
     }
 
-    public void Rotate(float angle)
+    public void RotateY(float angle)
     {
         transform.Rotate(0, angle, 0);
     }

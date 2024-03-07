@@ -37,7 +37,7 @@ public class GridManager : MonoBehaviour
             //outer loop, z-axis
             for (int x = 0; x <= terrainWidth; x++, i++)
             {
-                float y = Mathf.PerlinNoise((float)x / changeRate, (float)z / changeRate) * height + 3;
+                float y = Mathf.PerlinNoise((float)x / changeRate, (float)z / changeRate) * height;
                 y = Mathf.Floor(y) / 2;
                 coords[i] = new Vector3(x, y, z);
             }
@@ -59,7 +59,7 @@ public class GridManager : MonoBehaviour
                 Chunk elementInstance = Instantiate(terrainPrefab, this.transform);
                 elementInstance.Initialize(x, z);
                 terrainElements[i] = elementInstance;
-                elementInstance.gameObject.AddComponent<BoxCollider>();
+                //elementInstance.gameObject.AddComponent<BoxCollider>();
             }
         }
     }
