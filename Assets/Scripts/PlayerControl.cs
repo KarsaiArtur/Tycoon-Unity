@@ -3,24 +3,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerControll : MonoBehaviour
+public class PlayerControl : MonoBehaviour
 {
     public float cameraSpeed = 10;
     public float zoomSpeed = 10;
     public Camera GameCamera;
-    private Grass m_Selected = null;
+    public Placeable m_Selected = null;
     public int maxZoom = 5;
     public int minZoom = 20;
     public int maxLeft = 50;
     public int maxRight = 50;
     public int moveSpeed = 1;
     private float angle;
+    private int index;
+    private bool isNew = false;
+    public float objectTimesRotated = 0;
+    public int fenceIndex = 0;
+    public bool canBePlaced = true;
 
     // Start is called before the first frame update
     void Start()
     {
         angle = 90 - transform.eulerAngles.y;
     }
+
+    Vector3 placed;
 
     // Update is called once per frame
     void Update()
@@ -32,9 +39,34 @@ public class PlayerControll : MonoBehaviour
 
 
 
-        if (Input.GetMouseButtonDown(0) && m_Selected != null)
+        if (Input.GetMouseButtonDown(1) && isNew)
         {
+            Destroy(m_Selected.gameObject);
             m_Selected = null;
+            isNew = false;
+            objectTimesRotated = 0;
+        }
+        else if (Input.GetMouseButtonDown(0) && m_Selected != null)
+        {
+            if (canBePlaced)
+            {
+                m_Selected.gameObject.tag = "Placed";
+                m_Selected.ChangeMaterial(0);
+
+                if (isNew)
+                {
+                    Spawn(index);
+                    for (int i = 0; i < objectTimesRotated; i++)
+                    {
+                        m_Selected.RotateY(90);
+                    }
+                }
+                else
+                {
+                    m_Selected = null;
+                    objectTimesRotated = 0;
+                }
+            }
         }
         else if (Input.GetMouseButtonDown(0))
         {
@@ -48,9 +80,8 @@ public class PlayerControll : MonoBehaviour
             {
                 if (hit.collider.CompareTag("Terrain"))
                 {
-                    m_Selected.transform.position = new Vector3(Round(hit.point.x), hit.point.y+0.5f, Round(hit.point.z));
-                    Debug.Log(m_Selected.transform.position+ " selected");
-                    Debug.Log(new Vector3(Round(hit.point.x), hit.point.y + 0.5f, Round(hit.point.z)) + " hit");
+                    m_Selected.Place(hit);
+                    break;
                 }
             }
         }
@@ -61,10 +92,12 @@ public class PlayerControll : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R) && m_Selected != null)
         {
             m_Selected.RotateY(90);
+            if (isNew)
+                objectTimesRotated++;
         }
     }
 
-    float Round(float number)
+    public float Round(float number)
     {
         return Mathf.Floor(number) + 0.5f;
     }
@@ -110,15 +143,44 @@ public class PlayerControll : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            var grass = hit.collider.GetComponentInParent<Grass>();
-            m_Selected = grass;
+            if (hit.collider.gameObject.CompareTag("Placed"))
+            {
+                var building = hit.collider.GetComponentInParent<Placeable>();
+                m_Selected = building;
+                m_Selected.gameObject.tag = "Untagged";
+            }
         }
     }
 
-    public Grass[] prefabs;
+    public Placeable[] prefabs;
+    public Placeable[] fences;
 
-    public void Spawn(int index)
+    public void Spawn(int i)
     {
+        Debug.Log(index);
+        isNew = true;
+        index = i;
+        Debug.Log(index);
         m_Selected = Instantiate(prefabs[index], new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0,0,0,0));
+        if(m_Selected.gameObject.CompareTag("Fence") && fenceIndex != 0)
+            ChangeFence(fenceIndex);
+    }
+
+    public void SpawnFence(int i)
+    {
+        isNew = true;
+        fenceIndex = i;
+        m_Selected = Instantiate(fences[fenceIndex], new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
+    }
+
+    public void ChangeFence(int index)
+    {
+        fenceIndex = index;
+        Destroy(m_Selected.gameObject);
+        SpawnFence(index);
+        for (int i = 0; i < objectTimesRotated; i++)
+        {
+            m_Selected.RotateY(90);
+        }
     }
 }
