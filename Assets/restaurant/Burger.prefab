@@ -47,6 +47,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControl: {fileID: 0}
+  placeableName: Burger
+  placeablePrice: 1500
   x: 2
   z: 1
   materials:

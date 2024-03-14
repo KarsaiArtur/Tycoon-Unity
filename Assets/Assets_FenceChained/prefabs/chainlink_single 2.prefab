@@ -238,6 +238,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControl: {fileID: 0}
+  placeableName: Iron Fence
+  placeablePrice: 180
   index: 0
   materials:
   - {fileID: 2100000, guid: 7b2405b9286794840873c049383b02fe, type: 2}

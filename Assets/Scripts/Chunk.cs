@@ -8,7 +8,7 @@ public class Chunk : MonoBehaviour
 {
     private Mesh mesh;
     private MeshFilter meshFilter;
-    private Vector3[] verts;
+    public Vector3[] verts;
     private Color[] colors;
     private int[] tris;
     private Vector2[] uvs;

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 
 public class PlayerControl : MonoBehaviour
@@ -20,25 +21,30 @@ public class PlayerControl : MonoBehaviour
     public float objectTimesRotated = 0;
     public int fenceIndex = 0;
     public bool canBePlaced = true;
+    public bool terraForming = false;
+    public GameObject gridManager;
 
-    // Start is called before the first frame update
     void Start()
     {
         angle = 90 - transform.eulerAngles.y;
+        gridManager = GameObject.FindGameObjectWithTag("GridManager");
     }
 
-    Vector3 placed;
-
-    // Update is called once per frame
     void Update()
     {
         Move();
         Zoom();
         RotateObject();
 
+        //terraForming = false;
+        if (terraForming)
+            FormTerrain();
+        else
+            PlaceObject();
+    }
 
-
-
+    public void PlaceObject()
+    {
         if (Input.GetMouseButtonDown(1) && isNew)
         {
             Destroy(m_Selected.gameObject);
@@ -105,7 +111,7 @@ public class PlayerControl : MonoBehaviour
     void Move()
     {
         Vector2 move = new Vector2(Input.GetAxis("Vertical"), Input.GetAxis("Horizontal"));
-        transform.position = transform.position + new Vector3(move.x * (float)Math.Cos(angle * 0.0174532925) + move.y * (float)Math.Sin(angle * 0.0174532925), 0, move.x * (float)Math.Sin(angle * 0.0174532925) - move.y * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;      
+        transform.position = transform.position + new Vector3(move.x * (float)Math.Cos(angle * 0.0174532925) + move.y * (float)Math.Sin(angle * 0.0174532925), 0, move.x * (float)Math.Sin(angle * 0.0174532925) - move.y * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
 
         MovementSpeedChange();
     }
@@ -157,12 +163,18 @@ public class PlayerControl : MonoBehaviour
 
     public void Spawn(int i)
     {
-        Debug.Log(index);
         isNew = true;
         index = i;
-        Debug.Log(index);
-        m_Selected = Instantiate(prefabs[index], new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0,0,0,0));
-        if(m_Selected.gameObject.CompareTag("Fence") && fenceIndex != 0)
+        m_Selected = Instantiate(prefabs[index], new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
+        if (m_Selected.gameObject.CompareTag("Fence") && fenceIndex != 0)
+            ChangeFence(fenceIndex);
+    }
+
+    public void Spawn(Placeable placeable)
+    {
+        isNew = true;
+        m_Selected = Instantiate(placeable, new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
+        if (m_Selected.gameObject.CompareTag("Fence") && fenceIndex != 0)
             ChangeFence(fenceIndex);
     }
 
@@ -181,6 +193,34 @@ public class PlayerControl : MonoBehaviour
         for (int i = 0; i < objectTimesRotated; i++)
         {
             m_Selected.RotateY(90);
+        }
+    }
+
+    public void FormTerrain()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (hit.collider.gameObject.CompareTag("Terrain"))
+                {
+                    //Debug.Log(hit.collider.gameObject.name);
+
+                    string[] chunkCoords = hit.collider.gameObject.name.Split('_');
+                    GridManager gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
+                    Chunk chunk = gridM.terrainElements[int.Parse(chunkCoords[1]) * gridM.terrainWidth / gridM.elementWidth + int.Parse(chunkCoords[0])];
+
+
+                    int coordIndex = (int)((Mathf.Floor(hit.point.x) * gridM.elementWidth + Mathf.Floor(hit.point.z) - int.Parse(chunkCoords[1]) * gridM.elementWidth) % ((gridM.elementWidth) * (gridM.elementWidth))) * 6;
+                    Vector3 coords = chunk.verts[coordIndex];
+
+                    Debug.Log(hit.point + " " + coords + " " + chunk.verts.Length + " " + coordIndex);
+                    if (Mathf.Floor(hit.point.x) != coords.x || Mathf.Floor(hit.point.z) != coords.z)
+                        Debug.Log("BAAAAAAAAAAAAAAAAAAAJ");
+                }
+            }
         }
     }
 }

@@ -6,6 +6,8 @@ using UnityEngine.UIElements;
 public class Placeable : MonoBehaviour
 {
     public PlayerControl playerControl;
+    public string placeableName;
+    public int placeablePrice;
     
     void Awake()
     {
