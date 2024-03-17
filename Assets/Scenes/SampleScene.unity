@@ -537,9 +537,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1b6735c774ff543af319e9a520f4ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  submenus: []
   submenuPrefabs:
-  - {fileID: 4459871120374184215, guid: 5b6525200e2ef46449851fe4756c8d8a, type: 3}
+  - {fileID: 7622653307599481166, guid: 5b6525200e2ef46449851fe4756c8d8a, type: 3}
+  - {fileID: 7622653307599481166, guid: 9452550efc47f1644af74242781d4435, type: 3}
+  - {fileID: 7622653307599481166, guid: b19d493c999631d49a99198c498314ce, type: 3}
+  - {fileID: 7622653307599481166, guid: 426982e3aa8d24945a6c4f20ba83ebbe, type: 3}
+  - {fileID: 7622653307599481166, guid: ed8ceac05efad4e4aa2cf4b729584959, type: 3}
+  - {fileID: 7622653307599481166, guid: 5a360ea1d665a6b499d013eae4814c84, type: 3}
 --- !u!1001 &214875224
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1842,9 +1846,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1b6735c774ff543af319e9a520f4ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  submenus: []
   submenuPrefabs:
-  - {fileID: 4616116701943043721, guid: 0df30747adc6b6746881e3f240945f2e, type: 3}
+  - {fileID: 7622653307599481166, guid: 1839b74c4c1eb65408762a7f8302149d, type: 3}
 --- !u!1 &589452699
 GameObject:
   m_ObjectHideFlags: 0
@@ -2479,11 +2482,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1b6735c774ff543af319e9a520f4ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  submenus: []
   submenuPrefabs:
-  - {fileID: 4616116701943043721, guid: 0df30747adc6b6746881e3f240945f2e, type: 3}
-  - {fileID: 4616116701943043721, guid: 0df30747adc6b6746881e3f240945f2e, type: 3}
-  - {fileID: 4459871120374184215, guid: 5b6525200e2ef46449851fe4756c8d8a, type: 3}
+  - {fileID: 7622653307599481166, guid: 10355ba9100d79a4a98579d5f17953b7, type: 3}
+  - {fileID: 7622653307599481166, guid: 71057ab7650646148b3725fc1b727fe0, type: 3}
+  - {fileID: 7622653307599481166, guid: 9cf88af194943d74a93ea1aff43dfca3, type: 3}
 --- !u!1 &732199755
 GameObject:
   m_ObjectHideFlags: 0
@@ -4264,12 +4266,12 @@ MonoBehaviour:
   curMenu: {fileID: 0}
   curSubMenuIndex: 0
   curPlaceableIndex: 0
-  curName: {fileID: 0}
-  cuPrice: {fileID: 0}
+  curName: {fileID: 1250517164}
+  curPrice: {fileID: 661123084}
   isUIVisible: 0
   submenuPanel: {fileID: 1306719223}
   placeableListPanel: {fileID: 349903237}
-  button: {fileID: 7954326234534332523, guid: fe4a95a6a9f195e4db33ef7615b75883, type: 3}
+  button: {fileID: 1402598303060906925, guid: 81fd13ef955bfa84ebd425e468ba6450, type: 3}
 --- !u!1 &1463805437
 GameObject:
   m_ObjectHideFlags: 0
@@ -4416,10 +4418,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc1b6735c774ff543af319e9a520f4ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  submenus: []
   submenuPrefabs:
-  - {fileID: 4459871120374184215, guid: 5b6525200e2ef46449851fe4756c8d8a, type: 3}
-  - {fileID: 4616116701943043721, guid: 0df30747adc6b6746881e3f240945f2e, type: 3}
+  - {fileID: 5761982569303224633, guid: 0df30747adc6b6746881e3f240945f2e, type: 3}
+  - {fileID: 7622653307599481166, guid: 4c1e71bd2e0e92b48a417db7a608d5c3, type: 3}
 --- !u!1 &1479191111
 GameObject:
   m_ObjectHideFlags: 0

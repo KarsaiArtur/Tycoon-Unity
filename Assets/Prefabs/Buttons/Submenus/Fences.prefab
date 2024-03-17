@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6680119232808001531}
   - component: {fileID: 4459871120374184215}
   - component: {fileID: 7622653307599481166}
+  - component: {fileID: -3909907454791035505}
   m_Layer: 5
   m_Name: Fences
   m_TagString: Untagged
@@ -38,7 +39,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 249, y: 311.8}
-  m_SizeDelta: {x: 40, y: 40}
+  m_SizeDelta: {x: 60, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4500635739860545202
 CanvasRenderer:
@@ -134,11 +135,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bdc80d3aa9c9f9c4a9fbef2b00f8740b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  subMenuInstance: {fileID: 0}
   placeables:
   - {fileID: 9180999491319586247, guid: c77fd55fc534a3543b53a44ab443d53d, type: 3}
   - {fileID: 2548022094330047049, guid: ea2af87f8d07b52458eb9f260d74d5f9, type: 3}
   - {fileID: 8619175740054138018, guid: 94d57a6ef274ff94ebbd23970f583c43, type: 3}
-  idk: 
+--- !u!114 &-3909907454791035505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2117709699169680195}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e19747de3f5aca642ab2be37e372fb86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EffectColor: {r: 0.8980392, g: 0.14117648, b: 0.09019608, a: 0.5}
+  m_EffectDistance: {x: 3, y: 3}
+  m_UseGraphicAlpha: 1
 --- !u!1 &7906393884390104696
 GameObject:
   m_ObjectHideFlags: 0

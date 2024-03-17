@@ -5,10 +5,21 @@ using UnityEngine.UI;
 
 public class SubMenu : MonoBehaviour
 {
+    public SubMenu subMenuInstance;
     public Placeable[] placeables;
 
-    public Placeable GetSelectedPlaceable()
+    void Start()
     {
-        return placeables[UIMenu.Instance.curPlaceableIndex];
+        GetComponent<Button>().onClick.AddListener(SetSubmenuIndex);
+    }
+
+    public Placeable GetSelectedPlaceable(int placeableIndex)
+    {
+        return placeables[placeableIndex];
+    }
+
+    void SetSubmenuIndex()
+    {
+        UIMenu.Instance.SetSubmenu(transform.GetSiblingIndex(), 0);
     }
 }

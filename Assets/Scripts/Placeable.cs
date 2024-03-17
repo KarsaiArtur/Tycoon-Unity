@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class Placeable : MonoBehaviour
 {
     public PlayerControl playerControl;
     public string placeableName;
     public int placeablePrice;
-    
+    public Sprite icon;
+
     void Awake()
     {
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();

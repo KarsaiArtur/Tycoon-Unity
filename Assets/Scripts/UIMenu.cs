@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
+using System;
 
 public class UIMenu : MonoBehaviour
 {
@@ -11,7 +13,7 @@ public class UIMenu : MonoBehaviour
     public int curSubMenuIndex;
     public int curPlaceableIndex;
     public TextMeshProUGUI curName;
-    public TextMeshProUGUI cuPrice;
+    public TextMeshProUGUI curPrice;
     private PlayerControl playerControl;
     public bool isUIVisible = false;
     public Transform submenuPanel;
@@ -31,48 +33,62 @@ public class UIMenu : MonoBehaviour
 
     public void ChangeCurrentMenu(Menu newMenu)
     {
+        DestroyPlaceables();
+        DestroySubmenus();
         if (curMenu == newMenu)
         {
+            playerControl.DestroyPlaceableInHand();
             curMenu = null;
             isUIVisible = false;
         }
         else
         {
-            DestroySubmenus();
             curMenu = newMenu;
-            SpawnSubmenus();
-            SpawnPlaceables();
             curSubMenuIndex = 0;
-            curPlaceableIndex = 0;
-            /*Placeable curPlaceable = curMenu.GetSelectedPlaceable().GetComponent<Placeable>();
-            curName.text = curPlaceable.placeableName;
-            curPrice.text = curPlaceable.placeablePrice.ToString() + " $";
-            playerControl.Spawn(curPlaceable);*/
+            SpawnSubmenus();
             isUIVisible = true;
         }
         gameObject.SetActive(isUIVisible);
     }
 
+    public void SetPlaceable(int placeableIndex, int offset)
+    {
+        placeableListPanel.GetChild(curPlaceableIndex).GetComponent<Outline>().enabled = false;
+        curPlaceableIndex = placeableIndex;
+        placeableListPanel.GetChild(curPlaceableIndex+offset).GetComponent<Outline>().enabled = true;
+        playerControl.DestroyPlaceableInHand();
+        Placeable curPlaceable = curMenu.GetSelectedPlaceable(curPlaceableIndex).GetComponent<Placeable>();
+        curName.text = curPlaceable.placeableName;
+        curPrice.text = curPlaceable.placeablePrice.ToString() + " $";
+        playerControl.Spawn(curPlaceable);
+    }
+
+    public void SetSubmenu(int index, int offset)
+    {
+        submenuPanel.GetChild(curSubMenuIndex+offset).GetComponent<Outline>().enabled = false;
+        curSubMenuIndex = index;
+        submenuPanel.GetChild(curSubMenuIndex+ offset).GetComponent<Outline>().enabled = true;
+        DestroyPlaceables();
+        curPlaceableIndex = 0;
+        SpawnPlaceables();
+    }
+
     void SpawnSubmenus()
     {
-        if (curMenu.submenus.Length == 0)
-            curMenu.submenus = new UnityEngine.UI.Button[curMenu.submenuPrefabs.Length];
-
         for (int i = 0; i < curMenu.submenuPrefabs.Length; i++)
         {
-            curMenu.submenus[i] = Instantiate(curMenu.submenuPrefabs[i], Vector3.zero, Quaternion.identity);
-            curMenu.submenus[i].transform.parent = submenuPanel;
+            curMenu.submenuPrefabs[i].subMenuInstance = Instantiate(curMenu.submenuPrefabs[i], Vector3.zero, Quaternion.identity);
+            curMenu.submenuPrefabs[i].subMenuInstance.transform.parent = submenuPanel;
         }
+        SetSubmenu(0, submenuPanel.childCount - curMenu.submenuPrefabs.Length);
     }
+
+
     void DestroySubmenus()
     {
-        if(curMenu != null)
+        for(int i = 0; i < submenuPanel.childCount; i++)
         {
-            for (int i = 0; i < curMenu.submenus.Length; i++)
-            {
-                if (curMenu.submenus[i] != null)
-                    Destroy(curMenu.submenus[i].gameObject);
-            }
+            Destroy(submenuPanel.GetChild(i).gameObject);
         }
     }
 
@@ -80,15 +96,23 @@ public class UIMenu : MonoBehaviour
     public Button button;
     public void SpawnPlaceables()
     {
-        Placeable[] placeables = curMenu.submenus[curSubMenuIndex].GetComponent<SubMenu>().placeables;
+        Placeable[] placeables = curMenu.submenuPrefabs[curSubMenuIndex].subMenuInstance.GetComponent<SubMenu>().placeables;
         for (int i = 0; i < placeables.Length; i++)
         {
             var b = Instantiate(button, Vector3.zero, Quaternion.identity);
             b.transform.parent = placeableListPanel;
+            if (placeables[i].icon != null)
+            {
+                b.GetComponent<Image>().sprite = placeables[i].icon;
+            }
         }
+        SetPlaceable(0, placeableListPanel.childCount- placeables.Length);
     }
     void DestroyPlaceables()
     {
-        
+        for (int i = 0; i < placeableListPanel.childCount; i++)
+        {
+            Destroy(placeableListPanel.GetChild(i).gameObject);
+        }
     }
 }

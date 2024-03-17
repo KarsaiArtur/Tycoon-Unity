@@ -5,11 +5,10 @@ using UnityEngine.UI;
 
 public class Menu : MonoBehaviour
 {
-    public Button[] submenus;
-    public Button[] submenuPrefabs;
+    public SubMenu[] submenuPrefabs;
 
-    public Placeable GetSelectedPlaceable()
+    public Placeable GetSelectedPlaceable(int placeableIndex)
     {
-        return submenus[UIMenu.Instance.curSubMenuIndex].GetComponent<SubMenu>().GetSelectedPlaceable();
+        return submenuPrefabs[UIMenu.Instance.curSubMenuIndex].subMenuInstance.GetComponent<SubMenu>().GetSelectedPlaceable(placeableIndex);
     }
 }

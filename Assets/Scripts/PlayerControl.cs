@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -24,6 +25,13 @@ public class PlayerControl : MonoBehaviour
     public bool terraForming = false;
     public GameObject gridManager;
 
+    //*******
+    private bool MouseOverUI()
+    {
+        return EventSystem.current.IsPointerOverGameObject();
+    }
+    //*******
+
     void Start()
     {
         angle = 90 - transform.eulerAngles.y;
@@ -36,11 +44,16 @@ public class PlayerControl : MonoBehaviour
         Zoom();
         RotateObject();
 
-        //terraForming = false;
-        if (terraForming)
-            FormTerrain();
-        else
-            PlaceObject();
+        //********
+        if (!MouseOverUI())
+        {
+            //terraForming = false;
+            if (terraForming)
+                FormTerrain();
+            else
+                PlaceObject();
+        }
+        //********
     }
 
     public void PlaceObject()
@@ -223,4 +236,15 @@ public class PlayerControl : MonoBehaviour
             }
         }
     }
+
+    //*********
+    public void DestroyPlaceableInHand()
+    {
+        if (m_Selected != null)
+        {
+            Destroy(m_Selected.gameObject);
+            m_Selected = null;
+        }
+    }
+    //*********
 }
