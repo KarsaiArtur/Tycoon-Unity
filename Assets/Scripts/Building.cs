@@ -23,7 +23,7 @@ public class Building : Placeable
         z = -x; x = tempZ;
     }
 
-    public override void Place(RaycastHit hit)
+    public override void Place(RaycastHit mouseHit)
     {
         curY = -100;
         Vector3 position1;
@@ -44,8 +44,8 @@ public class Building : Placeable
             for (int j = 0; j < Math.Abs(z) + 1; j++)
             {
                 l = j * Math.Sign(z);
-                position1 = new Vector3(playerControl.Round(hit.point.x) + curOffsetX + k * 1, hit.point.y + 1.5f, playerControl.Round(hit.point.z) + curOffsetZ + l * 1);
-                position2 = new Vector3(playerControl.Round(hit.point.x) - curOffsetX + k * 1, hit.point.y + 1.5f, playerControl.Round(hit.point.z) - curOffsetZ + l * 1);
+                position1 = new Vector3(playerControl.Round(mouseHit.point.x) + curOffsetX + k * 1, mouseHit.point.y + 1.5f, playerControl.Round(mouseHit.point.z) + curOffsetZ + l * 1);
+                position2 = new Vector3(playerControl.Round(mouseHit.point.x) - curOffsetX + k * 1, mouseHit.point.y + 1.5f, playerControl.Round(mouseHit.point.z) - curOffsetZ + l * 1);
 
     
                 RaycastHit[] hits1 = Physics.RaycastAll(position1, -transform.up);
@@ -93,7 +93,7 @@ public class Building : Placeable
                                 curY += 0.5f;
                         }
                         curY = Mathf.Floor(curY * 2) / 2;
-                        transform.position = new Vector3(playerControl.Round(hit.point.x), curY + 0.5f, playerControl.Round(hit.point.z));
+                        transform.position = new Vector3(playerControl.Round(mouseHit.point.x), curY + 0.5f, playerControl.Round(mouseHit.point.z));
                     }
                 }
             }

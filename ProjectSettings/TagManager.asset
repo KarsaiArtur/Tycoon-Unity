@@ -8,6 +8,8 @@ TagManager:
   - Fence
   - Placed
   - GridManager
+  - Flat
+  - Incline
   layers:
   - Default
   - TransparentFX

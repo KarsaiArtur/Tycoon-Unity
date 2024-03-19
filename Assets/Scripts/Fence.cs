@@ -11,7 +11,7 @@ public class Fence : Placeable
 
     public Material[] materials;
 
-    // Update is called once per frame
+    /*
     void Update()
     {
         
@@ -20,11 +20,11 @@ public class Fence : Placeable
     void Awake()
     {
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
-    }
+    }*/
 
-    public override void Place(RaycastHit hit)
+    public override void Place(RaycastHit mouseHit)
     {
-        Vector3 position = new Vector3(playerControl.Round(hit.point.x) + curOffsetX, hit.point.y + 1.5f, playerControl.Round(hit.point.z) + curOffsetZ);
+        Vector3 position = new Vector3(playerControl.Round(mouseHit.point.x) + curOffsetX, mouseHit.point.y + 1.5f, playerControl.Round(mouseHit.point.z) + curOffsetZ);
 
         RaycastHit[] hits = Physics.RaycastAll(position, -transform.up);
 

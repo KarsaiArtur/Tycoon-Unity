@@ -142,10 +142,6 @@ public class Chunk : MonoBehaviour
     MeshCollider collider;
     void Start()
     {
-        mesh = new Mesh();
-        // do your mesh setup here or call a method that does it
-
-        //GetComponent<MeshFilter>().mesh = mesh;
         collider = GetComponent<MeshCollider>();
         collider.sharedMesh = GetComponent<MeshFilter>().mesh;
     }
