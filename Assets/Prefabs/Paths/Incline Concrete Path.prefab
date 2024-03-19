@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4276695133019391035}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.7071067, z: 0, w: -0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -50,10 +50,6 @@ MonoBehaviour:
   placeablePrice: 30
   icon: {fileID: 0}
   index: 0
-  materials:
-  - {fileID: 2100000, guid: 5c8a4e1f248ae9f4fab83ef327ff3898, type: 2}
-  - {fileID: 2100000, guid: 009dec613c70fdd478c2876011f89d0e, type: 2}
-  - {fileID: 2100000, guid: a27739f32cbd74249859e7e0ff1b8c96, type: 2}
   otherVariant: {fileID: 7551650816147809122, guid: f36d8d3beb3d7354daa3936df8cc286b, type: 3}
 --- !u!1 &4549912904737251565
 GameObject:

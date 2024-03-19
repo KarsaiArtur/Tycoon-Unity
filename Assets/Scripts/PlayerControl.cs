@@ -19,25 +19,39 @@ public class PlayerControl : MonoBehaviour
     public int moveSpeed = 1;
     private float angle;
     private int index;
-    private bool isNew = false;
     public float objectTimesRotated = 0;
     public int fenceIndex = 0;
     public bool canBePlaced = true;
     public bool terraForming = false;
     public GameObject gridManager;
     public bool isMouseDown = false;
+    public RaycastHit curHit;
 
-    //*******
+    private float maxTerrainHeight = 10;
+    private float minTerrainHeight = -3;
+    private GridManager gridM;
+    private string[] chunkCoords = { "", "" };
+    private Chunk chunk = null;
+    private int coordIndex = 0;
+    private float mouseDistnace = 0;
+    private List<Chunk> modifiedChunks = new List<Chunk>();
+
+    public void ChangeTerraformer()
+    {
+        terraForming = !terraForming;
+    }
+
     private bool MouseOverUI()
     {
         return EventSystem.current.IsPointerOverGameObject();
     }
-    //*******
 
     void Start()
     {
         angle = 90 - transform.eulerAngles.y;
         gridManager = GameObject.FindGameObjectWithTag("GridManager");
+
+        gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
     }
 
     void Update()
@@ -46,25 +60,21 @@ public class PlayerControl : MonoBehaviour
         Zoom();
         RotateObject();
 
-        //********
         if (!MouseOverUI())
         {
-            //terraForming = false;
             if (terraForming)
-                FormTerrain();
+                Terraform();
             else
                 PlaceObject();
         }
-        //********
     }
 
     public void PlaceObject()
     {
-        if (Input.GetMouseButtonDown(1) && isNew)
+        if (Input.GetMouseButtonDown(1))
         {
             Destroy(m_Selected.gameObject);
             m_Selected = null;
-            isNew = false;
             objectTimesRotated = 0;
         }
         else if (Input.GetMouseButtonDown(0))
@@ -75,25 +85,22 @@ public class PlayerControl : MonoBehaviour
         else if (Input.GetMouseButtonUp(0) && m_Selected != null)
         {
             isMouseDown = false;
-            Debug.Log(Path.startingPoint);
             if (canBePlaced)
             {
                 m_Selected.SetTag("Placed");
                 m_Selected.ChangeMaterial(0);
 
-                if (isNew)
+                Spawn(curPlaceable);
+                for (int i = 0; i < objectTimesRotated; i++)
                 {
-                    Spawn(curPlaceable);
-                    for (int i = 0; i < objectTimesRotated; i++)
-                    {
-                        m_Selected.RotateY(90);
-                    }
+                    m_Selected.RotateY(90);
                 }
-                else
-                {
-                    m_Selected = null;
-                    objectTimesRotated = 0;
-                }
+            }
+            else
+            {
+                Debug.Log("OK");
+                m_Selected.DestroyPlaceable();
+                Spawn(curPlaceable);
             }
         }
         else if (Input.GetMouseButtonUp(0))
@@ -108,7 +115,8 @@ public class PlayerControl : MonoBehaviour
             {
                 if (hit.collider.CompareTag("Terrain"))
                 {
-                        m_Selected.Place(hit);
+                    curHit = hit;
+                    m_Selected.Place(hit.point);
                     break;
                 }
             }
@@ -120,8 +128,7 @@ public class PlayerControl : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R) && m_Selected != null)
         {
             m_Selected.RotateY(90);
-            if (isNew)
-                objectTimesRotated++;
+            objectTimesRotated++;
         }
     }
 
@@ -183,19 +190,9 @@ public class PlayerControl : MonoBehaviour
     public Placeable[] prefabs;
     public Placeable[] fences;
 
-    public void Spawn(int i)
-    {
-        isNew = true;
-        index = i;
-        m_Selected = Instantiate(prefabs[index], new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
-        if (m_Selected.gameObject.CompareTag("Fence") && fenceIndex != 0)
-            ChangeFence(fenceIndex);
-    }
-
     public void Spawn(Placeable placeable)
     {
         curPlaceable = placeable;
-        isNew = true;
         var newSelected = Instantiate(placeable, new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
         m_Selected = newSelected;
         if (m_Selected.gameObject.CompareTag("Fence") && fenceIndex != 0)
@@ -204,7 +201,6 @@ public class PlayerControl : MonoBehaviour
 
     public void SpawnFence(int i)
     {
-        isNew = true;
         fenceIndex = i;
         m_Selected = Instantiate(fences[fenceIndex], new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
     }
@@ -220,20 +216,23 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public void ChangePath(Path path, int angle)
+    public void ChangePath(Path path, Vector3 pos, int angle)
     {
-        Destroy(m_Selected.gameObject);
-        SpawnPath(path);
-        m_Selected.RotateY(angle);
+        Path newPath = path.otherVariant;
+        Destroy(path.gameObject);
+        newPath = SpawnPath(newPath);
+        newPath.RotateY(angle);
+        newPath.CheckTerrain(pos);
     }
 
-    public void SpawnPath(Path path)
+    public Path SpawnPath(Path path)
     {
-        isNew = true;
-        m_Selected = Instantiate(path, new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
+        Path newPath = Instantiate(path, new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
+        m_Selected.Change(newPath);
+        return newPath;
     }
 
-    public void FormTerrain()
+    public void Terraform()
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -243,32 +242,226 @@ public class PlayerControl : MonoBehaviour
             {
                 if (hit.collider.gameObject.CompareTag("Terrain"))
                 {
-                    //Debug.Log(hit.collider.gameObject.name);
-
-                    string[] chunkCoords = hit.collider.gameObject.name.Split('_');
-                    GridManager gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
-                    Chunk chunk = gridM.terrainElements[int.Parse(chunkCoords[1]) * gridM.terrainWidth / gridM.elementWidth + int.Parse(chunkCoords[0])];
-
-
-                    int coordIndex = (int)((Mathf.Floor(hit.point.x) * gridM.elementWidth + Mathf.Floor(hit.point.z) - int.Parse(chunkCoords[1]) * gridM.elementWidth) % ((gridM.elementWidth) * (gridM.elementWidth))) * 6;
-                    Vector3 coords = chunk.verts[coordIndex];
-
-                    Debug.Log(hit.point + " " + coords + " " + chunk.verts.Length + " " + coordIndex);
-                    if (Mathf.Floor(hit.point.x) != coords.x || Mathf.Floor(hit.point.z) != coords.z)
-                        Debug.Log("BAAAAAAAAAAAAAAAAAAAJ");
+                    chunkCoords = hit.collider.gameObject.name.Split('_');
+                    chunk = gridM.terrainElements[int.Parse(chunkCoords[1]) * gridM.terrainWidth / gridM.elementWidth + int.Parse(chunkCoords[0])];
+                    coordIndex = (int)(Mathf.Floor(hit.point.x) + Mathf.Floor(hit.point.z) * (gridM.terrainWidth + 1));
                 }
             }
         }
+
+        if (Input.GetMouseButton(0))
+        {
+            mouseDistnace += Input.GetAxis("Mouse Y");
+            if (Input.GetAxis("Mouse Y") > 0)
+            {
+                if (mouseDistnace > 0.6f && gridM.coords[coordIndex].y <= maxTerrainHeight)
+                {
+                    mouseDistnace = 0;
+
+                    if (gridM.coords[coordIndex].y == gridM.coords[coordIndex + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 2].y)
+                    {
+                        gridM.coords[coordIndex].y += 0.5f;
+                        gridM.coords[coordIndex + 1].y += 0.5f;
+                        gridM.coords[coordIndex + gridM.terrainWidth + 1].y += 0.5f;
+                        gridM.coords[coordIndex + gridM.terrainWidth + 2].y += 0.5f;
+                    }
+                    else
+                    {
+                        if (gridM.coords[coordIndex].y < gridM.coords[coordIndex + 1].y)
+                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + 1].y;
+                        if (gridM.coords[coordIndex].y < gridM.coords[coordIndex + gridM.terrainWidth + 1].y)
+                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + gridM.terrainWidth + 1].y;
+                        if (gridM.coords[coordIndex].y < gridM.coords[coordIndex + gridM.terrainWidth + 2].y)
+                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + gridM.terrainWidth + 2].y;
+
+                        gridM.coords[coordIndex + 1].y = gridM.coords[coordIndex].y;
+                        gridM.coords[coordIndex + gridM.terrainWidth + 1].y = gridM.coords[coordIndex].y;
+                        gridM.coords[coordIndex + gridM.terrainWidth + 2].y = gridM.coords[coordIndex].y;
+                    }
+
+                    TerraformNeighbours(coordIndex, gridM.coords[coordIndex].y, gridM, true);
+                    TerraformNeighbours(coordIndex + 1, gridM.coords[coordIndex].y, gridM, true);
+                    TerraformNeighbours(coordIndex + gridM.terrainWidth + 1, gridM.coords[coordIndex].y, gridM, true);
+                    TerraformNeighbours(coordIndex + gridM.terrainWidth + 2, gridM.coords[coordIndex].y, gridM, true);
+                }
+            }
+            else
+            {
+                if (mouseDistnace < -0.6f && gridM.coords[coordIndex].y >= minTerrainHeight)
+                {
+                    mouseDistnace = 0;
+
+                    if (gridM.coords[coordIndex].y == gridM.coords[coordIndex + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 2].y)
+                    {
+                        gridM.coords[coordIndex].y += -0.5f;
+                        gridM.coords[coordIndex + 1].y += -0.5f;
+                        gridM.coords[coordIndex + gridM.terrainWidth + 1].y += -0.5f;
+                        gridM.coords[coordIndex + gridM.terrainWidth + 2].y += -0.5f;
+                    }
+                    else
+                    {
+                        if (gridM.coords[coordIndex].y > gridM.coords[coordIndex + 1].y)
+                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + 1].y;
+                        if (gridM.coords[coordIndex].y > gridM.coords[coordIndex + gridM.terrainWidth + 1].y)
+                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + gridM.terrainWidth + 1].y;
+                        if (gridM.coords[coordIndex].y > gridM.coords[coordIndex + gridM.terrainWidth + 2].y)
+                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + gridM.terrainWidth + 2].y;
+
+                        gridM.coords[coordIndex + 1].y = gridM.coords[coordIndex].y;
+                        gridM.coords[coordIndex + gridM.terrainWidth + 1].y = gridM.coords[coordIndex].y;
+                        gridM.coords[coordIndex + gridM.terrainWidth + 2].y = gridM.coords[coordIndex].y;
+                    }
+
+                    TerraformNeighbours(coordIndex, gridM.coords[coordIndex].y, gridM, false);
+                    TerraformNeighbours(coordIndex + 1, gridM.coords[coordIndex].y, gridM, false);
+                    TerraformNeighbours(coordIndex + gridM.terrainWidth + 1, gridM.coords[coordIndex].y, gridM, false);
+                    TerraformNeighbours(coordIndex + gridM.terrainWidth + 2, gridM.coords[coordIndex].y, gridM, false);
+                }
+            }
+
+            foreach (Chunk tempChunk in modifiedChunks)
+            {
+                tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
+            }
+            modifiedChunks = new List<Chunk>();
+        }
     }
 
-    //*********
+    public void TerraformNeighbours(int index, float height, GridManager gridM, bool positive)
+    {
+        if (index % (gridM.terrainWidth + 1) != gridM.terrainWidth)
+        {
+            if (gridM.coords[index + 1].y <= height - 1 && positive)
+            {
+                gridM.coords[index + 1].y = height - 0.5f;
+                TerraformNeighbours(index + 1, height - 0.5f, gridM, true);
+            }
+            else if (gridM.coords[index + 1].y >= height + 1 && !positive)
+            {
+                gridM.coords[index + 1].y = height + 0.5f;
+                TerraformNeighbours(index + 1, height + 0.5f, gridM, false);
+            }
+        }
+        if (index < (gridM.terrainWidth + 1) * (gridM.terrainWidth))
+        {
+            if (gridM.coords[index + gridM.terrainWidth + 1].y <= height - 1 && positive)
+            {
+                gridM.coords[index + gridM.terrainWidth + 1].y = height - 0.5f;
+                TerraformNeighbours(index + gridM.terrainWidth + 1, height - 0.5f, gridM, true);
+            }
+            else if (gridM.coords[index + gridM.terrainWidth + 1].y >= height + 1 && !positive)
+            {
+                gridM.coords[index + gridM.terrainWidth + 1].y = height + 0.5f;
+                TerraformNeighbours(index + gridM.terrainWidth + 1, height + 0.5f, gridM, false);
+            }
+        }
+        if (index % (gridM.terrainWidth + 1) != 0)
+        {
+            if (gridM.coords[index - 1].y <= height - 1 && positive)
+            {
+                gridM.coords[index - 1].y = height - 0.5f;
+                TerraformNeighbours(index - 1, height - 0.5f, gridM, true);
+            }
+            else if (gridM.coords[index - 1].y >= height + 1 && !positive)
+            {
+                gridM.coords[index - 1].y = height + 0.5f;
+                TerraformNeighbours(index - 1, height + 0.5f, gridM, false);
+            }
+        }
+        if (index > gridM.terrainWidth + 1)
+        {
+            if (gridM.coords[index - (gridM.terrainWidth + 1)].y <= height - 1 && positive)
+            {
+                gridM.coords[index - (gridM.terrainWidth + 1)].y = height - 0.5f;
+                TerraformNeighbours(index - (gridM.terrainWidth + 1), height - 0.5f, gridM, true);
+            }
+            else if (gridM.coords[index - (gridM.terrainWidth + 1)].y >= height + 1 && !positive)
+            {
+                gridM.coords[index - (gridM.terrainWidth + 1)].y = height + 0.5f;
+                TerraformNeighbours(index - (gridM.terrainWidth + 1), height + 0.5f, gridM, false);
+            }
+        }
+
+        //szél ellenõrzés, lehet nem kell szél fixálás után
+        if (index < (gridM.terrainWidth + 1) * (gridM.terrainWidth) && index > gridM.terrainWidth + 1 && index % (gridM.terrainWidth + 1) != 0 && index % (gridM.terrainWidth + 1) != gridM.terrainWidth)
+        {
+            if (gridM.coords[index].y == gridM.coords[index + gridM.terrainWidth].y && gridM.coords[index].y != gridM.coords[index + gridM.terrainWidth + 1].y && gridM.coords[index - 1].y == gridM.coords[index + gridM.terrainWidth + 1].y)
+            {
+                gridM.coords[index + gridM.terrainWidth + 1].y = gridM.coords[index].y;
+                gridM.coords[index - 1].y = gridM.coords[index].y;
+            }
+            if (gridM.coords[index].y == gridM.coords[index + gridM.terrainWidth + 2].y && gridM.coords[index].y != gridM.coords[index + gridM.terrainWidth + 1].y && gridM.coords[index + 1].y == gridM.coords[index + gridM.terrainWidth + 1].y)
+            {
+                gridM.coords[index + gridM.terrainWidth + 1].y = gridM.coords[index].y;
+                gridM.coords[index + 1].y = gridM.coords[index].y;
+            }
+            if (gridM.coords[index].y == gridM.coords[index - gridM.terrainWidth].y && gridM.coords[index].y != gridM.coords[index - (gridM.terrainWidth + 1)].y && gridM.coords[index + 1].y == gridM.coords[index - (gridM.terrainWidth + 1)].y)
+            {
+                gridM.coords[index - (gridM.terrainWidth + 1)].y = gridM.coords[index].y;
+                gridM.coords[index + 1].y = gridM.coords[index].y;
+            }
+            if (gridM.coords[index].y == gridM.coords[index - (gridM.terrainWidth + 2)].y && gridM.coords[index].y != gridM.coords[index - (gridM.terrainWidth + 1)].y && gridM.coords[index - 1].y == gridM.coords[index - (gridM.terrainWidth + 1)].y)
+            {
+                gridM.coords[index - (gridM.terrainWidth + 1)].y = gridM.coords[index].y;
+                gridM.coords[index - 1].y = gridM.coords[index].y;
+            }
+        }
+
+        //szél ellenõrzés, lehet nem kell szél fixálás után
+        if (index < (gridM.terrainWidth + 1) * (gridM.terrainWidth - 1) && index > (gridM.terrainWidth + 1) * 2 && index % (gridM.terrainWidth + 1) > 1 && index % (gridM.terrainWidth + 1) < gridM.terrainWidth - 1)
+        {
+            if (gridM.coords[index + 1].y != gridM.coords[index + 1 + 1].y && gridM.coords[index + gridM.terrainWidth + 1 + 1].y == gridM.coords[index + 1 + 1].y && gridM.coords[index - 1 + 1].y == gridM.coords[index + 1 + 1].y && gridM.coords[index - (gridM.terrainWidth + 1) + 1].y == gridM.coords[index + 1 + 1].y)
+            {
+                gridM.coords[index + 1].y = gridM.coords[index + 1 + 1].y;
+            }
+            if (gridM.coords[index - 1].y != gridM.coords[index + 1 - 1].y && gridM.coords[index + gridM.terrainWidth + 1 - 1].y == gridM.coords[index + 1 - 1].y && gridM.coords[index - 1 - 1].y == gridM.coords[index + 1 - 1].y && gridM.coords[index - (gridM.terrainWidth + 1) - 1].y == gridM.coords[index + 1 - 1].y)
+            {
+                gridM.coords[index - 1].y = gridM.coords[index + 1 - 1].y;
+            }
+            if (gridM.coords[index + gridM.terrainWidth + 1].y != gridM.coords[index + 1 + gridM.terrainWidth + 1].y && gridM.coords[index + gridM.terrainWidth + 1 + gridM.terrainWidth + 1].y == gridM.coords[index + 1 + gridM.terrainWidth + 1].y && gridM.coords[index - 1 + gridM.terrainWidth + 1].y == gridM.coords[index + 1 + gridM.terrainWidth + 1].y && gridM.coords[index - (gridM.terrainWidth + 1) + gridM.terrainWidth + 1].y == gridM.coords[index + 1 + gridM.terrainWidth + 1].y)
+            {
+                gridM.coords[index + gridM.terrainWidth + 1].y = gridM.coords[index + 1 + gridM.terrainWidth + 1].y;
+            }
+            if (gridM.coords[index - (gridM.terrainWidth + 1)].y != gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y && gridM.coords[index + gridM.terrainWidth + 1 - (gridM.terrainWidth + 1)].y == gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y && gridM.coords[index + gridM.terrainWidth + 2 - (gridM.terrainWidth + 1)].y == gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y && gridM.coords[index - 2 - (gridM.terrainWidth + 1)].y == gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y && gridM.coords[index - (gridM.terrainWidth + 1) - (gridM.terrainWidth + 1)].y == gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y && gridM.coords[index - (gridM.terrainWidth + 1) - (gridM.terrainWidth + 1) - 1].y == gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y)
+            {
+                gridM.coords[index - (gridM.terrainWidth + 1)].y = gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y;
+                gridM.coords[index - 1 - (gridM.terrainWidth + 1)].y = gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y;
+            }
+        }
+
+        //szél ellenõrzés, lehet nem kell szél fixálás után
+        if (index < (gridM.terrainWidth + 1) * (gridM.terrainWidth - 1) && index > (gridM.terrainWidth + 1) * 2 && index % (gridM.terrainWidth + 1) > 1 && index % (gridM.terrainWidth + 1) < gridM.terrainWidth - 1)
+        {
+            int chunkIndex = (int)(Mathf.Floor(gridM.coords[index - 2].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[index - 2].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
+            if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth))
+                if (!modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
+                    modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
+
+            chunkIndex = (int)(Mathf.Floor(gridM.coords[index + 2].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[index + 2].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
+            if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth))
+                if (!modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
+                    modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
+
+            chunkIndex = (int)(Mathf.Floor(gridM.coords[index + gridM.terrainWidth + 2].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[index + gridM.terrainWidth + 2].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
+            if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth))
+                if (!modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
+                    modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
+
+            chunkIndex = (int)(Mathf.Floor(gridM.coords[index - (gridM.terrainWidth + 2)].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[index - (gridM.terrainWidth + 2)].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
+            if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth))
+                if (!modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
+                    modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
+        }
+        //épület van fölötte, szél fixálás, szélesség változtatás (pl 3x3), talán listába elemek és úgy végig menni rajtuk
+    }
+
     public void DestroyPlaceableInHand()
     {
         if (m_Selected != null)
         {
-            Destroy(m_Selected.gameObject);
+            m_Selected.DestroyPlaceable();
+            Path.startingPoint = new Vector3(-1, -1, -1);
             m_Selected = null;
         }
     }
-    //*********
 }

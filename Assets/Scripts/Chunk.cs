@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
@@ -149,5 +150,11 @@ public class Chunk : MonoBehaviour
     void FixedUpdate()
     {
         collider.convex = false;
+    }
+
+    public void ReRender(int index_x, int index_z)
+    {
+        Initialize(index_x, index_z);
+        Start();
     }
 }

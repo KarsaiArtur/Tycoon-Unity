@@ -22,9 +22,9 @@ public class Fence : Placeable
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
     }*/
 
-    public override void Place(RaycastHit mouseHit)
+    public override void Place(Vector3 mouseHit)
     {
-        Vector3 position = new Vector3(playerControl.Round(mouseHit.point.x) + curOffsetX, mouseHit.point.y + 1.5f, playerControl.Round(mouseHit.point.z) + curOffsetZ);
+        Vector3 position = new Vector3(playerControl.Round(mouseHit.x) + curOffsetX, mouseHit.y + 1.5f, playerControl.Round(mouseHit.z) + curOffsetZ);
 
         RaycastHit[] hits = Physics.RaycastAll(position, -transform.up);
 
@@ -64,7 +64,6 @@ public class Fence : Placeable
 
     public override void RotateY(float angle)
     {
-        base.RotateY(angle);
 
         if (curOffsetZ == 0.5f)
         {
@@ -86,6 +85,8 @@ public class Fence : Placeable
             curOffsetZ = 0.5f;
             curOffsetX = -0.2f;
         }
+
+        base.RotateY(angle);
     }
 
     public override void ChangeMaterial(int index)
