@@ -3051,6 +3051,8 @@ MonoBehaviour:
   terraForming: 0
   gridManager: {fileID: 0}
   isMouseDown: 0
+  chunk: {fileID: 0}
+  modifiedChunks: []
   prefabs:
   - {fileID: 9180999491319586247, guid: c77fd55fc534a3543b53a44ab443d53d, type: 3}
   - {fileID: 2548022094330047049, guid: ea2af87f8d07b52458eb9f260d74d5f9, type: 3}
@@ -3823,10 +3825,12 @@ MonoBehaviour:
   terrainWidth: 128
   elementWidth: 32
   terrainPrefab: {fileID: 114363526940269292, guid: b4c11e0af705cca4f874d74f0d4b3a0e, type: 3}
+  backgroundTerrainPrefab: {fileID: -7332554084481508890, guid: 88aaaa3cf55a6e24e9a704190853ab1d, type: 3}
   coords: []
   terrainElements: []
   height: 20
   changeRate: 100
+  edgeHeight: 4.5
 --- !u!4 &1266772830
 Transform:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ using UnityEngine.UIElements;
 
 public class Path : Placeable
 {
-    float curOffsetX = 0.49f;
+    float curOffsetX = 0.5f;
     float curOffsetZ = 0.25f;
     public int index = 0;
 
@@ -58,27 +58,28 @@ public class Path : Placeable
 
         float yDifference = position1.y - position2.y;
         yDifference = RoundToDecimal(yDifference, 2);
+        Debug.Log(yDifference+ "        "+ (position1.y % 1));
         if (gameObject.CompareTag("Incline") && yDifference == 0 && position1.y % 0.5 == 0)
         {
             playerControl.ChangePath(this, pos, 0);
         }
-        else if (gameObject.CompareTag("Flat") && yDifference == 0 && (position1.y % 1 == 0.125f || position1.y % 1 == 0.625f))
+        else if (gameObject.CompareTag("Flat") && yDifference == 0 && (position1.y % 1 == 0.125f || position1.y % 1 == 0.625f || position1.y % 1 == -0.375f || position1.y % 1 == -0.875f))
         {
             playerControl.ChangePath(this, pos, 90);
         }
-        else if (gameObject.CompareTag("Flat") && yDifference == 0 && (position1.y % 1 == 0.375f || position1.y % 1 == 0.875f))
+        else if (gameObject.CompareTag("Flat") && yDifference == 0 && (position1.y % 1 == 0.375f || position1.y % 1 == 0.875f || position1.y % 1 == -0.125f || position1.y % 1 == -0.625f))
         {
             playerControl.ChangePath(this, pos, 270);
         }
-        else if (gameObject.CompareTag("Flat") && yDifference == -0.49f)
+        else if (gameObject.CompareTag("Flat") && yDifference == -0.5f && position1.y % 0.5 == 0)
         {
             playerControl.ChangePath(this, pos, 180);
         }
-        else if (gameObject.CompareTag("Flat") && yDifference == 0.49f)
+        else if (gameObject.CompareTag("Flat") && yDifference == 0.5f && position1.y % 0.5 == 0)
         {
             playerControl.ChangePath(this, pos, 0);
         }
-        else if (Math.Abs(yDifference) == 0.12f || Math.Abs(yDifference) == 0.37f)
+        else if (Math.Abs(yDifference) == 0.12f || Math.Abs(yDifference) == 0.38f || (Math.Abs(yDifference) == 0.5f && position1.y % 0.5 != 0))
         {
             if (gameObject.CompareTag("Incline"))
             {
@@ -86,7 +87,6 @@ public class Path : Placeable
             }
             playerControl.canBePlaced = false;
             yPos.y += 0.5f;
-            //ChangeMaterial(2);
         }
         transform.position = new Vector3(playerControl.Round(pos.x), yPos.y, playerControl.Round(pos.z));
     }

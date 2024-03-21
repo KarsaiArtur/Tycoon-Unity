@@ -20,7 +20,6 @@ public class Placeable : MonoBehaviour
     public virtual void RotateY(float angle)
     {
         transform.Rotate(0, angle, 0);
-        //Place(playerControl.curHit);
     }
 
     public virtual void Place(Vector3 mouseHit)

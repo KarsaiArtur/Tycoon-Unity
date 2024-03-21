@@ -10,6 +10,10 @@ public class PathManager : Placeable
     public Path pathPrefab;
     public List<Path> paths = new List<Path>();
     public int pathIndex = 0;
+    bool started = false;
+    float startedInXDir = 0;
+    float startedInZDir = 0;
+
 
     public override void Place(Vector3 mouseHit)
     {
@@ -38,6 +42,21 @@ public class PathManager : Placeable
 
         if (playerControl.isMouseDown && posChanged)
         {
+            if(transform.position.x == Path.startingPoint.x && transform.position.z == Path.startingPoint.z)
+            {
+                started = false;
+                startedInXDir = 0;
+                startedInZDir = 0;
+            }
+            else if(!started)
+            {
+                startedInXDir = Math.Abs(transform.position.x - Path.startingPoint.x);
+                startedInZDir = Math.Abs(transform.position.z - Path.startingPoint.z);
+                if (startedInXDir - startedInZDir == 0)
+                    startedInZDir = 0;
+                started = true;
+            }
+            Debug.Log(startedInXDir + "   " + startedInZDir +    "        "+ transform.position+ "   "+ Path.startingPoint);
             foreach (Path p in paths)
             {
                 if (p != null)
@@ -48,20 +67,23 @@ public class PathManager : Placeable
             }
             paths = new List<Path>();
             int i;
-            float xDifference = transform.position.x - startingPoint.x;
-            for (i = 0; i < Math.Abs(xDifference)+1; i++)
+            float xDifference = (transform.position.x - startingPoint.x) * startedInXDir;
+            float zDifference = (transform.position.z - startingPoint.z) * startedInZDir;
+            for (i = 0; i < Math.Abs(xDifference) + Math.Abs(zDifference) + 1; i++)
             {
-                Vector3 pos = new Vector3(startingPoint.x + (i * Math.Sign(xDifference)), startingPoint.y, startingPoint.z);
+                Vector3 pos = new Vector3(startingPoint.x + (i * Math.Sign(xDifference)), startingPoint.y, startingPoint.z + (i * Math.Sign(zDifference)));
                 Path newPath = Instantiate(pathPrefab, pos, transform.rotation);
                 paths.Add(newPath);
                 newPath.CheckTerrain(newPath.transform.position);
                 pathIndex++;
             }
-            float cornerX = startingPoint.x + ((i - 1) * Math.Sign(xDifference));
-            float zDifference = transform.position.z - startingPoint.z;
-            for (int j = 1; j <= Math.Abs(zDifference); j++)
+            float cornerX = (startingPoint.x + ((i - 1) * Math.Sign(xDifference))) * startedInXDir;
+            float cornerZ = (startingPoint.z + ((i - 1) * Math.Sign(zDifference))) * startedInZDir;
+            zDifference = (transform.position.z - startingPoint.z) * startedInXDir;
+            xDifference = (transform.position.x - startingPoint.x) * startedInZDir;
+            for (int j = 1; j <= Math.Abs(zDifference) + Math.Abs(xDifference); j++)
             {
-                Vector3 pos = new Vector3(cornerX, startingPoint.y, startingPoint.z + (j * Math.Sign(zDifference)));
+                Vector3 pos = new Vector3(cornerX + startedInZDir * (startingPoint.x + (j * Math.Sign(xDifference))), startingPoint.y, cornerZ + startedInXDir * (startingPoint.z + (j * Math.Sign(zDifference))));
                 Path newPath = Instantiate(pathPrefab, pos, transform.rotation);
                 paths.Add(newPath);
                 newPath.CheckTerrain(newPath.transform.position);
@@ -84,7 +106,6 @@ public class PathManager : Placeable
 
     public override void Change(Placeable placeable)
     {
-        Debug.Log(pathIndex);
         paths[pathIndex] = (Path)placeable;
     }
 

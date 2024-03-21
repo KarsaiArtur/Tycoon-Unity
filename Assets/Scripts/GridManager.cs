@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -11,6 +12,7 @@ public class GridManager : MonoBehaviour
     public static GridManager instance;
     public int terrainWidth, elementWidth;
     public Chunk terrainPrefab;
+    public Chunk backgroundTerrainPrefab;
     [HideInInspector]
     public Vector3[] coords;
     [HideInInspector]
@@ -18,30 +20,125 @@ public class GridManager : MonoBehaviour
 
     public int height = 0;
     public int changeRate = 20;
+    public float edgeHeight = 4.5f;
+    private PlayerControl pControl;
+
+    public Vector3[] tempCoords;
+    public bool edgeChanged = false;
+
+    void Awake()
+    {
+        pControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
+    }
 
     void Start()
     {
         instance = this;
         CreateCoords();
         CreateTerrainElements();
+
+
+        SetEdgeHeight();
+        foreach (Chunk chunk in terrainElements)
+        {
+            chunk.ReRender(int.Parse(chunk.name.Split('_')[0]), int.Parse(chunk.name.Split('_')[1]));
+        }
+
+        tempCoords = new Vector3[coords.Length];
+        Array.Copy(coords, tempCoords, coords.Length);
     }
 
     private void CreateCoords()
     {
-        coords = new Vector3[(terrainWidth + 1) * (terrainWidth + 1)];
-        /*
-        every side needs to be 1 unity longer
-        */
+        /*coords = new Vector3[(terrainWidth + 1) * (terrainWidth + 1)];
         for (int i = 0, z = 0; z <= terrainWidth; z++)
         {
-            //outer loop, z-axis
             for (int x = 0; x <= terrainWidth; x++, i++)
             {
                 float y = Mathf.PerlinNoise((float)x / changeRate, (float)z / changeRate) * height;
                 y = Mathf.Floor(y) / 2;
+                coords[i] = new Vector3(x + elementWidth, y, z + elementWidth);
+            }
+        }*/
+
+        CreateBackground();
+    }
+
+    void CreateBackground()
+    {
+        /*backgroundCoords = new Vector3[((terrainWidth+elementWidth) + 1) * (elementWidth + 1) * 4];
+        int i = 0, z, x;
+        for (i = 0, z = 0; z <= elementWidth; z++)
+        {
+            for (x = 0; x <= (terrainWidth + elementWidth -1); x++, i++)
+            {
+                backgroundCoords[i] = new Vector3(x, edgeHeight, z);
+            }
+        }
+
+        for (z = 0; z <= (terrainWidth + elementWidth -1); z++)
+        {
+            for (x = terrainWidth + elementWidth; x <= terrainWidth + elementWidth + elementWidth; x++, i++)
+            {
+                backgroundCoords[i] = new Vector3(x, edgeHeight, z);
+            }
+        }
+
+
+        for (z = terrainWidth + elementWidth; z <= terrainWidth + elementWidth + elementWidth; z++)
+        {
+            for (x = terrainWidth + elementWidth + elementWidth; x >= elementWidth + 1; x--, i++)
+            {
+                backgroundCoords[i] = new Vector3(x, edgeHeight, z);
+            }
+        }
+
+        for (z = terrainWidth + elementWidth + elementWidth; z >= elementWidth + 1; z--)
+        {
+            for (x = 0; x <= elementWidth; x++, i++)
+            {
+                backgroundCoords[i] = new Vector3(x, edgeHeight, z);
+            }
+        }*/
+
+
+        terrainWidth += elementWidth * 2;
+
+        coords = new Vector3[(terrainWidth + 1) * (terrainWidth + 1)];
+
+        float y;
+
+        for (int i = 0, z = 0; z <= terrainWidth; z++)
+        {
+            for (int x = 0; x <= terrainWidth; x++, i++)
+            {
+                if (!((x >= elementWidth && x <= terrainWidth-elementWidth) && (z >= elementWidth && z <= terrainWidth-elementWidth)))
+                {
+                    y = edgeHeight;
+                }
+                else
+                {
+                    y = Mathf.PerlinNoise((float)x / changeRate, (float)z / changeRate) * height;
+                    y = Mathf.Floor(y) / 2;
+                    coords[i] = new Vector3(x, y, z);
+                }
                 coords[i] = new Vector3(x, y, z);
             }
         }
+
+        /*backgroundCoords = new Vector3[((terrainWidth + elementWidth) + 1) * (elementWidth + 1) * 4];
+
+        for (int i = 0, z = 0; z <= terrainWidth + elementWidth*2; z++)
+        {
+            for (int x = 0; x <= terrainWidth + elementWidth*2; x++)
+            {
+                if(!((x > elementWidth && x < terrainWidth + elementWidth) && (z > elementWidth && z < terrainWidth + elementWidth)))
+                {
+                    backgroundCoords[i] = new Vector3(x, edgeHeight, z);
+                    i++;
+                }
+            }
+        }*/
 
     }
 
@@ -50,18 +147,24 @@ public class GridManager : MonoBehaviour
         int tilesPerSide = terrainWidth / elementWidth;
         terrainElements = new Chunk[tilesPerSide * tilesPerSide];
 
-        for (int i = 0, z = 0; z < tilesPerSide; z++)
+        int i = 0, z, x;
+        for (i = 0, z = 0; z < tilesPerSide; z++)
         {
-            //outer loop, z-axis
-            for (int x = 0; x < tilesPerSide; x++, i++)
+            for (x = 0; x < tilesPerSide; x++, i++)
             {
-
-                Chunk elementInstance = Instantiate(terrainPrefab, this.transform);
-                elementInstance.Initialize(x, z);
+                Chunk elementInstance;
+                if (x == 0 || x == (tilesPerSide - 1) || z == 0 || z == (tilesPerSide - 1))
+                    elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
+                else
+                    elementInstance = Instantiate(terrainPrefab, this.transform);
+                elementInstance.Initialize(x, z, coords);
                 terrainElements[i] = elementInstance;
-                //elementInstance.gameObject.AddComponent<BoxCollider>();
             }
         }
+
+
+
+
     }
 
     void OnDrawGizmosSelected()
@@ -73,9 +176,198 @@ public class GridManager : MonoBehaviour
         }
     }
 
+    private void SetEdgeHeight()
+    {
+        for (int i = 0; i < coords.Length; i++)
+        {
+            if (i >= (terrainWidth + 1) * (terrainWidth))
+            {
+                coords[i].y = edgeHeight;
+                if (coords[i - terrainWidth - 1].y >= edgeHeight + 1)
+                {
+                    coords[i - terrainWidth - 1].y = edgeHeight + 0.5f;
+                    TerraformNeighbours(i - terrainWidth - 1, edgeHeight + 0.5f, false);
+                }
+                else if (coords[i - terrainWidth - 1].y <= edgeHeight - 1)
+                {
+                    coords[i - terrainWidth - 1].y = edgeHeight - 0.5f;
+                    TerraformNeighbours(i - terrainWidth - 1, edgeHeight - 0.5f, true);
+                }
+            }
+            if (i <= terrainWidth + 1)
+            {
+                coords[i].y = edgeHeight;
+                if (coords[i + terrainWidth + 1].y >= edgeHeight + 1)
+                {
+                    coords[i + terrainWidth + 1].y = edgeHeight + 0.5f;
+                    TerraformNeighbours(i + terrainWidth + 1, edgeHeight + 0.5f, false);
+                }
+                else if (coords[i + terrainWidth + 1].y <= edgeHeight - 1)
+                {
+                    coords[i + terrainWidth + 1].y = edgeHeight - 0.5f;
+                    TerraformNeighbours(i + terrainWidth + 1, edgeHeight - 0.5f, true);
+                }
+            }
+            if (i % (terrainWidth + 1) == 0)
+            {
+                coords[i].y = edgeHeight;
+                if (coords[i + 1].y >= edgeHeight + 1)
+                {
+                    coords[i + 1].y = edgeHeight + 0.5f;
+                    TerraformNeighbours(i + 1, edgeHeight + 0.5f, false);
+                }
+                else if (coords[i + 1].y <= edgeHeight - 1)
+                {
+                    coords[i + 1].y = edgeHeight - 0.5f;
+                    TerraformNeighbours(i + 1, edgeHeight - 0.5f, true);
+                }
+            }
+            if (i % (terrainWidth + 1) == terrainWidth)
+            {
+                coords[i].y = edgeHeight;
+                if (coords[i - 1].y >= edgeHeight + 1)
+                {
+                    coords[i - 1].y = edgeHeight + 0.5f;
+                    TerraformNeighbours(i - 1, edgeHeight + 0.5f, false);
+                }
+                else if (coords[i - 1].y <= edgeHeight - 1)
+                {
+                    coords[i - 1].y = edgeHeight - 0.5f;
+                    TerraformNeighbours(i - 1, edgeHeight - 0.5f, true);
+                }
+            }
+        }
+    }
 
+    public void TerraformNeighbours(int index, float height, bool positive)
+    {
+        if (index % (terrainWidth + 1) == terrainWidth || index >= (terrainWidth + 1) * (terrainWidth) || index % (terrainWidth + 1) == 0 || index <= terrainWidth + 1)
+        {
+            edgeChanged = true;
+        }
 
+        if (index % (terrainWidth + 1) != terrainWidth)
+        {
+            if (coords[index + 1].y <= height - 1 && positive)
+            {
+                coords[index + 1].y = height - 0.5f;
+                TerraformNeighbours(index + 1, height - 0.5f, true);
+            }
+            else if (coords[index + 1].y >= height + 1 && !positive)
+            {
+                coords[index + 1].y = height + 0.5f;
+                TerraformNeighbours(index + 1, height + 0.5f, false);
+            }
+        }
+        if (index < (terrainWidth + 1) * (terrainWidth))
+        {
+            if (coords[index + terrainWidth + 1].y <= height - 1 && positive)
+            {
+                coords[index + terrainWidth + 1].y = height - 0.5f;
+                TerraformNeighbours(index + terrainWidth + 1, height - 0.5f, true);
+            }
+            else if (coords[index + terrainWidth + 1].y >= height + 1 && !positive)
+            {
+                coords[index + terrainWidth + 1].y = height + 0.5f;
+                TerraformNeighbours(index + terrainWidth + 1, height + 0.5f, false);
+            }
+        }
+        if (index % (terrainWidth + 1) != 0)
+        {
+            if (coords[index - 1].y <= height - 1 && positive)
+            {
+                coords[index - 1].y = height - 0.5f;
+                TerraformNeighbours(index - 1, height - 0.5f, true);
+            }
+            else if (coords[index - 1].y >= height + 1 && !positive)
+            {
+                coords[index - 1].y = height + 0.5f;
+                TerraformNeighbours(index - 1, height + 0.5f, false);
+            }
+        }
+        if (index > terrainWidth + 1)
+        {
+            if (coords[index - (terrainWidth + 1)].y <= height - 1 && positive)
+            {
+                coords[index - (terrainWidth + 1)].y = height - 0.5f;
+                TerraformNeighbours(index - (terrainWidth + 1), height - 0.5f, true);
+            }
+            else if (coords[index - (terrainWidth + 1)].y >= height + 1 && !positive)
+            {
+                coords[index - (terrainWidth + 1)].y = height + 0.5f;
+                TerraformNeighbours(index - (terrainWidth + 1), height + 0.5f, false);
+            }
+        }
 
+        if (index < (terrainWidth + 1) * (terrainWidth) && index > terrainWidth + 1 && index % (terrainWidth + 1) != 0 && index % (terrainWidth + 1) != terrainWidth)
+        {
+            if (coords[index].y == coords[index + terrainWidth].y && coords[index].y != coords[index + terrainWidth + 1].y && coords[index - 1].y == coords[index + terrainWidth + 1].y)
+            {
+                coords[index + terrainWidth + 1].y = coords[index].y;
+                coords[index - 1].y = coords[index].y;
+            }
+            if (coords[index].y == coords[index + terrainWidth + 2].y && coords[index].y != coords[index + terrainWidth + 1].y && coords[index + 1].y == coords[index + terrainWidth + 1].y)
+            {
+                coords[index + terrainWidth + 1].y = coords[index].y;
+                coords[index + 1].y = coords[index].y;
+            }
+            if (coords[index].y == coords[index - terrainWidth].y && coords[index].y != coords[index - (terrainWidth + 1)].y && coords[index + 1].y == coords[index - (terrainWidth + 1)].y)
+            {
+                coords[index - (terrainWidth + 1)].y = coords[index].y;
+                coords[index + 1].y = coords[index].y;
+            }
+            if (coords[index].y == coords[index - (terrainWidth + 2)].y && coords[index].y != coords[index - (terrainWidth + 1)].y && coords[index - 1].y == coords[index - (terrainWidth + 1)].y)
+            {
+                coords[index - (terrainWidth + 1)].y = coords[index].y;
+                coords[index - 1].y = coords[index].y;
+            }
+        }
+
+        if (index < (terrainWidth + 1) * (terrainWidth - 1) && index > (terrainWidth + 1) * 2 && index % (terrainWidth + 1) > 1 && index % (terrainWidth + 1) < terrainWidth - 1)
+        {
+            if (coords[index + 1].y != coords[index + 1 + 1].y && coords[index + terrainWidth + 1 + 1].y == coords[index + 1 + 1].y && coords[index - 1 + 1].y == coords[index + 1 + 1].y && coords[index - (terrainWidth + 1) + 1].y == coords[index + 1 + 1].y)
+            {
+                coords[index + 1].y = coords[index + 1 + 1].y;
+            }
+            if (coords[index - 1].y != coords[index + 1 - 1].y && coords[index + terrainWidth + 1 - 1].y == coords[index + 1 - 1].y && coords[index - 1 - 1].y == coords[index + 1 - 1].y && coords[index - (terrainWidth + 1) - 1].y == coords[index + 1 - 1].y)
+            {
+                coords[index - 1].y = coords[index + 1 - 1].y;
+            }
+            if (coords[index + terrainWidth + 1].y != coords[index + 1 + terrainWidth + 1].y && coords[index + terrainWidth + 1 + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y && coords[index - 1 + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y && coords[index - (terrainWidth + 1) + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y)
+            {
+                coords[index + terrainWidth + 1].y = coords[index + 1 + terrainWidth + 1].y;
+            }
+            if (coords[index - (terrainWidth + 1)].y != coords[index + 1 - (terrainWidth + 1)].y && coords[index + terrainWidth + 1 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index + terrainWidth + 2 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - 2 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - (terrainWidth + 1) - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - (terrainWidth + 1) - (terrainWidth + 1) - 1].y == coords[index + 1 - (terrainWidth + 1)].y)
+            {
+                coords[index - (terrainWidth + 1)].y = coords[index + 1 - (terrainWidth + 1)].y;
+                coords[index - 1 - (terrainWidth + 1)].y = coords[index + 1 - (terrainWidth + 1)].y;
+            }
+        }
+
+        if (index < (terrainWidth + 1) * (terrainWidth - 1) && index > (terrainWidth + 1) * 2 && index % (terrainWidth + 1) > 1 && index % (terrainWidth + 1) < terrainWidth - 1)
+        {
+            int chunkIndex = (int)(Mathf.Floor(coords[index - 2].x / elementWidth) + Mathf.Floor(coords[index - 2].z / elementWidth) * (terrainWidth / elementWidth));
+            if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
+                if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
+                    pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+
+            chunkIndex = (int)(Mathf.Floor(coords[index + 2].x / elementWidth) + Mathf.Floor(coords[index + 2].z / elementWidth) * (terrainWidth / elementWidth));
+            if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
+                if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
+                    pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+
+            chunkIndex = (int)(Mathf.Floor(coords[index + terrainWidth + 2].x / elementWidth) + Mathf.Floor(coords[index + terrainWidth + 2].z / elementWidth) * (terrainWidth / elementWidth));
+            if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
+                if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
+                    pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+
+            chunkIndex = (int)(Mathf.Floor(coords[index - (terrainWidth + 2)].x / elementWidth) + Mathf.Floor(coords[index - (terrainWidth + 2)].z / elementWidth) * (terrainWidth / elementWidth));
+            if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
+                if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
+                    pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+        }
+        //vannak még fura alakzatok kép van róla, épület van fölötte, szélesség változtatás (pl 3x3), talán listába elemek és úgy végig menni rajtuk
+    }
 
 
 

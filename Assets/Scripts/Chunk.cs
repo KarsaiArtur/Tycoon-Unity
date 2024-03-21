@@ -13,6 +13,7 @@ public class Chunk : MonoBehaviour
     private Color[] colors;
     private int[] tris;
     private Vector2[] uvs;
+    public Vector3 center;
 
     private bool TriangulationCheck(Vector3 coord0, Vector3 coord1)
     {
@@ -42,8 +43,9 @@ public class Chunk : MonoBehaviour
         }
     }
 
-    public void Initialize(int index_x, int index_z)
+    public virtual void Initialize(int index_x, int index_z, Vector3[] coords)
     {
+        center = new Vector3(GridManager.instance.elementWidth / 2 + index_x * GridManager.instance.elementWidth, GridManager.instance.edgeHeight, GridManager.instance.elementWidth / 2 + index_z * GridManager.instance.elementWidth);
         this.name = index_x + "_" + index_z;
 
         //getting width of element and terrain
@@ -71,25 +73,25 @@ public class Chunk : MonoBehaviour
             for (int x = 0; x < width; x++, i += 6)
             {
                 //setting verts                    
-                verts[i] = GridManager.instance.coords[origin + (x * (tWidth + 1) + z)];
-                verts[i + 1] = GridManager.instance.coords[origin + ((x + 1) * (tWidth + 1) + z)];
-                verts[i + 2] = GridManager.instance.coords[origin + ((x + 1) * (tWidth + 1) + z + 1)];
-                verts[i + 3] = GridManager.instance.coords[origin + (x * (tWidth + 1) + z + 1)];
+                verts[i] = coords[origin + (x * (tWidth + 1) + z)];
+                verts[i + 1] = coords[origin + ((x + 1) * (tWidth + 1) + z)];
+                verts[i + 2] = coords[origin + ((x + 1) * (tWidth + 1) + z + 1)];
+                verts[i + 3] = coords[origin + (x * (tWidth + 1) + z + 1)];
 
-                colors[i] = VertexColor(GridManager.instance.coords[origin + (x * (tWidth + 1) + z)].y);
-                colors[i + 1] = VertexColor(GridManager.instance.coords[origin + ((x + 1) * (tWidth + 1) + z)].y);
-                colors[i + 2] = VertexColor(GridManager.instance.coords[origin + ((x + 1) * (tWidth + 1) + z + 1)].y);
-                colors[i + 3] = VertexColor(GridManager.instance.coords[origin + (x * (tWidth + 1) + z + 1)].y);
+                colors[i] = VertexColor(coords[origin + (x * (tWidth + 1) + z)].y);
+                colors[i + 1] = VertexColor(coords[origin + ((x + 1) * (tWidth + 1) + z)].y);
+                colors[i + 2] = VertexColor(coords[origin + ((x + 1) * (tWidth + 1) + z + 1)].y);
+                colors[i + 3] = VertexColor(coords[origin + (x * (tWidth + 1) + z + 1)].y);
 
-                if (TriangulationCheck(GridManager.instance.coords[origin + (x * (tWidth + 1) + z)], GridManager.instance.coords[origin + ((x + 1) * (tWidth + 1) + z + 1)]))
+                if (TriangulationCheck(coords[origin + (x * (tWidth + 1) + z)], coords[origin + ((x + 1) * (tWidth + 1) + z + 1)]))
                 {
                     //setting extra vertices
-                    verts[i + 4] = GridManager.instance.coords[origin + (x * (tWidth + 1) + z)];
-                    verts[i + 5] = GridManager.instance.coords[origin + ((x + 1) * (tWidth + 1) + z + 1)];
+                    verts[i + 4] = coords[origin + (x * (tWidth + 1) + z)];
+                    verts[i + 5] = coords[origin + ((x + 1) * (tWidth + 1) + z + 1)];
 
                     //setting vertex colors
-                    colors[i + 4] = VertexColor(GridManager.instance.coords[origin + (x * (tWidth + 1) + z)].y);
-                    colors[i + 5] = VertexColor(GridManager.instance.coords[origin + ((x + 1) * (tWidth + 1) + z + 1)].y);
+                    colors[i + 4] = VertexColor(coords[origin + (x * (tWidth + 1) + z)].y);
+                    colors[i + 5] = VertexColor(coords[origin + ((x + 1) * (tWidth + 1) + z + 1)].y);
 
                     //setting tris
                     tris[i] = i;
@@ -109,12 +111,12 @@ public class Chunk : MonoBehaviour
                 else
                 {
                     //setting extra vertices
-                    verts[i + 4] = GridManager.instance.coords[origin + (x * (tWidth + 1) + z + 1)];
-                    verts[i + 5] = GridManager.instance.coords[origin + ((x + 1) * (tWidth + 1) + z)];
+                    verts[i + 4] = coords[origin + (x * (tWidth + 1) + z + 1)];
+                    verts[i + 5] = coords[origin + ((x + 1) * (tWidth + 1) + z)];
 
                     //setting vertex colors
-                    colors[i + 4] = VertexColor(GridManager.instance.coords[origin + (x * (tWidth + 1) + z + 1)].y);
-                    colors[i + 5] = VertexColor(GridManager.instance.coords[origin + ((x + 1) * (tWidth + 1) + z)].y);
+                    colors[i + 4] = VertexColor(coords[origin + (x * (tWidth + 1) + z + 1)].y);
+                    colors[i + 5] = VertexColor(coords[origin + ((x + 1) * (tWidth + 1) + z)].y);
 
                     //setting tris
                     tris[i] = i;
@@ -154,7 +156,7 @@ public class Chunk : MonoBehaviour
 
     public void ReRender(int index_x, int index_z)
     {
-        Initialize(index_x, index_z);
+        Initialize(index_x, index_z, GridManager.instance.coords);
         Start();
     }
 }

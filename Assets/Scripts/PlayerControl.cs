@@ -25,16 +25,13 @@ public class PlayerControl : MonoBehaviour
     public bool terraForming = false;
     public GameObject gridManager;
     public bool isMouseDown = false;
-    public RaycastHit curHit;
 
     private float maxTerrainHeight = 10;
     private float minTerrainHeight = -3;
     private GridManager gridM;
-    private string[] chunkCoords = { "", "" };
-    private Chunk chunk = null;
     private int coordIndex = 0;
     private float mouseDistnace = 0;
-    private List<Chunk> modifiedChunks = new List<Chunk>();
+    public List<Chunk> modifiedChunks = new List<Chunk>();
 
     public void ChangeTerraformer()
     {
@@ -80,7 +77,8 @@ public class PlayerControl : MonoBehaviour
         else if (Input.GetMouseButtonDown(0))
         {
             isMouseDown = true;
-            Path.startingPoint = m_Selected.transform.position;
+            if (m_Selected !=null)
+                Path.startingPoint = m_Selected.transform.position;
         }
         else if (Input.GetMouseButtonUp(0) && m_Selected != null)
         {
@@ -91,14 +89,9 @@ public class PlayerControl : MonoBehaviour
                 m_Selected.ChangeMaterial(0);
 
                 Spawn(curPlaceable);
-                for (int i = 0; i < objectTimesRotated; i++)
-                {
-                    m_Selected.RotateY(90);
-                }
             }
             else
             {
-                Debug.Log("OK");
                 m_Selected.DestroyPlaceable();
                 Spawn(curPlaceable);
             }
@@ -111,11 +104,11 @@ public class PlayerControl : MonoBehaviour
         {
             var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit[] hits = Physics.RaycastAll(ray);
+            Array.Sort(hits, (a, b) => (a.distance.CompareTo(b.distance)));
             foreach (RaycastHit hit in hits)
             {
                 if (hit.collider.CompareTag("Terrain"))
                 {
-                    curHit = hit;
                     m_Selected.Place(hit.point);
                     break;
                 }
@@ -129,6 +122,8 @@ public class PlayerControl : MonoBehaviour
         {
             m_Selected.RotateY(90);
             objectTimesRotated++;
+            if (objectTimesRotated == 4)
+                objectTimesRotated = 0;
         }
     }
 
@@ -197,6 +192,9 @@ public class PlayerControl : MonoBehaviour
         m_Selected = newSelected;
         if (m_Selected.gameObject.CompareTag("Fence") && fenceIndex != 0)
             ChangeFence(fenceIndex);
+        else
+            for (int i = 0; i < objectTimesRotated; i++)
+                m_Selected.RotateY(90);
     }
 
     public void SpawnFence(int i)
@@ -242,8 +240,6 @@ public class PlayerControl : MonoBehaviour
             {
                 if (hit.collider.gameObject.CompareTag("Terrain"))
                 {
-                    chunkCoords = hit.collider.gameObject.name.Split('_');
-                    chunk = gridM.terrainElements[int.Parse(chunkCoords[1]) * gridM.terrainWidth / gridM.elementWidth + int.Parse(chunkCoords[0])];
                     coordIndex = (int)(Mathf.Floor(hit.point.x) + Mathf.Floor(hit.point.z) * (gridM.terrainWidth + 1));
                 }
             }
@@ -257,6 +253,9 @@ public class PlayerControl : MonoBehaviour
                 if (mouseDistnace > 0.6f && gridM.coords[coordIndex].y <= maxTerrainHeight)
                 {
                     mouseDistnace = 0;
+
+                    gridM.tempCoords = new Vector3[gridM.coords.Length];
+                    Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
 
                     if (gridM.coords[coordIndex].y == gridM.coords[coordIndex + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 2].y)
                     {
@@ -279,10 +278,10 @@ public class PlayerControl : MonoBehaviour
                         gridM.coords[coordIndex + gridM.terrainWidth + 2].y = gridM.coords[coordIndex].y;
                     }
 
-                    TerraformNeighbours(coordIndex, gridM.coords[coordIndex].y, gridM, true);
-                    TerraformNeighbours(coordIndex + 1, gridM.coords[coordIndex].y, gridM, true);
-                    TerraformNeighbours(coordIndex + gridM.terrainWidth + 1, gridM.coords[coordIndex].y, gridM, true);
-                    TerraformNeighbours(coordIndex + gridM.terrainWidth + 2, gridM.coords[coordIndex].y, gridM, true);
+                    gridM.TerraformNeighbours(coordIndex, gridM.coords[coordIndex].y, true);
+                    gridM.TerraformNeighbours(coordIndex + 1, gridM.coords[coordIndex].y, true);
+                    gridM.TerraformNeighbours(coordIndex + gridM.terrainWidth + 1, gridM.coords[coordIndex].y, true);
+                    gridM.TerraformNeighbours(coordIndex + gridM.terrainWidth + 2, gridM.coords[coordIndex].y, true);
                 }
             }
             else
@@ -290,6 +289,9 @@ public class PlayerControl : MonoBehaviour
                 if (mouseDistnace < -0.6f && gridM.coords[coordIndex].y >= minTerrainHeight)
                 {
                     mouseDistnace = 0;
+
+                    gridM.tempCoords = new Vector3[gridM.coords.Length];
+                    Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
 
                     if (gridM.coords[coordIndex].y == gridM.coords[coordIndex + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 2].y)
                     {
@@ -312,11 +314,18 @@ public class PlayerControl : MonoBehaviour
                         gridM.coords[coordIndex + gridM.terrainWidth + 2].y = gridM.coords[coordIndex].y;
                     }
 
-                    TerraformNeighbours(coordIndex, gridM.coords[coordIndex].y, gridM, false);
-                    TerraformNeighbours(coordIndex + 1, gridM.coords[coordIndex].y, gridM, false);
-                    TerraformNeighbours(coordIndex + gridM.terrainWidth + 1, gridM.coords[coordIndex].y, gridM, false);
-                    TerraformNeighbours(coordIndex + gridM.terrainWidth + 2, gridM.coords[coordIndex].y, gridM, false);
+                    gridM.TerraformNeighbours(coordIndex, gridM.coords[coordIndex].y, false);
+                    gridM.TerraformNeighbours(coordIndex + 1, gridM.coords[coordIndex].y, false);
+                    gridM.TerraformNeighbours(coordIndex + gridM.terrainWidth + 1, gridM.coords[coordIndex].y, false);
+                    gridM.TerraformNeighbours(coordIndex + gridM.terrainWidth + 2, gridM.coords[coordIndex].y, false);
                 }
+            }
+
+            if (gridM.edgeChanged)
+            {
+                gridM.edgeChanged = false;
+                gridM.coords = new Vector3[gridM.tempCoords.Length];
+                Array.Copy(gridM.tempCoords, gridM.coords, gridM.tempCoords.Length);
             }
 
             foreach (Chunk tempChunk in modifiedChunks)
@@ -325,134 +334,6 @@ public class PlayerControl : MonoBehaviour
             }
             modifiedChunks = new List<Chunk>();
         }
-    }
-
-    public void TerraformNeighbours(int index, float height, GridManager gridM, bool positive)
-    {
-        if (index % (gridM.terrainWidth + 1) != gridM.terrainWidth)
-        {
-            if (gridM.coords[index + 1].y <= height - 1 && positive)
-            {
-                gridM.coords[index + 1].y = height - 0.5f;
-                TerraformNeighbours(index + 1, height - 0.5f, gridM, true);
-            }
-            else if (gridM.coords[index + 1].y >= height + 1 && !positive)
-            {
-                gridM.coords[index + 1].y = height + 0.5f;
-                TerraformNeighbours(index + 1, height + 0.5f, gridM, false);
-            }
-        }
-        if (index < (gridM.terrainWidth + 1) * (gridM.terrainWidth))
-        {
-            if (gridM.coords[index + gridM.terrainWidth + 1].y <= height - 1 && positive)
-            {
-                gridM.coords[index + gridM.terrainWidth + 1].y = height - 0.5f;
-                TerraformNeighbours(index + gridM.terrainWidth + 1, height - 0.5f, gridM, true);
-            }
-            else if (gridM.coords[index + gridM.terrainWidth + 1].y >= height + 1 && !positive)
-            {
-                gridM.coords[index + gridM.terrainWidth + 1].y = height + 0.5f;
-                TerraformNeighbours(index + gridM.terrainWidth + 1, height + 0.5f, gridM, false);
-            }
-        }
-        if (index % (gridM.terrainWidth + 1) != 0)
-        {
-            if (gridM.coords[index - 1].y <= height - 1 && positive)
-            {
-                gridM.coords[index - 1].y = height - 0.5f;
-                TerraformNeighbours(index - 1, height - 0.5f, gridM, true);
-            }
-            else if (gridM.coords[index - 1].y >= height + 1 && !positive)
-            {
-                gridM.coords[index - 1].y = height + 0.5f;
-                TerraformNeighbours(index - 1, height + 0.5f, gridM, false);
-            }
-        }
-        if (index > gridM.terrainWidth + 1)
-        {
-            if (gridM.coords[index - (gridM.terrainWidth + 1)].y <= height - 1 && positive)
-            {
-                gridM.coords[index - (gridM.terrainWidth + 1)].y = height - 0.5f;
-                TerraformNeighbours(index - (gridM.terrainWidth + 1), height - 0.5f, gridM, true);
-            }
-            else if (gridM.coords[index - (gridM.terrainWidth + 1)].y >= height + 1 && !positive)
-            {
-                gridM.coords[index - (gridM.terrainWidth + 1)].y = height + 0.5f;
-                TerraformNeighbours(index - (gridM.terrainWidth + 1), height + 0.5f, gridM, false);
-            }
-        }
-
-        //szél ellenõrzés, lehet nem kell szél fixálás után
-        if (index < (gridM.terrainWidth + 1) * (gridM.terrainWidth) && index > gridM.terrainWidth + 1 && index % (gridM.terrainWidth + 1) != 0 && index % (gridM.terrainWidth + 1) != gridM.terrainWidth)
-        {
-            if (gridM.coords[index].y == gridM.coords[index + gridM.terrainWidth].y && gridM.coords[index].y != gridM.coords[index + gridM.terrainWidth + 1].y && gridM.coords[index - 1].y == gridM.coords[index + gridM.terrainWidth + 1].y)
-            {
-                gridM.coords[index + gridM.terrainWidth + 1].y = gridM.coords[index].y;
-                gridM.coords[index - 1].y = gridM.coords[index].y;
-            }
-            if (gridM.coords[index].y == gridM.coords[index + gridM.terrainWidth + 2].y && gridM.coords[index].y != gridM.coords[index + gridM.terrainWidth + 1].y && gridM.coords[index + 1].y == gridM.coords[index + gridM.terrainWidth + 1].y)
-            {
-                gridM.coords[index + gridM.terrainWidth + 1].y = gridM.coords[index].y;
-                gridM.coords[index + 1].y = gridM.coords[index].y;
-            }
-            if (gridM.coords[index].y == gridM.coords[index - gridM.terrainWidth].y && gridM.coords[index].y != gridM.coords[index - (gridM.terrainWidth + 1)].y && gridM.coords[index + 1].y == gridM.coords[index - (gridM.terrainWidth + 1)].y)
-            {
-                gridM.coords[index - (gridM.terrainWidth + 1)].y = gridM.coords[index].y;
-                gridM.coords[index + 1].y = gridM.coords[index].y;
-            }
-            if (gridM.coords[index].y == gridM.coords[index - (gridM.terrainWidth + 2)].y && gridM.coords[index].y != gridM.coords[index - (gridM.terrainWidth + 1)].y && gridM.coords[index - 1].y == gridM.coords[index - (gridM.terrainWidth + 1)].y)
-            {
-                gridM.coords[index - (gridM.terrainWidth + 1)].y = gridM.coords[index].y;
-                gridM.coords[index - 1].y = gridM.coords[index].y;
-            }
-        }
-
-        //szél ellenõrzés, lehet nem kell szél fixálás után
-        if (index < (gridM.terrainWidth + 1) * (gridM.terrainWidth - 1) && index > (gridM.terrainWidth + 1) * 2 && index % (gridM.terrainWidth + 1) > 1 && index % (gridM.terrainWidth + 1) < gridM.terrainWidth - 1)
-        {
-            if (gridM.coords[index + 1].y != gridM.coords[index + 1 + 1].y && gridM.coords[index + gridM.terrainWidth + 1 + 1].y == gridM.coords[index + 1 + 1].y && gridM.coords[index - 1 + 1].y == gridM.coords[index + 1 + 1].y && gridM.coords[index - (gridM.terrainWidth + 1) + 1].y == gridM.coords[index + 1 + 1].y)
-            {
-                gridM.coords[index + 1].y = gridM.coords[index + 1 + 1].y;
-            }
-            if (gridM.coords[index - 1].y != gridM.coords[index + 1 - 1].y && gridM.coords[index + gridM.terrainWidth + 1 - 1].y == gridM.coords[index + 1 - 1].y && gridM.coords[index - 1 - 1].y == gridM.coords[index + 1 - 1].y && gridM.coords[index - (gridM.terrainWidth + 1) - 1].y == gridM.coords[index + 1 - 1].y)
-            {
-                gridM.coords[index - 1].y = gridM.coords[index + 1 - 1].y;
-            }
-            if (gridM.coords[index + gridM.terrainWidth + 1].y != gridM.coords[index + 1 + gridM.terrainWidth + 1].y && gridM.coords[index + gridM.terrainWidth + 1 + gridM.terrainWidth + 1].y == gridM.coords[index + 1 + gridM.terrainWidth + 1].y && gridM.coords[index - 1 + gridM.terrainWidth + 1].y == gridM.coords[index + 1 + gridM.terrainWidth + 1].y && gridM.coords[index - (gridM.terrainWidth + 1) + gridM.terrainWidth + 1].y == gridM.coords[index + 1 + gridM.terrainWidth + 1].y)
-            {
-                gridM.coords[index + gridM.terrainWidth + 1].y = gridM.coords[index + 1 + gridM.terrainWidth + 1].y;
-            }
-            if (gridM.coords[index - (gridM.terrainWidth + 1)].y != gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y && gridM.coords[index + gridM.terrainWidth + 1 - (gridM.terrainWidth + 1)].y == gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y && gridM.coords[index + gridM.terrainWidth + 2 - (gridM.terrainWidth + 1)].y == gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y && gridM.coords[index - 2 - (gridM.terrainWidth + 1)].y == gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y && gridM.coords[index - (gridM.terrainWidth + 1) - (gridM.terrainWidth + 1)].y == gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y && gridM.coords[index - (gridM.terrainWidth + 1) - (gridM.terrainWidth + 1) - 1].y == gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y)
-            {
-                gridM.coords[index - (gridM.terrainWidth + 1)].y = gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y;
-                gridM.coords[index - 1 - (gridM.terrainWidth + 1)].y = gridM.coords[index + 1 - (gridM.terrainWidth + 1)].y;
-            }
-        }
-
-        //szél ellenõrzés, lehet nem kell szél fixálás után
-        if (index < (gridM.terrainWidth + 1) * (gridM.terrainWidth - 1) && index > (gridM.terrainWidth + 1) * 2 && index % (gridM.terrainWidth + 1) > 1 && index % (gridM.terrainWidth + 1) < gridM.terrainWidth - 1)
-        {
-            int chunkIndex = (int)(Mathf.Floor(gridM.coords[index - 2].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[index - 2].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
-            if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth))
-                if (!modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
-                    modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
-
-            chunkIndex = (int)(Mathf.Floor(gridM.coords[index + 2].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[index + 2].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
-            if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth))
-                if (!modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
-                    modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
-
-            chunkIndex = (int)(Mathf.Floor(gridM.coords[index + gridM.terrainWidth + 2].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[index + gridM.terrainWidth + 2].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
-            if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth))
-                if (!modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
-                    modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
-
-            chunkIndex = (int)(Mathf.Floor(gridM.coords[index - (gridM.terrainWidth + 2)].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[index - (gridM.terrainWidth + 2)].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
-            if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth))
-                if (!modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
-                    modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
-        }
-        //épület van fölötte, szél fixálás, szélesség változtatás (pl 3x3), talán listába elemek és úgy végig menni rajtuk
     }
 
     public void DestroyPlaceableInHand()

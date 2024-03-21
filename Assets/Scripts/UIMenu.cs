@@ -60,6 +60,7 @@ public class UIMenu : MonoBehaviour
         Placeable curPlaceable = curMenu.GetSelectedPlaceable(curPlaceableIndex).GetComponent<Placeable>();
         curName.text = curPlaceable.placeableName;
         curPrice.text = curPlaceable.placeablePrice.ToString() + " $";
+        playerControl.objectTimesRotated = 0;
         playerControl.Spawn(curPlaceable);
     }
 
@@ -106,7 +107,7 @@ public class UIMenu : MonoBehaviour
                 b.GetComponent<Image>().sprite = placeables[i].icon;
             }
         }
-        SetPlaceable(0, placeableListPanel.childCount- placeables.Length);
+        SetPlaceable(0, placeableListPanel.childCount - placeables.Length);
     }
     void DestroyPlaceables()
     {
