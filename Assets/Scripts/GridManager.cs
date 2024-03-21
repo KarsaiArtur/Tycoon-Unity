@@ -12,11 +12,12 @@ public class GridManager : MonoBehaviour
     public static GridManager instance;
     public int terrainWidth, elementWidth;
     public Chunk terrainPrefab;
-    public Chunk backgroundTerrainPrefab;
+    public BackGroundChunk backgroundTerrainPrefab;
     [HideInInspector]
     public Vector3[] coords;
     [HideInInspector]
     public Chunk[] terrainElements;
+    public int rotationAngle = 0;
 
     public int height = 0;
     public int changeRate = 20;
@@ -152,9 +153,27 @@ public class GridManager : MonoBehaviour
         {
             for (x = 0; x < tilesPerSide; x++, i++)
             {
-                Chunk elementInstance;
-                if (x == 0 || x == (tilesPerSide - 1) || z == 0 || z == (tilesPerSide - 1))
+                Chunk elementInstance = new Chunk();
+                if (x == 0)
+                {
+                    rotationAngle = 0;
                     elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
+                }
+                else if (x == (tilesPerSide - 1))
+                {
+                    rotationAngle = 180;
+                    elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
+                }
+                else if (z == 0)
+                {
+                    rotationAngle = 270;
+                    elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
+                }
+                else if (z == (tilesPerSide - 1))
+                {
+                    rotationAngle = 90;
+                    elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
+                }
                 else
                     elementInstance = Instantiate(terrainPrefab, this.transform);
                 elementInstance.Initialize(x, z, coords);
@@ -180,7 +199,7 @@ public class GridManager : MonoBehaviour
     {
         for (int i = 0; i < coords.Length; i++)
         {
-            if (i >= (terrainWidth + 1) * (terrainWidth))
+            if (i < (terrainWidth + 1) * (terrainWidth + 1) - elementWidth * (terrainWidth + 1) && i > (terrainWidth + 1) * (terrainWidth + 1) - (elementWidth + 1) * (terrainWidth + 1))
             {
                 coords[i].y = edgeHeight;
                 if (coords[i - terrainWidth - 1].y >= edgeHeight + 1)
@@ -194,7 +213,7 @@ public class GridManager : MonoBehaviour
                     TerraformNeighbours(i - terrainWidth - 1, edgeHeight - 0.5f, true);
                 }
             }
-            if (i <= terrainWidth + 1)
+            if (i > (elementWidth) * (terrainWidth + 1) && i < (elementWidth + 1) * (terrainWidth + 1))
             {
                 coords[i].y = edgeHeight;
                 if (coords[i + terrainWidth + 1].y >= edgeHeight + 1)
@@ -208,7 +227,7 @@ public class GridManager : MonoBehaviour
                     TerraformNeighbours(i + terrainWidth + 1, edgeHeight - 0.5f, true);
                 }
             }
-            if (i % (terrainWidth + 1) == 0)
+            if (i % (terrainWidth + 1) == elementWidth)
             {
                 coords[i].y = edgeHeight;
                 if (coords[i + 1].y >= edgeHeight + 1)
@@ -222,7 +241,7 @@ public class GridManager : MonoBehaviour
                     TerraformNeighbours(i + 1, edgeHeight - 0.5f, true);
                 }
             }
-            if (i % (terrainWidth + 1) == terrainWidth)
+            if (i % (terrainWidth + 1) == terrainWidth - elementWidth)
             {
                 coords[i].y = edgeHeight;
                 if (coords[i - 1].y >= edgeHeight + 1)
@@ -241,131 +260,117 @@ public class GridManager : MonoBehaviour
 
     public void TerraformNeighbours(int index, float height, bool positive)
     {
-        if (index % (terrainWidth + 1) == terrainWidth || index >= (terrainWidth + 1) * (terrainWidth) || index % (terrainWidth + 1) == 0 || index <= terrainWidth + 1)
+        if (index % (terrainWidth + 1) == terrainWidth - elementWidth || (index > (elementWidth) * (terrainWidth + 1) && index < (elementWidth + 1) * (terrainWidth + 1)) || index % (terrainWidth + 1) == elementWidth || (index < (terrainWidth + 1) * (terrainWidth + 1) - elementWidth * (terrainWidth + 1) && index > (terrainWidth + 1) * (terrainWidth + 1) - (elementWidth + 1) * (terrainWidth + 1)))
         {
             edgeChanged = true;
         }
 
-        if (index % (terrainWidth + 1) != terrainWidth)
+        if (coords[index + 1].y <= height - 1 && positive)
         {
-            if (coords[index + 1].y <= height - 1 && positive)
-            {
-                coords[index + 1].y = height - 0.5f;
-                TerraformNeighbours(index + 1, height - 0.5f, true);
-            }
-            else if (coords[index + 1].y >= height + 1 && !positive)
-            {
-                coords[index + 1].y = height + 0.5f;
-                TerraformNeighbours(index + 1, height + 0.5f, false);
-            }
+            coords[index + 1].y = height - 0.5f;
+            TerraformNeighbours(index + 1, height - 0.5f, true);
         }
-        if (index < (terrainWidth + 1) * (terrainWidth))
+        else if (coords[index + 1].y >= height + 1 && !positive)
         {
-            if (coords[index + terrainWidth + 1].y <= height - 1 && positive)
-            {
-                coords[index + terrainWidth + 1].y = height - 0.5f;
-                TerraformNeighbours(index + terrainWidth + 1, height - 0.5f, true);
-            }
-            else if (coords[index + terrainWidth + 1].y >= height + 1 && !positive)
-            {
-                coords[index + terrainWidth + 1].y = height + 0.5f;
-                TerraformNeighbours(index + terrainWidth + 1, height + 0.5f, false);
-            }
-        }
-        if (index % (terrainWidth + 1) != 0)
-        {
-            if (coords[index - 1].y <= height - 1 && positive)
-            {
-                coords[index - 1].y = height - 0.5f;
-                TerraformNeighbours(index - 1, height - 0.5f, true);
-            }
-            else if (coords[index - 1].y >= height + 1 && !positive)
-            {
-                coords[index - 1].y = height + 0.5f;
-                TerraformNeighbours(index - 1, height + 0.5f, false);
-            }
-        }
-        if (index > terrainWidth + 1)
-        {
-            if (coords[index - (terrainWidth + 1)].y <= height - 1 && positive)
-            {
-                coords[index - (terrainWidth + 1)].y = height - 0.5f;
-                TerraformNeighbours(index - (terrainWidth + 1), height - 0.5f, true);
-            }
-            else if (coords[index - (terrainWidth + 1)].y >= height + 1 && !positive)
-            {
-                coords[index - (terrainWidth + 1)].y = height + 0.5f;
-                TerraformNeighbours(index - (terrainWidth + 1), height + 0.5f, false);
-            }
+            coords[index + 1].y = height + 0.5f;
+            TerraformNeighbours(index + 1, height + 0.5f, false);
         }
 
-        if (index < (terrainWidth + 1) * (terrainWidth) && index > terrainWidth + 1 && index % (terrainWidth + 1) != 0 && index % (terrainWidth + 1) != terrainWidth)
+        if (coords[index + terrainWidth + 1].y <= height - 1 && positive)
         {
-            if (coords[index].y == coords[index + terrainWidth].y && coords[index].y != coords[index + terrainWidth + 1].y && coords[index - 1].y == coords[index + terrainWidth + 1].y)
-            {
-                coords[index + terrainWidth + 1].y = coords[index].y;
-                coords[index - 1].y = coords[index].y;
-            }
-            if (coords[index].y == coords[index + terrainWidth + 2].y && coords[index].y != coords[index + terrainWidth + 1].y && coords[index + 1].y == coords[index + terrainWidth + 1].y)
-            {
-                coords[index + terrainWidth + 1].y = coords[index].y;
-                coords[index + 1].y = coords[index].y;
-            }
-            if (coords[index].y == coords[index - terrainWidth].y && coords[index].y != coords[index - (terrainWidth + 1)].y && coords[index + 1].y == coords[index - (terrainWidth + 1)].y)
-            {
-                coords[index - (terrainWidth + 1)].y = coords[index].y;
-                coords[index + 1].y = coords[index].y;
-            }
-            if (coords[index].y == coords[index - (terrainWidth + 2)].y && coords[index].y != coords[index - (terrainWidth + 1)].y && coords[index - 1].y == coords[index - (terrainWidth + 1)].y)
-            {
-                coords[index - (terrainWidth + 1)].y = coords[index].y;
-                coords[index - 1].y = coords[index].y;
-            }
+            coords[index + terrainWidth + 1].y = height - 0.5f;
+            TerraformNeighbours(index + terrainWidth + 1, height - 0.5f, true);
+        }
+        else if (coords[index + terrainWidth + 1].y >= height + 1 && !positive)
+        {
+            coords[index + terrainWidth + 1].y = height + 0.5f;
+            TerraformNeighbours(index + terrainWidth + 1, height + 0.5f, false);
         }
 
-        if (index < (terrainWidth + 1) * (terrainWidth - 1) && index > (terrainWidth + 1) * 2 && index % (terrainWidth + 1) > 1 && index % (terrainWidth + 1) < terrainWidth - 1)
+        if (coords[index - 1].y <= height - 1 && positive)
         {
-            if (coords[index + 1].y != coords[index + 1 + 1].y && coords[index + terrainWidth + 1 + 1].y == coords[index + 1 + 1].y && coords[index - 1 + 1].y == coords[index + 1 + 1].y && coords[index - (terrainWidth + 1) + 1].y == coords[index + 1 + 1].y)
-            {
-                coords[index + 1].y = coords[index + 1 + 1].y;
-            }
-            if (coords[index - 1].y != coords[index + 1 - 1].y && coords[index + terrainWidth + 1 - 1].y == coords[index + 1 - 1].y && coords[index - 1 - 1].y == coords[index + 1 - 1].y && coords[index - (terrainWidth + 1) - 1].y == coords[index + 1 - 1].y)
-            {
-                coords[index - 1].y = coords[index + 1 - 1].y;
-            }
-            if (coords[index + terrainWidth + 1].y != coords[index + 1 + terrainWidth + 1].y && coords[index + terrainWidth + 1 + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y && coords[index - 1 + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y && coords[index - (terrainWidth + 1) + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y)
-            {
-                coords[index + terrainWidth + 1].y = coords[index + 1 + terrainWidth + 1].y;
-            }
-            if (coords[index - (terrainWidth + 1)].y != coords[index + 1 - (terrainWidth + 1)].y && coords[index + terrainWidth + 1 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index + terrainWidth + 2 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - 2 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - (terrainWidth + 1) - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - (terrainWidth + 1) - (terrainWidth + 1) - 1].y == coords[index + 1 - (terrainWidth + 1)].y)
-            {
-                coords[index - (terrainWidth + 1)].y = coords[index + 1 - (terrainWidth + 1)].y;
-                coords[index - 1 - (terrainWidth + 1)].y = coords[index + 1 - (terrainWidth + 1)].y;
-            }
+            coords[index - 1].y = height - 0.5f;
+            TerraformNeighbours(index - 1, height - 0.5f, true);
+        }
+        else if (coords[index - 1].y >= height + 1 && !positive)
+        {
+            coords[index - 1].y = height + 0.5f;
+            TerraformNeighbours(index - 1, height + 0.5f, false);
         }
 
-        if (index < (terrainWidth + 1) * (terrainWidth - 1) && index > (terrainWidth + 1) * 2 && index % (terrainWidth + 1) > 1 && index % (terrainWidth + 1) < terrainWidth - 1)
+        if (coords[index - (terrainWidth + 1)].y <= height - 1 && positive)
         {
-            int chunkIndex = (int)(Mathf.Floor(coords[index - 2].x / elementWidth) + Mathf.Floor(coords[index - 2].z / elementWidth) * (terrainWidth / elementWidth));
-            if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
-                if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
-                    pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
-
-            chunkIndex = (int)(Mathf.Floor(coords[index + 2].x / elementWidth) + Mathf.Floor(coords[index + 2].z / elementWidth) * (terrainWidth / elementWidth));
-            if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
-                if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
-                    pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
-
-            chunkIndex = (int)(Mathf.Floor(coords[index + terrainWidth + 2].x / elementWidth) + Mathf.Floor(coords[index + terrainWidth + 2].z / elementWidth) * (terrainWidth / elementWidth));
-            if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
-                if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
-                    pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
-
-            chunkIndex = (int)(Mathf.Floor(coords[index - (terrainWidth + 2)].x / elementWidth) + Mathf.Floor(coords[index - (terrainWidth + 2)].z / elementWidth) * (terrainWidth / elementWidth));
-            if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
-                if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
-                    pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+            coords[index - (terrainWidth + 1)].y = height - 0.5f;
+            TerraformNeighbours(index - (terrainWidth + 1), height - 0.5f, true);
         }
+        else if (coords[index - (terrainWidth + 1)].y >= height + 1 && !positive)
+        {
+            coords[index - (terrainWidth + 1)].y = height + 0.5f;
+            TerraformNeighbours(index - (terrainWidth + 1), height + 0.5f, false);
+        }
+
+
+        if (coords[index].y == coords[index + terrainWidth].y && coords[index].y != coords[index + terrainWidth + 1].y && coords[index - 1].y == coords[index + terrainWidth + 1].y)
+        {
+            coords[index + terrainWidth + 1].y = coords[index].y;
+            coords[index - 1].y = coords[index].y;
+        }
+        if (coords[index].y == coords[index + terrainWidth + 2].y && coords[index].y != coords[index + terrainWidth + 1].y && coords[index + 1].y == coords[index + terrainWidth + 1].y)
+        {
+            coords[index + terrainWidth + 1].y = coords[index].y;
+            coords[index + 1].y = coords[index].y;
+        }
+        if (coords[index].y == coords[index - terrainWidth].y && coords[index].y != coords[index - (terrainWidth + 1)].y && coords[index + 1].y == coords[index - (terrainWidth + 1)].y)
+        {
+            coords[index - (terrainWidth + 1)].y = coords[index].y;
+            coords[index + 1].y = coords[index].y;
+        }
+        if (coords[index].y == coords[index - (terrainWidth + 2)].y && coords[index].y != coords[index - (terrainWidth + 1)].y && coords[index - 1].y == coords[index - (terrainWidth + 1)].y)
+        {
+            coords[index - (terrainWidth + 1)].y = coords[index].y;
+            coords[index - 1].y = coords[index].y;
+        }
+
+
+        if (coords[index + 1].y != coords[index + 1 + 1].y && coords[index + terrainWidth + 1 + 1].y == coords[index + 1 + 1].y && coords[index - 1 + 1].y == coords[index + 1 + 1].y && coords[index - (terrainWidth + 1) + 1].y == coords[index + 1 + 1].y)
+        {
+            coords[index + 1].y = coords[index + 1 + 1].y;
+        }
+        if (coords[index - 1].y != coords[index + 1 - 1].y && coords[index + terrainWidth + 1 - 1].y == coords[index + 1 - 1].y && coords[index - 1 - 1].y == coords[index + 1 - 1].y && coords[index - (terrainWidth + 1) - 1].y == coords[index + 1 - 1].y)
+        {
+            coords[index - 1].y = coords[index + 1 - 1].y;
+        }
+        if (coords[index + terrainWidth + 1].y != coords[index + 1 + terrainWidth + 1].y && coords[index + terrainWidth + 1 + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y && coords[index - 1 + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y && coords[index - (terrainWidth + 1) + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y)
+        {
+            coords[index + terrainWidth + 1].y = coords[index + 1 + terrainWidth + 1].y;
+        }
+        if (coords[index - (terrainWidth + 1)].y != coords[index + 1 - (terrainWidth + 1)].y && coords[index + terrainWidth + 1 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index + terrainWidth + 2 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - 2 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - (terrainWidth + 1) - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - (terrainWidth + 1) - (terrainWidth + 1) - 1].y == coords[index + 1 - (terrainWidth + 1)].y)
+        {
+            coords[index - (terrainWidth + 1)].y = coords[index + 1 - (terrainWidth + 1)].y;
+            coords[index - 1 - (terrainWidth + 1)].y = coords[index + 1 - (terrainWidth + 1)].y;
+        }
+
+
+        int chunkIndex = (int)(Mathf.Floor(coords[index - 2].x / elementWidth) + Mathf.Floor(coords[index - 2].z / elementWidth) * (terrainWidth / elementWidth));
+        if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
+            if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
+                pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+
+        chunkIndex = (int)(Mathf.Floor(coords[index + 2].x / elementWidth) + Mathf.Floor(coords[index + 2].z / elementWidth) * (terrainWidth / elementWidth));
+        if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
+            if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
+                pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+
+        chunkIndex = (int)(Mathf.Floor(coords[index + terrainWidth + 2].x / elementWidth) + Mathf.Floor(coords[index + terrainWidth + 2].z / elementWidth) * (terrainWidth / elementWidth));
+        if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
+            if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
+                pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+
+        chunkIndex = (int)(Mathf.Floor(coords[index - (terrainWidth + 2)].x / elementWidth) + Mathf.Floor(coords[index - (terrainWidth + 2)].z / elementWidth) * (terrainWidth / elementWidth));
+        if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
+            if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
+                pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+
         //vannak még fura alakzatok kép van róla, épület van fölötte, szélesség változtatás (pl 3x3), talán listába elemek és úgy végig menni rajtuk
     }
 

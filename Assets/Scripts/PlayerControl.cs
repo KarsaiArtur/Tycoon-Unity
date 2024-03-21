@@ -330,7 +330,8 @@ public class PlayerControl : MonoBehaviour
 
             foreach (Chunk tempChunk in modifiedChunks)
             {
-                tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
+                if (tempChunk.gameObject.CompareTag("Terrain"))
+                    tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
             }
             modifiedChunks = new List<Chunk>();
         }

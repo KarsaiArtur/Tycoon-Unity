@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -7332554084481508890}
   m_Layer: 0
   m_Name: backgroundTerrain
-  m_TagString: Terrain
+  m_TagString: BackGroundTerrain
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -55,7 +55,7 @@ MeshRenderer:
   m_RenderingLayerMask: 4294967295
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5de3681de9b525241b03184622a29d7a, type: 2}
+  - {fileID: 2100000, guid: 5c8a4e1f248ae9f4fab83ef327ff3898, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -120,5 +120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   verts: []
+  center: {x: 0, y: 0, z: 0}
   prefabs:
   - {fileID: 8028680735698920893, guid: a6724fff9b3b8174791af46495dd03b6, type: 3}
+  prefabInstances: []
