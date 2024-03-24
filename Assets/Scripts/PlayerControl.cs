@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.AI;
+using Unity.AI.Navigation;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -18,12 +20,11 @@ public class PlayerControl : MonoBehaviour
     public int maxRight = 50;
     public int moveSpeed = 1;
     private float angle;
-    private int index;
     public float objectTimesRotated = 0;
     public int fenceIndex = 0;
     public bool canBePlaced = true;
     public bool terraForming = false;
-    public GameObject gridManager;
+    public bool npcControl = false;
     public bool isMouseDown = false;
 
     private float maxTerrainHeight = 10;
@@ -38,6 +39,12 @@ public class PlayerControl : MonoBehaviour
         terraForming = !terraForming;
     }
 
+    public void ChangeNPCcontrol()
+    {
+        npcControl = !npcControl;
+    }
+
+
     private bool MouseOverUI()
     {
         return EventSystem.current.IsPointerOverGameObject();
@@ -46,7 +53,6 @@ public class PlayerControl : MonoBehaviour
     void Start()
     {
         angle = 90 - transform.eulerAngles.y;
-        gridManager = GameObject.FindGameObjectWithTag("GridManager");
 
         gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
     }
@@ -61,8 +67,16 @@ public class PlayerControl : MonoBehaviour
         {
             if (terraForming)
                 Terraform();
+            else if (npcControl)
+                MoveNpc();
             else
                 PlaceObject();
+        }
+        else if(MouseOverUI() && Input.GetMouseButtonUp(0) && m_Selected!= null)
+        {
+            isMouseDown = false;
+            m_Selected.DestroyPlaceable();
+            Spawn(curPlaceable);
         }
     }
 
@@ -87,6 +101,7 @@ public class PlayerControl : MonoBehaviour
             {
                 m_Selected.SetTag("Placed");
                 m_Selected.ChangeMaterial(0);
+                m_Selected.FinalPlace();
 
                 Spawn(curPlaceable);
             }
@@ -343,7 +358,29 @@ public class PlayerControl : MonoBehaviour
         {
             m_Selected.DestroyPlaceable();
             Path.startingPoint = new Vector3(-1, -1, -1);
+            isMouseDown = false;
             m_Selected = null;
+        }
+    }
+
+    public NavMeshSurface idk;
+    public NavMeshAgent agent;
+
+    public void Reload()
+    {
+        idk.BuildNavMesh();
+    }
+
+    public void MoveNpc()
+    {
+        if(Input.GetMouseButtonDown(0))
+        {
+            Ray ray = GameCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if(Physics.Raycast(ray, out hit))
+            {
+                agent.SetDestination(hit.point);
+            }
         }
     }
 }

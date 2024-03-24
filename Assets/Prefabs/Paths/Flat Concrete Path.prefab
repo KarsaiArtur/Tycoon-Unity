@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3617368597451996787}
   - component: {fileID: 7841547125551040964}
   - component: {fileID: 5954480816096368640}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 7223332289556840856}
   - component: {fileID: 7551650816147809122}
   - component: {fileID: 679954017552097056}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Flat Concrete Path
   m_TagString: Flat
   m_Icon: {fileID: 0}
@@ -134,12 +134,7 @@ MonoBehaviour:
   placeablePrice: 30
   icon: {fileID: 0}
   index: 0
-  materials:
-  - {fileID: 2100000, guid: 5c8a4e1f248ae9f4fab83ef327ff3898, type: 2}
-  - {fileID: 2100000, guid: 009dec613c70fdd478c2876011f89d0e, type: 2}
-  - {fileID: 2100000, guid: a27739f32cbd74249859e7e0ff1b8c96, type: 2}
   otherVariant: {fileID: 1622757161807058835, guid: 8588ad3f34700f94981b48ff0a306efe, type: 3}
-  paths: []
 --- !u!65 &679954017552097056
 BoxCollider:
   m_ObjectHideFlags: 0

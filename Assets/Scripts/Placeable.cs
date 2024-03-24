@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Placeable : MonoBehaviour
 {
     public PlayerControl playerControl;
+    public GridManager gridManager;
     public string placeableName;
     public int placeablePrice;
     public Sprite icon;
@@ -14,6 +15,7 @@ public class Placeable : MonoBehaviour
     void Awake()
     {
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
+        gridManager = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
     }
     
 
@@ -25,6 +27,11 @@ public class Placeable : MonoBehaviour
     public virtual void Place(Vector3 mouseHit)
     {
         transform.position = new Vector3(playerControl.Round(mouseHit.x), mouseHit.y + 0.5f, playerControl.Round(mouseHit.z));
+    }
+
+    public virtual void FinalPlace()
+    {
+
     }
 
     public virtual bool CalculateGrid(Vector3 mouseHit)

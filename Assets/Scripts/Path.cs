@@ -58,7 +58,6 @@ public class Path : Placeable
 
         float yDifference = position1.y - position2.y;
         yDifference = RoundToDecimal(yDifference, 2);
-        Debug.Log(yDifference+ "        "+ (position1.y % 1));
         if (gameObject.CompareTag("Incline") && yDifference == 0 && position1.y % 0.5 == 0)
         {
             playerControl.ChangePath(this, pos, 0);

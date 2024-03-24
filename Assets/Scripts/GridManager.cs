@@ -13,6 +13,8 @@ public class GridManager : MonoBehaviour
     public int terrainWidth, elementWidth;
     public Chunk terrainPrefab;
     public BackGroundChunk backgroundTerrainPrefab;
+    public CornerBackgroundChunk backgroundTerrainCornerPrefab;
+    public EntranceChunk entranceTerrainPrefab;
     [HideInInspector]
     public Vector3[] coords;
     [HideInInspector]
@@ -21,11 +23,12 @@ public class GridManager : MonoBehaviour
 
     public int height = 0;
     public int changeRate = 20;
-    public float edgeHeight = 4.5f;
+    public float edgeHeight;
     private PlayerControl pControl;
 
     public Vector3[] tempCoords;
     public bool edgeChanged = false;
+    public Grid[,] grids;
 
     void Awake()
     {
@@ -47,62 +50,56 @@ public class GridManager : MonoBehaviour
 
         tempCoords = new Vector3[coords.Length];
         Array.Copy(coords, tempCoords, coords.Length);
+
+        pControl.Reload();
+
+        InitializeGrids();
+    }
+
+    public void InitializeGrids()
+    {
+        int baseIndex = elementWidth * (terrainWidth + 1) + elementWidth;
+        int bonusIndex = 0;
+        grids = new Grid[terrainWidth - 2 * elementWidth, terrainWidth - 2 * elementWidth];
+        for (int i = 0; i < terrainWidth - 2 * elementWidth; i++)
+        {
+            for (int j = 0; j < terrainWidth - 2 * elementWidth; j++)
+            {
+                if (j > terrainWidth - elementWidth - 1)
+                    bonusIndex = elementWidth;
+                else
+                    bonusIndex = 0;
+
+                grids[j, i] = new();
+                grids[j, i].coords = new Vector3[4];
+                grids[j, i].neighbours = new Grid[4];
+
+                if (i == 0)
+                    grids[j, i].neighbours[0] = null;
+                else
+                    grids[j, i].SetNeighbour0(grids[j, i - 1]);
+
+                if (i == terrainWidth - 2 * elementWidth - 1)
+                    grids[j, i].neighbours[2] = null;
+
+                if (j == 0)
+                    grids[j, i].neighbours[1] = null;
+                else
+                    grids[j, i].SetNeighbour1(grids[j - 1, i]);
+
+                if (j == terrainWidth - 2 * elementWidth - 1)
+                    grids[j, i].neighbours[3] = null;
+
+                grids[j, i].coords[0] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j];
+                grids[j, i].coords[1] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j + 1];
+                grids[j, i].coords[2] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j + terrainWidth + 1];
+                grids[j, i].coords[3] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j + terrainWidth + 2];
+            }
+        }
     }
 
     private void CreateCoords()
     {
-        /*coords = new Vector3[(terrainWidth + 1) * (terrainWidth + 1)];
-        for (int i = 0, z = 0; z <= terrainWidth; z++)
-        {
-            for (int x = 0; x <= terrainWidth; x++, i++)
-            {
-                float y = Mathf.PerlinNoise((float)x / changeRate, (float)z / changeRate) * height;
-                y = Mathf.Floor(y) / 2;
-                coords[i] = new Vector3(x + elementWidth, y, z + elementWidth);
-            }
-        }*/
-
-        CreateBackground();
-    }
-
-    void CreateBackground()
-    {
-        /*backgroundCoords = new Vector3[((terrainWidth+elementWidth) + 1) * (elementWidth + 1) * 4];
-        int i = 0, z, x;
-        for (i = 0, z = 0; z <= elementWidth; z++)
-        {
-            for (x = 0; x <= (terrainWidth + elementWidth -1); x++, i++)
-            {
-                backgroundCoords[i] = new Vector3(x, edgeHeight, z);
-            }
-        }
-
-        for (z = 0; z <= (terrainWidth + elementWidth -1); z++)
-        {
-            for (x = terrainWidth + elementWidth; x <= terrainWidth + elementWidth + elementWidth; x++, i++)
-            {
-                backgroundCoords[i] = new Vector3(x, edgeHeight, z);
-            }
-        }
-
-
-        for (z = terrainWidth + elementWidth; z <= terrainWidth + elementWidth + elementWidth; z++)
-        {
-            for (x = terrainWidth + elementWidth + elementWidth; x >= elementWidth + 1; x--, i++)
-            {
-                backgroundCoords[i] = new Vector3(x, edgeHeight, z);
-            }
-        }
-
-        for (z = terrainWidth + elementWidth + elementWidth; z >= elementWidth + 1; z--)
-        {
-            for (x = 0; x <= elementWidth; x++, i++)
-            {
-                backgroundCoords[i] = new Vector3(x, edgeHeight, z);
-            }
-        }*/
-
-
         terrainWidth += elementWidth * 2;
 
         coords = new Vector3[(terrainWidth + 1) * (terrainWidth + 1)];
@@ -113,7 +110,7 @@ public class GridManager : MonoBehaviour
         {
             for (int x = 0; x <= terrainWidth; x++, i++)
             {
-                if (!((x >= elementWidth && x <= terrainWidth-elementWidth) && (z >= elementWidth && z <= terrainWidth-elementWidth)))
+                if (!((x >= elementWidth && x <= terrainWidth - elementWidth) && (z >= elementWidth && z <= terrainWidth - elementWidth)))
                 {
                     y = edgeHeight;
                 }
@@ -126,21 +123,6 @@ public class GridManager : MonoBehaviour
                 coords[i] = new Vector3(x, y, z);
             }
         }
-
-        /*backgroundCoords = new Vector3[((terrainWidth + elementWidth) + 1) * (elementWidth + 1) * 4];
-
-        for (int i = 0, z = 0; z <= terrainWidth + elementWidth*2; z++)
-        {
-            for (int x = 0; x <= terrainWidth + elementWidth*2; x++)
-            {
-                if(!((x > elementWidth && x < terrainWidth + elementWidth) && (z > elementWidth && z < terrainWidth + elementWidth)))
-                {
-                    backgroundCoords[i] = new Vector3(x, edgeHeight, z);
-                    i++;
-                }
-            }
-        }*/
-
     }
 
     private void CreateTerrainElements()
@@ -154,7 +136,32 @@ public class GridManager : MonoBehaviour
             for (x = 0; x < tilesPerSide; x++, i++)
             {
                 Chunk elementInstance = new Chunk();
-                if (x == 0)
+                if(x == 0 &&  z == 0)
+                {
+                    rotationAngle = 0;
+                    elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
+                }
+                else if (x == 0 && z == (tilesPerSide - 1))
+                {
+                    rotationAngle = 90;
+                    elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
+                }
+                else if (x == (tilesPerSide - 1) && z == (tilesPerSide - 1))
+                {
+                    rotationAngle = 180;
+                    elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
+                }
+                else if (x == (tilesPerSide - 1) && z == 0)
+                {
+                    rotationAngle = 270;
+                    elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
+                }
+                else if(x == 0 && z == 1)
+                {
+                    rotationAngle = 0;
+                    elementInstance = Instantiate(entranceTerrainPrefab, this.transform);
+                }
+                else if (x == 0)
                 {
                     rotationAngle = 0;
                     elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);

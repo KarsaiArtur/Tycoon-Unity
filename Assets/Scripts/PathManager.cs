@@ -56,7 +56,6 @@ public class PathManager : Placeable
                     startedInZDir = 0;
                 started = true;
             }
-            Debug.Log(startedInXDir + "   " + startedInZDir +    "        "+ transform.position+ "   "+ Path.startingPoint);
             foreach (Path p in paths)
             {
                 if (p != null)
@@ -114,6 +113,10 @@ public class PathManager : Placeable
         foreach (var path in paths)
         {
             path.gameObject.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().material = materials[index];
+        }
+        if(index == 0)
+        {
+            playerControl.Reload();
         }
     }
 

@@ -123,4 +123,5 @@ MonoBehaviour:
   center: {x: 0, y: 0, z: 0}
   prefabs:
   - {fileID: 8028680735698920893, guid: a6724fff9b3b8174791af46495dd03b6, type: 3}
+  - {fileID: 6816028668906552917, guid: 07052a64d71427e459f5659d9a6630fd, type: 3}
   prefabInstances: []
