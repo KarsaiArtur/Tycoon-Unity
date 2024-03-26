@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 33811272549906258}
   - component: {fileID: 114363526940269292}
   - component: {fileID: 2158536807138221534}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: terrainElement
   m_TagString: Terrain
   m_Icon: {fileID: 0}
@@ -97,6 +97,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e93527d74e73b546acfd48099ac50aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  verts: []
+  center: {x: 0, y: 0, z: 0}
 --- !u!64 &2158536807138221534
 MeshCollider:
   m_ObjectHideFlags: 0

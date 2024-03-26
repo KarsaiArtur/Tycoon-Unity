@@ -116,7 +116,7 @@ public class PathManager : Placeable
         }
         if(index == 0)
         {
-            playerControl.Reload();
+            playerControl.ReloadGuestNavMesh();
         }
     }
 
@@ -127,6 +127,14 @@ public class PathManager : Placeable
         {
             path.SetTag(newTag);
             path.transform.GetChild(0).tag = newTag;
+        }
+    }
+
+    public override void FinalPlace()
+    {
+        foreach (var path in paths)
+        {
+            gridManager.grids[(int)Mathf.Floor(path.gameObject.transform.position.x) - gridManager.elementWidth, (int)Mathf.Floor(path.gameObject.transform.position.z) - gridManager.elementWidth].isPath = true;
         }
     }
 

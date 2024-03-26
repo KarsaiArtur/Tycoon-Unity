@@ -13,20 +13,12 @@ public class Grid
 
     public Vector3[] coords;
     public Grid[] neighbours;
+    public Grid[] trueNeighbours;
     public GridType gridType;
     public bool isEntrance = false;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    public bool isPath = false;
+    public bool isExhibit = false;
+    public Exhibit exhibit;
 
     public void SetNeighbour0(Grid neighbour)
     {
@@ -39,5 +31,4 @@ public class Grid
         neighbours[1] = neighbour;
         neighbour.neighbours[3] = this;
     }
-
 }

@@ -2101,6 +2101,7 @@ GameObject:
   - component: {fileID: 8983794970868259858}
   - component: {fileID: 8619175740054138018}
   - component: {fileID: 6819721767351576434}
+  - component: {fileID: 5274801528639484971}
   m_Layer: 0
   m_Name: Coffe House
   m_TagString: Untagged
@@ -2137,6 +2138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControl: {fileID: 0}
+  gridManager: {fileID: 0}
   placeableName: Coffe House
   placeablePrice: 1000
   icon: {fileID: 21300000, guid: e604d11481c1900468ac088d5207a076, type: 3}
@@ -2167,6 +2169,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.8560826, y: 0.90379214, z: 1.8734417}
   m_Center: {x: 0.5003101, y: -0.08234203, z: 0.48219478}
+--- !u!208 &5274801528639484971
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9102167398544319431}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.9280415, y: 0.45189604, z: 0.936721}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0.5003101, y: -0.08234203, z: 0.4821948}
+  m_TimeToStationary: 0.5
 --- !u!1 &9174167181095817450
 GameObject:
   m_ObjectHideFlags: 0

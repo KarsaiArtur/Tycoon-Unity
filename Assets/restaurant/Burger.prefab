@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 346301680897928473}
   - component: {fileID: 2548022094330047049}
   - component: {fileID: 1551852019267658783}
+  - component: {fileID: 7196196711938146934}
   m_Layer: 0
   m_Name: Burger
   m_TagString: Untagged
@@ -47,6 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControl: {fileID: 0}
+  gridManager: {fileID: 0}
   placeableName: Burger
   placeablePrice: 1500
   icon: {fileID: 21300000, guid: 102c2ee4eec7e6a429f57bc60a0c30bc, type: 3}
@@ -77,6 +79,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 39.601986, y: 19.38901, z: 24.762281}
   m_Center: {x: 14.126086, y: 2.0545754, z: 7.0108967}
+--- !u!208 &7196196711938146934
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66635717445357443}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 19.800995, y: 9.694505, z: 12.38114}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 0
+  m_Center: {x: 14.12609, y: 2.054575, z: 7.010897}
+  m_TimeToStationary: 0.5
 --- !u!1 &354537909344023586
 GameObject:
   m_ObjectHideFlags: 0

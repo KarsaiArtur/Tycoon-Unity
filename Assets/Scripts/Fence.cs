@@ -91,13 +91,16 @@ public class Fence : Placeable
 
         if (BFS(grid1, grid2) != null)
         {
-            HashSet<Grid> tempGrids = BFS(grid1, gridManager.grids[0, 0]);
+            HashSet<Grid> tempGrids = BFS(grid1, gridManager.grids[35 - gridManager.elementWidth, 50 - gridManager.elementWidth]);
+            GameObject gateInstance = Instantiate(playerControl.gate, playerControl.m_Selected.transform.position, transform.rotation);
+            gateInstance.tag = "Placed";
+            playerControl.DestroyPlaceableInHand();
             if (tempGrids != null)
             {
                 Exhibit exhibit = new Exhibit(tempGrids);
             }
 
-            tempGrids = BFS(grid1, gridManager.grids[0, 0]);
+            tempGrids = BFS(grid1, gridManager.grids[35 - gridManager.elementWidth, 50 - gridManager.elementWidth]);
             if (tempGrids != null)
             {
                 Exhibit exhibit = new Exhibit(tempGrids);
@@ -110,6 +113,7 @@ public class Fence : Placeable
         HashSet<Grid> visited = new HashSet<Grid>();
         Queue<Grid> queue = new Queue<Grid>();
         queue.Enqueue(g1);
+        visited.Add(g1);
 
         while (queue.Count > 0)
         {
@@ -128,11 +132,11 @@ public class Fence : Placeable
             }
             else
             {
-                Debug.Log("Found");
+                //Debug.Log("Found");
                 return null;
             }
         }
-        Debug.Log("Not Found");
+        //Debug.Log("Not Found");
         return visited;
     }
 

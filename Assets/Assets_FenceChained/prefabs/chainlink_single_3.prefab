@@ -179,6 +179,7 @@ GameObject:
   - component: {fileID: 1139338630629672793}
   - component: {fileID: 7960421725665342888}
   - component: {fileID: -3916447213264962961}
+  - component: {fileID: 6358404920790163914}
   m_Layer: 0
   m_Name: chainlink_single_3
   m_TagString: Fence
@@ -259,6 +260,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControl: {fileID: 0}
+  gridManager: {fileID: 0}
+  placeableName: 
+  placeablePrice: 0
+  icon: {fileID: 0}
   index: 0
   materials:
   - {fileID: 2100000, guid: 7b2405b9286794840873c049383b02fe, type: 2}
@@ -291,6 +296,22 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!208 &6358404920790163914
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1000013955223658}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.540445, y: 0.507346, z: 0.0982553}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 0
+  m_Center: {x: -0.00724064, y: -0.2072321, z: 1.501115}
+  m_TimeToStationary: 0.5
 --- !u!1 &17643425630048341
 GameObject:
   m_ObjectHideFlags: 0

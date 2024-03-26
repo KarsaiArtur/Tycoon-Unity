@@ -236,7 +236,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControl: {fileID: 0}
+  gridManager: {fileID: 0}
+  placeableName: 
+  placeablePrice: 0
+  icon: {fileID: 0}
   index: 0
+  materials: []
 --- !u!1 &5382908708673630709
 GameObject:
   m_ObjectHideFlags: 0

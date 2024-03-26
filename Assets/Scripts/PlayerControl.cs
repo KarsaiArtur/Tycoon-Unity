@@ -26,6 +26,7 @@ public class PlayerControl : MonoBehaviour
     public bool terraForming = false;
     public bool npcControl = false;
     public bool isMouseDown = false;
+    public GameObject gate;
 
     private float maxTerrainHeight = 10;
     private float minTerrainHeight = -3;
@@ -66,7 +67,7 @@ public class PlayerControl : MonoBehaviour
         if (!MouseOverUI())
         {
             if (terraForming)
-                Terraform();
+                Terraform(1, 1);
             else if (npcControl)
                 MoveNpc();
             else
@@ -245,7 +246,7 @@ public class PlayerControl : MonoBehaviour
         return newPath;
     }
 
-    public void Terraform()
+    public void Terraform(int xWidth, int zWidth)
     {
         if (Input.GetMouseButtonDown(0))
         {
@@ -272,31 +273,31 @@ public class PlayerControl : MonoBehaviour
                     gridM.tempCoords = new Vector3[gridM.coords.Length];
                     Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
 
-                    if (gridM.coords[coordIndex].y == gridM.coords[coordIndex + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 2].y)
-                    {
-                        gridM.coords[coordIndex].y += 0.5f;
-                        gridM.coords[coordIndex + 1].y += 0.5f;
-                        gridM.coords[coordIndex + gridM.terrainWidth + 1].y += 0.5f;
-                        gridM.coords[coordIndex + gridM.terrainWidth + 2].y += 0.5f;
-                    }
-                    else
-                    {
-                        if (gridM.coords[coordIndex].y < gridM.coords[coordIndex + 1].y)
-                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + 1].y;
-                        if (gridM.coords[coordIndex].y < gridM.coords[coordIndex + gridM.terrainWidth + 1].y)
-                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + gridM.terrainWidth + 1].y;
-                        if (gridM.coords[coordIndex].y < gridM.coords[coordIndex + gridM.terrainWidth + 2].y)
-                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + gridM.terrainWidth + 2].y;
+                    float height = 0;
 
-                        gridM.coords[coordIndex + 1].y = gridM.coords[coordIndex].y;
-                        gridM.coords[coordIndex + gridM.terrainWidth + 1].y = gridM.coords[coordIndex].y;
-                        gridM.coords[coordIndex + gridM.terrainWidth + 2].y = gridM.coords[coordIndex].y;
+                    for (int i = 0; i < xWidth + 1; i++)
+                    {
+                        for (int j = 0; j < zWidth + 1; j++)
+                        {
+                            height += gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
+                        }
                     }
 
-                    gridM.TerraformNeighbours(coordIndex, gridM.coords[coordIndex].y, true);
-                    gridM.TerraformNeighbours(coordIndex + 1, gridM.coords[coordIndex].y, true);
-                    gridM.TerraformNeighbours(coordIndex + gridM.terrainWidth + 1, gridM.coords[coordIndex].y, true);
-                    gridM.TerraformNeighbours(coordIndex + gridM.terrainWidth + 2, gridM.coords[coordIndex].y, true);
+                    for (int i = 0; i < xWidth + 1; i++)
+                    {
+                        for (int j = 0; j < zWidth + 1; j++)
+                        {
+                            gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y = Mathf.Floor(height / (xWidth + 1) / (zWidth + 1) * 2) / 2 + 0.5f;
+                        }
+                    }
+
+                    for (int i = 0; i < xWidth + 1; i++)
+                    {
+                        for (int j = 0; j < zWidth + 1; j++)
+                        {
+                            gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, true);
+                        }
+                    }
                 }
             }
             else
@@ -308,31 +309,31 @@ public class PlayerControl : MonoBehaviour
                     gridM.tempCoords = new Vector3[gridM.coords.Length];
                     Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
 
-                    if (gridM.coords[coordIndex].y == gridM.coords[coordIndex + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 1].y && gridM.coords[coordIndex].y == gridM.coords[coordIndex + gridM.terrainWidth + 2].y)
-                    {
-                        gridM.coords[coordIndex].y += -0.5f;
-                        gridM.coords[coordIndex + 1].y += -0.5f;
-                        gridM.coords[coordIndex + gridM.terrainWidth + 1].y += -0.5f;
-                        gridM.coords[coordIndex + gridM.terrainWidth + 2].y += -0.5f;
-                    }
-                    else
-                    {
-                        if (gridM.coords[coordIndex].y > gridM.coords[coordIndex + 1].y)
-                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + 1].y;
-                        if (gridM.coords[coordIndex].y > gridM.coords[coordIndex + gridM.terrainWidth + 1].y)
-                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + gridM.terrainWidth + 1].y;
-                        if (gridM.coords[coordIndex].y > gridM.coords[coordIndex + gridM.terrainWidth + 2].y)
-                            gridM.coords[coordIndex].y = gridM.coords[coordIndex + gridM.terrainWidth + 2].y;
+                    float height = 0;
 
-                        gridM.coords[coordIndex + 1].y = gridM.coords[coordIndex].y;
-                        gridM.coords[coordIndex + gridM.terrainWidth + 1].y = gridM.coords[coordIndex].y;
-                        gridM.coords[coordIndex + gridM.terrainWidth + 2].y = gridM.coords[coordIndex].y;
+                    for (int i = 0; i < xWidth + 1; i++)
+                    {
+                        for (int j = 0; j < zWidth + 1; j++)
+                        {
+                            height += gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
+                        }
                     }
 
-                    gridM.TerraformNeighbours(coordIndex, gridM.coords[coordIndex].y, false);
-                    gridM.TerraformNeighbours(coordIndex + 1, gridM.coords[coordIndex].y, false);
-                    gridM.TerraformNeighbours(coordIndex + gridM.terrainWidth + 1, gridM.coords[coordIndex].y, false);
-                    gridM.TerraformNeighbours(coordIndex + gridM.terrainWidth + 2, gridM.coords[coordIndex].y, false);
+                    for (int i = 0; i < xWidth + 1; i++)
+                    {
+                        for (int j = 0; j < zWidth + 1; j++)
+                        {
+                            gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y = MathF.Ceiling(height / (xWidth + 1) / (zWidth + 1) * 2) / 2 - 0.5f;
+                        }
+                    }
+
+                    for (int i = 0; i < xWidth + 1; i++)
+                    {
+                        for (int j = 0; j < zWidth + 1; j++)
+                        {
+                            gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, false);
+                        }
+                    }
                 }
             }
 
@@ -363,12 +364,18 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public NavMeshSurface idk;
+    public NavMeshSurface guestNavMesh;
+    public NavMeshSurface animalNavMesh;
     public NavMeshAgent agent;
 
-    public void Reload()
+    public void ReloadAnimalNavMesh()
     {
-        idk.BuildNavMesh();
+        animalNavMesh.BuildNavMesh();
+    }
+
+    public void ReloadGuestNavMesh()
+    {
+        guestNavMesh.BuildNavMesh();
     }
 
     public void MoveNpc()

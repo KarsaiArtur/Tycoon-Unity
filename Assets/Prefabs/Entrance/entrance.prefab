@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 680888008390307687}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EvergladesPalmTree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 5717436025461678695}
   - component: {fileID: 7778117964582287386}
   - component: {fileID: 1159866151483411808}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Line003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -208,7 +208,7 @@ GameObject:
   - component: {fileID: 5924287991253294499}
   - component: {fileID: 7817368251995287911}
   - component: {fileID: 2413427961456209939}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryPalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -289,7 +289,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 871718437873525071}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pot (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -320,7 +320,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 524816629284421220}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EvergladesPalmTree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -353,7 +353,7 @@ GameObject:
   - component: {fileID: 7483184685270342433}
   - component: {fileID: 1665262885828124537}
   - component: {fileID: 2628269614498319735}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pot Plant (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -439,7 +439,7 @@ GameObject:
   - component: {fileID: 6420261344680099927}
   - component: {fileID: 7445235401600527507}
   - component: {fileID: 3048975253779787239}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryPalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -522,7 +522,7 @@ GameObject:
   - component: {fileID: 8320816678700375183}
   - component: {fileID: 8540670082831619159}
   - component: {fileID: 5417564564721713061}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RoyalPalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -603,7 +603,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2280585858725805903}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DatePalmTree (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -636,7 +636,7 @@ GameObject:
   - component: {fileID: 6865498582693082}
   - component: {fileID: 1106428922352430744}
   - component: {fileID: 967818744721428173}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DatePalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -719,7 +719,7 @@ GameObject:
   - component: {fileID: 5628441013029906713}
   - component: {fileID: 7782368591847397594}
   - component: {fileID: 5467764807703143579}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pot Plant (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -803,7 +803,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1339696395068903503}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pot (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -834,7 +834,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1247730115334760462}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RoyalPalmTree(1) (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -867,7 +867,7 @@ GameObject:
   - component: {fileID: 5491279495518983813}
   - component: {fileID: 8250420865767848513}
   - component: {fileID: 4574965495192615733}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryPalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -948,7 +948,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1270602748619137833}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: entrance
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -969,6 +969,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5743569066837938000}
+  - {fileID: 1179879736757083163}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1953965012764253538
@@ -982,7 +983,7 @@ GameObject:
   - component: {fileID: 2552024422573183880}
   - component: {fileID: 6527911723708835094}
   - component: {fileID: 3427732772261312969}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1063,7 +1064,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1664988408745134317}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: poster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1096,7 +1097,7 @@ GameObject:
   - component: {fileID: 1713227706088306520}
   - component: {fileID: 2335468322701654269}
   - component: {fileID: 544292723480316983}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BlackBamboo (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1180,7 +1181,7 @@ GameObject:
   - component: {fileID: 2725716700403677260}
   - component: {fileID: 6642494394936348370}
   - component: {fileID: 2965880520319701517}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1261,7 +1262,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 64052383588059703}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1294,7 +1295,7 @@ GameObject:
   - component: {fileID: 6419578309867208337}
   - component: {fileID: 7170567850650908337}
   - component: {fileID: 6148788667402210768}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: wood_bear2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1376,7 +1377,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6757961249399910208}
   - component: {fileID: 5190309920583259958}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spot Light (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1469,7 +1470,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2982090039056092563}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryCanePalmTree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1500,7 +1501,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2891800046660840780}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RoyalPalmTree(1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1533,7 +1534,7 @@ GameObject:
   - component: {fileID: 3118769860565208412}
   - component: {fileID: 4378853611739409276}
   - component: {fileID: 6101066965992254103}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: lion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1614,7 +1615,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2471515429583769703}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryCanePalmTree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1646,7 +1647,7 @@ GameObject:
   m_Component:
   - component: {fileID: 52134398460130939}
   - component: {fileID: 6777214799097353229}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1741,7 +1742,7 @@ GameObject:
   - component: {fileID: 8430231635549130249}
   - component: {fileID: 1932965243034341636}
   - component: {fileID: 4025754595741122637}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: wood_bear2 (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1824,7 +1825,7 @@ GameObject:
   - component: {fileID: 5334537470961539533}
   - component: {fileID: 5762321704601030933}
   - component: {fileID: 8241131550406851303}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RoyalPalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1907,7 +1908,7 @@ GameObject:
   - component: {fileID: 6452979478486330039}
   - component: {fileID: 376625515821436708}
   - component: {fileID: 5009785280068524459}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pot Plant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1993,7 +1994,7 @@ GameObject:
   - component: {fileID: 3188760383672504100}
   - component: {fileID: 1917857942837490178}
   - component: {fileID: 7931577273948579592}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pot Plant (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2077,7 +2078,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1962483218451953047}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GameObject (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2108,7 +2109,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4434464924667362249}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RoyalPalmTree(1) (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2141,7 +2142,7 @@ GameObject:
   - component: {fileID: 3760961976560982309}
   - component: {fileID: 2575309666102673157}
   - component: {fileID: 5463673678964375278}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: lion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2222,7 +2223,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3990538942048044725}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryCanePalmTree (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2255,7 +2256,7 @@ GameObject:
   - component: {fileID: 8266056821612135375}
   - component: {fileID: 2408673571108483153}
   - component: {fileID: 4866461570919214446}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Text.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2338,7 +2339,7 @@ GameObject:
   - component: {fileID: 6891575160637951816}
   - component: {fileID: 6511149014238611344}
   - component: {fileID: 7491104609160981602}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RoyalPalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2421,7 +2422,7 @@ GameObject:
   - component: {fileID: 5449299388999644411}
   - component: {fileID: 8948678269958142814}
   - component: {fileID: 6617160251828096916}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BlackBamboo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2505,7 +2506,7 @@ GameObject:
   - component: {fileID: 555145207421779931}
   - component: {fileID: 5717153302891492590}
   - component: {fileID: 8085175586705148651}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EvergladesPalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2588,7 +2589,7 @@ GameObject:
   - component: {fileID: 8737102386084055365}
   - component: {fileID: 53266684997238747}
   - component: {fileID: 8483427303496557316}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2671,7 +2672,7 @@ GameObject:
   - component: {fileID: 1447673811047344057}
   - component: {fileID: 3052517106861427581}
   - component: {fileID: 7448479699380505097}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryPalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2752,7 +2753,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5724586904787417887}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pot (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2785,7 +2786,7 @@ GameObject:
   - component: {fileID: 5631567660407311371}
   - component: {fileID: 8757393951161893806}
   - component: {fileID: 6803940884597978980}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pedestal2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2866,7 +2867,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5562449967458488864}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: poster2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2899,7 +2900,7 @@ GameObject:
   - component: {fileID: 5589756337197985918}
   - component: {fileID: 8808220981704507355}
   - component: {fileID: 6762683814972181265}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BlackBamboo (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3067,7 +3068,7 @@ GameObject:
   - component: {fileID: 4722328844424946939}
   - component: {fileID: 8637150811623794122}
   - component: {fileID: 5186045076232559869}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3170,7 +3171,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3791693435457560328}
   - component: {fileID: 4868015688006025732}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3265,7 +3266,7 @@ GameObject:
   - component: {fileID: 3695807404835437354}
   - component: {fileID: 1302752546345397285}
   - component: {fileID: 82600968502242817}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pot Plant (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3351,7 +3352,7 @@ GameObject:
   - component: {fileID: 7803120383529658208}
   - component: {fileID: 6087783757557154108}
   - component: {fileID: 3635929005073895340}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ' brur solid.002'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3434,7 +3435,7 @@ GameObject:
   - component: {fileID: 8975436701043220017}
   - component: {fileID: 1236207242877560229}
   - component: {fileID: 8354754748210874854}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Plane.002
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3517,7 +3518,7 @@ GameObject:
   - component: {fileID: 5071609237299330554}
   - component: {fileID: 8200529553842500191}
   - component: {fileID: 6209009677742573205}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BlackBamboo (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3601,7 +3602,7 @@ GameObject:
   - component: {fileID: 6293223144863827438}
   - component: {fileID: 3387256405944447280}
   - component: {fileID: 3075467862223583859}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: STAND
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3684,7 +3685,7 @@ GameObject:
   - component: {fileID: 688980817975242456}
   - component: {fileID: 4714403888371213805}
   - component: {fileID: 9083713870817844200}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EvergladesPalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3849,7 +3850,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6691152519856521062}
   - component: {fileID: 6398366055341894965}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spot Light (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3944,7 +3945,7 @@ GameObject:
   - component: {fileID: 1020567895007455644}
   - component: {fileID: 5393646080377181328}
   - component: {fileID: 1879508853543181191}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Plane.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4025,7 +4026,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6500779048530314732}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: woodenbear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4058,7 +4059,7 @@ GameObject:
   - component: {fileID: 321019807537677047}
   - component: {fileID: 4197335454783008307}
   - component: {fileID: 8592030999736594247}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryPalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4141,7 +4142,7 @@ GameObject:
   - component: {fileID: 4851919548830203848}
   - component: {fileID: 5483075388110202250}
   - component: {fileID: 5630481641582609887}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DatePalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4222,7 +4223,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6695546411386631261}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DatePalmTree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4255,7 +4256,7 @@ GameObject:
   - component: {fileID: 6030816127450494778}
   - component: {fileID: 7214230891515426975}
   - component: {fileID: 4898490929737747541}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BlackBamboo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4339,7 +4340,7 @@ GameObject:
   - component: {fileID: 1071276284583235830}
   - component: {fileID: 6605646826779459979}
   - component: {fileID: 5165677710058028314}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Text.005
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4422,7 +4423,7 @@ GameObject:
   - component: {fileID: 3612754799629114429}
   - component: {fileID: 8107938332216218184}
   - component: {fileID: 8418359673792319555}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Plane.010
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4505,7 +4506,7 @@ GameObject:
   - component: {fileID: 632271135973412707}
   - component: {fileID: 3931031921306772391}
   - component: {fileID: 8903401251379208915}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryPalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4588,7 +4589,7 @@ GameObject:
   - component: {fileID: 8526069713881338419}
   - component: {fileID: 2616475976342955696}
   - component: {fileID: 7134121382978894781}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Circle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4671,7 +4672,7 @@ GameObject:
   - component: {fileID: 3990832092090368555}
   - component: {fileID: 1724241734603484801}
   - component: {fileID: 7967278765626959013}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Text.003
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4754,7 +4755,7 @@ GameObject:
   - component: {fileID: 7778252209128209364}
   - component: {fileID: 6655824065044214897}
   - component: {fileID: 8915662648119656635}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pedestal2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4835,7 +4836,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7690795317127254553}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: lion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4949,7 +4950,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8017221199500441481}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryCanePalmTree (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4982,7 +4983,7 @@ GameObject:
   - component: {fileID: 4335655857628699867}
   - component: {fileID: 4637650358122458774}
   - component: {fileID: 5132999245368860854}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ' brur solid.001'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5064,7 +5065,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4596014972978891206}
   - component: {fileID: 7447477342260316431}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Spot Light (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5159,7 +5160,7 @@ GameObject:
   - component: {fileID: 7062442590701782320}
   - component: {fileID: 6173605556714048149}
   - component: {fileID: 8235389106989923935}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BlackBamboo (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5243,7 +5244,7 @@ GameObject:
   - component: {fileID: 4951931412513464111}
   - component: {fileID: 111794509193596459}
   - component: {fileID: 7375169213335247737}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube.007
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5327,7 +5328,7 @@ GameObject:
   - component: {fileID: 3351572729121807727}
   - component: {fileID: 4280854415135801154}
   - component: {fileID: 9047953560312440531}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cube.001
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5410,7 +5411,7 @@ GameObject:
   - component: {fileID: 318569291518624231}
   - component: {fileID: 6403086611032204404}
   - component: {fileID: 1756415515849913083}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pot Plant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5496,7 +5497,7 @@ GameObject:
   - component: {fileID: 7462077361988757294}
   - component: {fileID: 7551455546828668268}
   - component: {fileID: 7708080035998801209}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DatePalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5579,7 +5580,7 @@ GameObject:
   - component: {fileID: 1937867924781461735}
   - component: {fileID: 5067443277784569204}
   - component: {fileID: 499744605267280891}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Pot Plant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5663,7 +5664,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8660632297366203579}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DatePalmTree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5694,7 +5695,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9160799162471371463}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryCanePalmTree (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5725,7 +5726,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9168345583909030853}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DatePalmTree (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5758,7 +5759,7 @@ GameObject:
   - component: {fileID: 6954298176558858320}
   - component: {fileID: 8052460618437024274}
   - component: {fileID: 7923141811204258375}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: DatePalmTree_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5839,8 +5840,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5743569066837938000}
-  - component: {fileID: 5877903886909482268}
-  m_Layer: 0
+  - component: {fileID: 7824132160436700912}
+  m_Layer: 7
   m_Name: GameObject (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5948,7 +5949,7 @@ Transform:
   - {fileID: 8737102386084055365}
   m_Father: {fileID: 1270602748619137833}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &5877903886909482268
+--- !u!65 &7824132160436700912
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5967,8 +5968,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 5.1337137, y: 3.3793378, z: 5.2802553}
-  m_Center: {x: -12.746284, y: 7.4073453, z: -8.233794}
+  m_Size: {x: 5.881313, y: 2.977756, z: 4.47347}
+  m_Center: {x: -13.078054, y: 7.1110134, z: -8.900299}
 --- !u!1 &8707806697146893801
 GameObject:
   m_ObjectHideFlags: 0
@@ -5978,7 +5979,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8328150367561129811}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: IvoryCanePalmTree
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6011,7 +6012,7 @@ GameObject:
   - component: {fileID: 375017962255547973}
   - component: {fileID: 5107156634951977584}
   - component: {fileID: 2014037815103065964}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Text.004
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6092,7 +6093,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8485546683921303136}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: lion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6114,3 +6115,101 @@ Transform:
   m_Children: []
   m_Father: {fileID: 5743569066837938000}
   m_LocalEulerAnglesHint: {x: 0, y: -92.66, z: 0}
+--- !u!1001 &1717418625333935088
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1270602748619137833}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.1374
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.2473
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 15.53289
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.9379311
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.13591385
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7052493
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.0164008
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.70858175
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.01632366
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90.27
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 2.652
+      objectReference: {fileID: 0}
+    - target: {fileID: -7635826562936255635, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: b2e6d497e0033fe4d90570c8a332ad17, type: 2}
+    - target: {fileID: 919132149155446097, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_Name
+      value: sign
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.0971
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.0000021512
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.45164
+      objectReference: {fileID: 0}
+    - target: {fileID: 1151388028547126963, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.00000081398
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164078558771037576, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+--- !u!4 &1179879736757083163 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 73dc9f44566cd434abeda50904d473a4, type: 3}
+  m_PrefabInstance: {fileID: 1717418625333935088}
+  m_PrefabAsset: {fileID: 0}
