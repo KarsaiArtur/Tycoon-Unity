@@ -95,15 +95,20 @@ public class Fence : Placeable
             GameObject gateInstance = Instantiate(playerControl.gate, playerControl.m_Selected.transform.position, transform.rotation);
             gateInstance.tag = "Placed";
             playerControl.DestroyPlaceableInHand();
+
             if (tempGrids != null)
             {
                 Exhibit exhibit = new Exhibit(tempGrids);
+                exhibit.exhibitName = "Exhibit" + exhibit.gridList[0].coords[0];
+                gridManager.exhibits.Add(exhibit);
             }
 
-            tempGrids = BFS(grid1, gridManager.grids[35 - gridManager.elementWidth, 50 - gridManager.elementWidth]);
+            tempGrids = BFS(grid2, gridManager.grids[35 - gridManager.elementWidth, 50 - gridManager.elementWidth]);
             if (tempGrids != null)
             {
                 Exhibit exhibit = new Exhibit(tempGrids);
+                exhibit.exhibitName = "Exhibit" + exhibit.gridList[0].coords[0];
+                gridManager.exhibits.Add(exhibit);
             }
         }
     }
@@ -132,11 +137,9 @@ public class Fence : Placeable
             }
             else
             {
-                //Debug.Log("Found");
                 return null;
             }
         }
-        //Debug.Log("Not Found");
         return visited;
     }
 

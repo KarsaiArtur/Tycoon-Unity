@@ -120,7 +120,6 @@ public class PathManager : Placeable
         }
     }
 
-
     public override void SetTag(string newTag)
     {
         foreach (var path in paths)
@@ -134,7 +133,35 @@ public class PathManager : Placeable
     {
         foreach (var path in paths)
         {
-            gridManager.grids[(int)Mathf.Floor(path.gameObject.transform.position.x) - gridManager.elementWidth, (int)Mathf.Floor(path.gameObject.transform.position.z) - gridManager.elementWidth].isPath = true;
+            Grid grid = gridManager.GetGrid(path.gameObject.transform.position);
+            grid.isPath = true;
+            if (!grid.isExhibit)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    if (grid.trueNeighbours[i] != null)
+                    {
+                        if (grid.trueNeighbours[i].isExhibit && !grid.trueNeighbours[i].exhibit.paths.Contains(grid))
+                        {
+                            grid.trueNeighbours[i].exhibit.paths.Add(grid);
+                        }
+                        if (grid.trueNeighbours[i].trueNeighbours[i] != null)
+                        {
+                            if (grid.trueNeighbours[i].trueNeighbours[i].isExhibit && !grid.trueNeighbours[i].trueNeighbours[i].exhibit.paths.Contains(grid))
+                            {
+                                grid.trueNeighbours[i].trueNeighbours[i].exhibit.paths.Add(grid);
+                            }
+                        }
+                        if (grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4] != null)
+                        {
+                            if (grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].isExhibit && !grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].exhibit.paths.Contains(grid))
+                            {
+                                grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].exhibit.paths.Add(grid);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

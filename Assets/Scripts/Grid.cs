@@ -24,11 +24,15 @@ public class Grid
     {
         neighbours[0] = neighbour;
         neighbour.neighbours[2] = this;
+        trueNeighbours[0] = neighbour;
+        neighbour.trueNeighbours[2] = this;
     }
 
     public void SetNeighbour1(Grid neighbour)
     {
         neighbours[1] = neighbour;
         neighbour.neighbours[3] = this;
+        trueNeighbours[1] = neighbour;
+        neighbour.trueNeighbours[3] = this;
     }
 }

@@ -393,6 +393,7 @@ GameObject:
   - component: {fileID: 940657963880694830}
   - component: {fileID: 7843250570019648372}
   - component: {fileID: 2731902910639970738}
+  - component: {fileID: 7017745945639587569}
   m_Layer: 0
   m_Name: fox
   m_TagString: Untagged
@@ -426,12 +427,12 @@ NavMeshAgent:
   m_GameObject: {fileID: 6296442001791154185}
   m_Enabled: 1
   m_AgentTypeID: -334000983
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
+  m_Radius: 0.01
+  m_Speed: 1
+  m_Acceleration: 1
   avoidancePriority: 50
-  m_AngularSpeed: 180
-  m_StoppingDistance: 0
+  m_AngularSpeed: 500
+  m_StoppingDistance: 0.1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -459,6 +460,36 @@ MonoBehaviour:
   materials:
   - {fileID: 2100000, guid: e8eee43141a377848a3027dbe52e5f3e, type: 2}
   - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
+  surface: {fileID: 0}
+  agent: {fileID: 7843250570019648372}
+  fence: {fileID: 9180999491319586247, guid: c77fd55fc534a3543b53a44ab443d53d, type: 3}
+--- !u!54 &7017745945639587569
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6296442001791154185}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &6963371138809933191
 GameObject:
   m_ObjectHideFlags: 0

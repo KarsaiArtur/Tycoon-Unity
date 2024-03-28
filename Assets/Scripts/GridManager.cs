@@ -29,6 +29,7 @@ public class GridManager : MonoBehaviour
     public Vector3[] tempCoords;
     public bool edgeChanged = false;
     public Grid[,] grids;
+    public List<Exhibit> exhibits;
 
     void Awake()
     {
@@ -57,6 +58,8 @@ public class GridManager : MonoBehaviour
         InitializeGrids();
 
         SetSpawnHeight();
+
+        exhibits = new List<Exhibit>();
     }
 
     public void InitializeGrids()
@@ -79,30 +82,41 @@ public class GridManager : MonoBehaviour
                 grids[j, i].trueNeighbours = new Grid[4];
 
                 if (i == 0)
+                {
                     grids[j, i].neighbours[0] = null;
+                    grids[j, i].trueNeighbours[0] = null;
+                }
                 else
+                {
                     grids[j, i].SetNeighbour0(grids[j, i - 1]);
+                }
 
                 if (i == terrainWidth - 2 * elementWidth - 1)
+                {
                     grids[j, i].neighbours[2] = null;
+                    grids[j, i].trueNeighbours[2] = null;
+                }
 
                 if (j == 0)
+                {
                     grids[j, i].neighbours[1] = null;
+                    grids[j, i].trueNeighbours[1] = null;
+                }
                 else
+                {
                     grids[j, i].SetNeighbour1(grids[j - 1, i]);
+                }
 
                 if (j == terrainWidth - 2 * elementWidth - 1)
+                {
                     grids[j, i].neighbours[3] = null;
+                    grids[j, i].trueNeighbours[3] = null;
+                }
 
                 grids[j, i].coords[0] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j];
                 grids[j, i].coords[1] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j + 1];
                 grids[j, i].coords[2] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j + terrainWidth + 1];
                 grids[j, i].coords[3] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j + terrainWidth + 2];
-
-                grids[j, i].trueNeighbours[0] = grids[j, i].neighbours[0];
-                grids[j, i].trueNeighbours[1] = grids[j, i].neighbours[1];
-                grids[j, i].trueNeighbours[2] = grids[j, i].neighbours[2];
-                grids[j, i].trueNeighbours[3] = grids[j, i].neighbours[3];
             }
         }
     }

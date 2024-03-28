@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,9 +8,12 @@ public class Animal : Placeable
 {
 
     public Material[] materials;
+    public NavMeshSurface surface;
+    public List<NavMeshBuildSource> buildSource;
     public NavMeshAgent agent;
     public Exhibit exhibit;
-    bool atDestination = false;
+    bool atDestination = true;
+    bool placed = false;
     float terraintHeight;
 
     public override void Place(Vector3 mouseHit)
@@ -47,30 +51,41 @@ public class Animal : Placeable
     public override void FinalPlace()
     {
         transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
-        agent = gameObject.GetComponent<NavMeshAgent>();
         exhibit = gridManager.GetGrid(transform.position).exhibit;
+        agent.Warp(transform.position);
+        placed = true;
     }
 
     float time = 0;
+    float startTime = 5;
     Vector3 destination;
 
     public void Update()
     {
-        if (agent != null)
+        if (placed)
         {
-            if (!atDestination)
+            if (atDestination)
             {
                 ChooseDestination();
             }
-            if (transform.position == destination)
+            Debug.Log(name + "   " + agent.velocity);
+            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.01)
             {
+                agent.isStopped = true;
                 time += Time.deltaTime;
-                if(time > 5)
+                if (time > 5)
                 {
                     atDestination = true;
                 }
             }
-
+            else if (agent.velocity == Vector3.zero)
+            {
+                time += Time.deltaTime;
+                if (time > 5)
+                {
+                    atDestination = true;
+                }
+            }
         }
     }
 
@@ -85,6 +100,7 @@ public class Animal : Placeable
         agent.SetDestination(destination);
         atDestination = false;
         time = 0;
+        agent.isStopped = false;
     }
 
 }
