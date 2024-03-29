@@ -15,10 +15,11 @@ public class Grid
     public Grid[] neighbours;
     public Grid[] trueNeighbours;
     public GridType gridType;
-    public bool isEntrance = false;
     public bool isPath = false;
     public bool isExhibit = false;
+    public bool isBuilding = false;
     public Exhibit exhibit;
+    public Building building;
 
     public void SetNeighbour0(Grid neighbour)
     {

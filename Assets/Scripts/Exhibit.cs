@@ -4,12 +4,14 @@ using UnityEngine;
 
 public class Exhibit
 {
+    GridManager gridManager;
     public List<Grid> gridList;
     public List<Grid> paths;
     public string exhibitName;
 
     public Exhibit(HashSet<Grid> grids)
     {
+        gridManager = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
         gridList = new List<Grid>(grids);
         paths = new List<Grid>();
         gridList.Sort((x, y) => x.coords[0].z.CompareTo(y.coords[0].z) == 0 ? x.coords[0].x.CompareTo(y.coords[0].x) : x.coords[0].z.CompareTo(y.coords[0].z));
@@ -21,6 +23,18 @@ public class Exhibit
         }
 
         FindPaths();
+
+        if (paths.Count != 0)
+        {
+            for (int i = 0; i < paths.Count; i++)
+            {
+                if (gridManager.ReachableAttractionBFS(gridManager.startingGrid, paths[i]))
+                {
+                    gridManager.reachableExhibits.Add(this);
+                    break;
+                }
+            }
+        }
     }
 
     private void FindPaths()

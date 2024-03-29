@@ -30,6 +30,10 @@ public class GridManager : MonoBehaviour
     public bool edgeChanged = false;
     public Grid[,] grids;
     public List<Exhibit> exhibits;
+    public List<Building> buildings;
+    public List<Exhibit> reachableExhibits;
+    public List<Building> reachableBuildings;
+    public Grid startingGrid;
 
     void Awake()
     {
@@ -60,6 +64,11 @@ public class GridManager : MonoBehaviour
         SetSpawnHeight();
 
         exhibits = new List<Exhibit>();
+        buildings = new List<Building>();
+        reachableExhibits = new List<Exhibit>();
+        reachableBuildings = new List<Building>();
+
+        startingGrid = GetGrid(new Vector3(35, 0, 50));
     }
 
     public void InitializeGrids()
@@ -291,12 +300,12 @@ public class GridManager : MonoBehaviour
 
     private void SetSpawnHeight()
     {
-        for (int i = 32; i < 39; i++)
+        for (int i = 32; i < 37; i++)
         {
-            for (int j = 45; j < 58; j++)
+            for (int j = 46; j < 56; j++)
             {
                 coords[j * (terrainWidth + 1) + i].y = edgeHeight;
-                grids[i - elementWidth, j - elementWidth].isEntrance = true;
+                grids[i - elementWidth, j - elementWidth].isPath = true;
                 TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight + 0.5f, false);
                 TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight - 0.5f, true);
             }
@@ -384,6 +393,36 @@ public class GridManager : MonoBehaviour
         }
 
         //vannak még fura alakzatok kép van róla, épület van fölötte, smoothener
+    }
+
+    public bool ReachableAttractionBFS(Grid start, Grid end)
+    {
+        HashSet<Grid> visited = new HashSet<Grid>();
+        Queue<Grid> queue = new Queue<Grid>();
+        queue.Enqueue(start);
+        visited.Add(start);
+
+        while (queue.Count > 0)
+        {
+            Grid current = queue.Dequeue();
+
+            if (current != end)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Grid neighbour = current.trueNeighbours[i];
+                    if (neighbour != null && visited.Add(neighbour) && neighbour.isPath)
+                    {
+                        queue.Enqueue(neighbour);
+                    }
+                }
+            }
+            else
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
 

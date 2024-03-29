@@ -11,8 +11,11 @@ public class Building : Placeable
     float curOffsetZ = 0.2f;
     float curY = -100;
     bool collided = false;
+    public Vector3 startingGridIndex;
 
     public Material[] materials;
+    public List<Grid> gridList;
+    public List<Grid> paths;
 
 
 
@@ -95,6 +98,57 @@ public class Building : Placeable
                         curY = Mathf.Floor(curY * 2) / 2;
                         transform.position = new Vector3(playerControl.Round(mouseHit.x), curY + 0.5f, playerControl.Round(mouseHit.z));
                     }
+                }
+            }
+        }
+    }
+
+    public override void FinalPlace()
+    {
+        gridManager.buildings.Add(this);
+        gridList = new List<Grid>();
+
+        for (int i = 0; i < Math.Abs(x) + 1; i++)
+        {
+            for (int j = 0; j < Math.Abs(z) + 1; j++)
+            {
+                gridList.Add(gridManager.grids[(int)startingGridIndex.x + i * Math.Sign(x), (int)startingGridIndex.z + j * Math.Sign(z)]);
+            }
+        }
+
+        for (int i = 0; i < gridList.Count; i++)
+        {
+            gridList[i].isBuilding = true;
+            gridList[i].building = this;
+        }
+
+        paths = new List<Grid>();
+        FindPaths();
+
+        if (paths.Count != 0)
+        {
+            for (int i = 0; i < paths.Count; i++)
+            {
+                if (gridManager.ReachableAttractionBFS(gridManager.startingGrid, paths[i]))
+                {
+                    gridManager.reachableBuildings.Add(this);
+                    break;
+                }
+            }
+        }
+        Debug.Log(gridManager.reachableBuildings.Count);
+    }
+
+    private void FindPaths()
+    {
+        for (int i = 0; i < gridList.Count; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                if (gridList[i].trueNeighbours[j] != null)
+                {
+                    if (gridList[i].trueNeighbours[j].isPath)
+                        paths.Add(gridList[i].trueNeighbours[j]);
                 }
             }
         }

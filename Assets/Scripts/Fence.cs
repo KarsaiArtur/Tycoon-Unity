@@ -91,7 +91,7 @@ public class Fence : Placeable
 
         if (BFS(grid1, grid2) != null)
         {
-            HashSet<Grid> tempGrids = BFS(grid1, gridManager.grids[35 - gridManager.elementWidth, 50 - gridManager.elementWidth]);
+            HashSet<Grid> tempGrids = BFS(grid1, gridManager.startingGrid);
             GameObject gateInstance = Instantiate(playerControl.gate, playerControl.m_Selected.transform.position, transform.rotation);
             gateInstance.tag = "Placed";
             playerControl.DestroyPlaceableInHand();
@@ -99,32 +99,30 @@ public class Fence : Placeable
             if (tempGrids != null)
             {
                 Exhibit exhibit = new Exhibit(tempGrids);
-                exhibit.exhibitName = "Exhibit" + exhibit.gridList[0].coords[0];
                 gridManager.exhibits.Add(exhibit);
             }
 
-            tempGrids = BFS(grid2, gridManager.grids[35 - gridManager.elementWidth, 50 - gridManager.elementWidth]);
+            tempGrids = BFS(grid2, gridManager.startingGrid);
             if (tempGrids != null)
             {
                 Exhibit exhibit = new Exhibit(tempGrids);
-                exhibit.exhibitName = "Exhibit" + exhibit.gridList[0].coords[0];
                 gridManager.exhibits.Add(exhibit);
             }
         }
     }
 
-    public HashSet<Grid> BFS(Grid g1, Grid g2)
+    public HashSet<Grid> BFS(Grid start, Grid end)
     {
         HashSet<Grid> visited = new HashSet<Grid>();
         Queue<Grid> queue = new Queue<Grid>();
-        queue.Enqueue(g1);
-        visited.Add(g1);
+        queue.Enqueue(start);
+        visited.Add(start);
 
         while (queue.Count > 0)
         {
             Grid current = queue.Dequeue();
 
-            if (current != g2)
+            if (current != end)
             {
                 for (int i = 0; i < 4; i++)
                 {

@@ -131,6 +131,9 @@ public class PathManager : Placeable
 
     public override void FinalPlace()
     {
+        List<Exhibit> exhibits = new List<Exhibit>();
+        List<Building> buildings = new List<Building>();
+
         foreach (var path in paths)
         {
             Grid grid = gridManager.GetGrid(path.gameObject.transform.position);
@@ -144,12 +147,14 @@ public class PathManager : Placeable
                         if (grid.trueNeighbours[i].isExhibit && !grid.trueNeighbours[i].exhibit.paths.Contains(grid))
                         {
                             grid.trueNeighbours[i].exhibit.paths.Add(grid);
+                            exhibits.Add(grid.trueNeighbours[i].exhibit);
                         }
                         if (grid.trueNeighbours[i].trueNeighbours[i] != null)
                         {
                             if (grid.trueNeighbours[i].trueNeighbours[i].isExhibit && !grid.trueNeighbours[i].trueNeighbours[i].exhibit.paths.Contains(grid))
                             {
                                 grid.trueNeighbours[i].trueNeighbours[i].exhibit.paths.Add(grid);
+                                exhibits.Add(grid.trueNeighbours[i].trueNeighbours[i].exhibit);
                             }
                         }
                         if (grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4] != null)
@@ -157,11 +162,49 @@ public class PathManager : Placeable
                             if (grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].isExhibit && !grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].exhibit.paths.Contains(grid))
                             {
                                 grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].exhibit.paths.Add(grid);
+                                exhibits.Add(grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].exhibit);
                             }
+                        }
+
+                        if (grid.trueNeighbours[i].isBuilding && !grid.trueNeighbours[i].building.paths.Contains(grid))
+                        {
+                            grid.trueNeighbours[i].building.paths.Add(grid);
+                            buildings.Add(grid.trueNeighbours[i].building);
                         }
                     }
                 }
             }
+        }
+
+        foreach (var exhibit in exhibits)
+        {
+            if (!gridManager.reachableExhibits.Contains(exhibit))
+            {
+                for (int i = 0; i < paths.Count; i++)
+                {
+                    if (gridManager.ReachableAttractionBFS(gridManager.startingGrid, exhibit.paths[i]))
+                    {
+                        gridManager.reachableExhibits.Add(exhibit);
+                        break;
+                    }
+                }
+            }
+            Debug.Log(gridManager.reachableExhibits.Count);
+        }
+        foreach (var building in buildings)
+        {
+            if (!gridManager.reachableBuildings.Contains(building))
+            {
+                for (int i = 0; i < paths.Count; i++)
+                {
+                    if (gridManager.ReachableAttractionBFS(gridManager.startingGrid, building.paths[i]))
+                    {
+                        gridManager.reachableBuildings.Add(building);
+                        break;
+                    }
+                }
+            }
+            Debug.Log(gridManager.reachableBuildings.Count);
         }
     }
 
