@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Exhibit
+public class Exhibit : Visitable
 {
     GridManager gridManager;
     public List<Grid> gridList;
@@ -23,21 +23,25 @@ public class Exhibit
         }
 
         FindPaths();
+        DecideIfReachable();
+    }
 
+    public void DecideIfReachable()
+    {
         if (paths.Count != 0)
         {
             for (int i = 0; i < paths.Count; i++)
             {
-                if (gridManager.ReachableAttractionBFS(gridManager.startingGrid, paths[i]))
+                if (gridManager.ReachableAttractionBFS(paths[i], gridManager.startingGrid))
                 {
-                    gridManager.reachableExhibits.Add(this);
+                    gridManager.reachableVisitables.Add(this);
                     break;
                 }
             }
         }
     }
 
-    private void FindPaths()
+    public void FindPaths()
     {
         for (int i = 0; i < gridList.Count; i++)
         {
@@ -58,5 +62,10 @@ public class Exhibit
                 }
             }
         }
+    }
+
+    public List<Grid> GetPaths()
+    {
+        return paths;
     }
 }

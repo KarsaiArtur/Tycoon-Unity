@@ -31,8 +31,9 @@ public class GridManager : MonoBehaviour
     public Grid[,] grids;
     public List<Exhibit> exhibits;
     public List<Building> buildings;
-    public List<Exhibit> reachableExhibits;
-    public List<Building> reachableBuildings;
+    //public List<Exhibit> reachableExhibits;
+    //public List<Building> reachableBuildings;
+    public List<Visitable> reachableVisitables;
     public Grid startingGrid;
 
     void Awake()
@@ -65,8 +66,9 @@ public class GridManager : MonoBehaviour
 
         exhibits = new List<Exhibit>();
         buildings = new List<Building>();
-        reachableExhibits = new List<Exhibit>();
-        reachableBuildings = new List<Building>();
+        //reachableExhibits = new List<Exhibit>();
+        //reachableBuildings = new List<Building>();
+        reachableVisitables = new List<Visitable>();
 
         startingGrid = GetGrid(new Vector3(35, 0, 50));
     }

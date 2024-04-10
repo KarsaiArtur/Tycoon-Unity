@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-public class Building : Placeable
+public class Building : Placeable, Visitable
 {
     public int x;
     public int z;
@@ -38,7 +38,7 @@ public class Building : Placeable
             ChangeMaterial(2);
         }
 
-        if(!collided)
+        if (!collided)
             playerControl.canBePlaced = true;
 
         for (int i = 0; i < Math.Abs(x) + 1; i++)
@@ -50,7 +50,8 @@ public class Building : Placeable
                 position1 = new Vector3(playerControl.Round(mouseHit.x) + curOffsetX + k * 1, mouseHit.y + 1.5f, playerControl.Round(mouseHit.z) + curOffsetZ + l * 1);
                 position2 = new Vector3(playerControl.Round(mouseHit.x) - curOffsetX + k * 1, mouseHit.y + 1.5f, playerControl.Round(mouseHit.z) - curOffsetZ + l * 1);
 
-    
+                startingGridIndex = new Vector3((int)Mathf.Floor(mouseHit.x) - gridManager.elementWidth, 0, (int)Mathf.Floor(mouseHit.z) - gridManager.elementWidth);
+
                 RaycastHit[] hits1 = Physics.RaycastAll(position1, -transform.up);
                 RaycastHit[] hits2 = Physics.RaycastAll(position2, -transform.up);
 
@@ -107,6 +108,7 @@ public class Building : Placeable
     {
         gridManager.buildings.Add(this);
         gridList = new List<Grid>();
+        paths = new List<Grid>();
 
         for (int i = 0; i < Math.Abs(x) + 1; i++)
         {
@@ -122,24 +124,26 @@ public class Building : Placeable
             gridList[i].building = this;
         }
 
-        paths = new List<Grid>();
         FindPaths();
+        DecideIfReachable();
+    }
 
+    public void DecideIfReachable()
+    {
         if (paths.Count != 0)
         {
             for (int i = 0; i < paths.Count; i++)
             {
-                if (gridManager.ReachableAttractionBFS(gridManager.startingGrid, paths[i]))
+                if (gridManager.ReachableAttractionBFS(paths[i], gridManager.startingGrid))
                 {
-                    gridManager.reachableBuildings.Add(this);
+                    gridManager.reachableVisitables.Add(this);
                     break;
                 }
             }
         }
-        Debug.Log(gridManager.reachableBuildings.Count);
     }
 
-    private void FindPaths()
+    public void FindPaths()
     {
         for (int i = 0; i < gridList.Count; i++)
         {
@@ -156,7 +160,8 @@ public class Building : Placeable
 
     void OnCollisionStay(Collision collision)
     {
-        if (collision.collider.CompareTag("Placed") && !gameObject.CompareTag("Placed")) {
+        if (collision.collider.CompareTag("Placed") && !gameObject.CompareTag("Placed"))
+        {
             collided = true;
             playerControl.canBePlaced = false;
             ChangeMaterial(1);
@@ -172,5 +177,10 @@ public class Building : Placeable
     {
         gameObject.transform.GetChild(0).GetChild(1).gameObject.GetComponent<MeshRenderer>().material = materials[index];
         gameObject.transform.GetChild(0).GetChild(2).gameObject.GetComponent<MeshRenderer>().material = materials[index];
+    }
+
+    public List<Grid> GetPaths()
+    {
+        return paths;
     }
 }
