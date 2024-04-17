@@ -46,11 +46,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControl: {fileID: 0}
+  gridManager: {fileID: 0}
   placeableName: 
-  placeablePrice: 30
+  placeablePrice: 10
   icon: {fileID: 0}
   index: 0
-  materials: []
   otherVariant: {fileID: 0}
 --- !u!1 &4549912904737251565
 GameObject:

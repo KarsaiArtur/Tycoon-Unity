@@ -68,7 +68,7 @@ public class GridManager : MonoBehaviour
         buildings = new List<Building>();
         //reachableExhibits = new List<Exhibit>();
         //reachableBuildings = new List<Building>();
-        reachableVisitables = new List<Visitable>();
+        reachableVisitables = new List<Visitable> { ZooManager.instance == null ? new GameObject().AddComponent<ZooManager>() : ZooManager.instance };
 
         startingGrid = GetGrid(new Vector3(35, 0, 50));
     }

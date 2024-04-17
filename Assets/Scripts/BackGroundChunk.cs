@@ -103,7 +103,6 @@ public class BackGroundChunk : Chunk
 
     void GenerateLeft()
     {
-        Debug.Log(name);
         var generatedHouses = new List<List<BackgroundBuilding>>();
         for (int i = 0; i < 5; i++)
         {
@@ -126,14 +125,11 @@ public class BackGroundChunk : Chunk
         }
         float curX = center.x - GridManager.instance.elementWidth/2;
         float previousWidth = 0;
-        Debug.Log(bestList.Count);
         foreach (var clone in bestList)
         {
             buildings = CheckRemainingCount(buildings);
             var building = buildings.Find(x => x.name.Equals(clone.name));
-            Debug.Log(buildings.Find(x => x.name.Equals(building.name)).remaining + "i");
             building.remaining--;
-            Debug.Log(buildings.Find(x => x.name.Equals(building.name)).remaining + "ii");
             curX += previousWidth + building.x/2.0f;
             var newPos = new Vector3(curX, center.y, center.z-10.5f);
             BackgroundBuilding house = Instantiate(building, newPos, transform.rotation);
@@ -167,9 +163,7 @@ public class BackGroundChunk : Chunk
             {
                 sumWidth += chosenBuilding.x;
                 chosenBuildings.Add(chosenBuilding);
-                Debug.Log(buildings.Find(x => x.name.Equals(chosenBuilding.name)).remaining+"h");
                 chosenBuilding.remaining--;
-                Debug.Log(buildings.Find(x => x.name.Equals(chosenBuilding.name)).remaining+"hh");
             }
         }
         return chosenBuildings;

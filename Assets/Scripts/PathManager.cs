@@ -17,6 +17,7 @@ public class PathManager : Placeable
 
     public override void Place(Vector3 mouseHit)
     {
+        base.Place(mouseHit);
         pathIndex = 0;
         bool posChanged = CalculateGrid(mouseHit);
 
@@ -28,6 +29,7 @@ public class PathManager : Placeable
             {
                 Path newPath = Instantiate(pathPrefab, transform.position, transform.rotation);
                 paths.Add(newPath);
+                paths.ForEach(path => placeablePrice += path.placeablePrice);
             }
             paths[0].CheckTerrain(transform.transform.position); 
             if (playerControl.canBePlaced)
@@ -42,7 +44,8 @@ public class PathManager : Placeable
 
         if (playerControl.isMouseDown && posChanged)
         {
-            if(transform.position.x == Path.startingPoint.x && transform.position.z == Path.startingPoint.z)
+            placeablePrice = 0;
+            if (transform.position.x == Path.startingPoint.x && transform.position.z == Path.startingPoint.z)
             {
                 started = false;
                 startedInXDir = 0;
@@ -100,6 +103,8 @@ public class PathManager : Placeable
                     ChangeMaterial(2);
                 }
             }
+
+            paths.ForEach(path => placeablePrice += path.placeablePrice);
         }
     }
 

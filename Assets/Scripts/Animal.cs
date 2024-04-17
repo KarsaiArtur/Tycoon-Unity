@@ -68,7 +68,6 @@ public class Animal : Placeable
             {
                 ChooseDestination();
             }
-            Debug.Log(name + "   " + agent.velocity);
             if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.01)
             {
                 agent.isStopped = true;

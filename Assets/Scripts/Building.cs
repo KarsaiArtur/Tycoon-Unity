@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
+using Unity.Properties;
+using Unity.VisualScripting;
 
 public class Building : Placeable, Visitable
 {
@@ -17,7 +19,8 @@ public class Building : Placeable, Visitable
     public List<Grid> gridList;
     public List<Grid> paths;
 
-
+    public List<PurchasableItems> purchasableItems;
+    public int capacity;
 
     public override void RotateY(float angle)
     {
@@ -28,6 +31,7 @@ public class Building : Placeable, Visitable
 
     public override void Place(Vector3 mouseHit)
     {
+        base.Place(mouseHit);
         curY = -100;
         Vector3 position1;
         Vector3 position2;
@@ -182,5 +186,17 @@ public class Building : Placeable, Visitable
     public List<Grid> GetPaths()
     {
         return paths;
+    }
+
+    public void Arrived(Visitor visitor)
+    {
+        visitor.SetIsVisible(false);
+    }
+
+    public Vector3 ChoosePosition(Grid grid)
+    {
+        float offsetX = UnityEngine.Random.Range(0, 1.0f);
+        float offsetZ = UnityEngine.Random.Range(0, 1.0f);
+        return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
     }
 }

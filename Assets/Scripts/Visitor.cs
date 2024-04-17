@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
+using static Unity.VisualScripting.Antlr3.Runtime.Tree.TreeWizard;
 
 public class Visitor : MonoBehaviour
 {
@@ -10,11 +11,15 @@ public class Visitor : MonoBehaviour
     public NavMeshAgent agent;
     bool atDestination = true;
     bool placed = false;
+    Visitable destinationVisitable;
+    Vector3 defaultScale;
 
     public void Start()
     {
+        surface = GameObject.Find("NavMesh").GetComponent<NavMeshSurface>();
         agent.Warp(transform.position);
         placed = true;
+        defaultScale = transform.localScale;
     }
 
     float time = 0;
@@ -31,9 +36,10 @@ public class Visitor : MonoBehaviour
             {
                 ChooseDestination();
             }
-            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.01)
+            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1)
             {
                 agent.isStopped = true;
+                destinationVisitable.Arrived(this);
                 time += Time.deltaTime;
                 if (time > 5)
                 {
@@ -48,6 +54,7 @@ public class Visitor : MonoBehaviour
                     atDestination = true;
                 }
             }
+
             /*}
             else
             {
@@ -73,24 +80,36 @@ public class Visitor : MonoBehaviour
                     }
                 }
             }*/
-            
+
         }
     }
 
 
     void ChooseDestination()
     {
+        SetIsVisible(true);
         int randomExhibitIndex = Random.Range(0, GridManager.instance.reachableVisitables.Count);
-        Visitable randomExhibit = GridManager.instance.reachableVisitables[randomExhibitIndex];
-        int randomGridIndex = Random.Range(0, randomExhibit.GetPaths().Count);
-        Debug.Log(GridManager.instance.reachableVisitables.Count+"i");
-        Grid randomGrid = randomExhibit.GetPaths()[randomGridIndex];
-        float offsetX = Random.Range(0, 1.0f);
-        float offsetZ = Random.Range(0, 1.0f);
-        destination = new Vector3(randomGrid.coords[0].x + offsetX, randomGrid.coords[0].y, randomGrid.coords[0].z + offsetZ);
+        destinationVisitable = GridManager.instance.reachableVisitables[randomExhibitIndex];
+        int randomGridIndex = Random.Range(0, destinationVisitable.GetPaths().Count);
+        Grid randomGrid = destinationVisitable.GetPaths()[randomGridIndex];
+        destination = destinationVisitable.ChoosePosition(randomGrid);
+        Debug.Log(destination);
         agent.SetDestination(destination);
         atDestination = false;
         time = 0;
         agent.isStopped = false;
+    }
+
+    public void SetIsVisible(bool hide)
+    {
+        if (GetComponent<SkinnedMeshRenderer>() != null)
+            GetComponent<SkinnedMeshRenderer>().enabled = hide;
+        foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>())
+        {
+            //if(smr != null)
+                smr.enabled = hide;
+        }
+
+        GetComponent<NavMeshAgent>().enabled = hide;
     }
 }

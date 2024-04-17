@@ -6,9 +6,11 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
+using static UnityEditor.PlayerSettings;
 
 public class PlayerControl : MonoBehaviour
 {
+    public Canvas canvas;
     public float cameraSpeed = 10;
     public float zoomSpeed = 10;
     public Camera GameCamera;
@@ -48,7 +50,18 @@ public class PlayerControl : MonoBehaviour
 
     private bool MouseOverUI()
     {
-        return EventSystem.current.IsPointerOverGameObject();
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, raycastResults);
+        foreach (RaycastResult result in raycastResults)
+        {
+            if (!result.gameObject.tag.Equals("Price"))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void Start()
@@ -103,6 +116,7 @@ public class PlayerControl : MonoBehaviour
                 m_Selected.SetTag("Placed");
                 m_Selected.ChangeMaterial(0);
                 m_Selected.FinalPlace();
+                m_Selected.Paid();
 
                 Spawn(curPlaceable);
             }

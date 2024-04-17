@@ -68,4 +68,16 @@ public class Exhibit : Visitable
     {
         return paths;
     }
+
+    public void Arrived(Visitor visitor)
+    {
+        ///todo
+    }
+
+    public Vector3 ChoosePosition(Grid grid)
+    {
+        float offsetX = UnityEngine.Random.Range(0, 1.0f);
+        float offsetZ = UnityEngine.Random.Range(0, 1.0f);
+        return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
+    }
 }
