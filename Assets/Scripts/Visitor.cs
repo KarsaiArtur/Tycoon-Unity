@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using static Unity.VisualScripting.Antlr3.Runtime.Tree.TreeWizard;
 
-public class Visitor : MonoBehaviour
+public class Visitor : MonoBehaviour, Clickable
 {
     public NavMeshSurface surface;
     public NavMeshAgent agent;
@@ -13,6 +13,19 @@ public class Visitor : MonoBehaviour
     bool placed = false;
     Visitable destinationVisitable;
     Vector3 defaultScale;
+    PlayerControl playerControl;
+    int prev = 0;
+
+    public float hunger = 100;
+    public float thirst = 100;
+    public float energy = 100;
+    public float restroomNeeds = 100;
+    public float happiness = 100;
+
+    public float hungerDetriment = 0.25f;
+    public float thirstDetriment = 0.5f;
+    public float energyDetriment = 0.25f;
+    public float happinessDetriment = 0.25f;
 
     public void Start()
     {
@@ -20,6 +33,12 @@ public class Visitor : MonoBehaviour
         agent.Warp(transform.position);
         placed = true;
         defaultScale = transform.localScale;
+        playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
+
+        hungerDetriment = Random.Range(0.2f, 0.3f);
+        thirstDetriment = Random.Range(0.45f, 0.55f);
+        energyDetriment = Random.Range(0.2f, 0.3f);
+        happinessDetriment = Random.Range(0.2f, 0.3f);
     }
 
     float time = 0;
@@ -27,6 +46,30 @@ public class Visitor : MonoBehaviour
 
     public void Update()
     {
+        int totalSecondsInt = (int)(Time.deltaTime % 60);
+        if (prev != totalSecondsInt)
+        {
+            hunger -= hungerDetriment;
+            thirst -= thirstDetriment;
+            energy -= energyDetriment;
+
+            if (agent.remainingDistance != 0)
+            {
+                energy -= energyDetriment;
+            }
+
+            if (hunger < 20)
+                happiness -= happinessDetriment;
+            if (thirst < 20)
+                happiness -= happinessDetriment;
+            if (energy < 20)
+                happiness -= happinessDetriment;
+            if (restroomNeeds < 20)
+                happiness -= happinessDetriment;
+        }
+
+        prev = totalSecondsInt;
+
         if (placed)
         {
             /*int r = Random.Range(0, 2);
@@ -84,6 +127,14 @@ public class Visitor : MonoBehaviour
         }
     }
 
+    public void PurchasedItem(PurchasableItems item)
+    {
+        happiness += item.happinessBonus;
+        hunger += item.hungerBonus;
+        thirst += item.thirstBonus;
+        energy += item.energyBonus;
+        restroomNeeds -= item.hungerBonus / 2 - item.thirstBonus;
+    }
 
     void ChooseDestination()
     {
@@ -111,5 +162,18 @@ public class Visitor : MonoBehaviour
         }
 
         GetComponent<NavMeshAgent>().enabled = hide;
+    }
+
+    public void ClickedOn()
+    {
+        playerControl.DestroyCurrentInfopopup();
+        var newInfopopup = new GameObject().AddComponent<VisitorInfopopup>();
+        newInfopopup.SetClickable(this);
+        playerControl.SetInfopopup(newInfopopup);
+    }
+
+    public string GetName()
+    {
+        return "Szilva"+Random.Range(1, 1000);
     }
 }

@@ -36,6 +36,7 @@ public class PlayerControl : MonoBehaviour
     private int coordIndex = 0;
     private float mouseDistnace = 0;
     public List<Chunk> modifiedChunks = new List<Chunk>();
+    InfoPopup currentInfopopup;
 
     public void ChangeTerraformer()
     {
@@ -108,22 +109,40 @@ public class PlayerControl : MonoBehaviour
             if (m_Selected !=null)
                 Path.startingPoint = m_Selected.transform.position;
         }
-        else if (Input.GetMouseButtonUp(0) && m_Selected != null)
+        else if (Input.GetMouseButtonUp(0))
         {
-            isMouseDown = false;
-            if (canBePlaced)
+            if(m_Selected != null)
             {
-                m_Selected.SetTag("Placed");
-                m_Selected.ChangeMaterial(0);
-                m_Selected.FinalPlace();
-                m_Selected.Paid();
+                isMouseDown = false;
+                if (canBePlaced)
+                {
+                    m_Selected.SetTag("Placed");
+                    m_Selected.ChangeMaterial(0);
+                    m_Selected.FinalPlace();
+                    m_Selected.Paid();
 
-                Spawn(curPlaceable);
+                    Spawn(curPlaceable);
+                }
+                else
+                {
+                    m_Selected.DestroyPlaceable();
+                    Spawn(curPlaceable);
+                }
             }
             else
             {
-                m_Selected.DestroyPlaceable();
-                Spawn(curPlaceable);
+                var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
+                RaycastHit[] hits = Physics.RaycastAll(ray);
+                Array.Sort(hits, (a, b) => (a.distance.CompareTo(b.distance)));
+                foreach (RaycastHit hit in hits)
+                {
+                    if (hit.collider.CompareTag("Clickable") || hit.collider.CompareTag("Placed"))
+                    {
+                        var clickedOnObject = hit.collider.gameObject.GetComponent<Clickable>();
+                        clickedOnObject.ClickedOn();
+                        break;
+                    }
+                }
             }
         }
         else if (Input.GetMouseButtonUp(0))
@@ -403,5 +422,18 @@ public class PlayerControl : MonoBehaviour
                 agent.SetDestination(hit.point);
             }
         }
+    }
+
+    public void DestroyCurrentInfopopup()
+    {
+        if(currentInfopopup != null)
+        {
+            currentInfopopup.DestroyPanel();
+        }
+    }
+
+    public void SetInfopopup(InfoPopup infopopup)
+    {
+        currentInfopopup = infopopup;
     }
 }

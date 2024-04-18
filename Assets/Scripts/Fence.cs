@@ -27,6 +27,8 @@ public class Fence : Placeable
 
     public override void Place(Vector3 mouseHit)
     {
+        base.Place(mouseHit);
+
         Vector3 position = new Vector3(playerControl.Round(mouseHit.x) + curOffsetX, mouseHit.y + 1.5f, playerControl.Round(mouseHit.z) + curOffsetZ);
 
         RaycastHit[] hits = Physics.RaycastAll(position, -transform.up);

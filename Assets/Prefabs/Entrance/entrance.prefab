@@ -948,10 +948,12 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1270602748619137833}
-  - component: {fileID: 1618757002556139091}
+  - component: {fileID: 453661442477306477}
+  - component: {fileID: 3718218877499402825}
+  - component: {fileID: -9188159322519167832}
   m_Layer: 7
   m_Name: entrance
-  m_TagString: Untagged
+  m_TagString: Clickable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -973,7 +975,49 @@ Transform:
   - {fileID: 1179879736757083163}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1618757002556139091
+--- !u!65 &453661442477306477
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939299759812802963}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.2472992, y: 2.8258357, z: 7.04261}
+  m_Center: {x: 15.98481, y: 0.9129174, z: 3.021305}
+--- !u!65 &3718218877499402825
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939299759812802963}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.2472992, y: 1.9602618, z: 4.4666557}
+  m_Center: {x: 15.98481, y: 3.3078425, z: 3.1528034}
+--- !u!114 &-9188159322519167832
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -987,6 +1031,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   money: 50000
   moneyText: {fileID: 0}
+  entranceFee: 20
 --- !u!1 &1953965012764253538
 GameObject:
   m_ObjectHideFlags: 0
@@ -5855,7 +5900,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5743569066837938000}
-  - component: {fileID: 7824132160436700912}
   m_Layer: 7
   m_Name: GameObject (2)
   m_TagString: Untagged
@@ -5964,27 +6008,6 @@ Transform:
   - {fileID: 8737102386084055365}
   m_Father: {fileID: 1270602748619137833}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &7824132160436700912
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8619077349349332407}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 5.881313, y: 2.977756, z: 4.47347}
-  m_Center: {x: -13.078054, y: 7.1110134, z: -8.900299}
 --- !u!1 &8707806697146893801
 GameObject:
   m_ObjectHideFlags: 0

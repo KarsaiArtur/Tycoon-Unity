@@ -8,6 +8,7 @@ public class Exhibit : Visitable
     public List<Grid> gridList;
     public List<Grid> paths;
     public string exhibitName;
+    public List<Animal> animals;
 
     public Exhibit(HashSet<Grid> grids)
     {
@@ -71,7 +72,8 @@ public class Exhibit : Visitable
 
     public void Arrived(Visitor visitor)
     {
-        ///todo
+        foreach (Animal animal in animals)
+            visitor.happiness += animal.happiness / 25;
     }
 
     public Vector3 ChoosePosition(Grid grid)

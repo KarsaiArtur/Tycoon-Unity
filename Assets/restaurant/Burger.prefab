@@ -52,12 +52,20 @@ MonoBehaviour:
   placeableName: Burger
   placeablePrice: 1500
   icon: {fileID: 21300000, guid: 102c2ee4eec7e6a429f57bc60a0c30bc, type: 3}
+  currentPlacingPrice: {fileID: 0}
+  currentPlacingPriceInstance: {fileID: 0}
   x: 2
   z: 1
+  startingGridIndex: {x: 0, y: 0, z: 0}
   materials:
   - {fileID: -1637880222114644024, guid: 9cb781aee1480c84aa9c06b6a746ed63, type: 3}
   - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
   - {fileID: 2100000, guid: e8eee43141a377848a3027dbe52e5f3e, type: 2}
+  purchasableItems:
+  - {fileID: 8853725120316875499, guid: 39e9359a545b3984e8c3073d1cf215d3, type: 3}
+  - {fileID: 8853725120316875499, guid: dd81ecc222b0fa14187a117cc8c7b883, type: 3}
+  - {fileID: 8853725120316875499, guid: 12692cab4c5a2674c856a76cc24bea1f, type: 3}
+  capacity: 0
 --- !u!65 &1551852019267658783
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -19,6 +19,8 @@ public class UIMenu : MonoBehaviour
     public Transform submenuPanel;
     public Transform placeableListPanel;
 
+    public GameObject infoPanelPrefab;
+
     private void Awake()
     {
         Instance = this;

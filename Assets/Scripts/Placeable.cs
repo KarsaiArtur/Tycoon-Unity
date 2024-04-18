@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Placeable : MonoBehaviour
+public class Placeable : MonoBehaviour, Clickable
 {
     public PlayerControl playerControl;
     public GridManager gridManager;
@@ -31,7 +31,7 @@ public class Placeable : MonoBehaviour
     public virtual void Place(Vector3 mouseHit)
     {
         currentPlacingPriceInstance = currentPlacingPriceInstance == null ? Instantiate(currentPlacingPrice) : currentPlacingPriceInstance;
-        currentPlacingPriceInstance.transform.parent = playerControl.canvas.transform;
+        currentPlacingPriceInstance.transform.SetParent(playerControl.canvas.transform);
         currentPlacingPriceInstance.text = "-" + placeablePrice + "$";
         var zoomIn = playerControl.transform.position.y / 6.0f; ;
         var posi = new Vector3(Input.mousePosition.x + (500.0f / zoomIn), Input.mousePosition.y - (150.0f / zoomIn), 0);
@@ -62,8 +62,19 @@ public class Placeable : MonoBehaviour
 
     public virtual void Change(Placeable placeable)
     {
+    }
+
+    public virtual void ClickedOn()
+    {
 
     }
+
+    public string GetName()
+    {
+        return name;
+    }
+
+
 
     public virtual void DestroyPlaceable()
     {

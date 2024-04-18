@@ -6,7 +6,6 @@ using UnityEngine.AI;
 
 public class Animal : Placeable
 {
-
     public Material[] materials;
     public NavMeshSurface surface;
     public List<NavMeshBuildSource> buildSource;
@@ -15,9 +14,22 @@ public class Animal : Placeable
     bool atDestination = true;
     bool placed = false;
     float terraintHeight;
+    int prev = 0;
+
+    public float hunger = 100;
+    public float thirst = 100;
+    public float energy = 100;
+    public float happiness = 100;
+
+    public float hungerDetriment = 0.25f;
+    public float thirstDetriment = 0.5f;
+    public float energyDetriment = 0.25f;
+    public float happinessDetriment = 0.25f;
 
     public override void Place(Vector3 mouseHit)
     {
+        base.Place(mouseHit);
+
         terraintHeight = mouseHit.y;
         Vector3 position = new Vector3(playerControl.Round(mouseHit.x), mouseHit.y + 0.5f, playerControl.Round(mouseHit.z));
 
@@ -62,6 +74,28 @@ public class Animal : Placeable
 
     public void Update()
     {
+        int totalSecondsInt = (int)(Time.deltaTime % 60);
+        if (prev != totalSecondsInt)
+        {
+            hunger -= hungerDetriment;
+            thirst -= thirstDetriment;
+            energy -= energyDetriment;
+
+            if (agent.remainingDistance != 0)
+            {
+                energy -= energyDetriment;
+            }
+
+            if (hunger < 20)
+                happiness -= happinessDetriment;
+            if (thirst < 20)
+                happiness -= happinessDetriment;
+            if (energy < 20)
+                happiness -= happinessDetriment;
+        }
+
+        prev = totalSecondsInt;
+
         if (placed)
         {
             if (atDestination)
@@ -88,7 +122,6 @@ public class Animal : Placeable
         }
     }
 
-
     void ChooseDestination()
     {
         int random = Random.Range(0, exhibit.gridList.Count);
@@ -100,6 +133,14 @@ public class Animal : Placeable
         atDestination = false;
         time = 0;
         agent.isStopped = false;
+    }
+
+    public override void ClickedOn()
+    {
+        playerControl.DestroyCurrentInfopopup();
+        var newInfopopup = new GameObject().AddComponent<AnimalInfoPopup>();
+        newInfopopup.SetClickable(this);
+        playerControl.SetInfopopup(newInfopopup);
     }
 
 }

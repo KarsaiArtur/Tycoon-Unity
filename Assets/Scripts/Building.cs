@@ -22,6 +22,8 @@ public class Building : Placeable, Visitable
     public List<PurchasableItems> purchasableItems;
     public int capacity;
 
+    public bool hasRestroom = false;
+
     public override void RotateY(float angle)
     {
         base.RotateY(angle);
@@ -111,6 +113,19 @@ public class Building : Placeable, Visitable
     public override void FinalPlace()
     {
         gridManager.buildings.Add(this);
+        if (hasRestroom)
+        { 
+            gridManager.restrooms.Add(this);
+        }
+        if (HasFood())
+        { 
+            gridManager.foodBuildings.Add(this);
+        }
+        if (HasDrink())
+        { 
+            gridManager.drinkBuildings.Add(this);
+        }
+
         gridList = new List<Grid>();
         paths = new List<Grid>();
 
@@ -193,10 +208,36 @@ public class Building : Placeable, Visitable
         visitor.SetIsVisible(false);
     }
 
+    public bool HasFood()
+    {
+        if (purchasableItems.Count > 0)
+            foreach (var item in purchasableItems)
+                if (item.hungerBonus > 0)
+                    return true;
+        return false;
+    }
+    
+    public bool HasDrink()
+    {
+        if (purchasableItems.Count > 0)
+            foreach (var item in purchasableItems)
+                if (item.thirstBonus > 0)
+                    return true;
+        return false;
+    }
+
     public Vector3 ChoosePosition(Grid grid)
     {
         float offsetX = UnityEngine.Random.Range(0, 1.0f);
         float offsetZ = UnityEngine.Random.Range(0, 1.0f);
         return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
+    }
+
+    public override void ClickedOn()
+    {
+        playerControl.DestroyCurrentInfopopup();
+        var newInfopopup = new GameObject().AddComponent<BuildingInfopopup>();
+        newInfopopup.SetClickable(this);
+        playerControl.SetInfopopup(newInfopopup);
     }
 }

@@ -394,6 +394,7 @@ GameObject:
   - component: {fileID: 7843250570019648372}
   - component: {fileID: 2731902910639970738}
   - component: {fileID: 7017745945639587569}
+  - component: {fileID: 4052468926828298860}
   m_Layer: 0
   m_Name: fox
   m_TagString: Untagged
@@ -457,12 +458,13 @@ MonoBehaviour:
   placeableName: 
   placeablePrice: 0
   icon: {fileID: 0}
+  currentPlacingPrice: {fileID: 0}
+  currentPlacingPriceInstance: {fileID: 0}
   materials:
   - {fileID: 2100000, guid: e8eee43141a377848a3027dbe52e5f3e, type: 2}
   - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
   surface: {fileID: 0}
   agent: {fileID: 7843250570019648372}
-  fence: {fileID: 9180999491319586247, guid: c77fd55fc534a3543b53a44ab443d53d, type: 3}
 --- !u!54 &7017745945639587569
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -490,6 +492,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!65 &4052468926828298860
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6296442001791154185}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.13446464, y: 0.2558961, z: 0.49450558}
+  m_Center: {x: 0.0050301924, y: 0.1256597, z: -0.009620815}
 --- !u!1 &6963371138809933191
 GameObject:
   m_ObjectHideFlags: 0

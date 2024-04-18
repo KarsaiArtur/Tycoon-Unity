@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class ZooManager : MonoBehaviour, Visitable
+public class ZooManager : MonoBehaviour, Visitable, Clickable
 {
     public static ZooManager instance;
     public int money = 50000;
@@ -11,9 +11,11 @@ public class ZooManager : MonoBehaviour, Visitable
     public Grid entranceGrid;
     Grid exitGrid;
     public int entranceFee = 20;
+    PlayerControl playerControl;
 
     public void Start()
     {
+        playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
         instance = this;
         moneyText = GameObject.Find("MoneyText").GetComponent<TextMeshProUGUI>();
         moneyText.text = money.ToString() + " $";
@@ -51,5 +53,17 @@ public class ZooManager : MonoBehaviour, Visitable
         float offsetX = Random.Range(0.1f, 0.2f);
         float offsetZ = Random.Range(0, 0.75f);
         return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
+    }
+    public void ClickedOn()
+    {
+        playerControl.DestroyCurrentInfopopup();
+        var newInfopopup = new GameObject().AddComponent<GateInfopopup>();
+        newInfopopup.SetClickable(this);
+        playerControl.SetInfopopup(newInfopopup);
+    }
+
+    public string GetName()
+    {
+        return "Budapest's Most Enjoyable Zoo";
     }
 }
