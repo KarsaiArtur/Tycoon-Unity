@@ -36,7 +36,7 @@ public class PlayerControl : MonoBehaviour
     private int coordIndex = 0;
     private float mouseDistnace = 0;
     public List<Chunk> modifiedChunks = new List<Chunk>();
-    InfoPopup currentInfopopup;
+    public InfoPopup currentInfopopup;
 
     public void ChangeTerraformer()
     {
@@ -57,7 +57,7 @@ public class PlayerControl : MonoBehaviour
         EventSystem.current.RaycastAll(eventData, raycastResults);
         foreach (RaycastResult result in raycastResults)
         {
-            if (!result.gameObject.tag.Equals("Price"))
+            if (!result.gameObject.tag.Equals("Price") && !result.gameObject.tag.Equals("InfoPopup"))
             {
                 return true;
             }
@@ -432,8 +432,11 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+
     public void SetInfopopup(InfoPopup infopopup)
     {
         currentInfopopup = infopopup;
     }
+
+
 }

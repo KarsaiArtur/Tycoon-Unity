@@ -5429,6 +5429,7 @@ MonoBehaviour:
   isMouseDown: 0
   gate: {fileID: 9018188150627848651, guid: 197042be76595eb458203c24982e6d57, type: 3}
   modifiedChunks: []
+  currentInfopopup: {fileID: 0}
   prefabs:
   - {fileID: 9180999491319586247, guid: c77fd55fc534a3543b53a44ab443d53d, type: 3}
   - {fileID: 2548022094330047049, guid: ea2af87f8d07b52458eb9f260d74d5f9, type: 3}
@@ -6763,9 +6764,6 @@ MonoBehaviour:
   tempCoords: []
   edgeChanged: 0
   buildings: []
-  restrooms: []
-  foodBuildings: []
-  drinkBuildings: []
 --- !u!4 &1266772830
 Transform:
   m_ObjectHideFlags: 0
@@ -7711,6 +7709,8 @@ MonoBehaviour:
   submenuPanel: {fileID: 1306719223}
   placeableListPanel: {fileID: 349903237}
   infoPanelPrefab: {fileID: 6859910806340130846, guid: 466aee2c656ca944eba2c75c208904ad, type: 3}
+  purchasableItemUIPrefab: {fileID: 3816408874727558576, guid: 4da0d9f27636e724b87f989e71009968, type: 3}
+  visitorInfoItemPrefab: {fileID: 3715471709902465084, guid: 5a9a418745ddbe74d975b2293ba73240, type: 3}
   button: {fileID: 1402598303060906925, guid: 81fd13ef955bfa84ebd425e468ba6450, type: 3}
 --- !u!1 &1463805437
 GameObject:
@@ -10004,67 +10004,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 89c1d6e2a4dbd8b419528edfe257d42f, type: 3}
---- !u!1001 &8853828521715985997
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 3329038979444384512, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: surface
-      value: 
-      objectReference: {fileID: 259770375}
-    - target: {fileID: 6167348826630254398, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: m_Name
-      value: Adventurer
-      objectReference: {fileID: 0}
-    - target: {fileID: 6835623900031202692, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 35.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6835623900031202692, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 3.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6835623900031202692, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 50.32
-      objectReference: {fileID: 0}
-    - target: {fileID: 6835623900031202692, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6835623900031202692, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6835623900031202692, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6835623900031202692, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6835623900031202692, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6835623900031202692, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6835623900031202692, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: dbfa410dc856b8447b4b6c06c5d1f3eb, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -10113,7 +10052,6 @@ SceneRoots:
   - {fileID: 18560312}
   - {fileID: 350619497}
   - {fileID: 720156129}
-  - {fileID: 8853828521715985997}
   - {fileID: 6404700340290064548}
   - {fileID: 6008957788825583397}
   - {fileID: 1021612171}

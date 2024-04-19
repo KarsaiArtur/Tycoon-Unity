@@ -14,7 +14,7 @@ public class VisitorManager : MonoBehaviour
     void Update()
     {
         if (timeTillSpawn <= 0 && GridManager.instance.reachableVisitables.Count > 1) {
-            timeTillSpawn = 0.1f;//Random.Range(minSpawnTime, maxSpawnTime);
+            timeTillSpawn = Random.Range(minSpawnTime, maxSpawnTime);//0.1f;
             ZooManager.instance.PayEntranceFee();
             SpawnVisitor();
         }

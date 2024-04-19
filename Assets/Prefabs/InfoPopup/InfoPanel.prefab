@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2710676679791435926}
   m_Layer: 5
   m_Name: Panel
-  m_TagString: Untagged
+  m_TagString: InfoPopup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 4080402337903329536}
   m_Layer: 5
   m_Name: DataPanel
-  m_TagString: Untagged
+  m_TagString: InfoPopup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -152,7 +152,7 @@ GameObject:
   - component: {fileID: 5114918676073253011}
   m_Layer: 5
   m_Name: Text (TMP)
-  m_TagString: Untagged
+  m_TagString: InfoPopup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 3674596012782645526}
   m_Layer: 5
   m_Name: InfoPanel
-  m_TagString: Untagged
+  m_TagString: InfoPopup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -16,7 +16,8 @@ public class Visitor : MonoBehaviour, Clickable
     Vector3 defaultScale;
     PlayerControl playerControl;
     int prev = 0;
-    List<Exhibit> visitedExhibits = new List<Exhibit>();
+    List<Visitable> unvisitedExhibits = new List<Visitable>();
+    string visitorName;
 
     public float hunger = 100;
     public float thirst = 100;
@@ -24,13 +25,15 @@ public class Visitor : MonoBehaviour, Clickable
     public float restroomNeeds = 100;
     public float happiness = 100;
 
-    public float hungerDetriment = 0.25f;
-    public float thirstDetriment = 0.5f;
-    public float energyDetriment = 0.25f;
-    public float happinessDetriment = 0.25f;
+    float hungerDetriment = 0.25f;
+    float thirstDetriment = 0.5f;
+    float energyDetriment = 0.25f;
+    float restroomNeedsDetriment = 0.25f;
+    float happinessDetriment = 0.25f;
 
     public void Start()
     {
+        visitorName =  "Szilva" + Random.Range(1, 1000);
         surface = GameObject.Find("NavMesh").GetComponent<NavMeshSurface>();
         agent.Warp(transform.position);
         placed = true;
@@ -40,6 +43,7 @@ public class Visitor : MonoBehaviour, Clickable
         hungerDetriment = Random.Range(0.2f, 0.3f);
         thirstDetriment = Random.Range(0.45f, 0.55f);
         energyDetriment = Random.Range(0.2f, 0.3f);
+        restroomNeedsDetriment = Random.Range(0.0f, 0.1f);
         happinessDetriment = Random.Range(0.2f, 0.3f);
 
         hunger = Random.Range(50, 100);
@@ -47,6 +51,40 @@ public class Visitor : MonoBehaviour, Clickable
         energy = Random.Range(50, 100);
         restroomNeeds = Random.Range(50, 100);
         happiness = Random.Range(50, 100);
+
+        foreach (Exhibit exhibit in GridManager.instance.reachableExhibits)
+        {
+            unvisitedExhibits.Add(exhibit);
+        }
+
+        StartCoroutine(DecreaseNeeds());
+    }
+
+    IEnumerator DecreaseNeeds()
+    {
+        while (true)
+        {
+            hunger = hunger > hungerDetriment ? hunger - hungerDetriment : 0;
+            thirst = thirst > thirstDetriment ? thirst - thirstDetriment : 0;
+            //energy = energy > energyDetriment ? energy - energyDetriment : 0;
+            restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
+
+            if (GetComponent<NavMeshAgent>().enabled)
+                if (agent.remainingDistance != 0)
+                    energy = energy > energyDetriment ? energy - energyDetriment : 0;
+
+            if (hunger < 33)
+                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+            if (thirst < 33)
+                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+            if (energy < 33)
+                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+            if (restroomNeeds < 33)
+                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+
+            //Debug.Log("Hunger: " + hunger + " Thirst: " + thirst + " Energy: " + energy + " Restroom: " + restroomNeeds + " Happiness: " + happiness);
+            yield return new WaitForSeconds(1);
+        }
     }
 
     float time = 0;
@@ -54,30 +92,6 @@ public class Visitor : MonoBehaviour, Clickable
 
     public void Update()
     {
-        int totalSecondsInt = (int)(Time.deltaTime % 60);
-        if (prev != totalSecondsInt)
-        {
-            hunger -= hungerDetriment;
-            thirst -= thirstDetriment;
-            energy -= energyDetriment;
-
-            if (agent.remainingDistance != 0)
-            {
-                energy -= energyDetriment;
-            }
-
-            if (hunger < 20)
-                happiness -= happinessDetriment;
-            if (thirst < 20)
-                happiness -= happinessDetriment;
-            if (energy < 20)
-                happiness -= happinessDetriment;
-            if (restroomNeeds < 20)
-                happiness -= happinessDetriment;
-        }
-
-        prev = totalSecondsInt;
-
         if (placed)
         {
             /*int r = Random.Range(0, 2);
@@ -92,7 +106,7 @@ public class Visitor : MonoBehaviour, Clickable
                 agent.isStopped = true;
                 destinationVisitable.Arrived(this);
                 time += Time.deltaTime;
-                if (time > 5)
+                if (time > 15)
                 {
                     atDestination = true;
                 }
@@ -100,7 +114,7 @@ public class Visitor : MonoBehaviour, Clickable
             else if (agent.velocity == Vector3.zero)
             {
                 time += Time.deltaTime;
-                if (time > 5)
+                if (time > 15)
                 {
                     atDestination = true;
                 }
@@ -137,11 +151,11 @@ public class Visitor : MonoBehaviour, Clickable
 
     public void PurchasedItem(PurchasableItems item)
     {
-        hunger += item.hungerBonus;
-        thirst += item.thirstBonus;
-        energy += item.energyBonus;
-        restroomNeeds += -item.hungerBonus / 2 - item.thirstBonus;
-        happiness += item.happinessBonus;
+        hunger = hunger + item.hungerBonus > 100 ? 100 : hunger + item.hungerBonus;
+        thirst = thirst + item.thirstBonus > 100 ? 100 : thirst + item.thirstBonus;
+        energy = energy + item.energyBonus > 100 ? 100 : energy + item.energyBonus;
+        restroomNeedsDetriment = item.hungerBonus / 100 + item.thirstBonus / 50;
+        happiness = happiness + item.happinessBonus > 100 ? 100 : happiness + item.happinessBonus;
     }
 
     void ChooseDestination()
@@ -152,26 +166,24 @@ public class Visitor : MonoBehaviour, Clickable
 
         if (destinationTypeIndex == 0)
         {
-            destinationVisitable = ChooseClosestDestination(GridManager.instance.foodBuildings);
+            destinationVisitable = ChooseCloseDestination(GridManager.instance.foodBuildings);
         }
         else if (destinationTypeIndex == 1)
         {
-            destinationVisitable = ChooseClosestDestination(GridManager.instance.drinkBuildings);
+            destinationVisitable = ChooseCloseDestination(GridManager.instance.drinkBuildings);
         }
         else if (destinationTypeIndex == 2)
         {
-            destinationVisitable = ChooseClosestDestination(GridManager.instance.energyBuildings);
+            destinationVisitable = ChooseCloseDestination(GridManager.instance.energyBuildings);
         }
         else if (destinationTypeIndex == 3)
         {
-            destinationVisitable = ChooseClosestDestination(GridManager.instance.restroomBuildings);
+            destinationVisitable = ChooseCloseDestination(GridManager.instance.restroomBuildings);
         }
         else if (destinationTypeIndex == 4)
         {
-            destinationVisitable = GridManager.instance.reachableExhibits[Random.Range(0, GridManager.instance.reachableExhibits.Count)];
-            while (visitedExhibits.Contains(destinationVisitable))
-                destinationVisitable = GridManager.instance.reachableExhibits[Random.Range(0, GridManager.instance.reachableExhibits.Count)];
-            visitedExhibits.Add((Exhibit)destinationVisitable);
+            destinationVisitable = ChooseCloseDestination(unvisitedExhibits);
+            unvisitedExhibits.Remove((Exhibit)destinationVisitable);
         }
         else
         {
@@ -208,41 +220,62 @@ public class Visitor : MonoBehaviour, Clickable
         float sum = 0;
 
         if (GridManager.instance.reachableFoodBuildings.Count > 0)
-            sum += 110 - hunger;
-        probabilities.Add((0, sum));
+        {
+            sum += (110 - hunger);
+            probabilities.Add((0, sum));
+        }
         if (GridManager.instance.reachableDrinkBuildings.Count > 0)
-            sum += 110 - thirst;
-        probabilities.Add((1, sum));
+        {
+            sum += (110 - thirst);
+            probabilities.Add((1, sum));
+        }
         if (GridManager.instance.reachableEnergyBuildings.Count > 0)
-            sum += 110 - energy;
-        probabilities.Add((2, sum));
+        {
+            sum += (110 - energy);
+            probabilities.Add((2, sum));
+        }
         if (GridManager.instance.reachableRestroomBuildings.Count > 0)
-            sum += 110 - restroomNeeds;
-        probabilities.Add((3, sum));
-        if (GridManager.instance.reachableExhibits.Count > 0 && GridManager.instance.reachableExhibits.Count > visitedExhibits.Count)
-            sum += 200 - happiness;
-        probabilities.Add((4, sum));
-        sum += 100 - happiness;
+        {
+            sum += (110 - restroomNeeds);
+            probabilities.Add((3, sum));
+        }
+        if (unvisitedExhibits.Count > 0)
+        {
+            sum += (200 - happiness);
+            probabilities.Add((4, sum));
+        }
+        sum += (100 - happiness);
         probabilities.Add((5, sum));
+
+        foreach(var probability in probabilities)
+        {
+
+        }
 
         var random = Random.Range(0, sum);
         return probabilities.SkipWhile(i => i.probability < random).First().index;
     }
 
-    Visitable ChooseClosestDestination(List<Visitable> visitables)
+    Visitable ChooseCloseDestination(List<Visitable> visitables)
     {
-        float minDistance = float.MaxValue;
-        Visitable closestVisitable = null;
+        var VisitableDistances = new List<(Visitable visitable, float distance)>();
+        float sum = 0;
+        float maxDistance = 0;
+
         foreach (var visitable in visitables)
         {
-            float distance = Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0]);
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                closestVisitable = visitable;
-            }
+            if (Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0]) > maxDistance)
+                maxDistance = Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0]);
         }
-        return closestVisitable;
+
+        foreach (var visitable in visitables)
+        {
+            sum += (maxDistance + 10 - Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0]));
+            VisitableDistances.Add((visitable, sum));
+        }
+
+        var random = Random.Range(0.0f, sum);
+        return VisitableDistances.SkipWhile(i => i.distance < random).First().visitable;
     }
 
     public void SetIsVisible(bool hide)
@@ -268,6 +301,6 @@ public class Visitor : MonoBehaviour, Clickable
 
     public string GetName()
     {
-        return "Szilva"+Random.Range(1, 1000);
+        return visitorName;
     }
 }

@@ -44,5 +44,10 @@ public class InfoPopup : MonoBehaviour
         Destroy(gameObject);
     }
 
+    public virtual bool DidVisitorLeft(Visitor visitor)
+    {
+        return false;
+    }
+
 
 }

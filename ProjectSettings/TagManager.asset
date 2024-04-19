@@ -13,6 +13,7 @@ TagManager:
   - BackGroundTerrain
   - Price
   - Clickable
+  - InfoPopup
   layers:
   - Default
   - TransparentFX

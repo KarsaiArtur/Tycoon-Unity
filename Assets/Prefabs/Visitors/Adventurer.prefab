@@ -109,6 +109,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   surface: {fileID: 0}
   agent: {fileID: 5575644616196137121}
+  hunger: 100
+  thirst: 100
+  energy: 100
+  restroomNeeds: 100
+  happiness: 100
+  hungerDetriment: 0
+  thirstDetriment: 0.5
+  energyDetriment: 0
+  restroomNeedsDetriment: 100
+  happinessDetriment: 0
 --- !u!195 &5575644616196137121
 NavMeshAgent:
   m_ObjectHideFlags: 0

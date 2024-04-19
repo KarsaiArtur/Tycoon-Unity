@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -21,8 +22,11 @@ public class PurchasableItemUi : MonoBehaviour
         transform.Find("Name").GetComponent<TextMeshProUGUI>().text = purchasableItem.itemName;
         currentPriceText = transform.Find("Name").Find("Current Price").GetComponent<TextMeshProUGUI>();
         currentPriceText.text = purchasableItem.currentPrice.ToString() + "$";
-        minAndMaxPriceLimit = Mathf.Floor(purchasableItem.defaultPrice * PurchasableItems.minAndMaxPriceLimit * 10) / 10f;
-        changePrice = Mathf.Floor(minAndMaxPriceLimit / PurchasableItems.changingLimit * 10) / 10f;
+
+
+        minAndMaxPriceLimit = TwoDecimal(purchasableItem.defaultPrice * PurchasableItems.minAndMaxPriceLimit);
+        changePrice = TwoDecimal(minAndMaxPriceLimit / PurchasableItems.changingLimit);
+
         transform.Find("Lower").GetComponent<TextMeshProUGUI>().text = "-" + changePrice + "$";
         transform.Find("Raise").GetComponent<TextMeshProUGUI>().text = "+" + changePrice + "$";
         lowerButton = transform.Find("Lower").Find("Button").GetComponent<Button>();
@@ -33,9 +37,8 @@ public class PurchasableItemUi : MonoBehaviour
 
     void RaisePrice()
     {
-        purchasableItem.currentPrice += changePrice; 
+        purchasableItem.currentPrice = TwoDecimal(purchasableItem.currentPrice + changePrice); 
         lowerButton.enabled = true;
-        Debug.Log(purchasableItem.currentPrice + "   " + changePrice);
         if (Mathf.Abs(purchasableItem.currentPrice - purchasableItem.defaultPrice * (1f + PurchasableItems.minAndMaxPriceLimit)) < 0.001f)
         {
             raiseButton.enabled = false;
@@ -45,13 +48,17 @@ public class PurchasableItemUi : MonoBehaviour
 
     void LowerPrice()
     {
-        purchasableItem.currentPrice -= changePrice;
+        purchasableItem.currentPrice = TwoDecimal(purchasableItem.currentPrice - changePrice);
         raiseButton.enabled = true;
-        Debug.Log(purchasableItem.currentPrice + "   " + (purchasableItem.defaultPrice * (1f - PurchasableItems.minAndMaxPriceLimit)));
         if (Mathf.Abs(purchasableItem.currentPrice - purchasableItem.defaultPrice * (1f - PurchasableItems.minAndMaxPriceLimit)) < 0.001f)
         {
             lowerButton.enabled = false;
         }
         currentPriceText.text = purchasableItem.currentPrice.ToString() + "$";
+    }
+
+    public static float TwoDecimal(float value)
+    {
+        return (float)Math.Round((Decimal)value, 2, MidpointRounding.AwayFromZero);
     }
 }

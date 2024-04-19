@@ -6,11 +6,11 @@ using UnityEngine;
 public class ZooManager : MonoBehaviour, Visitable, Clickable
 {
     public static ZooManager instance;
-    public int money = 50000;
+    public float money = 50000;
     public TextMeshProUGUI moneyText;
     public Grid entranceGrid;
     Grid exitGrid;
-    public int entranceFee = 20;
+    public float entranceFee = 20;
     PlayerControl playerControl;
 
     public void Start()
@@ -26,10 +26,15 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
 
     public void Arrived(Visitor visitor)
     {
+        if(playerControl.currentInfopopup != null)
+        {
+            if (playerControl.currentInfopopup.DidVisitorLeft(visitor))
+                playerControl.DestroyCurrentInfopopup();
+        }
         Destroy(visitor.gameObject);
     }
 
-    public void ChangeMoney(int amount)
+    public void ChangeMoney(float amount)
     {
         money += amount;
         moneyText.text = money.ToString();
