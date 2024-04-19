@@ -428,7 +428,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 6296442001791154185}
   m_Enabled: 1
   m_AgentTypeID: -334000983
-  m_Radius: 0.01
+  m_Radius: 0.1
   m_Speed: 1
   m_Acceleration: 1
   avoidancePriority: 50
@@ -465,6 +465,14 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
   surface: {fileID: 0}
   agent: {fileID: 7843250570019648372}
+  hunger: 100
+  thirst: 100
+  energy: 100
+  happiness: 100
+  hungerDetriment: 0.25
+  thirstDetriment: 0.5
+  energyDetriment: 0.25
+  happinessDetriment: 0.25
 --- !u!54 &7017745945639587569
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -507,7 +515,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

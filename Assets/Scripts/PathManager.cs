@@ -182,7 +182,7 @@ public class PathManager : Placeable
                 {
                     if (gridManager.ReachableAttractionBFS(exhibit.paths[i], gridManager.startingGrid))
                     {
-                        gridManager.reachableVisitables.Add(exhibit);
+                        exhibit.AddToReachableLists();
                         break;
                     }
                 }
@@ -196,7 +196,7 @@ public class PathManager : Placeable
                 {
                     if (gridManager.ReachableAttractionBFS(building.paths[i], gridManager.startingGrid))
                     {
-                        gridManager.reachableVisitables.Add(building);
+                        building.AddToReachableLists();
                         break;
                     }
                 }

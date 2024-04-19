@@ -96,7 +96,6 @@ public class Fence : Placeable
             HashSet<Grid> tempGrids = BFS(grid1, gridManager.startingGrid);
             GameObject gateInstance = Instantiate(playerControl.gate, playerControl.m_Selected.transform.position, transform.rotation);
             gateInstance.tag = "Placed";
-            playerControl.DestroyPlaceableInHand();
 
             if (tempGrids != null)
             {

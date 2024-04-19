@@ -15,11 +15,16 @@ public class Placeable : MonoBehaviour, Clickable
     public TextMeshProUGUI currentPlacingPrice;
     public TextMeshProUGUI currentPlacingPriceInstance;
 
-    void Awake()
+    public virtual void Awake()
     {
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
         gridManager = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
         currentPlacingPrice = GameObject.Find("Placing Price").GetComponent<TextMeshProUGUI>();
+
+        if (placeableName.Equals(""))
+        {
+            placeableName = name.Remove(name.Length - "(Clone)".Length);
+        }
     }
     
 
@@ -71,7 +76,7 @@ public class Placeable : MonoBehaviour, Clickable
 
     public string GetName()
     {
-        return name;
+        return placeableName;
     }
 
 

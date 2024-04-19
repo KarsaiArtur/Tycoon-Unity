@@ -13,4 +13,8 @@ public interface Visitable
     public abstract void Arrived(Visitor visitor);
 
     public Vector3 ChoosePosition(Grid grid);
+
+    public Grid GetStartingGrid();
+
+    public void AddToReachableLists();
 }

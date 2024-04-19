@@ -8,7 +8,7 @@ public class Exhibit : Visitable
     public List<Grid> gridList;
     public List<Grid> paths;
     public string exhibitName;
-    public List<Animal> animals;
+    public List<Animal> animals = new List<Animal>();
 
     public Exhibit(HashSet<Grid> grids)
     {
@@ -35,7 +35,7 @@ public class Exhibit : Visitable
             {
                 if (gridManager.ReachableAttractionBFS(paths[i], gridManager.startingGrid))
                 {
-                    gridManager.reachableVisitables.Add(this);
+                    AddToReachableLists();
                     break;
                 }
             }
@@ -72,8 +72,9 @@ public class Exhibit : Visitable
 
     public void Arrived(Visitor visitor)
     {
-        foreach (Animal animal in animals)
-            visitor.happiness += animal.happiness / 25;
+        if (animals.Count > 0)
+            foreach (Animal animal in animals)
+                visitor.happiness += animal.happiness / 25;
     }
 
     public Vector3 ChoosePosition(Grid grid)
@@ -81,5 +82,15 @@ public class Exhibit : Visitable
         float offsetX = UnityEngine.Random.Range(0, 1.0f);
         float offsetZ = UnityEngine.Random.Range(0, 1.0f);
         return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
+    }
+
+    public Grid GetStartingGrid()
+    {
+        return gridList[0];
+    }
+    public void AddToReachableLists()
+    {
+        gridManager.reachableVisitables.Add(this);
+        gridManager.reachableExhibits.Add(this);
     }
 }

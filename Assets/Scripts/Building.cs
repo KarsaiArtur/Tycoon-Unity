@@ -19,10 +19,22 @@ public class Building : Placeable, Visitable
     public List<Grid> gridList;
     public List<Grid> paths;
 
-    public List<PurchasableItems> purchasableItems;
+    public List<PurchasableItems> purchasableItemPrefabs;
+    public List<PurchasableItems> purchasableItemInstances;
     public int capacity;
 
     public bool hasRestroom = false;
+
+    public override void Awake()
+    {
+        base.Awake();
+        foreach(PurchasableItems p in purchasableItemPrefabs)
+        {
+            var newItem = Instantiate(p);
+            purchasableItemInstances.Add(newItem);
+            newItem.transform.SetParent(transform);
+        }
+    }
 
     public override void RotateY(float angle)
     {
@@ -114,8 +126,8 @@ public class Building : Placeable, Visitable
     {
         gridManager.buildings.Add(this);
         if (hasRestroom)
-        { 
-            gridManager.restrooms.Add(this);
+        {
+            gridManager.restroomBuildings.Add(this);
         }
         if (HasFood())
         { 
@@ -124,6 +136,10 @@ public class Building : Placeable, Visitable
         if (HasDrink())
         { 
             gridManager.drinkBuildings.Add(this);
+        }
+        if (HasEnergy())
+        {
+            gridManager.energyBuildings.Add(this);
         }
 
         gridList = new List<Grid>();
@@ -155,7 +171,7 @@ public class Building : Placeable, Visitable
             {
                 if (gridManager.ReachableAttractionBFS(paths[i], gridManager.startingGrid))
                 {
-                    gridManager.reachableVisitables.Add(this);
+                    AddToReachableLists();
                     break;
                 }
             }
@@ -210,8 +226,8 @@ public class Building : Placeable, Visitable
 
     public bool HasFood()
     {
-        if (purchasableItems.Count > 0)
-            foreach (var item in purchasableItems)
+        if (purchasableItemInstances.Count > 0)
+            foreach (var item in purchasableItemInstances)
                 if (item.hungerBonus > 0)
                     return true;
         return false;
@@ -219,9 +235,18 @@ public class Building : Placeable, Visitable
     
     public bool HasDrink()
     {
-        if (purchasableItems.Count > 0)
-            foreach (var item in purchasableItems)
+        if (purchasableItemInstances.Count > 0)
+            foreach (var item in purchasableItemInstances)
                 if (item.thirstBonus > 0)
+                    return true;
+        return false;
+    }
+
+    public bool HasEnergy()
+    {
+        if (purchasableItemInstances.Count > 0)
+            foreach (var item in purchasableItemInstances)
+                if (item.energyBonus > 0)
                     return true;
         return false;
     }
@@ -239,5 +264,31 @@ public class Building : Placeable, Visitable
         var newInfopopup = new GameObject().AddComponent<BuildingInfopopup>();
         newInfopopup.SetClickable(this);
         playerControl.SetInfopopup(newInfopopup);
+    }
+
+    public Grid GetStartingGrid()
+    {
+        return gridList[0];
+    }
+
+    public void AddToReachableLists()
+    {
+        gridManager.reachableVisitables.Add(this);
+        if (HasFood())
+        {
+            gridManager.reachableFoodBuildings.Add(this);
+        }
+        if (HasDrink())
+        {
+            gridManager.reachableDrinkBuildings.Add(this);
+        }
+        if (HasEnergy())
+        {
+            gridManager.reachableEnergyBuildings.Add(this);
+        }
+        if (hasRestroom)
+        {
+            gridManager.reachableRestroomBuildings.Add(this);
+        }
     }
 }

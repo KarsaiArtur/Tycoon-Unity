@@ -31,9 +31,15 @@ public class GridManager : MonoBehaviour
     public Grid[,] grids;
     public List<Exhibit> exhibits;
     public List<Building> buildings;
-    public List<Building> restrooms;
-    public List<Building> foodBuildings;
-    public List<Building> drinkBuildings;
+    public List<Visitable> foodBuildings;
+    public List<Visitable> drinkBuildings;
+    public List<Visitable> energyBuildings;
+    public List<Visitable> restroomBuildings;
+    public List<Visitable> reachableFoodBuildings;
+    public List<Visitable> reachableDrinkBuildings;
+    public List<Visitable> reachableEnergyBuildings;
+    public List<Visitable> reachableRestroomBuildings;
+    public List<Visitable> reachableExhibits;
     public List<Visitable> reachableVisitables;
     public Grid startingGrid;
 
@@ -67,9 +73,15 @@ public class GridManager : MonoBehaviour
 
         exhibits = new List<Exhibit>();
         buildings = new List<Building>();
-        restrooms = new List<Building>();
-        foodBuildings = new List<Building>();
-        drinkBuildings = new List<Building>();
+        foodBuildings = new List<Visitable>();
+        drinkBuildings = new List<Visitable>();
+        energyBuildings = new List<Visitable>();
+        restroomBuildings = new List<Visitable>();
+        reachableFoodBuildings = new List<Visitable>();
+        reachableDrinkBuildings = new List<Visitable>();
+        reachableEnergyBuildings = new List<Visitable>();
+        reachableRestroomBuildings = new List<Visitable>();
+        reachableExhibits = new List<Visitable>();
         reachableVisitables = new List<Visitable> { ZooManager.instance == null ? new GameObject().AddComponent<ZooManager>() : ZooManager.instance };
 
         startingGrid = GetGrid(new Vector3(35, 0, 50));

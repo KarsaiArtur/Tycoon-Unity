@@ -20,6 +20,7 @@ public class UIMenu : MonoBehaviour
     public Transform placeableListPanel;
 
     public GameObject infoPanelPrefab;
+    public PurchasableItemUi purchasableItemUIPrefab;
 
     private void Awake()
     {

@@ -2151,11 +2151,13 @@ MonoBehaviour:
   - {fileID: -1637880222114644024, guid: 9cb781aee1480c84aa9c06b6a746ed63, type: 3}
   - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
   - {fileID: 2100000, guid: e8eee43141a377848a3027dbe52e5f3e, type: 2}
-  purchasableItems:
+  purchasableItemPrefabs:
   - {fileID: 8853725120316875499, guid: 743ba704c1a09954d932bb3c4ae64771, type: 3}
   - {fileID: 8853725120316875499, guid: bcdfbeab2786cfa42afec8048d68cee6, type: 3}
   - {fileID: 8853725120316875499, guid: 12692cab4c5a2674c856a76cc24bea1f, type: 3}
+  purchasableItemInstances: []
   capacity: 0
+  hasRestroom: 0
 --- !u!65 &6819721767351576434
 BoxCollider:
   m_ObjectHideFlags: 0

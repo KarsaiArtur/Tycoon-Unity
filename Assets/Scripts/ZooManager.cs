@@ -66,4 +66,13 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
     {
         return "Budapest's Most Enjoyable Zoo";
     }
+
+    public Grid GetStartingGrid()
+    {
+        return exitGrid;
+    }
+    public void AddToReachableLists()
+    {
+        return;
+    }
 }

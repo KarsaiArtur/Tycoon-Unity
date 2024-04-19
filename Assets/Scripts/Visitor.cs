@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -15,6 +16,7 @@ public class Visitor : MonoBehaviour, Clickable
     Vector3 defaultScale;
     PlayerControl playerControl;
     int prev = 0;
+    List<Exhibit> visitedExhibits = new List<Exhibit>();
 
     public float hunger = 100;
     public float thirst = 100;
@@ -39,6 +41,12 @@ public class Visitor : MonoBehaviour, Clickable
         thirstDetriment = Random.Range(0.45f, 0.55f);
         energyDetriment = Random.Range(0.2f, 0.3f);
         happinessDetriment = Random.Range(0.2f, 0.3f);
+
+        hunger = Random.Range(50, 100);
+        thirst = Random.Range(50, 100);
+        energy = Random.Range(50, 100);
+        restroomNeeds = Random.Range(50, 100);
+        happiness = Random.Range(50, 100);
     }
 
     float time = 0;
@@ -129,26 +137,112 @@ public class Visitor : MonoBehaviour, Clickable
 
     public void PurchasedItem(PurchasableItems item)
     {
-        happiness += item.happinessBonus;
         hunger += item.hungerBonus;
         thirst += item.thirstBonus;
         energy += item.energyBonus;
-        restroomNeeds -= item.hungerBonus / 2 - item.thirstBonus;
+        restroomNeeds += -item.hungerBonus / 2 - item.thirstBonus;
+        happiness += item.happinessBonus;
     }
 
     void ChooseDestination()
     {
         SetIsVisible(true);
-        int randomExhibitIndex = Random.Range(0, GridManager.instance.reachableVisitables.Count);
-        destinationVisitable = GridManager.instance.reachableVisitables[randomExhibitIndex];
+
+        int destinationTypeIndex = ChooseDestinationType();
+
+        if (destinationTypeIndex == 0)
+        {
+            destinationVisitable = ChooseClosestDestination(GridManager.instance.foodBuildings);
+        }
+        else if (destinationTypeIndex == 1)
+        {
+            destinationVisitable = ChooseClosestDestination(GridManager.instance.drinkBuildings);
+        }
+        else if (destinationTypeIndex == 2)
+        {
+            destinationVisitable = ChooseClosestDestination(GridManager.instance.energyBuildings);
+        }
+        else if (destinationTypeIndex == 3)
+        {
+            destinationVisitable = ChooseClosestDestination(GridManager.instance.restroomBuildings);
+        }
+        else if (destinationTypeIndex == 4)
+        {
+            destinationVisitable = GridManager.instance.reachableExhibits[Random.Range(0, GridManager.instance.reachableExhibits.Count)];
+            while (visitedExhibits.Contains(destinationVisitable))
+                destinationVisitable = GridManager.instance.reachableExhibits[Random.Range(0, GridManager.instance.reachableExhibits.Count)];
+            visitedExhibits.Add((Exhibit)destinationVisitable);
+        }
+        else
+        {
+            destinationVisitable = ZooManager.instance;
+        }
+
         int randomGridIndex = Random.Range(0, destinationVisitable.GetPaths().Count);
         Grid randomGrid = destinationVisitable.GetPaths()[randomGridIndex];
         destination = destinationVisitable.ChoosePosition(randomGrid);
-        Debug.Log(destination);
         agent.SetDestination(destination);
         atDestination = false;
         time = 0;
         agent.isStopped = false;
+    }
+
+    //void ChooseDestination()
+    //{
+    //    SetIsVisible(true);
+    //    int randomExhibitIndex = Random.Range(0, GridManager.instance.reachableVisitables.Count);
+    //    destinationVisitable = GridManager.instance.reachableVisitables[randomExhibitIndex];
+    //    int randomGridIndex = Random.Range(0, destinationVisitable.GetPaths().Count);
+    //    Grid randomGrid = destinationVisitable.GetPaths()[randomGridIndex];
+    //    destination = destinationVisitable.ChoosePosition(randomGrid);
+    //    Debug.Log(destination);
+    //    agent.SetDestination(destination);
+    //    atDestination = false;
+    //    time = 0;
+    //    agent.isStopped = false;
+    //}
+
+    int ChooseDestinationType()
+    {
+        var probabilities = new List<(int index, float probability)>();
+        float sum = 0;
+
+        if (GridManager.instance.reachableFoodBuildings.Count > 0)
+            sum += 110 - hunger;
+        probabilities.Add((0, sum));
+        if (GridManager.instance.reachableDrinkBuildings.Count > 0)
+            sum += 110 - thirst;
+        probabilities.Add((1, sum));
+        if (GridManager.instance.reachableEnergyBuildings.Count > 0)
+            sum += 110 - energy;
+        probabilities.Add((2, sum));
+        if (GridManager.instance.reachableRestroomBuildings.Count > 0)
+            sum += 110 - restroomNeeds;
+        probabilities.Add((3, sum));
+        if (GridManager.instance.reachableExhibits.Count > 0 && GridManager.instance.reachableExhibits.Count > visitedExhibits.Count)
+            sum += 200 - happiness;
+        probabilities.Add((4, sum));
+        sum += 100 - happiness;
+        probabilities.Add((5, sum));
+
+        var random = Random.Range(0, sum);
+        return probabilities.SkipWhile(i => i.probability < random).First().index;
+    }
+
+    Visitable ChooseClosestDestination(List<Visitable> visitables)
+    {
+        float minDistance = float.MaxValue;
+        Visitable closestVisitable = null;
+        foreach (var visitable in visitables)
+        {
+            float distance = Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0]);
+            if (distance < minDistance)
+            {
+                minDistance = distance;
+                closestVisitable = visitable;
+            }
+        }
+        return closestVisitable;
     }
 
     public void SetIsVisible(bool hide)
