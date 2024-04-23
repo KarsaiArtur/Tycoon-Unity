@@ -4,7 +4,6 @@ using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
-using static Unity.VisualScripting.Antlr3.Runtime.Tree.TreeWizard;
 
 public class Visitor : MonoBehaviour, Clickable
 {
@@ -13,11 +12,12 @@ public class Visitor : MonoBehaviour, Clickable
     bool atDestination = true;
     bool placed = false;
     Visitable destinationVisitable;
-    Vector3 defaultScale;
     PlayerControl playerControl;
-    int prev = 0;
     List<Visitable> unvisitedExhibits = new List<Visitable>();
     string visitorName;
+
+    float time = 0;
+    Vector3 destination;
 
     public float hunger = 100;
     public float thirst = 100;
@@ -31,19 +31,20 @@ public class Visitor : MonoBehaviour, Clickable
     float restroomNeedsDetriment = 0.25f;
     float happinessDetriment = 0.25f;
 
+    public string action = "";
+
     public void Start()
     {
-        visitorName =  "Szilva" + Random.Range(1, 1000);
+        visitorName = "Szilva" + Random.Range(1, 1000);
         surface = GameObject.Find("NavMesh").GetComponent<NavMeshSurface>();
         agent.Warp(transform.position);
         placed = true;
-        defaultScale = transform.localScale;
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
 
         hungerDetriment = Random.Range(0.2f, 0.3f);
         thirstDetriment = Random.Range(0.45f, 0.55f);
         energyDetriment = Random.Range(0.2f, 0.3f);
-        restroomNeedsDetriment = Random.Range(0.0f, 0.1f);
+        restroomNeedsDetriment = UnityEngine.Random.Range(0.05f, 0.15f);
         happinessDetriment = Random.Range(0.2f, 0.3f);
 
         hunger = Random.Range(50, 100);
@@ -66,7 +67,7 @@ public class Visitor : MonoBehaviour, Clickable
         {
             hunger = hunger > hungerDetriment ? hunger - hungerDetriment : 0;
             thirst = thirst > thirstDetriment ? thirst - thirstDetriment : 0;
-            //energy = energy > energyDetriment ? energy - energyDetriment : 0;
+            energy = energy > energyDetriment ? energy - energyDetriment : 0;
             restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
 
             if (GetComponent<NavMeshAgent>().enabled)
@@ -86,9 +87,6 @@ public class Visitor : MonoBehaviour, Clickable
             yield return new WaitForSeconds(1);
         }
     }
-
-    float time = 0;
-    Vector3 destination;
 
     public void Update()
     {
@@ -149,45 +147,55 @@ public class Visitor : MonoBehaviour, Clickable
         }
     }
 
-    public void PurchasedItem(PurchasableItems item)
+    public void PurchaseItem(PurchasableItems item)
     {
         hunger = hunger + item.hungerBonus > 100 ? 100 : hunger + item.hungerBonus;
         thirst = thirst + item.thirstBonus > 100 ? 100 : thirst + item.thirstBonus;
         energy = energy + item.energyBonus > 100 ? 100 : energy + item.energyBonus;
         restroomNeedsDetriment = item.hungerBonus / 100 + item.thirstBonus / 50;
         happiness = happiness + item.happinessBonus > 100 ? 100 : happiness + item.happinessBonus;
+
+        ZooManager.instance.ChangeMoney(item.currentPrice);
+    }
+
+    public void lowerRestroomNeeds()
+    {
+        var random = UnityEngine.Random.Range(40, 60);
+        restroomNeeds = restroomNeeds + random > 100 ? 100 : restroomNeeds + random;
+        restroomNeedsDetriment = UnityEngine.Random.Range(0.05f, 0.15f);
     }
 
     void ChooseDestination()
     {
         SetIsVisible(true);
 
-        int destinationTypeIndex = ChooseDestinationType();
+        ChooseDestinationType();
 
-        if (destinationTypeIndex == 0)
+        switch (action)
         {
-            destinationVisitable = ChooseCloseDestination(GridManager.instance.foodBuildings);
-        }
-        else if (destinationTypeIndex == 1)
-        {
-            destinationVisitable = ChooseCloseDestination(GridManager.instance.drinkBuildings);
-        }
-        else if (destinationTypeIndex == 2)
-        {
-            destinationVisitable = ChooseCloseDestination(GridManager.instance.energyBuildings);
-        }
-        else if (destinationTypeIndex == 3)
-        {
-            destinationVisitable = ChooseCloseDestination(GridManager.instance.restroomBuildings);
-        }
-        else if (destinationTypeIndex == 4)
-        {
-            destinationVisitable = ChooseCloseDestination(unvisitedExhibits);
-            unvisitedExhibits.Remove((Exhibit)destinationVisitable);
-        }
-        else
-        {
-            destinationVisitable = ZooManager.instance;
+            case "food":
+                destinationVisitable = ChooseCloseDestination(GridManager.instance.foodBuildings);
+                break;
+            case "drink":
+                destinationVisitable = ChooseCloseDestination(GridManager.instance.drinkBuildings);
+                break;
+            case "energy":
+                destinationVisitable = ChooseCloseDestination(GridManager.instance.energyBuildings);
+                break;
+            case "restroom":
+                destinationVisitable = ChooseCloseDestination(GridManager.instance.restroomBuildings);
+                break;
+            case "happiness":
+                //Souvenirshop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                destinationVisitable = ChooseCloseDestination(unvisitedExhibits);
+                unvisitedExhibits.Remove((Exhibit)destinationVisitable);
+                break;
+            case "leave":
+                destinationVisitable = ZooManager.instance;
+                break;
+            default:
+                destinationVisitable = ZooManager.instance;
+                break;
         }
 
         int randomGridIndex = Random.Range(0, destinationVisitable.GetPaths().Count);
@@ -214,46 +222,43 @@ public class Visitor : MonoBehaviour, Clickable
     //    agent.isStopped = false;
     //}
 
-    int ChooseDestinationType()
+    void ChooseDestinationType()
     {
-        var probabilities = new List<(int index, float probability)>();
+        var probabilities = new List<(string action, float probability)>();
         float sum = 0;
 
         if (GridManager.instance.reachableFoodBuildings.Count > 0)
         {
             sum += (110 - hunger);
-            probabilities.Add((0, sum));
+            probabilities.Add(("food", sum));
         }
         if (GridManager.instance.reachableDrinkBuildings.Count > 0)
         {
             sum += (110 - thirst);
-            probabilities.Add((1, sum));
+            probabilities.Add(("drink", sum));
         }
         if (GridManager.instance.reachableEnergyBuildings.Count > 0)
         {
             sum += (110 - energy);
-            probabilities.Add((2, sum));
+            probabilities.Add(("energy", sum));
         }
         if (GridManager.instance.reachableRestroomBuildings.Count > 0)
         {
             sum += (110 - restroomNeeds);
-            probabilities.Add((3, sum));
+            probabilities.Add(("restroom", sum));
         }
         if (unvisitedExhibits.Count > 0)
         {
             sum += (200 - happiness);
-            probabilities.Add((4, sum));
+            probabilities.Add(("happiness", sum));
         }
-        sum += (100 - happiness);
-        probabilities.Add((5, sum));
-
-        foreach(var probability in probabilities)
-        {
-
-        }
+        sum += (100 + 10 * (GridManager.instance.reachableExhibits.Count - unvisitedExhibits.Count) - happiness);
+        if (unvisitedExhibits.Count == 0)
+            sum += 100;
+        probabilities.Add(("leave", sum));
 
         var random = Random.Range(0, sum);
-        return probabilities.SkipWhile(i => i.probability < random).First().index;
+        action = probabilities.SkipWhile(i => i.probability < random).First().action;
     }
 
     Visitable ChooseCloseDestination(List<Visitable> visitables)
@@ -285,7 +290,7 @@ public class Visitor : MonoBehaviour, Clickable
         foreach (SkinnedMeshRenderer smr in GetComponentsInChildren<SkinnedMeshRenderer>())
         {
             //if(smr != null)
-                smr.enabled = hide;
+            smr.enabled = hide;
         }
 
         GetComponent<NavMeshAgent>().enabled = hide;
@@ -293,6 +298,7 @@ public class Visitor : MonoBehaviour, Clickable
 
     public void ClickedOn()
     {
+        playerControl.SetFollowedObject(this.gameObject);
         playerControl.DestroyCurrentInfopopup();
         var newInfopopup = new GameObject().AddComponent<VisitorInfopopup>();
         newInfopopup.SetClickable(this);

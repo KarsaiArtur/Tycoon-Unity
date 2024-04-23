@@ -1,12 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using System;
 using TMPro;
 
 public class CalendarManager : MonoBehaviour
 {
-    DateTime currentDate;
+    public static CalendarManager instance;
+    public DateTime currentDate;
     int prev;
     float totalSeconds;
     public TextMeshProUGUI dateText;
@@ -17,6 +16,7 @@ public class CalendarManager : MonoBehaviour
 
     private void Start()
     {
+        instance = this;
         currentDate = new DateTime(2024, 1, 1, 0, 0, 0);
         SetDate();
     }
@@ -25,10 +25,12 @@ public class CalendarManager : MonoBehaviour
     {
         totalSeconds += Time.deltaTime;
         int totalSecondsInt = (int)(totalSeconds % 60);
-        if (prev != totalSecondsInt){
+        if (prev != totalSecondsInt)
+        {
             timer++;
         }
-        if (timer == secondsPerDay) {
+        if (timer == secondsPerDay)
+        {
             AddDay();
             timer = 0;
         }
@@ -38,7 +40,6 @@ public class CalendarManager : MonoBehaviour
 
     void AddDay()
     {
-        Debug.Log(currentDate);
         currentDate = currentDate.AddDays(1);
         SetDate();
     }

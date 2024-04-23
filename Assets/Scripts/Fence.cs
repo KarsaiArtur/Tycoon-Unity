@@ -101,6 +101,7 @@ public class Fence : Placeable
             {
                 Exhibit exhibit = new Exhibit(tempGrids);
                 gridManager.exhibits.Add(exhibit);
+                exhibit.exitGrid = grid1;
             }
 
             tempGrids = BFS(grid2, gridManager.startingGrid);
@@ -108,6 +109,7 @@ public class Fence : Placeable
             {
                 Exhibit exhibit = new Exhibit(tempGrids);
                 gridManager.exhibits.Add(exhibit);
+                exhibit.exitGrid = grid2;
             }
         }
     }

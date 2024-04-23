@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -12,7 +13,7 @@ public class VisitorInfopopup : InfoPopup
 {
     Visitor visitor;
     List<GameObject> visitorInfoItemInstances;
-    List<(string name, float value)> attributes;
+    List<(string name, Func<float> value)> attributes;
 
     public override void Initialize()
     {
@@ -20,7 +21,7 @@ public class VisitorInfopopup : InfoPopup
         InitAttributeList();
         visitorInfoItemInstances = new List<GameObject>();
         infoPanelInstance.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = visitor.GetName();
-        foreach(var attribute in attributes)
+        foreach (var attribute in attributes)
         {
             var newItem = Instantiate(UIMenu.Instance.visitorInfoItemPrefab);
             visitorInfoItemInstances.Add(newItem);
@@ -31,13 +32,13 @@ public class VisitorInfopopup : InfoPopup
 
     void InitAttributeList()
     {
-        attributes = new List<(string name, float value)>()
+        attributes = new List<(string name, Func<float> value)>()
         {
-            ("Happiness", visitor.happiness),
-            ("Hunger", visitor.hunger ),
-            ("Thirst", visitor.thirst ),
-            ("Restroom Needs", visitor.restroomNeeds ),
-            ("Energy", visitor.energy )
+            ("Happiness", () => { return visitor.happiness; }),
+            ("Hunger", () => { return visitor.hunger; } ),
+            ("Thirst", () => { return visitor.thirst; } ),
+            ("Restroom Needs", () => { return visitor.restroomNeeds; } ),
+            ("Energy",  () => { return visitor.energy; } )
         };
     }
 
@@ -59,19 +60,19 @@ public class VisitorInfopopup : InfoPopup
 
     void SetVisitorInfoItem(int index)
     {
-        InitAttributeList();
         visitorInfoItemInstances[index].transform.Find("Info Name").GetComponent<TextMeshProUGUI>().text = attributes[index].name;
-        visitorInfoItemInstances[index].transform.Find("Progress Bar").GetComponent<Slider>().value = attributes[index].value;
+        visitorInfoItemInstances[index].transform.Find("Progress Bar").GetComponent<Slider>().value = attributes[index].value();
 
         Color c = new Color();
         float greenPercentage;
-        if (attributes[index].value >= 50f) {
-            greenPercentage = (attributes[index].value - 50f) / 50f;
+        if (attributes[index].value() >= 50f)
+        {
+            greenPercentage = (attributes[index].value() - 50f) / 50f;
             c = new Color((1f - greenPercentage), 1, 0);
         }
         else
         {
-            greenPercentage = attributes[index].value / 50f;
+            greenPercentage = attributes[index].value() / 50f;
             c = new Color(1f, greenPercentage, 0);
         }
 

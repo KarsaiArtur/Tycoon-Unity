@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
-using Unity.Properties;
-using Unity.VisualScripting;
+using System.Linq;
 
 public class Building : Placeable, Visitable
 {
@@ -28,7 +26,7 @@ public class Building : Placeable, Visitable
     public override void Awake()
     {
         base.Awake();
-        foreach(PurchasableItems p in purchasableItemPrefabs)
+        foreach (PurchasableItems p in purchasableItemPrefabs)
         {
             var newItem = Instantiate(p);
             purchasableItemInstances.Add(newItem);
@@ -130,11 +128,11 @@ public class Building : Placeable, Visitable
             gridManager.restroomBuildings.Add(this);
         }
         if (HasFood())
-        { 
+        {
             gridManager.foodBuildings.Add(this);
         }
         if (HasDrink())
-        { 
+        {
             gridManager.drinkBuildings.Add(this);
         }
         if (HasEnergy())
@@ -222,20 +220,120 @@ public class Building : Placeable, Visitable
     public void Arrived(Visitor visitor)
     {
         visitor.SetIsVisible(false);
+
+        int index = 0;
+
+        switch (visitor.action)
+        {
+            case "food":
+                index = ChooseFood(visitor);
+                break;
+            case "drink":
+                index = ChooseDrink(visitor);
+                break;
+            case "energy":
+                index = ChooseEnergy(visitor);
+                break;
+            case "restroom":
+                visitor.lowerRestroomNeeds();
+                return;
+            default:
+                return;
+        }
+
+        if (index < purchasableItemInstances.Count)
+        {
+            visitor.PurchaseItem(purchasableItemInstances[index]);
+            Debug.Log(visitor.action + " " + purchasableItemInstances[index].itemName);
+        }
+        else
+        {
+            visitor.happiness -= 10;
+            Debug.Log(visitor.action + " nothing");
+        }
+    }
+
+    int ChooseFood(Visitor visitor)
+    {
+        var probabilities = new List<(int index, float probability)>();
+        float sum = 0;
+        int index = 0;
+
+        foreach (var item in purchasableItemInstances)
+        {
+            if (item.hungerBonus > 10)
+            {
+                sum += 100 - Mathf.Abs(100 - visitor.hunger + item.hungerBonus) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                probabilities.Add((index, sum));
+            }
+            index++;
+        }
+
+        sum += 100;
+        probabilities.Add((index, sum));
+
+        var random = UnityEngine.Random.Range(0, sum);
+        return probabilities.SkipWhile(i => i.probability < random).First().index;
+    }
+
+    int ChooseDrink(Visitor visitor)
+    {
+        var probabilities = new List<(int index, float probability)>();
+        float sum = 0;
+        int index = 0;
+
+        foreach (var item in purchasableItemInstances)
+        {
+            if (item.thirstBonus > 10)
+            {
+                sum += 100 - Mathf.Abs(100 - visitor.thirst + item.thirstBonus) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                probabilities.Add((index, sum));
+            }
+            index++;
+        }
+
+        sum += 100;
+        probabilities.Add((index, sum));
+
+        var random = UnityEngine.Random.Range(0, sum);
+        return probabilities.SkipWhile(i => i.probability < random).First().index;
+    }
+
+    int ChooseEnergy(Visitor visitor)
+    {
+        var probabilities = new List<(int index, float probability)>();
+        float sum = 0;
+        int index = 0;
+
+        foreach (var item in purchasableItemInstances)
+        {
+            if (item.energyBonus > 10)
+            {
+                sum += 100 - Mathf.Abs(100 - visitor.energy + item.energyBonus) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                probabilities.Add((index, sum));
+            }
+            index++;
+        }
+
+        sum += 100;
+        probabilities.Add((index, sum));
+
+        var random = UnityEngine.Random.Range(0, sum);
+        return probabilities.SkipWhile(i => i.probability < random).First().index;
     }
 
     public bool HasFood()
     {
-        if (purchasableItemInstances.Count > 0)
+        if (purchasableItemInstances.Count > 10)
             foreach (var item in purchasableItemInstances)
                 if (item.hungerBonus > 0)
                     return true;
         return false;
     }
-    
+
     public bool HasDrink()
     {
-        if (purchasableItemInstances.Count > 0)
+        if (purchasableItemInstances.Count > 10)
             foreach (var item in purchasableItemInstances)
                 if (item.thirstBonus > 0)
                     return true;
@@ -244,7 +342,7 @@ public class Building : Placeable, Visitable
 
     public bool HasEnergy()
     {
-        if (purchasableItemInstances.Count > 0)
+        if (purchasableItemInstances.Count > 10)
             foreach (var item in purchasableItemInstances)
                 if (item.energyBonus > 0)
                     return true;
@@ -260,6 +358,7 @@ public class Building : Placeable, Visitable
 
     public override void ClickedOn()
     {
+        playerControl.SetFollowedObject(this.gameObject);
         playerControl.DestroyCurrentInfopopup();
         var newInfopopup = new GameObject().AddComponent<BuildingInfopopup>();
         newInfopopup.SetClickable(this);

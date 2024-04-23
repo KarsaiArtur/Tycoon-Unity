@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
+using Cinemachine;
 using static UnityEditor.PlayerSettings;
 
 public class PlayerControl : MonoBehaviour
@@ -14,6 +15,7 @@ public class PlayerControl : MonoBehaviour
     public float cameraSpeed = 10;
     public float zoomSpeed = 10;
     public Camera GameCamera;
+    public CinemachineVirtualCamera VirtualCamera;
     public Placeable m_Selected = null;
     public Placeable curPlaceable = null;
     public int maxZoom = 5;
@@ -28,6 +30,7 @@ public class PlayerControl : MonoBehaviour
     public bool terraForming = false;
     public bool npcControl = false;
     public bool isMouseDown = false;
+    public bool isClickableSelected = false;
     public GameObject gate;
 
     private float maxTerrainHeight = 10;
@@ -68,8 +71,9 @@ public class PlayerControl : MonoBehaviour
     void Start()
     {
         angle = 90 - transform.eulerAngles.y;
-
+        VirtualCamera.transform.rotation = GameCamera.transform.rotation;
         gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
+        GameCamera.GetComponent<CinemachineBrain>().enabled = false;
     }
 
     void Update()
@@ -184,6 +188,12 @@ public class PlayerControl : MonoBehaviour
     void Move()
     {
         Vector2 move = new Vector2(Input.GetAxis("Vertical"), Input.GetAxis("Horizontal"));
+        if(move!= Vector2.zero)
+        {
+            GameCamera.GetComponent<CinemachineBrain>().enabled = false;
+            if(currentInfopopup != null)
+                currentInfopopup.DestroyPanel();
+        }
         transform.position = transform.position + new Vector3(move.x * (float)Math.Cos(angle * 0.0174532925) + move.y * (float)Math.Sin(angle * 0.0174532925), 0, move.x * (float)Math.Sin(angle * 0.0174532925) - move.y * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
 
         MovementSpeedChange();
@@ -438,5 +448,10 @@ public class PlayerControl : MonoBehaviour
         currentInfopopup = infopopup;
     }
 
+    public void SetFollowedObject(GameObject followed)
+    {
+        GameCamera.GetComponent<CinemachineBrain>().enabled = true;
+        VirtualCamera.Follow = followed.transform;
+    }
 
 }

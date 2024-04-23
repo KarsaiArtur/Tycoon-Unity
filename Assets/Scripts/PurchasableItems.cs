@@ -12,6 +12,7 @@ public class PurchasableItems : MonoBehaviour
     public float hungerBonus;
     public float thirstBonus;
     public float energyBonus;
+    public float probabilityToBuy = 1;
 
     public static float minAndMaxPriceLimit = 0.2f;
     public static float changingLimit = 5;
