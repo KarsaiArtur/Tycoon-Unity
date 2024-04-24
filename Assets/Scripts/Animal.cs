@@ -27,7 +27,7 @@ public class Animal : Placeable
     public float thirst = 100;
     public float restroomNeeds = 100;
     public float happiness = 100;
-    public float health = 100;
+    public float health = 25;
 
     public float hungerDetriment = 0.25f;
     public float thirstDetriment = 0.5f;
@@ -36,7 +36,7 @@ public class Animal : Placeable
     public float healthDetriment = 0.25f;
     //age, gender, pregnancy
 
-    public bool isIll = false;
+    public bool isSick = false;
 
     public string action = "";
 
@@ -77,6 +77,7 @@ public class Animal : Placeable
     {
         transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
         exhibit = gridManager.GetGrid(transform.position).exhibit;
+        exhibit.animals.Add(this);
         agent.Warp(transform.position);
         placed = true;
 
@@ -95,7 +96,7 @@ public class Animal : Placeable
         thirst = UnityEngine.Random.Range(50, 100);
         restroomNeeds = UnityEngine.Random.Range(50, 100);
         happiness = UnityEngine.Random.Range(50, 100);
-        health = UnityEngine.Random.Range(75, 100);
+        //health = UnityEngine.Random.Range(75, 100);
 
         prevDay = CalendarManager.instance.currentDate;
     }
@@ -124,7 +125,7 @@ public class Animal : Placeable
                 health = health > healthDetriment ? health - healthDetriment : 0;
             if (exhibit.animalDroppings.Count > exhibit.gridList.Count)
                 health = health > healthDetriment ? health - healthDetriment : 0;
-            if (isIll)
+            if (isSick)
                 health = health > healthDetriment * 5 ? health - healthDetriment * 5 : 0;
 
             if (restroomNeeds == 0)
@@ -143,7 +144,7 @@ public class Animal : Placeable
             prevDay = CalendarManager.instance.currentDate;
             if (UnityEngine.Random.Range(0, 100) < 5)
             {
-                isIll = true;
+                isSick = true;
             }
         }
 
@@ -253,7 +254,7 @@ public class Animal : Placeable
 
     public override void ClickedOn()
     {
-        playerControl.SetFollowedObject(this.gameObject);
+        playerControl.SetFollowedObject(this.gameObject, 5);
         playerControl.DestroyCurrentInfopopup();
         var newInfopopup = new GameObject().AddComponent<AnimalInfoPopup>();
         newInfopopup.SetClickable(this);

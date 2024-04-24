@@ -61,6 +61,8 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
     }
     public void ClickedOn()
     {
+        Debug.Log(gameObject);
+        playerControl.SetFollowedObject(this.gameObject, 15);
         playerControl.DestroyCurrentInfopopup();
         var newInfopopup = new GameObject().AddComponent<GateInfopopup>();
         newInfopopup.SetClickable(this);

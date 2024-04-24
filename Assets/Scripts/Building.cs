@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.Linq;
+using UnityEngine.AI;
 
 public class Building : Placeable, Visitable
 {
@@ -159,6 +160,8 @@ public class Building : Placeable, Visitable
 
         FindPaths();
         DecideIfReachable();
+        gameObject.GetComponent<BoxCollider>().isTrigger = false;
+        gameObject.GetComponent<NavMeshObstacle>().enabled = true;
     }
 
     public void DecideIfReachable()
@@ -358,7 +361,7 @@ public class Building : Placeable, Visitable
 
     public override void ClickedOn()
     {
-        playerControl.SetFollowedObject(this.gameObject);
+        playerControl.SetFollowedObject(this.gameObject, 7);
         playerControl.DestroyCurrentInfopopup();
         var newInfopopup = new GameObject().AddComponent<BuildingInfopopup>();
         newInfopopup.SetClickable(this);

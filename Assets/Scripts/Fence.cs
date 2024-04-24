@@ -95,22 +95,31 @@ public class Fence : Placeable
         {
             HashSet<Grid> tempGrids = BFS(grid1, gridManager.startingGrid);
             GameObject gateInstance = Instantiate(playerControl.gate, playerControl.m_Selected.transform.position, transform.rotation);
+            Exhibit exhibit = gateInstance.AddComponent<Exhibit>();
             gateInstance.tag = "Placed";
 
             if (tempGrids != null)
             {
-                Exhibit exhibit = new Exhibit(tempGrids);
+                exhibit.SetExhibit(tempGrids);
                 gridManager.exhibits.Add(exhibit);
                 exhibit.exitGrid = grid1;
             }
-
-            tempGrids = BFS(grid2, gridManager.startingGrid);
-            if (tempGrids != null)
+            else
             {
-                Exhibit exhibit = new Exhibit(tempGrids);
-                gridManager.exhibits.Add(exhibit);
-                exhibit.exitGrid = grid2;
+                tempGrids = BFS(grid2, gridManager.startingGrid);
+                if (tempGrids != null)
+                {
+                    exhibit.SetExhibit(tempGrids);
+                    gridManager.exhibits.Add(exhibit);
+                    exhibit.exitGrid = grid2;
+                }
             }
+            playerControl.SetFollowedObject(gateInstance.gameObject, 7);
+            var placeable = gateInstance.GetComponent<Placeable>();
+            placeable.Place(Vector3.zero);
+            placeable.Paid();
+            ZooManager.instance.ChangeMoney(placeable.placeablePrice);
+            DestroyPlaceable();
         }
     }
 

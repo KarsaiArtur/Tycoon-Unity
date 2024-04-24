@@ -265,7 +265,7 @@ public class PlayerControl : MonoBehaviour
     public void ChangeFence(int index)
     {
         fenceIndex = index;
-        Destroy(m_Selected.gameObject);
+        m_Selected.DestroyPlaceable();
         SpawnFence(index);
         for (int i = 0; i < objectTimesRotated; i++)
         {
@@ -448,10 +448,11 @@ public class PlayerControl : MonoBehaviour
         currentInfopopup = infopopup;
     }
 
-    public void SetFollowedObject(GameObject followed)
+    public void SetFollowedObject(GameObject followed, float cameraDistance)
     {
         GameCamera.GetComponent<CinemachineBrain>().enabled = true;
         VirtualCamera.Follow = followed.transform;
+        VirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_CameraDistance = cameraDistance;
     }
 
 }

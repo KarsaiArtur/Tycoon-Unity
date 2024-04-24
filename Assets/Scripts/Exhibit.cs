@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Exhibit : Visitable
+public class Exhibit : MonoBehaviour, Visitable, Clickable
 {
     public List<Grid> gridList;
     public List<Grid> paths;
@@ -9,11 +9,17 @@ public class Exhibit : Visitable
     public List<Animal> animals = new List<Animal>();
     public List<int> animalDroppings = new();
     public Grid exitGrid;
+    PlayerControl playerControl;
 
     public float food = 1000;
     public float water = 1000;
 
-    public Exhibit(HashSet<Grid> grids)
+    void Start()
+    {
+        playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
+    }
+
+    public void SetExhibit(HashSet<Grid> grids)
     {
         gridList = new List<Grid>(grids);
         paths = new List<Grid>();
@@ -94,5 +100,19 @@ public class Exhibit : Visitable
     {
         GridManager.instance.reachableVisitables.Add(this);
         GridManager.instance.reachableExhibits.Add(this);
+    }
+
+    public void ClickedOn()
+    {
+        playerControl.SetFollowedObject(this.gameObject, 7);
+        playerControl.DestroyCurrentInfopopup();
+        var newInfopopup = new GameObject().AddComponent<ExhibitInfopopup>();
+        newInfopopup.SetClickable(this);
+        playerControl.SetInfopopup(newInfopopup);
+    }
+
+    public string GetName()
+    {
+        return exhibitName;
     }
 }

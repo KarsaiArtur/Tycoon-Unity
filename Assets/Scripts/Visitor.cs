@@ -298,7 +298,7 @@ public class Visitor : MonoBehaviour, Clickable
 
     public void ClickedOn()
     {
-        playerControl.SetFollowedObject(this.gameObject);
+        playerControl.SetFollowedObject(this.gameObject, 5);
         playerControl.DestroyCurrentInfopopup();
         var newInfopopup = new GameObject().AddComponent<VisitorInfopopup>();
         newInfopopup.SetClickable(this);

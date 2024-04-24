@@ -19,7 +19,8 @@ public class EntranceChunk : BackGroundChunk
             }
         }
 
-        GameObject entrance = Instantiate(prefabs[2], center, transform.rotation);
+        Vector3 entrancePos = new Vector3(center.x + elementWidth / 2, center.y, center.z + 3);
+        GameObject entrance = Instantiate(prefabs[2], entrancePos, transform.rotation);
         entrance.transform.parent = this.transform;
 
         for (int i = 0; i < 10; i++)

@@ -90,7 +90,6 @@ public class Placeable : MonoBehaviour, Clickable
 
     public void Paid()
     {
-
         ZooManager.instance.ChangeMoney(-placeablePrice);
         currentPlacingPriceInstance.color = Color.red;
         float distance = 2.0f;
