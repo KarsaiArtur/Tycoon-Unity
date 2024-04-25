@@ -7,8 +7,22 @@ using UnityEngine.AI;
 
 public class Vet : Staff
 {
+    Animal animalToHeal;
+
+    public void Update()
+    {
+        base.Update();
+
+        if (destinationTypeIndex == 2)
+        {
+            animalToHeal.agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
+        }
+    }
+
     public override void FindJob()
     {
+        isAvailable = false;
+
         var animalSickness = new List<(Exhibit exhibit, Animal animal, float health)>();
         foreach (Exhibit exhibit in GridManager.instance.exhibits)
         {
@@ -29,16 +43,23 @@ public class Vet : Staff
     public void HealAnimal(List<(Exhibit exhibit, Animal animal, float health)> animalSickness)
     {
         animalSickness = animalSickness.OrderBy(x => x.health).ToList();
-        Animal tempAnimal = animalSickness.First().animal;
-        if (tempAnimal.health < 75)
+        animalToHeal = animalSickness.First().animal;
+        if (animalToHeal.health < 75)
         {
-            StaffManager.instance.availableStaff.Remove(this);
-
             float healthRecovered = Random.Range(40, 60);
-            tempAnimal.health = tempAnimal.health + healthRecovered > 100 ? 100 : tempAnimal.health + healthRecovered;
-            tempAnimal.isSick = false;
+            animalToHeal.health = animalToHeal.health + healthRecovered > 100 ? 100 : animalToHeal.health + healthRecovered;
+            animalToHeal.isSick = false;
+            animalToHeal.healthDetriment = 0;
 
+            destinationTypeIndex = 0;
             FindDestination(animalSickness.First().exhibit);
         }
+        else
+            isAvailable = true;
+    }
+
+    public override void FindInsideDestination()
+    {
+        agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
     }
 }

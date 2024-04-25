@@ -138,8 +138,6 @@ MonoBehaviour:
   subMenuInstance: {fileID: 0}
   placeables:
   - {fileID: 9180999491319586247, guid: c77fd55fc534a3543b53a44ab443d53d, type: 3}
-  - {fileID: 2548022094330047049, guid: ea2af87f8d07b52458eb9f260d74d5f9, type: 3}
-  - {fileID: 8619175740054138018, guid: 94d57a6ef274ff94ebbd23970f583c43, type: 3}
 --- !u!114 &-3909907454791035505
 MonoBehaviour:
   m_ObjectHideFlags: 0

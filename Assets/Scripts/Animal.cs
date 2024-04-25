@@ -27,7 +27,7 @@ public class Animal : Placeable
     public float thirst = 100;
     public float restroomNeeds = 100;
     public float happiness = 100;
-    public float health = 25;
+    public float health = 100;
 
     public float hungerDetriment = 0.25f;
     public float thirstDetriment = 0.5f;
@@ -96,7 +96,7 @@ public class Animal : Placeable
         thirst = UnityEngine.Random.Range(50, 100);
         restroomNeeds = UnityEngine.Random.Range(50, 100);
         happiness = UnityEngine.Random.Range(50, 100);
-        //health = UnityEngine.Random.Range(75, 100);
+        health = UnityEngine.Random.Range(75, 100);
 
         prevDay = CalendarManager.instance.currentDate;
     }

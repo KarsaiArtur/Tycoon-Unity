@@ -455,4 +455,10 @@ public class PlayerControl : MonoBehaviour
         VirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_CameraDistance = cameraDistance;
     }
 
+
+    public NavMeshSurface test;
+    public void Reload()
+    {
+        test.BuildNavMesh();
+    }
 }

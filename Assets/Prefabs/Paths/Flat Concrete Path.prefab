@@ -130,9 +130,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControl: {fileID: 0}
+  gridManager: {fileID: 0}
   placeableName: Concrete Path
   placeablePrice: 30
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 9cb50b8fd853ac545b39fce09d1020f7, type: 3}
+  currentPlacingPrice: {fileID: 0}
+  currentPlacingPriceInstance: {fileID: 0}
   index: 0
   otherVariant: {fileID: 1622757161807058835, guid: 8588ad3f34700f94981b48ff0a306efe, type: 3}
 --- !u!65 &679954017552097056

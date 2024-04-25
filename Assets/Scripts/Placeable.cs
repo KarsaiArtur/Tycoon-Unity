@@ -74,7 +74,7 @@ public class Placeable : MonoBehaviour, Clickable
 
     }
 
-    public string GetName()
+    public virtual string GetName()
     {
         return placeableName;
     }
@@ -107,5 +107,15 @@ public class Placeable : MonoBehaviour, Clickable
         }
         if (currentPlacingPriceInstance != null)
             Destroy(currentPlacingPriceInstance.gameObject);
+    }
+
+    public virtual string GetPrice()
+    {
+        return placeablePrice.ToString();
+    }
+
+    public virtual Sprite GetIcon()
+    {
+        return icon;
     }
 }

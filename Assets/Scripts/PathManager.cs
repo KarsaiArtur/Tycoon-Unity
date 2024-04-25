@@ -6,7 +6,6 @@ using static UnityEditor.PlayerSettings;
 
 public class PathManager : Placeable
 {
-    public Material[] materials;
     public Path pathPrefab;
     public List<Path> paths = new List<Path>();
     public int pathIndex = 0;
@@ -115,9 +114,27 @@ public class PathManager : Placeable
 
     public override void ChangeMaterial(int index)
     {
+        
+        Material newMaterial = new Material(pathPrefab.transform.GetChild(0).GetComponent<MeshRenderer>().sharedMaterials[0]);
+        Color customColor;
+        switch (index)
+        {
+            case 1:
+                newMaterial.shader = Shader.Find("Standard (Specular setup)");
+                customColor = new Color(0.2f, 1f, 0.2f, 1f);
+                newMaterial.SetColor("_Color", customColor);
+                newMaterial.SetColor("_SpecColor", customColor);
+                break;
+            case 2:
+                newMaterial.shader = Shader.Find("Standard (Specular setup)");
+                customColor = new Color(1f, 0.2f, 0.2f, 1f);
+                newMaterial.SetColor("_Color", customColor);
+                newMaterial.SetColor("_SpecColor", customColor);
+                break;
+        }
         foreach (var path in paths)
         {
-            path.gameObject.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().material = materials[index];
+            path.gameObject.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().material = newMaterial;
         }
         if(index == 0)
         {
@@ -211,5 +228,20 @@ public class PathManager : Placeable
             Destroy(path.gameObject);
         }
         base.DestroyPlaceable();
+    }
+
+    public override string GetPrice()
+    {
+        return pathPrefab.placeablePrice.ToString();
+    }
+
+    public override Sprite GetIcon()
+    {
+        return pathPrefab.icon;
+    }
+
+    public override string GetName()
+    {
+        return pathPrefab.GetName();
     }
 }

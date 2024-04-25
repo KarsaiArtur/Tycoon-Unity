@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class Exhibit : MonoBehaviour, Visitable, Clickable
 {
@@ -9,10 +10,12 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public List<Animal> animals = new List<Animal>();
     public List<int> animalDroppings = new();
     public Grid exitGrid;
+    public Grid entranceGrid;
     PlayerControl playerControl;
 
     public float food = 1000;
     public float water = 1000;
+    bool isOpen = false;
 
     void Start()
     {
@@ -85,6 +88,22 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
                 visitor.happiness += animal.happiness / 25;
     }
 
+
+    public void StaffArrived(Staff staff)
+    {
+        if (isOpen)
+        {
+            CloseGate();
+            isOpen = false;
+        }
+        else
+        {
+            OpenGate();
+            isOpen = true;
+        }
+    }
+
+
     public Vector3 ChoosePosition(Grid grid)
     {
         float offsetX = UnityEngine.Random.Range(0, 1.0f);
@@ -114,5 +133,17 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public string GetName()
     {
         return exhibitName;
+    }
+
+    public void OpenGate()
+    {
+        var gateObstacle = gameObject.GetComponent<NavMeshObstacle>();
+        gateObstacle.center = new Vector3(gateObstacle.center.x - 1, gateObstacle.center.y, gateObstacle.center.z);
+    }
+
+    public void CloseGate()
+    {
+        var gateObstacle = gameObject.GetComponent<NavMeshObstacle>();
+        gateObstacle.center = new Vector3(gateObstacle.center.x + 1, gateObstacle.center.y, gateObstacle.center.z);
     }
 }

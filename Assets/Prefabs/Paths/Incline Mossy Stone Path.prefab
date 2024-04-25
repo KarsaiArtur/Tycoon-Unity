@@ -50,8 +50,10 @@ MonoBehaviour:
   placeableName: 
   placeablePrice: 10
   icon: {fileID: 0}
+  currentPlacingPrice: {fileID: 0}
+  currentPlacingPriceInstance: {fileID: 0}
   index: 0
-  otherVariant: {fileID: 0}
+  otherVariant: {fileID: 7551650816147809122, guid: 5792f775bb6100d4d94648f95e69e6aa, type: 3}
 --- !u!1 &4549912904737251565
 GameObject:
   m_ObjectHideFlags: 0

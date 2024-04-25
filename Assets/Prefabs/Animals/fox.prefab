@@ -457,7 +457,7 @@ MonoBehaviour:
   gridManager: {fileID: 0}
   placeableName: 
   placeablePrice: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   materials:
@@ -465,14 +465,19 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
   surface: {fileID: 0}
   agent: {fileID: 7843250570019648372}
+  exhibit: {fileID: 0}
   hunger: 100
   thirst: 100
-  energy: 100
+  restroomNeeds: 100
   happiness: 100
+  health: 100
   hungerDetriment: 0.25
   thirstDetriment: 0.5
-  energyDetriment: 0.25
+  restroomNeedsDetriment: 0.25
   happinessDetriment: 0.25
+  healthDetriment: 0.25
+  isSick: 0
+  action: 
 --- !u!54 &7017745945639587569
 Rigidbody:
   m_ObjectHideFlags: 0

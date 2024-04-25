@@ -103,6 +103,7 @@ public class Fence : Placeable
                 exhibit.SetExhibit(tempGrids);
                 gridManager.exhibits.Add(exhibit);
                 exhibit.exitGrid = grid1;
+                exhibit.entranceGrid = grid1.trueNeighbours[(timesRotated + 2) % 4];
             }
             else
             {
@@ -112,6 +113,7 @@ public class Fence : Placeable
                     exhibit.SetExhibit(tempGrids);
                     gridManager.exhibits.Add(exhibit);
                     exhibit.exitGrid = grid2;
+                    exhibit.entranceGrid = grid2.trueNeighbours[(timesRotated + 2) % 4];
                 }
             }
             playerControl.SetFollowedObject(gateInstance.gameObject, 7);
