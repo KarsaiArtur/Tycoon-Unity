@@ -40,6 +40,7 @@ public class PlayerControl : MonoBehaviour
     private float mouseDistnace = 0;
     public List<Chunk> modifiedChunks = new List<Chunk>();
     public InfoPopup currentInfopopup;
+    public bool stopMovement = false;
 
     public void ChangeTerraformer()
     {
@@ -78,24 +79,27 @@ public class PlayerControl : MonoBehaviour
 
     void Update()
     {
-        Move();
-        Zoom();
-        RotateObject();
+        if (!stopMovement)
+        {
+            Move();
+            Zoom();
+            RotateObject();
 
-        if (!MouseOverUI())
-        {
-            if (terraForming)
-                Terraform(1, 1);
-            else if (npcControl)
-                MoveNpc();
-            else
-                PlaceObject();
-        }
-        else if(MouseOverUI() && Input.GetMouseButtonUp(0) && m_Selected!= null)
-        {
-            isMouseDown = false;
-            m_Selected.DestroyPlaceable();
-            Spawn(curPlaceable);
+            if (!MouseOverUI())
+            {
+                if (terraForming)
+                    Terraform(1, 1);
+                else if (npcControl)
+                    MoveNpc();
+                else
+                    PlaceObject();
+            }
+            else if (MouseOverUI() && Input.GetMouseButtonUp(0) && m_Selected != null)
+            {
+                isMouseDown = false;
+                m_Selected.DestroyPlaceable();
+                Spawn(curPlaceable);
+            }
         }
     }
 
@@ -122,8 +126,8 @@ public class PlayerControl : MonoBehaviour
                 {
                     m_Selected.SetTag("Placed");
                     m_Selected.ChangeMaterial(0);
-                    m_Selected.FinalPlace();
                     m_Selected.Paid();
+                    m_Selected.FinalPlace();
 
                     Spawn(curPlaceable);
                 }
@@ -162,7 +166,7 @@ public class PlayerControl : MonoBehaviour
             {
                 if (hit.collider.CompareTag("Terrain"))
                 {
-                    m_Selected.Place(hit.point);
+                    m_Selected.Place(hit.point);    
                     break;
                 }
             }
@@ -224,6 +228,7 @@ public class PlayerControl : MonoBehaviour
             zoom = 0;
         }
         transform.Translate(Vector3.forward * zoom * zoomSpeed);
+        VirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_CameraDistance -= zoom * zoomSpeed;
     }
 
     public void HandleSelection()
@@ -246,14 +251,17 @@ public class PlayerControl : MonoBehaviour
 
     public void Spawn(Placeable placeable)
     {
-        curPlaceable = placeable;
-        var newSelected = Instantiate(placeable, new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
-        m_Selected = newSelected;
-        if (m_Selected.gameObject.CompareTag("Fence") && fenceIndex != 0)
-            ChangeFence(fenceIndex);
-        else
-            for (int i = 0; i < objectTimesRotated; i++)
-                m_Selected.RotateY(90);
+        if (!stopMovement)
+        {
+            curPlaceable = placeable;
+            var newSelected = Instantiate(placeable, new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
+            m_Selected = newSelected;
+            if (m_Selected.gameObject.CompareTag("Fence") && fenceIndex != 0)
+                ChangeFence(fenceIndex);
+            else
+                for (int i = 0; i < objectTimesRotated; i++)
+                    m_Selected.RotateY(90);
+        }
     }
 
     public void SpawnFence(int i)

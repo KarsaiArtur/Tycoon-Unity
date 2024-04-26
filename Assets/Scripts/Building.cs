@@ -131,10 +131,6 @@ public class Building : Placeable, Visitable
     public override void FinalPlace()
     {
         gridManager.buildings.Add(this);
-        if (hasRestroom)
-        {
-            gridManager.restroomBuildings.Add(this);
-        }
         if (HasFood())
         {
             gridManager.foodBuildings.Add(this);
@@ -146,6 +142,14 @@ public class Building : Placeable, Visitable
         if (HasEnergy())
         {
             gridManager.energyBuildings.Add(this);
+        }
+        if (hasRestroom)
+        {
+            gridManager.restroomBuildings.Add(this);
+        }
+        if (HasHappiness())
+        {
+            gridManager.happinessBuildings.Add(this);
         }
 
         gridList = new List<Grid>();
@@ -169,6 +173,16 @@ public class Building : Placeable, Visitable
         DecideIfReachable();
         gameObject.GetComponent<BoxCollider>().isTrigger = false;
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
+
+        foreach(var child in GetComponentsInChildren<BoxCollider>())
+        {
+            if (child.tag.Equals("Frame"))
+            {
+                Destroy(child.gameObject);
+                break;
+            }
+        }
+        
     }
 
     public void DecideIfReachable()
@@ -231,7 +245,7 @@ public class Building : Placeable, Visitable
     {
         visitor.SetIsVisible(false);
 
-        int index = 0;
+        int index;
 
         switch (visitor.action)
         {
@@ -245,8 +259,11 @@ public class Building : Placeable, Visitable
                 index = ChooseEnergy(visitor);
                 break;
             case "restroom":
-                visitor.lowerRestroomNeeds();
+                visitor.LowerRestroomNeeds();
                 return;
+            case "happiness":
+                index = ChooseHappiness(visitor);
+                break;
             default:
                 return;
         }
@@ -330,6 +347,29 @@ public class Building : Placeable, Visitable
         return probabilities.SkipWhile(i => i.probability < random).First().index;
     }
 
+    int ChooseHappiness(Visitor visitor)
+    {
+        var probabilities = new List<(int index, float probability)>();
+        float sum = 0;
+        int index = 0;
+
+        foreach (var item in purchasableItemInstances)
+        {
+            if (item.happinessBonus > 10)
+            {
+                sum += 100 - Mathf.Abs(100 - visitor.happiness + item.happinessBonus) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                probabilities.Add((index, sum));
+            }
+            index++;
+        }
+
+        sum += 100;
+        probabilities.Add((index, sum));
+
+        var random = UnityEngine.Random.Range(0, sum);
+        return probabilities.SkipWhile(i => i.probability < random).First().index;
+    }
+
     public bool HasFood()
     {
         if (purchasableItemInstances.Count > 0)
@@ -353,6 +393,15 @@ public class Building : Placeable, Visitable
         if (purchasableItemInstances.Count > 0)
             foreach (var item in purchasableItemInstances)
                 if (item.energyBonus > 10)
+                    return true;
+        return false;
+    }
+
+    public bool HasHappiness()
+    {
+        if (purchasableItemInstances.Count > 0)
+            foreach (var item in purchasableItemInstances)
+                if (item.happinessBonus > 10)
                     return true;
         return false;
     }
@@ -394,6 +443,10 @@ public class Building : Placeable, Visitable
             gridManager.reachableEnergyBuildings.Add(this);
         }
         if (hasRestroom)
+        {
+            gridManager.reachableRestroomBuildings.Add(this);
+        }
+        if (HasHappiness())
         {
             gridManager.reachableRestroomBuildings.Add(this);
         }

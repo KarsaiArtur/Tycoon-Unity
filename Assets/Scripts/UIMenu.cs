@@ -22,6 +22,7 @@ public class UIMenu : MonoBehaviour
     public GameObject infoPanelPrefab;
     public PurchasableItemUi purchasableItemUIPrefab;
     public GameObject visitorInfoItemPrefab;
+    public List<GameObject> exhibitCreateWindows;
 
     private void Awake()
     {

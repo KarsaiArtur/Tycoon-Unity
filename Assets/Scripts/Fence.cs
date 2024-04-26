@@ -1,7 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Fence : Placeable
 {
@@ -96,6 +100,8 @@ public class Fence : Placeable
             HashSet<Grid> tempGrids = BFS(grid1, gridManager.startingGrid);
             GameObject gateInstance = Instantiate(playerControl.gate, playerControl.m_Selected.transform.position, transform.rotation);
             Exhibit exhibit = gateInstance.AddComponent<Exhibit>();
+            CreateExhibitWindow(exhibit);
+            UnityEditorInternal.ComponentUtility.MoveComponentUp(exhibit);
             gateInstance.tag = "Placed";
 
             if (tempGrids != null)
@@ -113,14 +119,15 @@ public class Fence : Placeable
                     exhibit.SetExhibit(tempGrids);
                     gridManager.exhibits.Add(exhibit);
                     exhibit.exitGrid = grid2;
-                    exhibit.entranceGrid = grid2.trueNeighbours[(timesRotated + 2) % 4];
+                    exhibit.entranceGrid = grid2.trueNeighbours[timesRotated % 4];
                 }
             }
             playerControl.SetFollowedObject(gateInstance.gameObject, 7);
             var placeable = gateInstance.GetComponent<Placeable>();
+            placeable.placeablePrice = placeablePrice;
             placeable.Place(Vector3.zero);
             placeable.Paid();
-            ZooManager.instance.ChangeMoney(placeable.placeablePrice);
+            ZooManager.instance.ChangeMoney(placeablePrice);
             DestroyPlaceable();
         }
     }
@@ -188,4 +195,25 @@ public class Fence : Placeable
         gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<MeshRenderer>().material = materials[index];
         gameObject.transform.GetChild(0).GetChild(1).gameObject.GetComponent<MeshRenderer>().material = materials[index];
     }*/
+
+    void CreateExhibitWindow(Exhibit exhibit)
+    {
+        playerControl.stopMovement = true;
+        playerControl.DestroyPlaceableInHand();
+        GameObject exhibitCreateWindow = Instantiate(UIMenu.Instance.exhibitCreateWindows[UnityEngine.Random.Range(0, 3)]);
+        exhibitCreateWindow.transform.SetParent(playerControl.canvas.transform);
+        exhibitCreateWindow.transform.localPosition = Vector3.zero;
+
+        var placeholder = exhibitCreateWindow.transform.GetChild(0).Find("Inputfield").Find("Text Area").Find("Placeholder").GetComponent<TextMeshProUGUI>();
+        placeholder.text = "Exhibit" + Exhibit.exhibitCount++;
+        var inputfield = exhibitCreateWindow.transform.GetChild(0).Find("Inputfield").GetComponent<TMP_InputField>();
+        exhibitCreateWindow.transform.GetChild(0).Find("Submit").GetComponent<Button>().
+            onClick.AddListener(
+            () => {
+                exhibit.exhibitName = String.IsNullOrWhiteSpace(inputfield.text) ? placeholder.text : inputfield.text;
+                Destroy(exhibitCreateWindow.gameObject);
+                playerControl.stopMovement = false;
+                playerControl.Spawn(playerControl.curPlaceable);
+            });
+    }
 }

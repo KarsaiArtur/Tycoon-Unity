@@ -84,7 +84,6 @@ public class Placeable : MonoBehaviour, Clickable
 
     public virtual void ChangeMaterial(int index)
     {
-        //Debug.Log("OK");
         if(previousMaterialIndex != index)
         {
             int k = 0;
@@ -169,14 +168,18 @@ public class Placeable : MonoBehaviour, Clickable
         {
             case 1:
                 //newMaterial.shader = Shader.Find("Standard (Specular setup)");
+                Debug.unityLogger.logEnabled = false;
                 newMaterial.shader = Shader.Find("Standard");
+                Debug.unityLogger.logEnabled = true;
                 customColor = new Color(0.2f, 1f, 0.2f, 1f);
                 newMaterial.SetColor("_Color", customColor);
                 //newMaterial.SetColor("_SpecColor", customColor);
                 break;
             case 2:
                 //newMaterial.shader = Shader.Find("Standard (Specular setup)");
+                Debug.unityLogger.logEnabled = false;
                 newMaterial.shader = Shader.Find("Standard");
+                Debug.unityLogger.logEnabled = true;
                 customColor = new Color(1f, 0.2f, 0.2f, 1f);
                 newMaterial.SetColor("_Color", customColor);
                 //newMaterial.SetColor("_SpecColor", customColor);

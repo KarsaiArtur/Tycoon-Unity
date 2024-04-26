@@ -13,6 +13,7 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public Grid entranceGrid;
     PlayerControl playerControl;
     bool isOpen = false;
+    public static int exhibitCount = 0;
 
     public float food = 1000;
     public float water = 1000;
@@ -85,9 +86,8 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     {
         if (animals.Count > 0)
             foreach (Animal animal in animals)
-                visitor.happiness += animal.happiness / 25;
+                visitor.happiness = visitor.happiness + animal.happiness / 25 > 100 ? 100 : visitor.happiness + animal.happiness / 25;
     }
-
 
     public void StaffArrived(int action)
     {
@@ -111,7 +111,6 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
         }
     }
 
-
     public Vector3 ChoosePosition(Grid grid)
     {
         float offsetX = UnityEngine.Random.Range(0, 1.0f);
@@ -123,10 +122,11 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     {
         return gridList[0];
     }
+
     public void AddToReachableLists()
     {
         GridManager.instance.reachableVisitables.Add(this);
-        GridManager.instance.reachableExhibits.Add(this);
+        GridManager.instance.reachableHappinessBuildings.Add(this);
     }
 
     public void ClickedOn()

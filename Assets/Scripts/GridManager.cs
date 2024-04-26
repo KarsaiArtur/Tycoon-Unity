@@ -35,11 +35,12 @@ public class GridManager : MonoBehaviour
     public List<Visitable> drinkBuildings;
     public List<Visitable> energyBuildings;
     public List<Visitable> restroomBuildings;
+    public List<Visitable> happinessBuildings;
     public List<Visitable> reachableFoodBuildings;
     public List<Visitable> reachableDrinkBuildings;
     public List<Visitable> reachableEnergyBuildings;
     public List<Visitable> reachableRestroomBuildings;
-    public List<Visitable> reachableExhibits;
+    public List<Visitable> reachableHappinessBuildings;
     public List<Visitable> reachableVisitables;
     public Grid startingGrid;
 
@@ -77,11 +78,12 @@ public class GridManager : MonoBehaviour
         drinkBuildings = new List<Visitable>();
         energyBuildings = new List<Visitable>();
         restroomBuildings = new List<Visitable>();
+        happinessBuildings = new List<Visitable>();
         reachableFoodBuildings = new List<Visitable>();
         reachableDrinkBuildings = new List<Visitable>();
         reachableEnergyBuildings = new List<Visitable>();
         reachableRestroomBuildings = new List<Visitable>();
-        reachableExhibits = new List<Visitable>();
+        reachableHappinessBuildings = new List<Visitable>();
         reachableVisitables = new List<Visitable> { ZooManager.instance == null ? new GameObject().AddComponent<ZooManager>() : ZooManager.instance };
 
         startingGrid = GetGrid(new Vector3(35, 0, 50));
@@ -242,14 +244,14 @@ public class GridManager : MonoBehaviour
         return grids[(int)Mathf.Floor(position.x) - elementWidth, (int)Mathf.Floor(position.z) - elementWidth];
     }
 
-    void OnDrawGizmosSelected()
-    {
-        foreach (Vector3 vec3 in coords)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(vec3, .1f);
-        }
-    }
+    //void OnDrawGizmosSelected()
+    //{
+    //    foreach (Vector3 vec3 in coords)
+    //    {
+    //        Gizmos.color = Color.red;
+    //        Gizmos.DrawSphere(vec3, .1f);
+    //    }
+    //}
 
     private void SetEdgeHeight()
     {

@@ -16,7 +16,8 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
     PlayerControl playerControl;
 
     public List<float> latestVisitorHappinesses = new();
-    public float reputation = 50;
+    int listSizeLimit = 25;
+    public float reputation = 75;
 
     public void Start()
     {
@@ -32,10 +33,12 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
     public void Arrived(Visitor visitor)
     {
         latestVisitorHappinesses.Add(visitor.happiness);
-        if (latestVisitorHappinesses.Count > 10)
+        if (latestVisitorHappinesses.Count > listSizeLimit)
+        {
+            reputation -= latestVisitorHappinesses[0] / listSizeLimit;
+            reputation += visitor.happiness / listSizeLimit;
             latestVisitorHappinesses.RemoveAt(0);
-
-        reputation = latestVisitorHappinesses.Average();
+        }
 
         if (playerControl.currentInfopopup != null)
         {

@@ -5453,6 +5453,7 @@ MonoBehaviour:
   gate: {fileID: 232319869438825228, guid: b6c72ed45728ae546ac9c1953d9a770d, type: 3}
   modifiedChunks: []
   currentInfopopup: {fileID: 0}
+  stopMovement: 0
   prefabs:
   - {fileID: 9180999491319586247, guid: c77fd55fc534a3543b53a44ab443d53d, type: 3}
   - {fileID: 2548022094330047049, guid: ea2af87f8d07b52458eb9f260d74d5f9, type: 3}
@@ -7860,6 +7861,10 @@ MonoBehaviour:
   infoPanelPrefab: {fileID: 6859910806340130846, guid: 466aee2c656ca944eba2c75c208904ad, type: 3}
   purchasableItemUIPrefab: {fileID: 3816408874727558576, guid: 4da0d9f27636e724b87f989e71009968, type: 3}
   visitorInfoItemPrefab: {fileID: 3715471709902465084, guid: 5a9a418745ddbe74d975b2293ba73240, type: 3}
+  exhibitCreateWindows:
+  - {fileID: 2016135402113569128, guid: b6aa542f27738fe429aba40f75f2f44f, type: 3}
+  - {fileID: 6410034903815843560, guid: 05c9c78e62dd0154fa1cbbe09c43547f, type: 3}
+  - {fileID: 8012818236100604548, guid: 97704fd455ca4f448b189a125c88c190, type: 3}
   button: {fileID: 1402598303060906925, guid: 81fd13ef955bfa84ebd425e468ba6450, type: 3}
 --- !u!1 &1463805437
 GameObject:

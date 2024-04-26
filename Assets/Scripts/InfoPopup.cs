@@ -35,7 +35,7 @@ public class InfoPopup : MonoBehaviour
     public virtual void Initialize()
     {
         infoPanelInstance = Instantiate(UIMenu.Instance.infoPanelPrefab);
-        infoPanelInstance.transform.parent = playerControl.canvas.transform;
+        infoPanelInstance.transform.SetParent(playerControl.canvas.transform);
     }
 
     public virtual void DestroyPanel()

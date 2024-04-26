@@ -10,10 +10,11 @@ public class Visitor : MonoBehaviour, Clickable
     public NavMeshSurface surface;
     public NavMeshAgent agent;
     bool atDestination = true;
+    bool arrived = false;
     bool placed = false;
     Visitable destinationVisitable;
     PlayerControl playerControl;
-    List<Visitable> unvisitedExhibits = new List<Visitable>();
+    List<Visitable> unvisitedHappinessBuildings = new();
     string visitorName;
 
     float time = 0;
@@ -53,9 +54,9 @@ public class Visitor : MonoBehaviour, Clickable
         restroomNeeds = Random.Range(50, 100);
         happiness = Random.Range(50, 100);
 
-        foreach (Exhibit exhibit in GridManager.instance.reachableExhibits)
+        foreach (Exhibit exhibit in GridManager.instance.reachableHappinessBuildings)
         {
-            unvisitedExhibits.Add(exhibit);
+            unvisitedHappinessBuildings.Add(exhibit);
         }
 
         StartCoroutine(DecreaseNeeds());
@@ -102,8 +103,12 @@ public class Visitor : MonoBehaviour, Clickable
             if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1)
             {
                 agent.isStopped = true;
-                destinationVisitable.Arrived(this);
                 time += Time.deltaTime;
+                if (!arrived)
+                {
+                    destinationVisitable.Arrived(this);
+                    arrived = true;
+                }
                 if (time > 15)
                 {
                     atDestination = true;
@@ -158,7 +163,7 @@ public class Visitor : MonoBehaviour, Clickable
         ZooManager.instance.ChangeMoney(item.currentPrice);
     }
 
-    public void lowerRestroomNeeds()
+    public void LowerRestroomNeeds()
     {
         var random = Random.Range(40, 60);
         restroomNeeds = restroomNeeds + random > 100 ? 100 : restroomNeeds + random;
@@ -167,6 +172,7 @@ public class Visitor : MonoBehaviour, Clickable
 
     void ChooseDestination()
     {
+        arrived = false;
         SetIsVisible(true);
         destinationVisitable?.SetCapacity(destinationVisitable.GetCapacity() + 1);
 
@@ -187,9 +193,8 @@ public class Visitor : MonoBehaviour, Clickable
                 destinationVisitable = ChooseCloseDestination(GridManager.instance.reachableRestroomBuildings);
                 break;
             case "happiness":
-                //Souvenirshop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-                destinationVisitable = ChooseCloseDestination(unvisitedExhibits);
-                unvisitedExhibits.Remove((Exhibit)destinationVisitable);
+                destinationVisitable = ChooseCloseDestination(unvisitedHappinessBuildings);
+                unvisitedHappinessBuildings.Remove((Exhibit)destinationVisitable);
                 break;
             case "leave":
                 destinationVisitable = ZooManager.instance;
@@ -235,18 +240,20 @@ public class Visitor : MonoBehaviour, Clickable
             sum += (110 - restroomNeeds);
             probabilities.Add(("restroom", sum));
         }
-        if (unvisitedExhibits.Count > 0)
+        if (unvisitedHappinessBuildings.Count > 0)
         {
             sum += (200 - happiness);
             probabilities.Add(("happiness", sum));
         }
-        sum += (100 + 10 * (GridManager.instance.reachableExhibits.Count - unvisitedExhibits.Count) - happiness);
-        if (unvisitedExhibits.Count == 0)
+        sum += (100 + 10 * (GridManager.instance.reachableHappinessBuildings.Count - unvisitedHappinessBuildings.Count) - happiness);
+        if (unvisitedHappinessBuildings.Count == 0)
             sum += 100;
         probabilities.Add(("leave", sum));
 
         var random = Random.Range(0, sum);
-        action = probabilities.SkipWhile(i => i.probability < random).First().action;
+        action = probabilities.SkipWhile(i => i.probability < random).FirstOrDefault().action;
+        if (action == null)
+            action = "leave";
     }
 
     Visitable ChooseCloseDestination(List<Visitable> visitables)
