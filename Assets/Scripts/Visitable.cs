@@ -1,4 +1,3 @@
-
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,4 +16,8 @@ public interface Visitable
     public Grid GetStartingGrid();
 
     public void AddToReachableLists();
+
+    public int GetCapacity();
+
+    public void SetCapacity(int newCapacity);
 }

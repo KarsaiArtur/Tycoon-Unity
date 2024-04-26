@@ -13,7 +13,6 @@ public class PathManager : Placeable
     float startedInXDir = 0;
     float startedInZDir = 0;
 
-
     public override void Place(Vector3 mouseHit)
     {
         base.Place(mouseHit);
@@ -91,18 +90,14 @@ public class PathManager : Placeable
                 pathIndex++;
             }
 
-            foreach (var path in paths)
+            if(playerControl.canBePlaced)
             {
-                if(playerControl.canBePlaced)
-                {
-                    ChangeMaterial(1);
-                }
-                else
-                {
-                    ChangeMaterial(2);
-                }
+                ChangeMaterial(1);
             }
-
+            else
+            {
+                ChangeMaterial(2);
+            }
             paths.ForEach(path => placeablePrice += path.placeablePrice);
         }
     }
@@ -114,27 +109,9 @@ public class PathManager : Placeable
 
     public override void ChangeMaterial(int index)
     {
-        
-        Material newMaterial = new Material(pathPrefab.transform.GetChild(0).GetComponent<MeshRenderer>().sharedMaterials[0]);
-        Color customColor;
-        switch (index)
-        {
-            case 1:
-                newMaterial.shader = Shader.Find("Standard (Specular setup)");
-                customColor = new Color(0.2f, 1f, 0.2f, 1f);
-                newMaterial.SetColor("_Color", customColor);
-                newMaterial.SetColor("_SpecColor", customColor);
-                break;
-            case 2:
-                newMaterial.shader = Shader.Find("Standard (Specular setup)");
-                customColor = new Color(1f, 0.2f, 0.2f, 1f);
-                newMaterial.SetColor("_Color", customColor);
-                newMaterial.SetColor("_SpecColor", customColor);
-                break;
-        }
         foreach (var path in paths)
         {
-            path.gameObject.transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().material = newMaterial;
+            path.ChangeMaterial(index);
         }
         if(index == 0)
         {

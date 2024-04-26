@@ -61,8 +61,8 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -1837948256379183155, guid: 515d79b7ab5e31b4687bc44e7a5d35b1, type: 3}
-  - {fileID: 3516903230610000126, guid: 515d79b7ab5e31b4687bc44e7a5d35b1, type: 3}
+  - {fileID: 2100000, guid: 2d98111299eef684ca7bb3397f027778, type: 2}
+  - {fileID: 2100000, guid: 2d98111299eef684ca7bb3397f027778, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -145,7 +145,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -1837948256379183155, guid: 515d79b7ab5e31b4687bc44e7a5d35b1, type: 3}
+  - {fileID: 2100000, guid: 2d98111299eef684ca7bb3397f027778, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -194,7 +194,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.885, y: -0.38, z: -1.945}
   m_LocalScale: {x: 0.19, y: 0.19, z: 0.19}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5975590152749383796}
   - {fileID: 5193378542893023760}
@@ -291,3 +291,4 @@ MonoBehaviour:
   icon: {fileID: 0}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
+  defaultMaterials: []

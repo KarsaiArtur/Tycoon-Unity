@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -14,6 +17,9 @@ public class Placeable : MonoBehaviour, Clickable
     public static Vector3 startingPoint = new Vector3(-1, -1, -1);
     public TextMeshProUGUI currentPlacingPrice;
     public TextMeshProUGUI currentPlacingPriceInstance;
+    public List<Material> defaultMaterials;
+    List<Renderer> renderers;
+    int previousMaterialIndex  = -1;
 
     public virtual void Awake()
     {
@@ -25,6 +31,27 @@ public class Placeable : MonoBehaviour, Clickable
         {
             placeableName = name.Remove(name.Length - "(Clone)".Length);
         }
+
+        renderers = new List<Renderer>(GetComponentsInChildren<MeshRenderer>());
+        List<Renderer> renderers2 = new List<Renderer>(GetComponentsInChildren<SkinnedMeshRenderer>());
+
+        foreach (var renderer in renderers)
+        {
+            foreach (var material in renderer.sharedMaterials)
+            {
+                defaultMaterials.Add(material);
+            }
+        }
+        foreach (var renderer in renderers2)
+        {
+            foreach (var material in renderer.sharedMaterials)
+            {
+                defaultMaterials.Add(material);
+            }
+        }
+
+        renderers2.ForEach(r => renderers.Add(r));
+
     }
     
 
@@ -57,7 +84,22 @@ public class Placeable : MonoBehaviour, Clickable
 
     public virtual void ChangeMaterial(int index)
     {
-
+        //Debug.Log("OK");
+        if(previousMaterialIndex != index)
+        {
+            int k = 0;
+            for (int i = 0; i < renderers.Count; i++)
+            {
+                var newMaterials = renderers[i].sharedMaterials;
+                for (int j = 0; j < newMaterials.Length; j++)
+                {
+                    newMaterials[j] = SetMaterialColor(index, defaultMaterials[k]);
+                    k++;
+                }
+                renderers[i].materials = newMaterials;
+            }
+            previousMaterialIndex = index;
+        }
     }
 
     public virtual void SetTag(string newTag)
@@ -117,5 +159,29 @@ public class Placeable : MonoBehaviour, Clickable
     public virtual Sprite GetIcon()
     {
         return icon;
+    }
+
+    public Material SetMaterialColor(int index, Material material)
+    {
+        Material newMaterial = new Material(material);
+        Color customColor;
+        switch (index)
+        {
+            case 1:
+                //newMaterial.shader = Shader.Find("Standard (Specular setup)");
+                newMaterial.shader = Shader.Find("Standard");
+                customColor = new Color(0.2f, 1f, 0.2f, 1f);
+                newMaterial.SetColor("_Color", customColor);
+                //newMaterial.SetColor("_SpecColor", customColor);
+                break;
+            case 2:
+                //newMaterial.shader = Shader.Find("Standard (Specular setup)");
+                newMaterial.shader = Shader.Find("Standard");
+                customColor = new Color(1f, 0.2f, 0.2f, 1f);
+                newMaterial.SetColor("_Color", customColor);
+                //newMaterial.SetColor("_SpecColor", customColor);
+                break;
+        }
+        return newMaterial;
     }
 }

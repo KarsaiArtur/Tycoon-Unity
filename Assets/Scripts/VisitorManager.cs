@@ -8,13 +8,19 @@ public class VisitorManager : MonoBehaviour
     public List<Visitor> visitors;
     public List<Visitor> visitorPrefabs;
     private float timeTillSpawn  = 0;
-    private float minSpawnTime = 5;
-    private float maxSpawnTime = 10;
+    public float SpawnTime = 15;
 
     void Update()
     {
-        if (timeTillSpawn <= 0 && GridManager.instance.reachableVisitables.Count > 1) {
-            timeTillSpawn = Random.Range(minSpawnTime, maxSpawnTime);//0.1f;
+        if (timeTillSpawn <= 0 && GridManager.instance.reachableVisitables.Count > 1)
+        {
+            timeTillSpawn = Random.Range(SpawnTime - 5 < 0 ? 0 : SpawnTime - 5, SpawnTime + 5);
+            SpawnTime = 15;
+            if (GridManager.instance.reachableExhibits.Count > 0)
+                SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(GridManager.instance.reachableExhibits.Count));
+            SpawnTime = SpawnTime / ZooManager.instance.reputation * 100;
+            SpawnTime = SpawnTime * ZooManager.instance.currentEntranceFee / ZooManager.instance.defaultEntranceFee;
+            //timeTillSpawn = 0.1f;
             ZooManager.instance.PayEntranceFee();
             SpawnVisitor();
         }

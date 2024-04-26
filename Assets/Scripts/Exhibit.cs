@@ -12,10 +12,10 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public Grid exitGrid;
     public Grid entranceGrid;
     PlayerControl playerControl;
+    bool isOpen = false;
 
     public float food = 1000;
     public float water = 1000;
-    bool isOpen = false;
 
     void Start()
     {
@@ -89,17 +89,25 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     }
 
 
-    public void StaffArrived(Staff staff)
+    public void StaffArrived(int action)
     {
-        if (isOpen)
+        switch (action)
         {
-            CloseGate();
-            isOpen = false;
-        }
-        else
-        {
-            OpenGate();
-            isOpen = true;
+            case 1:
+                if(!isOpen)
+                {
+                    OpenGate();
+                    isOpen = true;
+                }
+                break;
+            case 2:
+
+                if (isOpen)
+                {
+                    CloseGate();
+                    isOpen = false;
+                }
+                break;
         }
     }
 
@@ -138,12 +146,21 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public void OpenGate()
     {
         var gateObstacle = gameObject.GetComponent<NavMeshObstacle>();
-        gateObstacle.center = new Vector3(gateObstacle.center.x - 1, gateObstacle.center.y, gateObstacle.center.z);
+        GetComponentInChildren<Animator>().Play("Open");
+        gateObstacle.center = new Vector3(gateObstacle.center.x - 0.5f, gateObstacle.center.y, gateObstacle.center.z);
     }
 
     public void CloseGate()
     {
         var gateObstacle = gameObject.GetComponent<NavMeshObstacle>();
-        gateObstacle.center = new Vector3(gateObstacle.center.x + 1, gateObstacle.center.y, gateObstacle.center.z);
+        GetComponentInChildren<Animator>().Play("Close");
+        gateObstacle.center = new Vector3(gateObstacle.center.x + 0.5f, gateObstacle.center.y, gateObstacle.center.z);
     }
+
+    public int GetCapacity()
+    {
+        return int.MaxValue;
+    }
+
+    public void SetCapacity(int newCapacity) { }
 }

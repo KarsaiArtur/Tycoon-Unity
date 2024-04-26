@@ -461,4 +461,20 @@ public class PlayerControl : MonoBehaviour
     {
         test.BuildNavMesh();
     }
+
+    public GameObject gateTest;
+    bool closed = true;
+
+    public void Switch()
+    {
+        if (closed)
+        {
+            gateTest.GetComponent<Animator>().Play("Open");
+        }
+        else
+        {
+            gateTest.GetComponent<Animator>().Play("Close");
+        }
+        closed = !closed;
+    }
 }

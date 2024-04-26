@@ -183,7 +183,7 @@ public class GridManager : MonoBehaviour
         {
             for (x = 0; x < tilesPerSide; x++, i++)
             {
-                Chunk elementInstance = new Chunk();
+                Chunk elementInstance;
                 if(x == 0 &&  z == 0)
                 {
                     rotationAngle = 0;

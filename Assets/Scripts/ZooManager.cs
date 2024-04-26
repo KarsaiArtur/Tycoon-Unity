@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 
@@ -10,8 +11,12 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
     public TextMeshProUGUI moneyText;
     public Grid entranceGrid;
     Grid exitGrid;
-    public float entranceFee = 20;
+    public float defaultEntranceFee = 20;
+    public float currentEntranceFee = 20;
     PlayerControl playerControl;
+
+    public List<float> latestVisitorHappinesses = new();
+    public float reputation = 50;
 
     public void Start()
     {
@@ -26,7 +31,13 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
 
     public void Arrived(Visitor visitor)
     {
-        if(playerControl.currentInfopopup != null)
+        latestVisitorHappinesses.Add(visitor.happiness);
+        if (latestVisitorHappinesses.Count > 10)
+            latestVisitorHappinesses.RemoveAt(0);
+
+        reputation = latestVisitorHappinesses.Average();
+
+        if (playerControl.currentInfopopup != null)
         {
             if (playerControl.currentInfopopup.DidVisitorLeft(visitor))
                 playerControl.DestroyCurrentInfopopup();
@@ -51,7 +62,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
 
     public void PayEntranceFee()
     {
-        ChangeMoney(entranceFee);
+        ChangeMoney(currentEntranceFee);
     }
     public Vector3 ChoosePosition(Grid grid)
     {
@@ -82,4 +93,12 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
     {
         return;
     }
+
+    public int GetCapacity()
+    {
+        return int.MaxValue;
+    }
+
+    public void SetCapacity(int newCapacity) { }
+
 }

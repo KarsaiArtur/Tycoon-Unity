@@ -40,6 +40,7 @@ public class Animal : Placeable
 
     public string action = "";
 
+
     public override void Place(Vector3 mouseHit)
     {
         base.Place(mouseHit);
@@ -51,7 +52,7 @@ public class Animal : Placeable
 
         if (playerControl.canBePlaced)
         {
-            ChangeMaterial(0);
+            ChangeMaterial(1);
         }
 
         playerControl.canBePlaced = true;
@@ -61,17 +62,17 @@ public class Animal : Placeable
             if (hit.collider.CompareTag("Terrain") && playerControl.canBePlaced && !gridManager.GetGrid(hit.point).isExhibit)
             {
                 playerControl.canBePlaced = false;
-                ChangeMaterial(1);
+                ChangeMaterial(2);
             }
         }
 
         transform.position = position;
     }
 
-    public override void ChangeMaterial(int index)
+    /*public override void ChangeMaterial(int index)
     {
-        gameObject.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material = materials[index];
-    }
+        gameObject.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material = SetMaterialColor(index, defaultMaterial);
+    }*/
 
     public override void FinalPlace()
     {

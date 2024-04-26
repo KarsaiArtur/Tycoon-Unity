@@ -183,9 +183,9 @@ public class Fence : Placeable
         base.RotateY(angle);
     }
 
-    public override void ChangeMaterial(int index)
+    /*public override void ChangeMaterial(int index)
     {
         gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<MeshRenderer>().material = materials[index];
         gameObject.transform.GetChild(0).GetChild(1).gameObject.GetComponent<MeshRenderer>().material = materials[index];
-    }
+    }*/
 }

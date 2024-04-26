@@ -34,17 +34,29 @@ public class Staff : Placeable
                         isAvailable = true;
                     }
                 }
-                if (destinationTypeIndex != 2 && destinationTypeIndex != 5 && destinationTypeIndex != -1)
+                else if (destinationTypeIndex == 0 || destinationTypeIndex == 3)
                 {
                     time += Time.deltaTime;
+
+                    destinationExhibit.StaffArrived(1);
                     if (time > 2)
                     {
-                        destinationExhibit.StaffArrived(this);
                         destinationTypeIndex = (destinationTypeIndex + 1) % 6;
                         FindDestination(destinationExhibit);
                     }
                 }
-                if (destinationTypeIndex == 2)
+                else if(destinationTypeIndex == 1 || destinationTypeIndex == 4)
+                {
+                    time += Time.deltaTime;
+
+                    destinationExhibit.StaffArrived(2);
+                    if (time > 2)
+                    {
+                        destinationTypeIndex = (destinationTypeIndex + 1) % 6;
+                        FindDestination(destinationExhibit);
+                    }
+                }
+                else if(destinationTypeIndex == 2)
                 {
                     time += Time.deltaTime;
                     agent.isStopped = false;

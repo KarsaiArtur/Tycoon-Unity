@@ -160,30 +160,31 @@ public class Visitor : MonoBehaviour, Clickable
 
     public void lowerRestroomNeeds()
     {
-        var random = UnityEngine.Random.Range(40, 60);
+        var random = Random.Range(40, 60);
         restroomNeeds = restroomNeeds + random > 100 ? 100 : restroomNeeds + random;
-        restroomNeedsDetriment = UnityEngine.Random.Range(0.05f, 0.15f);
+        restroomNeedsDetriment = Random.Range(0.05f, 0.15f);
     }
 
     void ChooseDestination()
     {
         SetIsVisible(true);
+        destinationVisitable?.SetCapacity(destinationVisitable.GetCapacity() + 1);
 
         ChooseDestinationType();
 
         switch (action)
         {
             case "food":
-                destinationVisitable = ChooseCloseDestination(GridManager.instance.foodBuildings);
+                destinationVisitable = ChooseCloseDestination(GridManager.instance.reachableFoodBuildings);
                 break;
             case "drink":
-                destinationVisitable = ChooseCloseDestination(GridManager.instance.drinkBuildings);
+                destinationVisitable = ChooseCloseDestination(GridManager.instance.reachableDrinkBuildings);
                 break;
             case "energy":
-                destinationVisitable = ChooseCloseDestination(GridManager.instance.energyBuildings);
+                destinationVisitable = ChooseCloseDestination(GridManager.instance.reachableEnergyBuildings);
                 break;
             case "restroom":
-                destinationVisitable = ChooseCloseDestination(GridManager.instance.restroomBuildings);
+                destinationVisitable = ChooseCloseDestination(GridManager.instance.reachableRestroomBuildings);
                 break;
             case "happiness":
                 //Souvenirshop!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -198,6 +199,8 @@ public class Visitor : MonoBehaviour, Clickable
                 break;
         }
 
+        destinationVisitable.SetCapacity(destinationVisitable.GetCapacity() - 1);
+
         int randomGridIndex = Random.Range(0, destinationVisitable.GetPaths().Count);
         Grid randomGrid = destinationVisitable.GetPaths()[randomGridIndex];
         destination = destinationVisitable.ChoosePosition(randomGrid);
@@ -206,21 +209,6 @@ public class Visitor : MonoBehaviour, Clickable
         time = 0;
         agent.isStopped = false;
     }
-
-    //void ChooseDestination()
-    //{
-    //    SetIsVisible(true);
-    //    int randomExhibitIndex = Random.Range(0, GridManager.instance.reachableVisitables.Count);
-    //    destinationVisitable = GridManager.instance.reachableVisitables[randomExhibitIndex];
-    //    int randomGridIndex = Random.Range(0, destinationVisitable.GetPaths().Count);
-    //    Grid randomGrid = destinationVisitable.GetPaths()[randomGridIndex];
-    //    destination = destinationVisitable.ChoosePosition(randomGrid);
-    //    Debug.Log(destination);
-    //    agent.SetDestination(destination);
-    //    atDestination = false;
-    //    time = 0;
-    //    agent.isStopped = false;
-    //}
 
     void ChooseDestinationType()
     {
@@ -275,11 +263,16 @@ public class Visitor : MonoBehaviour, Clickable
 
         foreach (var visitable in visitables)
         {
-            sum += (maxDistance + 10 - Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0]));
-            VisitableDistances.Add((visitable, sum));
+            if (visitable.GetCapacity() > 0)
+            {
+                sum += (maxDistance + 10 - Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0]));
+                VisitableDistances.Add((visitable, sum));
+            }
         }
 
         var random = Random.Range(0.0f, sum);
+        if (VisitableDistances.Count == 0)
+            return ZooManager.instance;
         return VisitableDistances.SkipWhile(i => i.distance < random).First().visitable;
     }
 

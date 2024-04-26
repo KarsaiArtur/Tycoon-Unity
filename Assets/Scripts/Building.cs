@@ -20,7 +20,7 @@ public class Building : Placeable, Visitable
 
     public List<PurchasableItems> purchasableItemPrefabs;
     public List<PurchasableItems> purchasableItemInstances;
-    public int capacity;
+    public int capacity = 10;
 
     public bool hasRestroom = false;
 
@@ -29,6 +29,7 @@ public class Building : Placeable, Visitable
         base.Awake();
         foreach (PurchasableItems p in purchasableItemPrefabs)
         {
+            p.currentPrice = p.defaultPrice;
             var newItem = Instantiate(p);
             purchasableItemInstances.Add(newItem);
             newItem.transform.SetParent(transform);
@@ -52,7 +53,7 @@ public class Building : Placeable, Visitable
 
         if (playerControl.canBePlaced)
         {
-            ChangeMaterial(2);
+            ChangeMaterial(1);
         }
 
         if (!collided)
@@ -77,7 +78,7 @@ public class Building : Placeable, Visitable
                     if (hit2.collider.CompareTag("Placed") && playerControl.canBePlaced)
                     {
                         playerControl.canBePlaced = false;
-                        ChangeMaterial(1);
+                        ChangeMaterial(2);
                     }
 
                     if (hit2.collider.CompareTag("Terrain"))
@@ -86,8 +87,11 @@ public class Building : Placeable, Visitable
                             curY = hit2.point.y;
                         else if (curY != hit2.point.y)
                         {
-                            playerControl.canBePlaced = false;
-                            ChangeMaterial(1);
+                            if (playerControl.canBePlaced)
+                            {
+                                playerControl.canBePlaced = false;
+                                ChangeMaterial(2);
+                            }
                             if (curY < hit2.point.y)
                                 curY += 0.5f;
                         }
@@ -99,7 +103,7 @@ public class Building : Placeable, Visitable
                     if (hit2.collider.CompareTag("Placed") && playerControl.canBePlaced)
                     {
                         playerControl.canBePlaced = false;
-                        ChangeMaterial(1);
+                        ChangeMaterial(2);
                     }
 
                     if (hit2.collider.CompareTag("Terrain"))
@@ -108,8 +112,11 @@ public class Building : Placeable, Visitable
                             curY = hit2.point.y;
                         else if (curY != hit2.point.y)
                         {
-                            playerControl.canBePlaced = false;
-                            ChangeMaterial(1);
+                            if (playerControl.canBePlaced)
+                            {
+                                playerControl.canBePlaced = false;
+                                ChangeMaterial(2);
+                            }
                             if (curY < hit2.point.y)
                                 curY += 0.5f;
                         }
@@ -200,7 +207,7 @@ public class Building : Placeable, Visitable
         {
             collided = true;
             playerControl.canBePlaced = false;
-            ChangeMaterial(1);
+            ChangeMaterial(2);
         }
     }
 
@@ -209,11 +216,11 @@ public class Building : Placeable, Visitable
         collided = false;
     }
 
-    public override void ChangeMaterial(int index)
+    /*public override void ChangeMaterial(int index)
     {
         gameObject.transform.GetChild(0).GetChild(1).gameObject.GetComponent<MeshRenderer>().material = materials[index];
         gameObject.transform.GetChild(0).GetChild(2).gameObject.GetComponent<MeshRenderer>().material = materials[index];
-    }
+    }*/
 
     public List<Grid> GetPaths()
     {
@@ -247,12 +254,10 @@ public class Building : Placeable, Visitable
         if (index < purchasableItemInstances.Count)
         {
             visitor.PurchaseItem(purchasableItemInstances[index]);
-            Debug.Log(visitor.action + " " + purchasableItemInstances[index].itemName);
         }
         else
         {
             visitor.happiness -= 10;
-            Debug.Log(visitor.action + " nothing");
         }
     }
 
@@ -327,27 +332,27 @@ public class Building : Placeable, Visitable
 
     public bool HasFood()
     {
-        if (purchasableItemInstances.Count > 10)
+        if (purchasableItemInstances.Count > 0)
             foreach (var item in purchasableItemInstances)
-                if (item.hungerBonus > 0)
+                if (item.hungerBonus > 10)
                     return true;
         return false;
     }
 
     public bool HasDrink()
     {
-        if (purchasableItemInstances.Count > 10)
+        if (purchasableItemInstances.Count > 0)
             foreach (var item in purchasableItemInstances)
-                if (item.thirstBonus > 0)
+                if (item.thirstBonus > 10)
                     return true;
         return false;
     }
 
     public bool HasEnergy()
     {
-        if (purchasableItemInstances.Count > 10)
+        if (purchasableItemInstances.Count > 0)
             foreach (var item in purchasableItemInstances)
-                if (item.energyBonus > 0)
+                if (item.energyBonus > 10)
                     return true;
         return false;
     }
@@ -392,5 +397,15 @@ public class Building : Placeable, Visitable
         {
             gridManager.reachableRestroomBuildings.Add(this);
         }
+    }
+
+    public int GetCapacity()
+    {
+        return capacity;
+    }
+
+    public void SetCapacity(int newCapacity)
+    {
+        capacity = newCapacity;
     }
 }
