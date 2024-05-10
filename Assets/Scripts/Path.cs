@@ -26,7 +26,7 @@ public class Path : Placeable
 
         foreach (RaycastHit hit in hits3)
         {
-            if (hit.collider.CompareTag("Placed"))
+            if (playerControl.placedTags.Contains(hit.collider.tag))
             {
                 playerControl.canBePlaced = false;
                 yOffset = 0.01f;

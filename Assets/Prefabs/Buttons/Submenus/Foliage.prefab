@@ -136,7 +136,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   subMenuInstance: {fileID: 0}
-  placeables: []
+  placeables:
+  - {fileID: -7873760092086206215, guid: 4f5d858ccfd66ca48b715a68ae6a9781, type: 3}
+  - {fileID: -7873760092086206215, guid: f101767f12fc18849a3bf1ab93ebe934, type: 3}
+  - {fileID: -7873760092086206215, guid: 1d9613e6e0d794b459d4e359a4478af6, type: 3}
 --- !u!114 &-3909907454791035505
 MonoBehaviour:
   m_ObjectHideFlags: 0

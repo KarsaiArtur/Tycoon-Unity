@@ -23,6 +23,7 @@ public class Building : Placeable, Visitable
     public int capacity = 10;
 
     public bool hasRestroom = false;
+    public int expense = 0;
 
     public override void Awake()
     {
@@ -75,7 +76,7 @@ public class Building : Placeable, Visitable
 
                 foreach (RaycastHit hit2 in hits1)
                 {
-                    if (hit2.collider.CompareTag("Placed") && playerControl.canBePlaced)
+                    if (playerControl.placedTags.Contains(hit2.collider.tag) && playerControl.canBePlaced)
                     {
                         playerControl.canBePlaced = false;
                         ChangeMaterial(2);
@@ -100,7 +101,7 @@ public class Building : Placeable, Visitable
 
                 foreach (RaycastHit hit2 in hits2)
                 {
-                    if (hit2.collider.CompareTag("Placed") && playerControl.canBePlaced)
+                    if (playerControl.placedTags.Contains(hit2.collider.tag) && playerControl.canBePlaced)
                     {
                         playerControl.canBePlaced = false;
                         ChangeMaterial(2);
@@ -217,7 +218,7 @@ public class Building : Placeable, Visitable
 
     void OnCollisionStay(Collision collision)
     {
-        if (collision.collider.CompareTag("Placed") && !gameObject.CompareTag("Placed"))
+        if (playerControl.placedTags.Contains(collision.collider.tag) && !playerControl.placedTags.Contains(gameObject.tag))
         {
             collided = true;
             playerControl.canBePlaced = false;

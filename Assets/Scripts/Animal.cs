@@ -37,9 +37,9 @@ public class Animal : Placeable
     //age, gender, pregnancy
 
     public bool isSick = false;
+    public bool isGettingHealed = false;
 
     public string action = "";
-
 
     public override void Place(Vector3 mouseHit)
     {
@@ -79,6 +79,10 @@ public class Animal : Placeable
         transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
         exhibit = gridManager.GetGrid(transform.position).exhibit;
         exhibit.animals.Add(this);
+        if (exhibit.reachable && exhibit.animals.Count == 1)
+        {
+            exhibit.AddToReachableLists();
+        }
         agent.Warp(transform.position);
         placed = true;
 
@@ -131,11 +135,18 @@ public class Animal : Placeable
 
             if (restroomNeeds == 0)
             {
-                exhibit.animalDroppings.Add(0);
+                Poop();
             }
             //Debug.Log("Hunger: " + hunger + " Thirst: " + thirst + " Energy: " + energy + " Restroom: " + restroomNeeds + " Happiness: " + happiness);
             yield return new WaitForSeconds(1);
         }
+    }
+
+    void Poop()
+    {
+        var animalDropping = Instantiate(playerControl.animalDroppingPrefab, transform.position, transform.rotation);
+        exhibit.animalDroppings.Add(animalDropping);
+        restroomNeeds += UnityEngine.Random.Range(75f, 100f);
     }
 
     public void Update()
@@ -197,7 +208,7 @@ public class Animal : Placeable
         switch (action)
         {
             case "food":
-                destinationGrid = exhibit.exitGrid;
+                destinationGrid = exhibit.gridList[0];
                 float foodEaten = UnityEngine.Random.Range(40, 60);
                 foodEaten = exhibit.food > foodEaten ? foodEaten : exhibit.food;
                 foodEaten = hunger + foodEaten > 100 ? 100 - hunger : foodEaten;
@@ -205,7 +216,7 @@ public class Animal : Placeable
                 exhibit.food -= foodEaten;
                 break;
             case "drink":
-                destinationGrid = exhibit.exitGrid;
+                destinationGrid = exhibit.gridList[0];
                 float waterDrunk = UnityEngine.Random.Range(40, 60);
                 waterDrunk = exhibit.water > waterDrunk ? waterDrunk : exhibit.water;
                 waterDrunk = thirst + waterDrunk > 100 ? 100 - thirst : waterDrunk;

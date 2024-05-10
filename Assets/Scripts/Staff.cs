@@ -8,92 +8,183 @@ public class Staff : Placeable
     public NavMeshAgent agent;
     bool placed = false;
     float time = 0;
-    Exhibit destinationExhibit;
-    public int destinationTypeIndex = -1;
+    public Exhibit destinationExhibit;
+    public Exhibit insideExhibit;
     public bool isAvailable = true;
+    public int salary;
+    public WorkingState workingState;
+    public bool destinationReached = false;
+
+    public enum WorkingState
+    {
+        GoingToExhibitEntranceToEnter,
+        GoingToExhibitExitToEnter,
+        GoingToExhibitEntranceToLeave,
+        GoingToExhibitExitToLeave,
+        Working,
+        Resting
+    }
 
     public void Start()
     {
         isAvailable = true;
-        destinationTypeIndex = -1;
+        workingState = WorkingState.Resting;
     }
 
     public void Update()
     {
-        if (placed && destinationTypeIndex >= 0)
+        if (placed)
         {
             if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1)
             {
-                agent.isStopped = true;
-                if (destinationTypeIndex == 5)
+                destinationReached = true;
+            }
+            if (destinationReached && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.2)
+            {
+                //agent.isStopped = true;
+                switch (workingState)
                 {
-                    time += Time.deltaTime;
-                    if (time > 2)
-                    {
-                        destinationTypeIndex = -1;
-                        isAvailable = true;
-                    }
-                }
-                else if (destinationTypeIndex == 0 || destinationTypeIndex == 3)
-                {
-                    time += Time.deltaTime;
-
-                    destinationExhibit.StaffArrived(1);
-                    if (time > 2)
-                    {
-                        destinationTypeIndex = (destinationTypeIndex + 1) % 6;
-                        FindDestination(destinationExhibit);
-                    }
-                }
-                else if(destinationTypeIndex == 1 || destinationTypeIndex == 4)
-                {
-                    time += Time.deltaTime;
-
-                    destinationExhibit.StaffArrived(2);
-                    if (time > 2)
-                    {
-                        destinationTypeIndex = (destinationTypeIndex + 1) % 6;
-                        FindDestination(destinationExhibit);
-                    }
-                }
-                else if(destinationTypeIndex == 2)
-                {
-                    time += Time.deltaTime;
-                    agent.isStopped = false;
-                    if (time > 10)
-                    {
-                        destinationTypeIndex = (destinationTypeIndex + 1) % 6;
-                        FindDestination(destinationExhibit);
-                    }
+                    case WorkingState.GoingToExhibitEntranceToEnter:
+                        time += Time.deltaTime;
+                        destinationExhibit.StaffArrived(1);
+                        if (!destinationExhibit.staff.Contains(this))
+                            destinationExhibit.staff.Add(this);
+                        if (time > 1)
+                        {
+                            workingState = WorkingState.GoingToExhibitExitToEnter;
+                            FindDestination(destinationExhibit);
+                        }
+                        break;
+                    case WorkingState.GoingToExhibitExitToEnter:
+                        time += Time.deltaTime;
+                        if (destinationExhibit.staff.Contains(this))
+                            destinationExhibit.staff.Remove(this);
+                        if (time > 1)
+                        {
+                            workingState = WorkingState.Working;
+                            destinationExhibit.StaffArrived(2);
+                            FindDestination(destinationExhibit);
+                            insideExhibit = destinationExhibit;
+                        }
+                        break;
+                    case WorkingState.GoingToExhibitEntranceToLeave:
+                        time += Time.deltaTime;
+                        if (insideExhibit.staff.Contains(this))
+                            insideExhibit.staff.Remove(this);
+                        if (time > 1)
+                        {
+                            if (destinationExhibit == null)
+                            {
+                                workingState = WorkingState.Resting;
+                                FindDestination(insideExhibit);
+                            }
+                            else
+                            {
+                                workingState = WorkingState.GoingToExhibitEntranceToEnter;
+                                FindDestination(destinationExhibit);
+                            }
+                            insideExhibit.StaffArrived(2);
+                            insideExhibit = null;
+                        }
+                        break;
+                    case WorkingState.GoingToExhibitExitToLeave:
+                        time += Time.deltaTime;
+                        insideExhibit.StaffArrived(1);
+                        if (!insideExhibit.staff.Contains(this))
+                            insideExhibit.staff.Add(this);
+                        if (time > 1)
+                        {
+                            workingState = WorkingState.GoingToExhibitEntranceToLeave;
+                            FindDestination(insideExhibit);
+                        }
+                        break;
+                    case WorkingState.Working:
+                        time += Time.deltaTime;
+                        agent.isStopped = false;
+                        if (time > 10)
+                        {
+                            DoJob();
+                            workingState = WorkingState.GoingToExhibitExitToLeave;
+                            isAvailable = true;
+                            destinationExhibit = null;
+                            FindDestination(insideExhibit);
+                        }
+                        break;
+                    case WorkingState.Resting:
+                        agent.isStopped = true;
+                        time = 0;
+                        destinationReached = false;
+                        break;
+                    default:
+                        break;
                 }
             }
             else if (agent.velocity == Vector3.zero)
             {
                 time += Time.deltaTime;
-                if (time > 11)
+                if (time > 15)
                 {
-                    FindDestination(destinationExhibit);
+                    destinationReached = false;
+                    destinationExhibit = null;
+                    insideExhibit = GridManager.instance.GetGrid(transform.position).exhibit;
+                    workingState = WorkingState.Resting;
+                    isAvailable = true;
+                    time = 0;
                 }
             }
         }
     }
 
-    public virtual void FindJob() { }
-
-    public virtual void FindInsideDestination() { }
-
     public void FindDestination(Exhibit exhibit)
     {
-        if (destinationTypeIndex == 0 || destinationTypeIndex == 4)
-            agent.SetDestination(new Vector3(exhibit.entranceGrid.coords[0].x + 0.5f, exhibit.entranceGrid.coords[0].y, exhibit.entranceGrid.coords[0].z + 0.5f));
-        if (destinationTypeIndex == 1 || destinationTypeIndex == 3)
-            agent.SetDestination(new Vector3(exhibit.exitGrid.coords[0].x + 0.5f, exhibit.exitGrid.coords[0].y, exhibit.exitGrid.coords[0].z + 0.5f));
-        if (destinationTypeIndex == 2)
-            FindInsideDestination();
-        destinationExhibit = exhibit;
+        if (exhibit != null)
+        {
+            if (workingState == WorkingState.GoingToExhibitEntranceToEnter || workingState == WorkingState.GoingToExhibitEntranceToLeave)
+            {
+                agent.SetDestination(new Vector3(exhibit.entranceGrid.coords[0].x + Random.Range(0.1f, 0.9f), exhibit.entranceGrid.coords[0].y, exhibit.entranceGrid.coords[0].z + Random.Range(0.1f, 0.9f)));
+                if (workingState == WorkingState.GoingToExhibitEntranceToEnter)
+                {
+                    var path = new NavMeshPath();
+                    agent.CalculatePath(agent.destination, path);
+                    if (path.status != NavMeshPathStatus.PathComplete)
+                    {
+                        exhibit.SetUnreachableForStaff();
+                        destinationReached = false;
+                        destinationExhibit = null;
+                        insideExhibit = GridManager.instance.GetGrid(transform.position).exhibit;
+                        workingState = WorkingState.Resting;
+                        isAvailable = true;
+                        time = 0;
+                        Debug.Log("Exhibit cannot be reached");
+                    }
+                }
+            }
+            else if (workingState == WorkingState.GoingToExhibitExitToEnter || workingState == WorkingState.GoingToExhibitExitToLeave)
+                agent.SetDestination(new Vector3(exhibit.exitGrid.coords[0].x + Random.Range(0.1f, 0.9f), exhibit.exitGrid.coords[0].y, exhibit.exitGrid.coords[0].z + Random.Range(0.1f, 0.9f)));
+            else if (workingState == WorkingState.Working)
+                FindInsideDestination();
+            else if (workingState == WorkingState.Resting && exhibit.entranceGrid.neighbours.Length > 0)
+            {
+                foreach (Grid grid in exhibit.entranceGrid.trueNeighbours)
+                {
+                    if (grid != null)
+                    {
+                        agent.SetDestination(new Vector3(grid.coords[0].x + Random.Range(0, 1.0f), grid.coords[0].y, grid.coords[0].z + Random.Range(0, 1.0f)));
+                        break;
+                    }
+                }
+            }
+            agent.isStopped = false;
+            destinationReached = false;
+        }
         time = 0;
-        agent.isStopped = false;
     }
+
+    public virtual void FindJob() { }
+
+    public virtual void DoJob() { }
+
+    public virtual void FindInsideDestination() { }
 
     public override void ClickedOn()
     {

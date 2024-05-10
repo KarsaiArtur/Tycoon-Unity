@@ -15,6 +15,7 @@ TagManager:
   - Clickable
   - InfoPopup
   - Frame
+  - Placed Fence
   layers:
   - Default
   - TransparentFX

@@ -14,6 +14,12 @@ public class Chunk : MonoBehaviour
     private int[] tris;
     private Vector2[] uvs;
     public Vector3 center;
+    public PlayerControl playerControl;
+
+    public void Awake()
+    {
+        playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
+    }
 
     private bool TriangulationCheck(Vector3 coord0, Vector3 coord1)
     {

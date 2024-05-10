@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4670496208201858416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6995886077579787356}
+  - component: {fileID: -7873760092086206215}
+  - component: {fileID: -9046277886167272794}
+  m_Layer: 0
+  m_Name: Pine
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6995886077579787356
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4670496208201858416}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 36.18433, y: 12.016154, z: 48.11652}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-7873760092086206215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4670496208201858416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7783d6ea26439045a9c4657051f135a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerControl: {fileID: 0}
+  gridManager: {fileID: 0}
+  placeableName: Pine
+  placeablePrice: 75
+  icon: {fileID: 0}
+  currentPlacingPrice: {fileID: 0}
+  currentPlacingPriceInstance: {fileID: 0}
+  defaultMaterials: []
+  foligeVariants:
+  - {fileID: 3886322433513631021, guid: 3371f5c3fd7ee374eabe0feed440c81e, type: 3}
+  - {fileID: 1009410153541789054, guid: 17e37e57047622b41b1f3815cb754704, type: 3}
+  - {fileID: 5630335326196474926, guid: 57e638bc109a30f439636e68d1e16aa9, type: 3}
+  - {fileID: 8965415907948756142, guid: 2e8a49bc8b444a440993586b76dda7a3, type: 3}
+  - {fileID: 1440121077862442017, guid: 4a84ee51ffc320848b1b0751478cf53d, type: 3}
+  - {fileID: 2922504736442060950, guid: 837541ac9884dbb4fb50e839e7e5328c, type: 3}
+  - {fileID: 2576887344108056095, guid: 301765750bc2bda4eb0171164c074cea, type: 3}
+  - {fileID: 4669266814900154463, guid: fbf82c8fa451c1a489a81bf71f07113a, type: 3}
+  selectedVariantInstance: {fileID: 0}
+--- !u!54 &-9046277886167272794
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4670496208201858416}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0

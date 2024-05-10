@@ -9,11 +9,17 @@ public class Vet : Staff
 {
     Animal animalToHeal;
 
+    public void Start()
+    {
+        base.Start();
+        salary = 500;
+    }
+
     public void Update()
     {
         base.Update();
 
-        if (destinationTypeIndex == 2)
+        if (workingState == WorkingState.Working)
         {
             animalToHeal.agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
         }
@@ -26,36 +32,60 @@ public class Vet : Staff
         var animalSickness = new List<(Exhibit exhibit, Animal animal, float health)>();
         foreach (Exhibit exhibit in GridManager.instance.exhibits)
         {
-            if (exhibit.animals.Count > 0)
+            if (exhibit.animals.Count > 0 && !exhibit.unreachableForStaff)
             {
                 foreach (Animal animal in exhibit.animals)
                 {
-                    animalSickness.Add((exhibit, animal, animal.health));
+                    if (!animal.isGettingHealed)
+                        animalSickness.Add((exhibit, animal, animal.health));
                 }
             }
         }
         if (animalSickness.Count > 0)
         {
-            HealAnimal(animalSickness);
+            FindAnimalToHeal(animalSickness);
         }
     }
 
-    public void HealAnimal(List<(Exhibit exhibit, Animal animal, float health)> animalSickness)
+    public void FindAnimalToHeal(List<(Exhibit exhibit, Animal animal, float health)> animalSickness)
     {
         animalSickness = animalSickness.OrderBy(x => x.health).ToList();
         animalToHeal = animalSickness.First().animal;
         if (animalToHeal.health < 75)
         {
-            float healthRecovered = Random.Range(40, 60);
-            animalToHeal.health = animalToHeal.health + healthRecovered > 100 ? 100 : animalToHeal.health + healthRecovered;
-            animalToHeal.isSick = false;
-            animalToHeal.healthDetriment = 0;
+            animalToHeal.isGettingHealed = true;
 
-            destinationTypeIndex = 0;
-            FindDestination(animalSickness.First().exhibit);
+            destinationExhibit = animalSickness.First().exhibit;
+
+            if (insideExhibit != null)
+            {
+                if (insideExhibit == destinationExhibit)
+                {
+                    workingState = WorkingState.Working;
+                    FindDestination(destinationExhibit);
+                    return;
+                }
+                else
+                {
+                    workingState = WorkingState.GoingToExhibitExitToLeave;
+                    FindDestination(insideExhibit);
+                    return;
+                }
+            }
+            workingState = WorkingState.GoingToExhibitEntranceToEnter;
+            FindDestination(destinationExhibit);
+            return;
         }
-        else
-            isAvailable = true;
+        isAvailable = true;
+    }
+
+    public override void DoJob()
+    {
+        float healthRecovered = Random.Range(40, 60);
+        animalToHeal.health = animalToHeal.health + healthRecovered > 100 ? 100 : animalToHeal.health + healthRecovered;
+        animalToHeal.isSick = false;
+        animalToHeal.healthDetriment = 0;
+        animalToHeal.isGettingHealed = false;
     }
 
     public override void FindInsideDestination()

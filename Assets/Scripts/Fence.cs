@@ -15,19 +15,9 @@ public class Fence : Placeable
     private int timesRotated = 0;
     public Grid grid1;
     public Grid grid2;
+    bool collided = false;
 
     public Material[] materials;
-
-    /*
-    void Update()
-    {
-        
-    }
-
-    void Awake()
-    {
-        playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
-    }*/
 
     public override void Place(Vector3 mouseHit)
     {
@@ -42,11 +32,12 @@ public class Fence : Placeable
             ChangeMaterial(1);
         }
 
-        playerControl.canBePlaced = true;
+        if (!collided)
+            playerControl.canBePlaced = true;
 
         foreach (RaycastHit hit2 in hits)
         {
-            if (hit2.collider.CompareTag("Placed") && playerControl.canBePlaced) {
+            if (playerControl.placedTags.Contains(hit2.collider.tag) && playerControl.canBePlaced) {
                 playerControl.canBePlaced = false;
                 ChangeMaterial(2);
             }
@@ -94,15 +85,16 @@ public class Fence : Placeable
     {
         gridManager.grids[(int)grid1.coords[0].x - gridManager.elementWidth, (int)grid1.coords[0].z - gridManager.elementWidth].neighbours[(timesRotated + 2) % 4] = null;
         gridManager.grids[(int)grid2.coords[0].x - gridManager.elementWidth, (int)grid2.coords[0].z - gridManager.elementWidth].neighbours[timesRotated] = null;
+        tag = "Placed Fence";
 
         if (BFS(grid1, grid2) != null)
         {
             HashSet<Grid> tempGrids = BFS(grid1, gridManager.startingGrid);
-            GameObject gateInstance = Instantiate(playerControl.gate, playerControl.m_Selected.transform.position, transform.rotation);
+            GameObject gateInstance = Instantiate(playerControl.gates[playerControl.fenceIndex], playerControl.m_Selected.transform.position, transform.rotation);
             Exhibit exhibit = gateInstance.AddComponent<Exhibit>();
             CreateExhibitWindow(exhibit);
             UnityEditorInternal.ComponentUtility.MoveComponentUp(exhibit);
-            gateInstance.tag = "Placed";
+            gateInstance.tag = "Placed Fence";
 
             if (tempGrids != null)
             {
@@ -190,11 +182,23 @@ public class Fence : Placeable
         base.RotateY(angle);
     }
 
-    /*public override void ChangeMaterial(int index)
+    void OnCollisionStay(Collision collision)
     {
-        gameObject.transform.GetChild(0).GetChild(0).gameObject.GetComponent<MeshRenderer>().material = materials[index];
-        gameObject.transform.GetChild(0).GetChild(1).gameObject.GetComponent<MeshRenderer>().material = materials[index];
-    }*/
+        if (collision.collider.CompareTag("Placed") )
+        {
+            collided = true;
+            playerControl.canBePlaced = false;
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (!tag.Equals("Placed"))
+        {
+            collided = false;
+            playerControl.canBePlaced = true;
+        }
+    }
 
     void CreateExhibitWindow(Exhibit exhibit)
     {

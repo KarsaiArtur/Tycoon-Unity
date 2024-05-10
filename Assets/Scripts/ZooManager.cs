@@ -48,6 +48,18 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
         Destroy(visitor.gameObject);
     }
 
+    public void PayExpenses()
+    {
+        foreach (var staff in StaffManager.instance.staffs)
+        {
+            ChangeMoney(-staff.salary);
+        }
+        foreach (var building in GridManager.instance.buildings)
+        {
+            ChangeMoney(-building.expense);
+        }
+    }
+
     public void ChangeMoney(float amount)
     {
         money += amount;

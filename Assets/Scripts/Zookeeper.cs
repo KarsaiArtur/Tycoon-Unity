@@ -5,6 +5,14 @@ using UnityEngine;
 public class Zookeeper : Staff
 {
     Exhibit exhibitToWorkAt;
+    string JobAtExhibit;
+
+
+    public void Start()
+    {
+        base.Start();
+        salary = 300;
+    }
 
     public override void FindJob()
     {
@@ -15,16 +23,22 @@ public class Zookeeper : Staff
         {
             foreach (Exhibit exhibit in GridManager.instance.exhibits)
             {
-                animalNeeds.Add((exhibit, "food", exhibit.food / 1000));
-                animalNeeds.Add((exhibit, "water", exhibit.water / 1000));
-                animalNeeds.Add((exhibit, "dropping", 1 - exhibit.animalDroppings.Count / exhibit.gridList.Count));
+                if (!exhibit.unreachableForStaff)
+                {
+                    if (!exhibit.isGettingFood)
+                        animalNeeds.Add((exhibit, "food", exhibit.food / 1000));
+                    if (!exhibit.isGettingWater)
+                        animalNeeds.Add((exhibit, "water", exhibit.water / 1000));
+                    if (!exhibit.isGettingCleaned)
+                        animalNeeds.Add((exhibit, "dropping", 1 - exhibit.animalDroppings.Count / exhibit.gridList.Count));
+                }
             }
         }
 
-        DoJob(animalNeeds);
+        FindExhibitToWorkOn(animalNeeds);
     }
 
-    public void DoJob(List<(Exhibit exhibit, string need, float percent)> animalNeeds)
+    public void FindExhibitToWorkOn(List<(Exhibit exhibit, string need, float percent)> animalNeeds)
     {
         animalNeeds = animalNeeds.OrderBy(x => x.percent).ToList();
         exhibitToWorkAt = animalNeeds.First().exhibit;
@@ -33,31 +47,69 @@ public class Zookeeper : Staff
         {
             if (animalNeeds.First().need == "food")
             {
-                float foodAdded = Random.Range(400, 600);
-                exhibitToWorkAt.food = exhibitToWorkAt.food + foodAdded > 1000 ? 1000 : exhibitToWorkAt.food + foodAdded;
-                exhibitToWorkAt.food = 1000;
+                exhibitToWorkAt.isGettingFood = true;
+                JobAtExhibit = "food";
             }
-            else if (animalNeeds.First().need == "water")
+            if (animalNeeds.First().need == "water")
             {
-                float waterAdded = Random.Range(400, 600);
-                exhibitToWorkAt.water = exhibitToWorkAt.water + waterAdded > 1000 ? 1000 : exhibitToWorkAt.water + waterAdded;
-                exhibitToWorkAt.water = 1000;
+                exhibitToWorkAt.isGettingWater = true;
+                JobAtExhibit = "water";
             }
-            else if (animalNeeds.First().need == "dropping")
+            if (animalNeeds.First().need == "dropping")
             {
-                exhibitToWorkAt.animalDroppings.Clear();
+                exhibitToWorkAt.isGettingCleaned = true;
+                JobAtExhibit = "dropping";
             }
 
-            destinationTypeIndex = 0;
-            FindDestination(exhibitToWorkAt);
+            destinationExhibit = exhibitToWorkAt;
+
+            if (insideExhibit != null)
+            {
+                if (insideExhibit == destinationExhibit)
+                {
+                    workingState = WorkingState.Working;
+                    FindDestination(destinationExhibit);
+                    return;
+                }
+                else
+                {
+                    workingState = WorkingState.GoingToExhibitExitToLeave;
+                    FindDestination(insideExhibit);
+                    return;
+                }
+            }
+            workingState = WorkingState.GoingToExhibitEntranceToEnter;
+            FindDestination(destinationExhibit);
+            return;
         }
-        else
-            isAvailable = true;
+        isAvailable = true;
+    }
+
+    public override void DoJob()
+    {
+        if (JobAtExhibit == "food")
+        {
+            float foodAdded = Random.Range(400, 600);
+            exhibitToWorkAt.food = exhibitToWorkAt.food + foodAdded > 1000 ? 1000 : exhibitToWorkAt.food + foodAdded;
+            exhibitToWorkAt.isGettingFood = false;
+        }
+        else if (JobAtExhibit == "water")
+        {
+            float waterAdded = Random.Range(400, 600);
+            exhibitToWorkAt.water = exhibitToWorkAt.water + waterAdded > 1000 ? 1000 : exhibitToWorkAt.water + waterAdded;
+            exhibitToWorkAt.isGettingWater = false;
+        }
+        else if (JobAtExhibit == "dropping")
+        {
+            exhibitToWorkAt.animalDroppings.Clear();
+            exhibitToWorkAt.isGettingCleaned = false;
+        }
+        JobAtExhibit = "";
     }
 
     public override void FindInsideDestination()
     {
         Grid destinationGrid = exhibitToWorkAt.gridList[Random.Range(0, exhibitToWorkAt.gridList.Count)];
-        agent.SetDestination(new Vector3(destinationGrid.coords[0].x, destinationGrid.coords[0].y, destinationGrid.coords[0].z));
+        agent.SetDestination(new Vector3(destinationGrid.coords[0].x + Random.Range(0, 1.0f), destinationGrid.coords[0].y, destinationGrid.coords[0].z + Random.Range(0, 1.0f)));
     }
 }

@@ -31,7 +31,9 @@ public class PlayerControl : MonoBehaviour
     public bool npcControl = false;
     public bool isMouseDown = false;
     public bool isClickableSelected = false;
-    public GameObject gate;
+    public List<GameObject> gates;
+    public GameObject animalDroppingPrefab;
+    public List<string> placedTags = new List<string>() { "Placed", "Placed Fence" };
 
     private float maxTerrainHeight = 10;
     private float minTerrainHeight = -3;
@@ -39,12 +41,30 @@ public class PlayerControl : MonoBehaviour
     private int coordIndex = 0;
     private float mouseDistnace = 0;
     public List<Chunk> modifiedChunks = new List<Chunk>();
+    public int maxDepth = 1;
+    public GameObject TerraformColliderPrefab;
+    public bool terrainCollided = false;
+    public Vector3[] startingCoords;
+
     public InfoPopup currentInfopopup;
     public bool stopMovement = false;
 
     public void ChangeTerraformer()
     {
         terraForming = !terraForming;
+        if(!terraForming)
+        {
+            animalNavMesh.UpdateNavMesh(animalNavMesh.navMeshData);
+        }
+
+        startingCoords = new Vector3[gridM.coords.Length];
+        Array.Copy(gridM.coords, startingCoords, gridM.coords.Length);
+
+        foreach (Chunk tempChunk in gridM.terrainElements)
+        {
+            if (tempChunk.gameObject.CompareTag("Terrain"))
+                tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
+        }
     }
 
     public void ChangeNPCcontrol()
@@ -75,6 +95,9 @@ public class PlayerControl : MonoBehaviour
         VirtualCamera.transform.rotation = GameCamera.transform.rotation;
         gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
         GameCamera.GetComponent<CinemachineBrain>().enabled = false;
+
+        startingCoords = new Vector3[gridM.coords.Length];
+        Array.Copy(gridM.coords, startingCoords, gridM.coords.Length);
     }
 
     void Update()
@@ -144,7 +167,7 @@ public class PlayerControl : MonoBehaviour
                 Array.Sort(hits, (a, b) => (a.distance.CompareTo(b.distance)));
                 foreach (RaycastHit hit in hits)
                 {
-                    if (hit.collider.CompareTag("Clickable") || hit.collider.CompareTag("Placed"))
+                    if (hit.collider.CompareTag("Clickable") || placedTags.Contains(hit.collider.tag))
                     {
                         var clickedOnObject = hit.collider.gameObject.GetComponent<Clickable>();
                         clickedOnObject.ClickedOn();
@@ -237,7 +260,7 @@ public class PlayerControl : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            if (hit.collider.gameObject.CompareTag("Placed"))
+            if (placedTags.Contains(hit.collider.tag))
             {
                 var building = hit.collider.GetComponentInParent<Placeable>();
                 m_Selected = building;
@@ -299,6 +322,8 @@ public class PlayerControl : MonoBehaviour
 
     public void Terraform(int xWidth, int zWidth)
     {
+        //Vector3 startingGrid;
+
         if (Input.GetMouseButtonDown(0))
         {
             var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
@@ -308,12 +333,20 @@ public class PlayerControl : MonoBehaviour
                 if (hit.collider.gameObject.CompareTag("Terrain"))
                 {
                     coordIndex = (int)(Mathf.Floor(hit.point.x) + Mathf.Floor(hit.point.z) * (gridM.terrainWidth + 1));
+
+                    if (!gridM.edgeChanged && !terrainCollided)
+                    {
+                        startingCoords = new Vector3[gridM.coords.Length];
+                        Array.Copy(gridM.coords, startingCoords, gridM.coords.Length);
+                    }
                 }
             }
         }
 
         if (Input.GetMouseButton(0))
         {
+            //startingGrid = GridManager.instance.coords[coordIndex];
+
             mouseDistnace += Input.GetAxis("Mouse Y");
             if (Input.GetAxis("Mouse Y") > 0)
             {
@@ -321,8 +354,8 @@ public class PlayerControl : MonoBehaviour
                 {
                     mouseDistnace = 0;
 
-                    gridM.tempCoords = new Vector3[gridM.coords.Length];
-                    Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
+                    //gridM.tempCoords = new Vector3[gridM.coords.Length];
+                    //Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
 
                     float height = 0;
 
@@ -339,6 +372,14 @@ public class PlayerControl : MonoBehaviour
                         for (int j = 0; j < zWidth + 1; j++)
                         {
                             gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y = Mathf.Floor(height / (xWidth + 1) / (zWidth + 1) * 2) / 2 + 0.5f;
+
+                            BoxCollider terraformCollider = Instantiate(TerraformColliderPrefab).GetComponent<BoxCollider>();
+
+                            terraformCollider.isTrigger = true;
+                            terraformCollider.size = new Vector3(1.9f, 30, 1.9f);
+                            terraformCollider.center = new Vector3(gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].x, gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y, gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].z);
+                            Destroy(terraformCollider.gameObject, 0.3f);
+                            //Destroy(terraformCollider.gameObject, 50f);
                         }
                     }
 
@@ -346,7 +387,7 @@ public class PlayerControl : MonoBehaviour
                     {
                         for (int j = 0; j < zWidth + 1; j++)
                         {
-                            gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, true);
+                            gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, true, 1);
                         }
                     }
                 }
@@ -357,8 +398,8 @@ public class PlayerControl : MonoBehaviour
                 {
                     mouseDistnace = 0;
 
-                    gridM.tempCoords = new Vector3[gridM.coords.Length];
-                    Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
+                    //gridM.tempCoords = new Vector3[gridM.coords.Length];
+                    //Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
 
                     float height = 0;
 
@@ -375,6 +416,13 @@ public class PlayerControl : MonoBehaviour
                         for (int j = 0; j < zWidth + 1; j++)
                         {
                             gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y = MathF.Ceiling(height / (xWidth + 1) / (zWidth + 1) * 2) / 2 - 0.5f;
+
+                            BoxCollider terraformCollider = Instantiate(TerraformColliderPrefab).GetComponent<BoxCollider>();
+
+                            terraformCollider.isTrigger = true;
+                            terraformCollider.size = new Vector3(1.9f, 30, 1.9f);
+                            terraformCollider.center = new Vector3(gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].x, gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y, gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].z);
+                            Destroy(terraformCollider.gameObject, 0.3f);
                         }
                     }
 
@@ -382,18 +430,50 @@ public class PlayerControl : MonoBehaviour
                     {
                         for (int j = 0; j < zWidth + 1; j++)
                         {
-                            gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, false);
+                            gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, false, 1);
                         }
                     }
                 }
             }
 
-            if (gridM.edgeChanged)
+            //if (modifiedChunks.Count > 0)
+            //{
+            //    BoxCollider terraformCollider = Instantiate(TerraformColliderPrefab).GetComponent<BoxCollider>();
+
+            //    maxDepth = maxDepth > 2 ? maxDepth - 1 : maxDepth;
+            //    terraformCollider.size = new Vector3(maxDepth * 2, 30, maxDepth * 2);
+            //    terraformCollider.center = new Vector3(startingGrid.x + 0.5f, startingGrid.y, startingGrid.z + 0.5f);
+            //    maxDepth = 1;
+
+            //    Destroy(terraformCollider.gameObject, 0.5f);
+
+            //    Destroy(terraformCollider.gameObject, 50);
+            //}
+
+            if (gridM.edgeChanged || terrainCollided)
             {
+                Debug.Log(terrainCollided);
                 gridM.edgeChanged = false;
-                gridM.coords = new Vector3[gridM.tempCoords.Length];
-                Array.Copy(gridM.tempCoords, gridM.coords, gridM.tempCoords.Length);
+                terrainCollided = false;
+                gridM.coords = new Vector3[startingCoords.Length];
+                Array.Copy(startingCoords, gridM.coords, startingCoords.Length);
             }
+
+            //if (gridM.edgeChanged || terrainCollided)
+            //{
+            //    Debug.Log(terrainCollided);
+            //    gridM.edgeChanged = false;
+            //    terrainCollided = false;
+            //    gridM.coords = new Vector3[gridM.tempCoords.Length];
+            //    Array.Copy(gridM.tempCoords, gridM.coords, gridM.tempCoords.Length);
+            //}
+
+            //gridM.tempCoords = null;
+
+            int chunkIndex = (int)(Mathf.Floor(gridM.coords[coordIndex].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[coordIndex].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
+            if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth))
+                if (!modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
+                    modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
 
             foreach (Chunk tempChunk in modifiedChunks)
             {
@@ -414,7 +494,7 @@ public class PlayerControl : MonoBehaviour
             m_Selected = null;
         }
     }
-
+    
     public NavMeshSurface guestNavMesh;
     public NavMeshSurface animalNavMesh;
     public NavMeshAgent agent;
@@ -450,7 +530,6 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-
     public void SetInfopopup(InfoPopup infopopup)
     {
         currentInfopopup = infopopup;
@@ -463,12 +542,11 @@ public class PlayerControl : MonoBehaviour
         VirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_CameraDistance = cameraDistance;
     }
 
-
-    public NavMeshSurface test;
-    public void Reload()
-    {
-        test.BuildNavMesh();
-    }
+    //public NavMeshSurface test;
+    //public void Reload()
+    //{
+    //    test.UpdateNavMesh(test.navMeshData);
+    //}
 
     public GameObject gateTest;
     bool closed = true;

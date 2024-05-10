@@ -8,23 +8,45 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public List<Grid> paths;
     public string exhibitName;
     public List<Animal> animals = new List<Animal>();
-    public List<int> animalDroppings = new();
+    public List<GameObject> animalDroppings = new();
     public Grid exitGrid;
     public Grid entranceGrid;
     PlayerControl playerControl;
-    bool isOpen = false;
+    public bool isOpen = false;
     public static int exhibitCount = 0;
+    public bool reachable = false;
+    public List<Staff> staff = new();
+    Vector3 gateObstacleCenter;
+    float time = 0;
+    public bool unreachableForStaff = false;
 
     public float food = 1000;
     public float water = 1000;
+    public bool isGettingFood = false;
+    public bool isGettingWater = false;
+    public bool isGettingCleaned = false;
 
     void Start()
     {
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
     }
 
+    void Update()
+    {
+        if (unreachableForStaff)
+        {
+            time += Time.deltaTime;
+            if (time > 60)
+            {
+                unreachableForStaff = false;
+                time = 0;
+            }
+        }
+    }
+
     public void SetExhibit(HashSet<Grid> grids)
     {
+        gateObstacleCenter = gameObject.GetComponent<NavMeshObstacle>().center;
         gridList = new List<Grid>(grids);
         paths = new List<Grid>();
         gridList.Sort((x, y) => x.coords[0].z.CompareTo(y.coords[0].z) == 0 ? x.coords[0].x.CompareTo(y.coords[0].x) : x.coords[0].z.CompareTo(y.coords[0].z));
@@ -94,18 +116,15 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
         switch (action)
         {
             case 1:
-                if(!isOpen)
+                if (!isOpen)
                 {
                     OpenGate();
-                    isOpen = true;
                 }
                 break;
             case 2:
-
                 if (isOpen)
                 {
                     CloseGate();
-                    isOpen = false;
                 }
                 break;
         }
@@ -125,8 +144,12 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
 
     public void AddToReachableLists()
     {
-        GridManager.instance.reachableVisitables.Add(this);
-        GridManager.instance.reachableHappinessBuildings.Add(this);
+        reachable = true;
+        if (animals.Count > 0)
+        {
+            GridManager.instance.reachableVisitables.Add(this);
+            GridManager.instance.reachableHappinessBuildings.Add(this);
+        }
     }
 
     public void ClickedOn()
@@ -145,16 +168,28 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
 
     public void OpenGate()
     {
-        var gateObstacle = gameObject.GetComponent<NavMeshObstacle>();
-        GetComponentInChildren<Animator>().Play("Open");
-        gateObstacle.center = new Vector3(gateObstacle.center.x - 0.5f, gateObstacle.center.y, gateObstacle.center.z);
+        if (!isOpen)
+        {
+            var gateObstacle = gameObject.GetComponent<NavMeshObstacle>();
+            GetComponentInChildren<Animator>().Play("Open");
+            gateObstacle.center = new Vector3(gateObstacleCenter.x - 0.6f, gateObstacle.center.y, gateObstacle.center.z);
+            isOpen = true;
+        }
     }
 
     public void CloseGate()
     {
-        var gateObstacle = gameObject.GetComponent<NavMeshObstacle>();
-        GetComponentInChildren<Animator>().Play("Close");
-        gateObstacle.center = new Vector3(gateObstacle.center.x + 0.5f, gateObstacle.center.y, gateObstacle.center.z);
+        if (isOpen)
+        {
+            if (staff.Count > 0)
+                foreach (Staff staffMember in staff)
+                    if (!(staffMember.workingState == Staff.WorkingState.Working) && !(staffMember.workingState == Staff.WorkingState.Resting))
+                        return;
+            var gateObstacle = gameObject.GetComponent<NavMeshObstacle>();
+            GetComponentInChildren<Animator>().Play("Close");
+            gateObstacle.center = new Vector3(gateObstacleCenter.x, gateObstacle.center.y, gateObstacle.center.z);
+            isOpen = false;
+        }
     }
 
     public int GetCapacity()
@@ -163,4 +198,12 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     }
 
     public void SetCapacity(int newCapacity) { }
+
+    public void SetUnreachableForStaff()
+    {
+        unreachableForStaff = true;
+        isGettingFood = false;
+        isGettingWater = false;
+        isGettingCleaned = false;
+    }
 }

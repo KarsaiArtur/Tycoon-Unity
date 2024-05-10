@@ -42,6 +42,10 @@ public class CalendarManager : MonoBehaviour
     {
         currentDate = currentDate.AddDays(1);
         SetDate();
+        if (currentDate.Day == 1)
+        {
+            ZooManager.instance.PayExpenses();
+        }
     }
 
     void SetDate()
