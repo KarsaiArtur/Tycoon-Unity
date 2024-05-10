@@ -139,6 +139,8 @@ MonoBehaviour:
   placeables:
   - {fileID: 2548022094330047049, guid: ea2af87f8d07b52458eb9f260d74d5f9, type: 3}
   - {fileID: 8619175740054138018, guid: 94d57a6ef274ff94ebbd23970f583c43, type: 3}
+  - {fileID: -8529523461088322332, guid: 0fa000784ee4f6d4aab113ddf8cd139b, type: 3}
+  - {fileID: -8529523461088322332, guid: 6d6486846c6864d4aa0ec6e430be7354, type: 3}
 --- !u!114 &-551359618796648214
 MonoBehaviour:
   m_ObjectHideFlags: 0

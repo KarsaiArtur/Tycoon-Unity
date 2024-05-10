@@ -18,7 +18,6 @@ public class Animal : Placeable
     float terraintHeight;
 
     float time = 0;
-    float startTime = 5;
     Vector3 destination;
 
     DateTime prevDay;

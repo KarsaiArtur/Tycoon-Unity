@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 public class TerraformCollider : MonoBehaviour
@@ -16,7 +17,7 @@ public class TerraformCollider : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Placed"))
+        if (playerControl.placedTags.Contains(other.tag))
         {
             playerControl.terrainCollided = true;
         }

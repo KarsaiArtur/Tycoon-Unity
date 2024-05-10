@@ -25,6 +25,7 @@ public class GridManager : MonoBehaviour
     public int changeRate = 20;
     public float edgeHeight;
     private PlayerControl pControl;
+    bool initializing = true;
 
     public Vector3[] tempCoords;
     public bool edgeChanged = false;
@@ -55,7 +56,7 @@ public class GridManager : MonoBehaviour
         CreateCoords();
         CreateTerrainElements();
 
-
+        initializing = true;
         SetEdgeHeight();
         foreach (Chunk chunk in terrainElements)
         {
@@ -87,6 +88,7 @@ public class GridManager : MonoBehaviour
         reachableVisitables = new List<Visitable> { ZooManager.instance == null ? new GameObject().AddComponent<ZooManager>() : ZooManager.instance };
 
         startingGrid = GetGrid(new Vector3(35, 0, 50));
+        initializing = false;
     }
 
     public void InitializeGrids()
@@ -186,7 +188,7 @@ public class GridManager : MonoBehaviour
             for (x = 0; x < tilesPerSide; x++, i++)
             {
                 Chunk elementInstance;
-                if(x == 0 &&  z == 0)
+                if (x == 0 && z == 0)
                 {
                     rotationAngle = 0;
                     elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
@@ -206,7 +208,7 @@ public class GridManager : MonoBehaviour
                     rotationAngle = 270;
                     elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
                 }
-                else if(x == 0 && z == 1)
+                else if (x == 0 && z == 1)
                 {
                     rotationAngle = 0;
                     elementInstance = Instantiate(entranceTerrainPrefab, this.transform);
@@ -345,14 +347,17 @@ public class GridManager : MonoBehaviour
             edgeChanged = true;
         }
 
-        BoxCollider terraformCollider = Instantiate(pControl.TerraformColliderPrefab).GetComponent<BoxCollider>();
+        if (!initializing)
+        {
+            BoxCollider terraformCollider = Instantiate(pControl.TerraformColliderPrefab).GetComponent<BoxCollider>();
 
-        terraformCollider.isTrigger = true;
-        terraformCollider.size = new Vector3(1.9f, 30, 1.9f);
-        terraformCollider.center = new Vector3(coords[index].x, coords[index].y, coords[index].z);
+            terraformCollider.isTrigger = true;
+            terraformCollider.size = new Vector3(1.9f, 30, 1.9f);
+            terraformCollider.center = new Vector3(coords[index].x, coords[index].y, coords[index].z);
 
-        Destroy(terraformCollider.gameObject, 0.3f);
-        //Destroy(terraformCollider.gameObject, 50);
+            Destroy(terraformCollider.gameObject, 0.3f);
+            //Destroy(terraformCollider.gameObject, 50);
+        }
 
         int[] neighbourIndexes = new int[4];
         neighbourIndexes[0] = index + 1;
