@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 8443560985580367103}
   - component: {fileID: 7541442019886409230}
   - component: {fileID: 1275409622969242082}
+  - component: {fileID: 2030654994202824833}
   m_Layer: 0
   m_Name: GameObject (6)
   m_TagString: Untagged
@@ -159,6 +160,22 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.84
   m_Center: {x: 0, y: 0.68, z: 0}
+--- !u!208 &2030654994202824833
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4001717575615986724}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.05, y: 1.44, z: 0.05}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: -0.04, y: 0, z: -0.02}
+  m_TimeToStationary: 0.5
 --- !u!1 &5602065795382309580
 GameObject:
   m_ObjectHideFlags: 0

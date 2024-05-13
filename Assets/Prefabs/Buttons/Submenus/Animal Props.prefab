@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7622653307599481166}
   - component: {fileID: -3909907454791035505}
   m_Layer: 5
-  m_Name: Animal Toys
+  m_Name: Animal Props
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -136,7 +136,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   subMenuInstance: {fileID: 0}
-  placeables: []
+  placeables:
+  - {fileID: 1213586563527077254, guid: 212cade3a16344741a2e416afe4b4dc9, type: 3}
 --- !u!114 &-3909907454791035505
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,7 +218,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Ter. Type
+  m_text: Animal Props
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

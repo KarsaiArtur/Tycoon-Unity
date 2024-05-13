@@ -33,7 +33,7 @@ public class PlayerControl : MonoBehaviour
     public bool isClickableSelected = false;
     public List<GameObject> gates;
     public GameObject animalDroppingPrefab;
-    public List<string> placedTags = new List<string>() { "Placed", "Placed Fence" };
+    public List<string> placedTags = new List<string>() { "Placed", "Placed Fence", "Placed Path", };
 
     private float maxTerrainHeight = 10;
     private float minTerrainHeight = -3;

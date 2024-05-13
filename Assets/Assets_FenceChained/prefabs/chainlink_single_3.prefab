@@ -266,6 +266,7 @@ MonoBehaviour:
   icon: {fileID: 0}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
+  defaultMaterials: []
   index: 0
   materials:
   - {fileID: 2100000, guid: 7b2405b9286794840873c049383b02fe, type: 2}
@@ -305,7 +306,7 @@ NavMeshObstacle:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1000013955223658}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Shape: 1
   m_Extents: {x: 1.540445, y: 0.507346, z: 0.0982553}

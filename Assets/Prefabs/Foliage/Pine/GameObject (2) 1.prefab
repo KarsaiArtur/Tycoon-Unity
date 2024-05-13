@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 4885417203482785092}
   - component: {fileID: 7632057391878114560}
   - component: {fileID: 2613432306242482863}
+  - component: {fileID: 2736345457663530006}
   m_Layer: 0
   m_Name: GameObject (2) 1
   m_TagString: Untagged
@@ -53,7 +54,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.36
+  m_Radius: 0.69
   m_Height: 3.1
   m_Direction: 1
   m_Center: {x: 0.0006444976, y: 0.28, z: -0.0004925914}
@@ -78,6 +79,22 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.26, y: 2.23, z: 0.26}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!208 &2736345457663530006
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5630335326196474926}
+  m_Enabled: 0
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.05, y: 1.115, z: 0.05}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &6347338326659067628
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.UI;
 
 public class Fence : Placeable
@@ -83,9 +84,9 @@ public class Fence : Placeable
 
     public override void FinalPlace()
     {
+        gameObject.GetComponent<NavMeshObstacle>().enabled = true;
         gridManager.grids[(int)grid1.coords[0].x - gridManager.elementWidth, (int)grid1.coords[0].z - gridManager.elementWidth].neighbours[(timesRotated + 2) % 4] = null;
         gridManager.grids[(int)grid2.coords[0].x - gridManager.elementWidth, (int)grid2.coords[0].z - gridManager.elementWidth].neighbours[timesRotated] = null;
-        tag = "Placed Fence";
 
         if (BFS(grid1, grid2) != null)
         {
@@ -94,7 +95,6 @@ public class Fence : Placeable
             Exhibit exhibit = gateInstance.AddComponent<Exhibit>();
             CreateExhibitWindow(exhibit);
             UnityEditorInternal.ComponentUtility.MoveComponentUp(exhibit);
-            gateInstance.tag = "Placed Fence";
 
             if (tempGrids != null)
             {
@@ -122,6 +122,11 @@ public class Fence : Placeable
             ZooManager.instance.ChangeMoney(placeablePrice);
             DestroyPlaceable();
         }
+    }
+
+    public override void SetTag(string newTag)
+    {
+        tag = "Placed Fence";
     }
 
     public HashSet<Grid> BFS(Grid start, Grid end)
@@ -184,10 +189,11 @@ public class Fence : Placeable
 
     void OnCollisionStay(Collision collision)
     {
-        if (collision.collider.CompareTag("Placed") )
+        if (collision.collider.CompareTag("Placed") && !tag.Equals("Placed Fence"))
         {
             collided = true;
             playerControl.canBePlaced = false;
+            ChangeMaterial(2);
         }
     }
 

@@ -123,7 +123,7 @@ public class PathManager : Placeable
     {
         foreach (var path in paths)
         {
-            path.SetTag(newTag);
+            path.SetTag("Placed Path");
             path.transform.GetChild(0).tag = newTag;
         }
     }
