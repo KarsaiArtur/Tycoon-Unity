@@ -2054,6 +2054,7 @@ MonoBehaviour:
   purchasableItemInstances: []
   capacity: 10
   hasRestroom: 0
+  expense: 0
 --- !u!65 &6819721767351576434
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -2073,8 +2074,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.8560826, y: 0.90379214, z: 1.8734417}
-  m_Center: {x: 0.5003101, y: -0.08234203, z: 0.48219478}
+  m_Size: {x: 1.8560826, y: 0.90379214, z: 1.83854}
+  m_Center: {x: 0.5003101, y: -0.08234203, z: 0.4996457}
 --- !u!208 &5274801528639484971
 NavMeshObstacle:
   m_ObjectHideFlags: 0
@@ -2085,11 +2086,11 @@ NavMeshObstacle:
   m_Enabled: 0
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 0.9280415, y: 0.45189604, z: 0.936721}
+  m_Extents: {x: 0.9280415, y: 0.45189604, z: 0.91927}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
-  m_Center: {x: 0.5003101, y: -0.08234203, z: 0.4821948}
+  m_Center: {x: 0.5003101, y: -0.08234203, z: 0.4996457}
   m_TimeToStationary: 0.5
 --- !u!1 &9174167181095817450
 GameObject:

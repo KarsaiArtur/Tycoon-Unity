@@ -16,6 +16,7 @@ TagManager:
   - InfoPopup
   - Frame
   - Placed Fence
+  - Placed Path
   layers:
   - Default
   - TransparentFX

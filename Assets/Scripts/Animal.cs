@@ -146,7 +146,7 @@ public class Animal : Placeable
     {
         var animalDropping = Instantiate(playerControl.animalDroppingPrefab, transform.position, transform.rotation);
         exhibit.animalDroppings.Add(animalDropping);
-        restroomNeeds += UnityEngine.Random.Range(75f, 100f);
+        restroomNeeds = UnityEngine.Random.Range(75f, 100f);
     }
 
     public void Update()

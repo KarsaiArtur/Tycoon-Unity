@@ -4,9 +4,11 @@ using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
+using static Unity.VisualScripting.Antlr3.Runtime.Tree.TreeWizard;
 
 public class Visitor : MonoBehaviour, Clickable
 {
+    public Animator animator;
     public NavMeshSurface surface;
     public NavMeshAgent agent;
     bool atDestination = true;
@@ -19,6 +21,8 @@ public class Visitor : MonoBehaviour, Clickable
 
     float time = 0;
     Vector3 destination;
+    public Exhibit currentExhibit;
+    public Animal lookedAnimal;
 
     public float hunger = 100;
     public float thirst = 100;
@@ -31,6 +35,7 @@ public class Visitor : MonoBehaviour, Clickable
     float energyDetriment = 0.25f;
     float restroomNeedsDetriment = 0.25f;
     float happinessDetriment = 0.25f;
+    MeshRenderer photoCamera;
 
     public string action = "";
 
@@ -45,14 +50,14 @@ public class Visitor : MonoBehaviour, Clickable
         hungerDetriment = Random.Range(0.2f, 0.3f);
         thirstDetriment = Random.Range(0.45f, 0.55f);
         energyDetriment = Random.Range(0.2f, 0.3f);
-        restroomNeedsDetriment = UnityEngine.Random.Range(0.05f, 0.15f);
+        restroomNeedsDetriment = Random.Range(0.05f, 0.15f);
         happinessDetriment = Random.Range(0.2f, 0.3f);
 
-        hunger = Random.Range(50, 100);
-        thirst = Random.Range(50, 100);
-        energy = Random.Range(50, 100);
-        restroomNeeds = Random.Range(50, 100);
-        happiness = Random.Range(50, 100);
+        hunger = Random.Range(50, 75);
+        thirst = Random.Range(50, 75);
+        energy = Random.Range(50, 75);
+        restroomNeeds = Random.Range(50, 75);
+        happiness = Random.Range(50, 75);
 
         foreach (Exhibit exhibit in GridManager.instance.reachableHappinessBuildings)
         {
@@ -60,6 +65,15 @@ public class Visitor : MonoBehaviour, Clickable
         }
 
         StartCoroutine(DecreaseNeeds());
+
+
+        foreach (var renderer in new List<MeshRenderer>(GetComponentsInChildren<MeshRenderer>()))
+        {
+            if (renderer.tag.Equals("Camera"))
+            {
+                photoCamera = renderer;
+            }
+        }
     }
 
     IEnumerator DecreaseNeeds()
@@ -93,9 +107,9 @@ public class Visitor : MonoBehaviour, Clickable
     {
         if (placed)
         {
-            /*int r = Random.Range(0, 2);
-            if(r == 0)
-            {*/
+
+            animator.SetFloat("vertical", agent.velocity.magnitude / agent.speed);
+
             if (atDestination && GridManager.instance.reachableVisitables.Count != 0)
             {
                 ChooseDestination();
@@ -106,8 +120,12 @@ public class Visitor : MonoBehaviour, Clickable
                 time += Time.deltaTime;
                 if (!arrived)
                 {
-                    destinationVisitable.Arrived(this);
                     arrived = true;
+                    destinationVisitable.Arrived(this);
+                }
+                if(arrived && lookAtAnimals)
+                {
+                    RotateTowards(lookedAnimal.transform.position);
                 }
                 if (time > 15)
                 {
@@ -172,6 +190,7 @@ public class Visitor : MonoBehaviour, Clickable
 
     void ChooseDestination()
     {
+        photoCamera.enabled = false;
         arrived = false;
         SetIsVisible(true);
         destinationVisitable?.SetCapacity(destinationVisitable.GetCapacity() + 1);
@@ -308,5 +327,56 @@ public class Visitor : MonoBehaviour, Clickable
     public string GetName()
     {
         return visitorName;
+    }
+
+    public void TakePictures()
+    {
+        photoCamera.enabled = true;
+        GetComponentInChildren<Animator>().Play("Take Camera Out");
+        StartCoroutine(CheckPictures());
+    }
+    public int randomRange = 10;
+    bool lookAtAnimals = false;
+
+    IEnumerator CheckPictures()
+    {
+        lookedAnimal = currentExhibit.animals[Random.Range(0, currentExhibit.animals.Count)];
+        randomRange = 10;
+        while (arrived)
+        {
+            if (this.animator.GetCurrentAnimatorStateInfo(0).IsName("Taking Pictures"))
+            {
+                lookAtAnimals = true;
+                var random = Random.Range(0, randomRange);
+                if(random == 0) {
+                    GetComponentInChildren<Animator>().Play("Checking Pictures");
+                    randomRange = 10;
+                    lookAtAnimals = false;
+                    lookedAnimal = currentExhibit.animals[Random.Range(0, currentExhibit.animals.Count)];
+                }
+                else
+                {
+                    randomRange--;
+                }
+            }
+            yield return new WaitForSeconds(1);
+        }
+        lookAtAnimals = false;
+    }
+
+
+
+    public void RotateTowards(Vector3 to)
+    {
+
+        Quaternion _lookRotation =
+            Quaternion.LookRotation(to - transform.position);
+
+        //over time
+        transform.rotation =
+            Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * 20);
+
+        //instant
+        //transform.rotation = _lookRotation;
     }
 }

@@ -24,6 +24,7 @@ public class Building : Placeable, Visitable
 
     public bool hasRestroom = false;
     public int expense = 0;
+    public static int itemsBought = 0;
 
     public override void Awake()
     {
@@ -272,6 +273,7 @@ public class Building : Placeable, Visitable
         if (index < purchasableItemInstances.Count)
         {
             visitor.PurchaseItem(purchasableItemInstances[index]);
+            itemsBought++;
         }
         else
         {

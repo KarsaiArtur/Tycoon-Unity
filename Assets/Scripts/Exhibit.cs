@@ -109,6 +109,8 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
         if (animals.Count > 0)
             foreach (Animal animal in animals)
                 visitor.happiness = visitor.happiness + animal.happiness / 25 > 100 ? 100 : visitor.happiness + animal.happiness / 25;
+        visitor.currentExhibit = this;
+        visitor.TakePictures();
     }
 
     public void StaffArrived(int action)

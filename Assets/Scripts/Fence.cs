@@ -223,7 +223,7 @@ public class Fence : Placeable
                 exhibit.exhibitName = String.IsNullOrWhiteSpace(inputfield.text) ? placeholder.text : inputfield.text;
                 Destroy(exhibitCreateWindow.gameObject);
                 playerControl.stopMovement = false;
-                playerControl.Spawn(playerControl.curPlaceable);
+                playerControl.Spawn(UIMenu.Instance.curPlaceable);
             });
     }
 }

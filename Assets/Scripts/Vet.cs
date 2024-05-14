@@ -79,13 +79,14 @@ public class Vet : Staff
         isAvailable = true;
     }
 
-    public override void DoJob()
+    public override bool DoJob()
     {
         float healthRecovered = Random.Range(40, 60);
         animalToHeal.health = animalToHeal.health + healthRecovered > 100 ? 100 : animalToHeal.health + healthRecovered;
         animalToHeal.isSick = false;
         animalToHeal.healthDetriment = 0;
         animalToHeal.isGettingHealed = false;
+        return true;
     }
 
     public override void FindInsideDestination()

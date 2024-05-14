@@ -5,8 +5,7 @@ using UnityEngine;
 public class Zookeeper : Staff
 {
     Exhibit exhibitToWorkAt;
-    string JobAtExhibit;
-
+    public string jobAtExhibit;
 
     public void Start()
     {
@@ -30,7 +29,7 @@ public class Zookeeper : Staff
                     if (!exhibit.isGettingWater)
                         animalNeeds.Add((exhibit, "water", exhibit.water / 1000));
                     if (!exhibit.isGettingCleaned)
-                        animalNeeds.Add((exhibit, "dropping", 1 - exhibit.animalDroppings.Count / exhibit.gridList.Count));
+                        animalNeeds.Add((exhibit, "dropping", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)));
                 }
             }
         }
@@ -48,17 +47,17 @@ public class Zookeeper : Staff
             if (animalNeeds.First().need == "food")
             {
                 exhibitToWorkAt.isGettingFood = true;
-                JobAtExhibit = "food";
+                jobAtExhibit = "food";
             }
             if (animalNeeds.First().need == "water")
             {
                 exhibitToWorkAt.isGettingWater = true;
-                JobAtExhibit = "water";
+                jobAtExhibit = "water";
             }
             if (animalNeeds.First().need == "dropping")
             {
                 exhibitToWorkAt.isGettingCleaned = true;
-                JobAtExhibit = "dropping";
+                jobAtExhibit = "dropping";
             }
 
             destinationExhibit = exhibitToWorkAt;
@@ -85,31 +84,52 @@ public class Zookeeper : Staff
         isAvailable = true;
     }
 
-    public override void DoJob()
+    public override bool DoJob()
     {
-        if (JobAtExhibit == "food")
+        if (jobAtExhibit == "food")
         {
             float foodAdded = Random.Range(400, 600);
             exhibitToWorkAt.food = exhibitToWorkAt.food + foodAdded > 1000 ? 1000 : exhibitToWorkAt.food + foodAdded;
             exhibitToWorkAt.isGettingFood = false;
+            jobAtExhibit = "";
+            return true;
         }
-        else if (JobAtExhibit == "water")
+        else if (jobAtExhibit == "water")
         {
             float waterAdded = Random.Range(400, 600);
             exhibitToWorkAt.water = exhibitToWorkAt.water + waterAdded > 1000 ? 1000 : exhibitToWorkAt.water + waterAdded;
             exhibitToWorkAt.isGettingWater = false;
+            jobAtExhibit = "";
+            return true;
         }
-        else if (JobAtExhibit == "dropping")
+        else if (jobAtExhibit == "dropping")
         {
-            exhibitToWorkAt.animalDroppings.Clear();
-            exhibitToWorkAt.isGettingCleaned = false;
+            var temp = exhibitToWorkAt.animalDroppings.ElementAt(0);
+            exhibitToWorkAt.animalDroppings.RemoveAt(0);
+            Destroy(temp);
+            if (exhibitToWorkAt.animalDroppings.Count == 0)
+            {
+                exhibitToWorkAt.isGettingCleaned = false;
+                jobAtExhibit = "";
+                return true;
+            }
+            return false;
         }
-        JobAtExhibit = "";
+        return true;
     }
 
     public override void FindInsideDestination()
     {
-        Grid destinationGrid = exhibitToWorkAt.gridList[Random.Range(0, exhibitToWorkAt.gridList.Count)];
-        agent.SetDestination(new Vector3(destinationGrid.coords[0].x + Random.Range(0, 1.0f), destinationGrid.coords[0].y, destinationGrid.coords[0].z + Random.Range(0, 1.0f)));
+        if (jobAtExhibit == "dropping")
+        {
+            time = 8;
+            Grid destinationGrid = exhibitToWorkAt.gridList[Random.Range(0, exhibitToWorkAt.gridList.Count)];
+            agent.SetDestination(exhibitToWorkAt.animalDroppings[0].transform.position);
+        }
+        else
+        {
+            Grid destinationGrid = exhibitToWorkAt.gridList[Random.Range(0, exhibitToWorkAt.gridList.Count)];
+            agent.SetDestination(new Vector3(destinationGrid.coords[0].x + Random.Range(0, 1.0f), destinationGrid.coords[0].y, destinationGrid.coords[0].z + Random.Range(0, 1.0f)));
+        }
     }
 }

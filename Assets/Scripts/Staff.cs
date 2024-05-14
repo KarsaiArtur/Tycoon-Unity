@@ -7,7 +7,7 @@ public class Staff : Placeable
 {
     public NavMeshAgent agent;
     bool placed = false;
-    float time = 0;
+    public float time = 0;
     public Exhibit destinationExhibit;
     public Exhibit insideExhibit;
     public bool isAvailable = true;
@@ -103,11 +103,17 @@ public class Staff : Placeable
                         agent.isStopped = false;
                         if (time > 10)
                         {
-                            DoJob();
-                            workingState = WorkingState.GoingToExhibitExitToLeave;
-                            isAvailable = true;
-                            destinationExhibit = null;
-                            FindDestination(insideExhibit);
+                            if (!DoJob())
+                            {
+                                FindDestination(insideExhibit);
+                            }
+                            else
+                            {
+                                workingState = WorkingState.GoingToExhibitExitToLeave;
+                                isAvailable = true;
+                                destinationExhibit = null;
+                                FindDestination(insideExhibit);
+                            }
                         }
                         break;
                     case WorkingState.Resting:
@@ -137,6 +143,7 @@ public class Staff : Placeable
 
     public void FindDestination(Exhibit exhibit)
     {
+        time = 0;
         if (exhibit != null)
         {
             if (workingState == WorkingState.GoingToExhibitEntranceToEnter || workingState == WorkingState.GoingToExhibitEntranceToLeave)
@@ -177,12 +184,11 @@ public class Staff : Placeable
             agent.isStopped = false;
             destinationReached = false;
         }
-        time = 0;
     }
 
     public virtual void FindJob() { }
 
-    public virtual void DoJob() { }
+    public virtual bool DoJob() { return true; }
 
     public virtual void FindInsideDestination() { }
 

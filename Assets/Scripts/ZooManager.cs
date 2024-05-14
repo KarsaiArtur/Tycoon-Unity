@@ -14,6 +14,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
     public float defaultEntranceFee = 20;
     public float currentEntranceFee = 20;
     PlayerControl playerControl;
+    public int allTimeVisitorCount = 0;
 
     public List<float> latestVisitorHappinesses = new();
     int listSizeLimit = 25;
@@ -32,6 +33,8 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
 
     public void Arrived(Visitor visitor)
     {
+        allTimeVisitorCount++;
+
         latestVisitorHappinesses.Add(visitor.happiness);
         if (latestVisitorHappinesses.Count > listSizeLimit)
         {

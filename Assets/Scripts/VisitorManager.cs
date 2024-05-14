@@ -5,6 +5,7 @@ using UnityEngine.AI;
 
 public class VisitorManager : MonoBehaviour
 {
+    public static VisitorManager instance;
     public List<Visitor> visitors;
     public List<Visitor> visitorPrefabs;
     private float timeTillSpawn  = 0;
@@ -13,6 +14,7 @@ public class VisitorManager : MonoBehaviour
 
     private void Start()
     {
+        instance = this;
         numberOfVisitors = new List<int> { 1, 1, 1, 1, 2, 2, 2, 3, 3, 4 };
     }
 

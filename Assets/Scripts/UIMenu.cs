@@ -18,6 +18,7 @@ public class UIMenu : MonoBehaviour
     public bool isUIVisible = false;
     public Transform submenuPanel;
     public Transform placeableListPanel;
+    public Placeable curPlaceable;
 
     public GameObject infoPanelPrefab;
     public PurchasableItemUi purchasableItemUIPrefab;
@@ -62,7 +63,7 @@ public class UIMenu : MonoBehaviour
         curPlaceableIndex = placeableIndex;
         placeableListPanel.GetChild(curPlaceableIndex+offset).GetComponent<Outline>().enabled = true;
         playerControl.DestroyPlaceableInHand();
-        Placeable curPlaceable = curMenu.GetSelectedPlaceable(curPlaceableIndex).GetComponent<Placeable>();
+        curPlaceable = curMenu.GetSelectedPlaceable(curPlaceableIndex).GetComponent<Placeable>();
         curName.text = curPlaceable.GetName();
         curPrice.text = curPlaceable.GetPrice() + " $";
         playerControl.objectTimesRotated = 0;
