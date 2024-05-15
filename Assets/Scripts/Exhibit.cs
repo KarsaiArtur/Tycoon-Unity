@@ -22,6 +22,8 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
 
     public float food = 1000;
     public float water = 1000;
+    public List<Decoration> foodPlaces = new();
+    public List<Decoration> waterPlaces = new();
     public bool isGettingFood = false;
     public bool isGettingWater = false;
     public bool isGettingCleaned = false;

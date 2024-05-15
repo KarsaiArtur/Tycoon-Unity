@@ -13,12 +13,15 @@ public class Animal : Placeable
     public NavMeshSurface surface;
     public List<NavMeshBuildSource> buildSource;
     public NavMeshAgent agent;
+    public Animator animator;
     public Exhibit exhibit;
     bool atDestination = true;
     bool placed = false;
     float terraintHeight;
 
     float time = 0;
+    float stuckTime = 0;
+    bool destinationReached = false;
     Vector3 destination;
 
     DateTime prevDay;
@@ -162,14 +165,23 @@ public class Animal : Placeable
 
         if (placed)
         {
+            animator.SetFloat("vertical", agent.velocity.magnitude / agent.speed);
             if (atDestination)
             {
                 ChooseDestination();
             }
-            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.01)
+            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1)
+            {
+                destinationReached = true;
+            }
+            if (destinationReached && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.2)
             {
                 agent.isStopped = true;
                 time += Time.deltaTime;
+                if (action == "food" || action == "drink")
+                {
+                    //RotateTowards(agent.destination);
+                }
                 if (time > 5)
                 {
                     atDestination = true;
@@ -177,11 +189,17 @@ public class Animal : Placeable
             }
             else if (agent.velocity == Vector3.zero)
             {
+                animator.SetFloat("vertical", 0);
                 time += Time.deltaTime;
                 if (time > 5)
                 {
                     atDestination = true;
                 }
+            }
+            stuckTime += Time.deltaTime;
+            if (stuckTime > 60)
+            {
+                atDestination = true;
             }
         }
     }
@@ -204,11 +222,22 @@ public class Animal : Placeable
         ChooseDestinationType();
         Grid destinationGrid;
         int random;
+        float offsetX = UnityEngine.Random.Range(0, 1.0f);
+        float offsetZ = UnityEngine.Random.Range(0, 1.0f);
 
         switch (action)
         {
             case "food":
-                destinationGrid = exhibit.gridList[0];
+                if (exhibit.foodPlaces.Count > 0)
+                {
+                    random = UnityEngine.Random.Range(0, exhibit.foodPlaces.Count);
+                    destination = exhibit.foodPlaces[random].transform.position;
+                }
+                else
+                {
+                    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                    destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
+                }
                 float foodEaten = UnityEngine.Random.Range(40, 60);
                 foodEaten = exhibit.food > foodEaten ? foodEaten : exhibit.food;
                 foodEaten = hunger + foodEaten > 100 ? 100 - hunger : foodEaten;
@@ -216,7 +245,16 @@ public class Animal : Placeable
                 exhibit.food -= foodEaten;
                 break;
             case "drink":
-                destinationGrid = exhibit.gridList[0];
+                if (exhibit.waterPlaces.Count > 0)
+                {
+                    random = UnityEngine.Random.Range(0, exhibit.waterPlaces.Count);
+                    destination = exhibit.waterPlaces[random].transform.position;
+                }
+                else
+                {
+                    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                    destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
+                }
                 float waterDrunk = UnityEngine.Random.Range(40, 60);
                 waterDrunk = exhibit.water > waterDrunk ? waterDrunk : exhibit.water;
                 waterDrunk = thirst + waterDrunk > 100 ? 100 - thirst : waterDrunk;
@@ -224,21 +262,19 @@ public class Animal : Placeable
                 exhibit.water -= waterDrunk;
                 break;
             case "wander":
-                random = UnityEngine.Random.Range(0, exhibit.gridList.Count);
-                destinationGrid = exhibit.gridList[random];
+                destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
                 break;
             default:
-                random = UnityEngine.Random.Range(0, exhibit.gridList.Count);
-                destinationGrid = exhibit.gridList[random];
+                destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
                 break;
         }
 
-        float offsetX = UnityEngine.Random.Range(0, 1.0f);
-        float offsetZ = UnityEngine.Random.Range(0, 1.0f);
-        destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
         agent.SetDestination(destination);
         atDestination = false;
         time = 0;
+        stuckTime = 0;
         agent.isStopped = false;
     }
 
@@ -273,4 +309,16 @@ public class Animal : Placeable
         playerControl.SetInfopopup(newInfopopup);
     }
 
+
+    public void RotateTowards(Vector3 to)
+    {
+
+        Quaternion _lookRotation = Quaternion.LookRotation(to - transform.position);
+
+        //over time
+        //transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * 20);
+
+        //instant
+        transform.rotation = _lookRotation;
+    }
 }

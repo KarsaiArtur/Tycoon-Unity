@@ -4,7 +4,6 @@ using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
-using static Unity.VisualScripting.Antlr3.Runtime.Tree.TreeWizard;
 
 public class Visitor : MonoBehaviour, Clickable
 {
@@ -335,6 +334,7 @@ public class Visitor : MonoBehaviour, Clickable
         GetComponentInChildren<Animator>().Play("Take Camera Out");
         StartCoroutine(CheckPictures());
     }
+
     public int randomRange = 10;
     bool lookAtAnimals = false;
 
@@ -363,8 +363,6 @@ public class Visitor : MonoBehaviour, Clickable
         }
         lookAtAnimals = false;
     }
-
-
 
     public void RotateTowards(Vector3 to)
     {

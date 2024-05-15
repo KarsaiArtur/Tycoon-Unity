@@ -83,7 +83,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Jaguar Animator
+  m_Name: Giraffe Animator
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: vertical
@@ -91,7 +91,7 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -126,7 +126,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 2847642367013452201, guid: 1b80231ca7c7b154a8adb80b7048ba7c, type: 3}
+  m_Motion: {fileID: 2847642367013452201, guid: e38c07eb2eeb1214c822a60932e02386, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
