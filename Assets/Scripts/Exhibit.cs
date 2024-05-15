@@ -20,10 +20,11 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     float time = 0;
     public bool unreachableForStaff = false;
 
-    public float food = 1000;
-    public float water = 1000;
-    public List<Decoration> foodPlaces = new();
-    public List<Decoration> waterPlaces = new();
+    public float food = 0;
+    public float water = 0;
+    public float waterCapacity = 0;
+    public List<AnimalFood> foodPlaces = new();
+    public List<WaterTrough> waterPlaces = new();
     public bool isGettingFood = false;
     public bool isGettingWater = false;
     public bool isGettingCleaned = false;
@@ -209,5 +210,18 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
         isGettingFood = false;
         isGettingWater = false;
         isGettingCleaned = false;
+    }
+
+    public void AddWaterPlace(WaterTrough waterPlace)
+    {
+        waterPlaces.Add(waterPlace);
+        water += 500;
+        waterCapacity += 500;
+    }
+
+    public void AddFoodPlace(AnimalFood animalFood)
+    {
+        foodPlaces.Add(animalFood);
+        food += 500;
     }
 }

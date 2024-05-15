@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.AI.Navigation;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,6 +17,7 @@ public class Animal : Placeable
     bool atDestination = true;
     bool placed = false;
     float terraintHeight;
+    public AnimalFood foodPrefab;
 
     float time = 0;
     float stuckTime = 0;
@@ -43,6 +43,7 @@ public class Animal : Placeable
     public bool isGettingHealed = false;
 
     public string action = "";
+    public AnimalVisitable destinationVisitable;
 
     public override void Place(Vector3 mouseHit)
     {
@@ -96,7 +97,7 @@ public class Animal : Placeable
     {
         hungerDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
         thirstDetriment = UnityEngine.Random.Range(0.45f, 0.55f);
-        restroomNeedsDetriment = UnityEngine.Random.Range(0.0f, 0.1f);
+        restroomNeedsDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
         happinessDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
         healthDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
 
@@ -184,6 +185,8 @@ public class Animal : Placeable
                 }
                 if (time > 5)
                 {
+                    if (destinationVisitable != null)
+                        destinationVisitable.Arrived(this);
                     atDestination = true;
                 }
             }
@@ -232,42 +235,46 @@ public class Animal : Placeable
                 {
                     random = UnityEngine.Random.Range(0, exhibit.foodPlaces.Count);
                     destination = exhibit.foodPlaces[random].transform.position;
+                    destinationVisitable = exhibit.foodPlaces[random];
                 }
-                else
-                {
-                    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
-                    destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
-                }
-                float foodEaten = UnityEngine.Random.Range(40, 60);
-                foodEaten = exhibit.food > foodEaten ? foodEaten : exhibit.food;
-                foodEaten = hunger + foodEaten > 100 ? 100 - hunger : foodEaten;
-                hunger += foodEaten;
-                exhibit.food -= foodEaten;
+                //else
+                //{
+                //    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                //    destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
+                //}
+                //float foodEaten = UnityEngine.Random.Range(40, 60);
+                //foodEaten = exhibit.food > foodEaten ? foodEaten : exhibit.food;
+                //foodEaten = hunger + foodEaten > 100 ? 100 - hunger : foodEaten;
+                //hunger += foodEaten;
+                //exhibit.food -= foodEaten;
                 break;
             case "drink":
                 if (exhibit.waterPlaces.Count > 0)
                 {
                     random = UnityEngine.Random.Range(0, exhibit.waterPlaces.Count);
                     destination = exhibit.waterPlaces[random].transform.position;
+                    destinationVisitable = exhibit.waterPlaces[random];
                 }
-                else
-                {
-                    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
-                    destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
-                }
-                float waterDrunk = UnityEngine.Random.Range(40, 60);
-                waterDrunk = exhibit.water > waterDrunk ? waterDrunk : exhibit.water;
-                waterDrunk = thirst + waterDrunk > 100 ? 100 - thirst : waterDrunk;
-                thirst += waterDrunk;
-                exhibit.water -= waterDrunk;
+                //else
+                //{
+                //    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                //    destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
+                //}
+                //float waterDrunk = UnityEngine.Random.Range(40, 60);
+                //waterDrunk = exhibit.water > waterDrunk ? waterDrunk : exhibit.water;
+                //waterDrunk = thirst + waterDrunk > 100 ? 100 - thirst : waterDrunk;
+                //thirst += waterDrunk;
+                //exhibit.water -= waterDrunk;
                 break;
             case "wander":
                 destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
+                destinationVisitable = null;
                 break;
             default:
                 destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
+                destinationVisitable = null;
                 break;
         }
 

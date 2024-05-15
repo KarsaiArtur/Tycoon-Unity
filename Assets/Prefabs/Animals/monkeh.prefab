@@ -181,6 +181,7 @@ MonoBehaviour:
   agent: {fileID: 295175515213165716}
   animator: {fileID: 7856306232705164593}
   exhibit: {fileID: 0}
+  foodPrefab: {fileID: 8474453306234765502, guid: 19cada2424b7e1e49b0bb22e29124f17, type: 3}
   hunger: 100
   thirst: 100
   restroomNeeds: 100

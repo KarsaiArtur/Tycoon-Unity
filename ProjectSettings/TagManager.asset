@@ -17,6 +17,8 @@ TagManager:
   - Frame
   - Placed Fence
   - Placed Path
+  - Camera
+  - QuestManager
   layers:
   - Default
   - TransparentFX

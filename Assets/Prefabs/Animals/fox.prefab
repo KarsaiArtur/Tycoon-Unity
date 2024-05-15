@@ -394,6 +394,7 @@ GameObject:
   - component: {fileID: 7843250570019648372}
   - component: {fileID: 2731902910639970738}
   - component: {fileID: 4052468926828298860}
+  - component: {fileID: 7157752313310495021}
   m_Layer: 0
   m_Name: fox
   m_TagString: Untagged
@@ -465,7 +466,9 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
   surface: {fileID: 0}
   agent: {fileID: 7843250570019648372}
+  animator: {fileID: 7157752313310495021}
   exhibit: {fileID: 0}
+  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
   hunger: 100
   thirst: 100
   restroomNeeds: 100
@@ -500,6 +503,27 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.13446464, y: 0.2558961, z: 0.49450558}
   m_Center: {x: 0.0050301924, y: 0.1256597, z: -0.009620815}
+--- !u!95 &7157752313310495021
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6296442001791154185}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4af40a47602236d44992c836934d5651, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6963371138809933191
 GameObject:
   m_ObjectHideFlags: 0

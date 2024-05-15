@@ -97,6 +97,7 @@ GameObject:
   - component: {fileID: 7822815589781692132}
   - component: {fileID: 1213586563527077254}
   - component: {fileID: 644384083433879613}
+  - component: {fileID: 2025970466060621267}
   m_Layer: 0
   m_Name: wood_water_trough
   m_TagString: Untagged
@@ -204,6 +205,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &2025970466060621267
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6344863181651507530}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04b551c55f81a444499e6b84d2262bfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8928261863753087272
 GameObject:
   m_ObjectHideFlags: 0

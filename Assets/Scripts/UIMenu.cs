@@ -10,6 +10,7 @@ public class UIMenu : MonoBehaviour
 {
     public static UIMenu Instance { get; private set; }
     public Menu curMenu = null;
+    public ExtraMenu curExtraMenu = null;
     public int curSubMenuIndex;
     public int curPlaceableIndex;
     public TextMeshProUGUI curName;
@@ -121,5 +122,24 @@ public class UIMenu : MonoBehaviour
         {
             Destroy(placeableListPanel.GetChild(i).gameObject);
         }
+    }
+
+    public void ChangeCurrentExtraMenu(ExtraMenu newMenu)
+    {
+        if (curExtraMenu?.GetName() == newMenu.GetName())
+        {
+            Debug.Log("ON");
+            isUIVisible = !isUIVisible;
+        }
+        else
+        {
+            Debug.Log("OFF");
+            curExtraMenu?.Destroy();
+            curExtraMenu = null;
+            curExtraMenu = Instantiate(newMenu, playerControl.canvas.transform.position, playerControl.canvas.transform.rotation);
+            curExtraMenu.SetPosition(newMenu.transform.position);
+            isUIVisible = true;
+        }
+        curExtraMenu.SetActive(isUIVisible);
     }
 }

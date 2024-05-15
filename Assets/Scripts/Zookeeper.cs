@@ -6,6 +6,7 @@ public class Zookeeper : Staff
 {
     Exhibit exhibitToWorkAt;
     public string jobAtExhibit;
+    int waterTroughIndex = 0;
 
     public void Start()
     {
@@ -25,9 +26,9 @@ public class Zookeeper : Staff
                 if (!exhibit.unreachableForStaff)
                 {
                     if (!exhibit.isGettingFood)
-                        animalNeeds.Add((exhibit, "food", exhibit.food / 1000));
+                        animalNeeds.Add((exhibit, "food", exhibit.food / (exhibit.animals.Count * 200)));
                     if (!exhibit.isGettingWater)
-                        animalNeeds.Add((exhibit, "water", exhibit.water / 1000));
+                        animalNeeds.Add((exhibit, "water", exhibit.water / exhibit.waterCapacity));
                     if (!exhibit.isGettingCleaned)
                         animalNeeds.Add((exhibit, "dropping", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)));
                 }
@@ -88,16 +89,15 @@ public class Zookeeper : Staff
     {
         if (jobAtExhibit == "food")
         {
-            float foodAdded = Random.Range(400, 600);
-            exhibitToWorkAt.food = exhibitToWorkAt.food + foodAdded > 1000 ? 1000 : exhibitToWorkAt.food + foodAdded;
+            var animalFood = Instantiate(exhibitToWorkAt.animals[0].foodPrefab, transform.position, transform.rotation);
+            animalFood.FinalPlace();
             exhibitToWorkAt.isGettingFood = false;
             jobAtExhibit = "";
             return true;
         }
         else if (jobAtExhibit == "water")
         {
-            float waterAdded = Random.Range(400, 600);
-            exhibitToWorkAt.water = exhibitToWorkAt.water + waterAdded > 1000 ? 1000 : exhibitToWorkAt.water + waterAdded;
+            exhibitToWorkAt.waterPlaces[waterTroughIndex].FillWithWater();
             exhibitToWorkAt.isGettingWater = false;
             jobAtExhibit = "";
             return true;
@@ -126,7 +126,20 @@ public class Zookeeper : Staff
             Grid destinationGrid = exhibitToWorkAt.gridList[Random.Range(0, exhibitToWorkAt.gridList.Count)];
             agent.SetDestination(exhibitToWorkAt.animalDroppings[0].transform.position);
         }
-        else
+        else if (jobAtExhibit == "water")
+        {
+            float minWater = 500;
+            for (int i = 0; i < exhibitToWorkAt.waterPlaces.Count; i++)
+            {
+                if (exhibitToWorkAt.waterPlaces[i].water < minWater)
+                {
+                    minWater = exhibitToWorkAt.waterPlaces[i].water;
+                    waterTroughIndex = i;
+                }
+            }
+            agent.SetDestination(exhibitToWorkAt.waterPlaces[waterTroughIndex].transform.position);
+        }
+        else if (jobAtExhibit == "food")
         {
             Grid destinationGrid = exhibitToWorkAt.gridList[Random.Range(0, exhibitToWorkAt.gridList.Count)];
             agent.SetDestination(new Vector3(destinationGrid.coords[0].x + Random.Range(0, 1.0f), destinationGrid.coords[0].y, destinationGrid.coords[0].z + Random.Range(0, 1.0f)));

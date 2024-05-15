@@ -1,28 +1,26 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
 using Cinemachine;
-using static UnityEditor.PlayerSettings;
 
 public class PlayerControl : MonoBehaviour
 {
     public Canvas canvas;
-    public float cameraSpeed = 10;
-    public float zoomSpeed = 10;
+    float cameraSpeed = 10;
+    float zoomSpeed = 10;
     public Camera GameCamera;
     public CinemachineVirtualCamera VirtualCamera;
     public Placeable m_Selected = null;
     public Placeable curPlaceable = null;
-    public int maxZoom = 5;
-    public int minZoom = 20;
-    public int maxLeft = 50;
-    public int maxRight = 50;
-    public int moveSpeed = 1;
+    int maxZoom = 15;
+    int minZoom = 30;
+    int minX = 30;
+    int maxX = 160;
+    int minZ = 20;
+    int maxZ = 160;
     private float angle;
     public float objectTimesRotated = 0;
     public int fenceIndex = 0;
@@ -48,6 +46,7 @@ public class PlayerControl : MonoBehaviour
 
     public InfoPopup currentInfopopup;
     public bool stopMovement = false;
+    public int currentTerraformSize = 1;
 
     public void ChangeTerraformer()
     {
@@ -71,7 +70,6 @@ public class PlayerControl : MonoBehaviour
     {
         npcControl = !npcControl;
     }
-
 
     private bool MouseOverUI()
     {
@@ -111,7 +109,7 @@ public class PlayerControl : MonoBehaviour
             if (!MouseOverUI())
             {
                 if (terraForming)
-                    Terraform(1, 1);
+                    Terraform(currentTerraformSize, currentTerraformSize);
                 else if (npcControl)
                     MoveNpc();
                 else
@@ -223,6 +221,15 @@ public class PlayerControl : MonoBehaviour
         }
         transform.position = transform.position + new Vector3(move.x * (float)Math.Cos(angle * 0.0174532925) + move.y * (float)Math.Sin(angle * 0.0174532925), 0, move.x * (float)Math.Sin(angle * 0.0174532925) - move.y * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
 
+        if (transform.position.x < minX)
+            transform.position = new Vector3(minX, transform.position.y, transform.position.z);
+        if (transform.position.x > maxX)
+            transform.position = new Vector3(maxX, transform.position.y, transform.position.z);
+        if (transform.position.z < minZ)
+            transform.position = new Vector3(transform.position.x, transform.position.y, minZ);
+        if (transform.position.z > maxZ)
+            transform.position = new Vector3(transform.position.x, transform.position.y, maxZ);
+
         MovementSpeedChange();
     }
 
@@ -242,16 +249,21 @@ public class PlayerControl : MonoBehaviour
     {
         float zoom = Input.GetAxis("Mouse ScrollWheel");
 
-        if (transform.position.y < maxZoom && zoom > 0)
+        if (transform.position.y <= maxZoom && zoom > 0)
         {
+            transform.position = new Vector3(transform.position.x, maxZoom, transform.position.z);
             zoom = 0;
         }
-        if (transform.position.y > minZoom && zoom < 0)
+        else if (transform.position.y >= minZoom && zoom < 0)
         {
+            transform.position = new Vector3(transform.position.x, minZoom, transform.position.z);
             zoom = 0;
         }
-        transform.Translate(Vector3.forward * zoom * zoomSpeed);
-        VirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_CameraDistance -= zoom * zoomSpeed;
+        else
+        {
+            transform.Translate(Vector3.forward * zoom * zoomSpeed);
+            VirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_CameraDistance -= zoom * zoomSpeed;
+        }
     }
 
     public void HandleSelection()

@@ -177,6 +177,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1493876487756627552}
+  - component: {fileID: -6171456068034794058}
   m_Layer: 0
   m_Name: model(Clone) (2)
   m_TagString: Untagged
@@ -203,6 +204,18 @@ Transform:
   - {fileID: 53791142739190916}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -15.68, y: -20.395, z: 101.345}
+--- !u!114 &-6171456068034794058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5166779458239892980}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eab82316ca4570243a1f4ccdf0cc4692, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5255134848660245129
 GameObject:
   m_ObjectHideFlags: 0
