@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AnimalFood : MonoBehaviour, AnimalVisitable
 {
-    public float food = 100;
+    public float food = 200;
     Exhibit exhibit;
 
     public void FinalPlace()

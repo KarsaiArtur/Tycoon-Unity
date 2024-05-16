@@ -206,6 +206,7 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
 
     public void SetUnreachableForStaff()
     {
+        UIMenu.Instance.NewNotification(exhibitName+" exhibit can no be reached by staffs! Please clear the entrance of the exhibit!");
         unreachableForStaff = true;
         isGettingFood = false;
         isGettingWater = false;
@@ -222,6 +223,6 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public void AddFoodPlace(AnimalFood animalFood)
     {
         foodPlaces.Add(animalFood);
-        food += 500;
+        food += animalFood.food;
     }
 }

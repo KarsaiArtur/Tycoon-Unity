@@ -35,10 +35,8 @@ public class Decoration : Placeable
 
     void OnCollisionStay(Collision collision)
     {
-        Debug.Log("1");
         if (playerControl.placedTags.Contains(collision.collider.tag) && !tag.Equals("Placed"))
         {
-            Debug.Log("2");
             playerControl.canBePlaced = false;
         }
     }

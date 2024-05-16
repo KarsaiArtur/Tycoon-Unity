@@ -15,38 +15,37 @@ public class PlayerControl : MonoBehaviour
     public CinemachineVirtualCamera VirtualCamera;
     public Placeable m_Selected = null;
     public Placeable curPlaceable = null;
-    int maxZoom = 15;
+    int maxZoom = 10;
     int minZoom = 30;
     int minX = 30;
-    int maxX = 160;
+    int maxX = 170;
     int minZ = 20;
-    int maxZ = 160;
+    int maxZ = 165;
     private float angle;
     public float objectTimesRotated = 0;
     public int fenceIndex = 0;
     public bool canBePlaced = true;
     public bool terraForming = false;
-    public bool npcControl = false;
     public bool isMouseDown = false;
     public bool isClickableSelected = false;
     public List<GameObject> gates;
     public GameObject animalDroppingPrefab;
     public List<string> placedTags = new List<string>() { "Placed", "Placed Fence", "Placed Path", };
 
-    private float maxTerrainHeight = 10;
+    private float maxTerrainHeight = 7;
     private float minTerrainHeight = -3;
     private GridManager gridM;
     private int coordIndex = 0;
     private float mouseDistnace = 0;
     public List<Chunk> modifiedChunks = new List<Chunk>();
-    public int maxDepth = 1;
     public GameObject TerraformColliderPrefab;
     public bool terrainCollided = false;
+    float startingHeight = -10;
+    public int currentTerraformSize = 1;
     public Vector3[] startingCoords;
 
     public InfoPopup currentInfopopup;
     public bool stopMovement = false;
-    public int currentTerraformSize = 1;
 
     public void ChangeTerraformer()
     {
@@ -64,11 +63,6 @@ public class PlayerControl : MonoBehaviour
             if (tempChunk.gameObject.CompareTag("Terrain"))
                 tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
         }
-    }
-
-    public void ChangeNPCcontrol()
-    {
-        npcControl = !npcControl;
     }
 
     private bool MouseOverUI()
@@ -110,8 +104,6 @@ public class PlayerControl : MonoBehaviour
             {
                 if (terraForming)
                     Terraform(currentTerraformSize, currentTerraformSize);
-                else if (npcControl)
-                    MoveNpc();
                 else
                     PlaceObject();
             }
@@ -143,7 +135,7 @@ public class PlayerControl : MonoBehaviour
             if(m_Selected != null)
             {
                 isMouseDown = false;
-                if (canBePlaced)
+                if (canBePlaced && ZooManager.instance.money >= m_Selected.placeablePrice)
                 {
                     m_Selected.SetTag("Placed");
                     m_Selected.ChangeMaterial(0);
@@ -223,12 +215,12 @@ public class PlayerControl : MonoBehaviour
 
         if (transform.position.x < minX)
             transform.position = new Vector3(minX, transform.position.y, transform.position.z);
-        if (transform.position.x > maxX)
-            transform.position = new Vector3(maxX, transform.position.y, transform.position.z);
+        if (transform.position.x > maxX - transform.position.y)
+            transform.position = new Vector3(maxX - transform.position.y, transform.position.y, transform.position.z);
         if (transform.position.z < minZ)
             transform.position = new Vector3(transform.position.x, transform.position.y, minZ);
-        if (transform.position.z > maxZ)
-            transform.position = new Vector3(transform.position.x, transform.position.y, maxZ);
+        if (transform.position.z > maxZ - transform.position.y)
+            transform.position = new Vector3(transform.position.x, transform.position.y, maxZ - transform.position.y);
 
         MovementSpeedChange();
     }
@@ -336,6 +328,37 @@ public class PlayerControl : MonoBehaviour
     {
         //Vector3 startingGrid;
 
+        if (Input.GetMouseButtonUp(0))
+        {
+            if (startingHeight != -10 && coordIndex != 0)
+            {
+                int price = 0;
+
+                for (int i = 0; i < Mathf.Abs(startingHeight - gridM.coords[coordIndex].y) * 2; i++)
+                {
+                    price += ((3 + i * 2 + currentTerraformSize - 1) * (3 + i * 2 + currentTerraformSize - 1) - 4 * (i)) * 10;
+                }
+
+                if (ZooManager.instance.money >= price)
+                {
+                    ZooManager.instance.ChangeMoney(-price);
+                }
+                else
+                {
+                    gridM.edgeChanged = false;
+                    terrainCollided = false;
+                    gridM.coords = new Vector3[startingCoords.Length];
+                    Array.Copy(startingCoords, gridM.coords, startingCoords.Length);
+                }
+            }
+
+            foreach (Chunk tempChunk in gridM.terrainElements)
+            {
+                if (tempChunk.gameObject.CompareTag("Terrain"))
+                    tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
+            }
+        }
+
         if (Input.GetMouseButtonDown(0))
         {
             var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
@@ -348,6 +371,7 @@ public class PlayerControl : MonoBehaviour
 
                     if (!gridM.edgeChanged && !terrainCollided)
                     {
+                        startingHeight = gridM.coords[coordIndex].y;
                         startingCoords = new Vector3[gridM.coords.Length];
                         Array.Copy(gridM.coords, startingCoords, gridM.coords.Length);
                     }
@@ -376,6 +400,8 @@ public class PlayerControl : MonoBehaviour
                         for (int j = 0; j < zWidth + 1; j++)
                         {
                             height += gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
+                            if (gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y < startingHeight)
+                                startingHeight = gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
                         }
                     }
 
@@ -399,7 +425,7 @@ public class PlayerControl : MonoBehaviour
                     {
                         for (int j = 0; j < zWidth + 1; j++)
                         {
-                            gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, true, 1);
+                            gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, true);
                         }
                     }
                 }
@@ -420,6 +446,8 @@ public class PlayerControl : MonoBehaviour
                         for (int j = 0; j < zWidth + 1; j++)
                         {
                             height += gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
+                            if (gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y > startingHeight)
+                                startingHeight = gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
                         }
                     }
 
@@ -442,7 +470,7 @@ public class PlayerControl : MonoBehaviour
                     {
                         for (int j = 0; j < zWidth + 1; j++)
                         {
-                            gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, false, 1);
+                            gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, false);
                         }
                     }
                 }
@@ -464,7 +492,6 @@ public class PlayerControl : MonoBehaviour
 
             if (gridM.edgeChanged || terrainCollided)
             {
-                Debug.Log(terrainCollided);
                 gridM.edgeChanged = false;
                 terrainCollided = false;
                 gridM.coords = new Vector3[startingCoords.Length];
@@ -519,19 +546,6 @@ public class PlayerControl : MonoBehaviour
     public void ReloadGuestNavMesh()
     {
         guestNavMesh.BuildNavMesh();
-    }
-
-    public void MoveNpc()
-    {
-        if(Input.GetMouseButtonDown(0))
-        {
-            Ray ray = GameCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if(Physics.Raycast(ray, out hit))
-            {
-                agent.SetDestination(hit.point);
-            }
-        }
     }
 
     public void DestroyCurrentInfopopup()

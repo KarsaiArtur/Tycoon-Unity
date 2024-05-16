@@ -89,6 +89,7 @@ public class GridManager : MonoBehaviour
 
         startingGrid = GetGrid(new Vector3(35, 0, 50));
         initializing = false;
+        edgeChanged = false;
     }
 
     public void InitializeGrids()
@@ -265,12 +266,12 @@ public class GridManager : MonoBehaviour
                 if (coords[i - terrainWidth - 1].y >= edgeHeight + 1)
                 {
                     coords[i - terrainWidth - 1].y = edgeHeight + 0.5f;
-                    TerraformNeighbours(i - terrainWidth - 1, edgeHeight + 0.5f, false, 1);
+                    TerraformNeighbours(i - terrainWidth - 1, edgeHeight + 0.5f, false);
                 }
                 else if (coords[i - terrainWidth - 1].y <= edgeHeight - 1)
                 {
                     coords[i - terrainWidth - 1].y = edgeHeight - 0.5f;
-                    TerraformNeighbours(i - terrainWidth - 1, edgeHeight - 0.5f, true, 1);
+                    TerraformNeighbours(i - terrainWidth - 1, edgeHeight - 0.5f, true);
                 }
             }
             if (i > (elementWidth) * (terrainWidth + 1) && i < (elementWidth + 1) * (terrainWidth + 1))
@@ -279,12 +280,12 @@ public class GridManager : MonoBehaviour
                 if (coords[i + terrainWidth + 1].y >= edgeHeight + 1)
                 {
                     coords[i + terrainWidth + 1].y = edgeHeight + 0.5f;
-                    TerraformNeighbours(i + terrainWidth + 1, edgeHeight + 0.5f, false, 1);
+                    TerraformNeighbours(i + terrainWidth + 1, edgeHeight + 0.5f, false);
                 }
                 else if (coords[i + terrainWidth + 1].y <= edgeHeight - 1)
                 {
                     coords[i + terrainWidth + 1].y = edgeHeight - 0.5f;
-                    TerraformNeighbours(i + terrainWidth + 1, edgeHeight - 0.5f, true, 1);
+                    TerraformNeighbours(i + terrainWidth + 1, edgeHeight - 0.5f, true);
                 }
             }
             if (i % (terrainWidth + 1) == elementWidth)
@@ -293,12 +294,12 @@ public class GridManager : MonoBehaviour
                 if (coords[i + 1].y >= edgeHeight + 1)
                 {
                     coords[i + 1].y = edgeHeight + 0.5f;
-                    TerraformNeighbours(i + 1, edgeHeight + 0.5f, false, 1);
+                    TerraformNeighbours(i + 1, edgeHeight + 0.5f, false);
                 }
                 else if (coords[i + 1].y <= edgeHeight - 1)
                 {
                     coords[i + 1].y = edgeHeight - 0.5f;
-                    TerraformNeighbours(i + 1, edgeHeight - 0.5f, true, 1);
+                    TerraformNeighbours(i + 1, edgeHeight - 0.5f, true);
                 }
             }
             if (i % (terrainWidth + 1) == terrainWidth - elementWidth)
@@ -307,12 +308,12 @@ public class GridManager : MonoBehaviour
                 if (coords[i - 1].y >= edgeHeight + 1)
                 {
                     coords[i - 1].y = edgeHeight + 0.5f;
-                    TerraformNeighbours(i - 1, edgeHeight + 0.5f, false, 1);
+                    TerraformNeighbours(i - 1, edgeHeight + 0.5f, false);
                 }
                 else if (coords[i - 1].y <= edgeHeight - 1)
                 {
                     coords[i - 1].y = edgeHeight - 0.5f;
-                    TerraformNeighbours(i - 1, edgeHeight - 0.5f, true, 1);
+                    TerraformNeighbours(i - 1, edgeHeight - 0.5f, true);
                 }
             }
         }
@@ -326,17 +327,14 @@ public class GridManager : MonoBehaviour
             {
                 coords[j * (terrainWidth + 1) + i].y = edgeHeight;
                 grids[i - elementWidth, j - elementWidth].isPath = true;
-                TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight + 0.5f, false, 1);
-                TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight - 0.5f, true, 1);
+                TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight + 0.5f, false);
+                TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight - 0.5f, true);
             }
         }
     }
 
-    public void TerraformNeighbours(int index, float height, bool positive, int depth)
+    public void TerraformNeighbours(int index, float height, bool positive)
     {
-        if (depth > pControl.maxDepth)
-            pControl.maxDepth = depth;
-
         if (index % (terrainWidth + 1) == terrainWidth - elementWidth || (index > (elementWidth) * (terrainWidth + 1) && index < (elementWidth + 1) * (terrainWidth + 1)) || index % (terrainWidth + 1) == elementWidth || (index < (terrainWidth + 1) * (terrainWidth + 1) - elementWidth * (terrainWidth + 1) && index > (terrainWidth + 1) * (terrainWidth + 1) - (elementWidth + 1) * (terrainWidth + 1)))
         {
             edgeChanged = true;
@@ -370,12 +368,12 @@ public class GridManager : MonoBehaviour
             if (coords[neighbourIndexes[i]].y <= height - 1 && positive)
             {
                 coords[neighbourIndexes[i]].y = height - 0.5f;
-                TerraformNeighbours(neighbourIndexes[i], height - 0.5f, true, ++depth);
+                TerraformNeighbours(neighbourIndexes[i], height - 0.5f, true);
             }
             else if (coords[neighbourIndexes[i]].y >= height + 1 && !positive)
             {
                 coords[neighbourIndexes[i]].y = height + 0.5f;
-                TerraformNeighbours(neighbourIndexes[i], height + 0.5f, false, ++depth);
+                TerraformNeighbours(neighbourIndexes[i], height + 0.5f, false);
             }
         }
 

@@ -68,6 +68,14 @@ public class Animal : Placeable
                 playerControl.canBePlaced = false;
                 ChangeMaterial(2);
             }
+            else if (hit.collider.CompareTag("Terrain") && playerControl.canBePlaced && gridManager.GetGrid(hit.point).exhibit.animals.Count > 0)
+            {
+                if (gridManager.GetGrid(hit.point).exhibit.animals[0].foodPrefab != foodPrefab)
+                {
+                    playerControl.canBePlaced = false;
+                    ChangeMaterial(2);
+                }
+            }
         }
 
         transform.position = position;
@@ -136,6 +144,9 @@ public class Animal : Placeable
                 health = health > healthDetriment ? health - healthDetriment : 0;
             if (isSick)
                 health = health > healthDetriment * 5 ? health - healthDetriment * 5 : 0;
+
+            if (hunger > 75 && thirst > 75 && health > 75)
+                happiness = happiness + happinessDetriment > 100 ? 100 : happiness + happinessDetriment;
 
             if (restroomNeeds == 0)
             {

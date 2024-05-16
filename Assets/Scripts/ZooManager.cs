@@ -34,8 +34,6 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
 
     public void Arrived(Visitor visitor)
     {
-        allTimeVisitorCount++;
-
         latestVisitorHappinesses.Add(visitor.happiness);
         if (latestVisitorHappinesses.Count > listSizeLimit)
         {

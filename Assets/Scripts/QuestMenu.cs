@@ -20,11 +20,12 @@ public class QuestMenu : ExtraMenu
     {
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
         questManager = GameObject.FindGameObjectWithTag("QuestManager").GetComponent<QuestManager>();
-        UpdateWindow();
+        questManager.questWindowOpened = true;
     }
 
     public override void Destroy()
     {
+        questManager.questWindowOpened = false;
         Destroy(gameObject);
     }
 
@@ -35,6 +36,7 @@ public class QuestMenu : ExtraMenu
 
     public override void SetActive(bool isVisible)
     {
+        questManager.questWindowOpened = isVisible;
         gameObject.SetActive(isVisible);
     }
 
@@ -50,7 +52,7 @@ public class QuestMenu : ExtraMenu
         questName.text = questManager.currentQuest.questName;
         difficulty.text = questManager.currentQuest.difficulty;
         description.text = questManager.currentQuest.description;
-        //currentQuestProgression.text = questManager. +"/"+
+        currentQuestProgression.text = questManager.currentQuest.progression.Invoke() + "/" + questManager.currentQuest.goal;
         reward.text = "Reward: "+questManager.currentQuest.reward+" $";
     }
 }

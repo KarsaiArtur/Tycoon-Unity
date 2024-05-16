@@ -8,7 +8,7 @@ public class InfoPopup : MonoBehaviour
 {
     public float priceChangeLimit = 0.2f;
     public GameObject infoPanelInstance;
-    PlayerControl playerControl;
+    protected PlayerControl playerControl;
 
     private void Start()
     {

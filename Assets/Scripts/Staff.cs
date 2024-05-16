@@ -162,7 +162,6 @@ public class Staff : Placeable
                         workingState = WorkingState.Resting;
                         isAvailable = true;
                         time = 0;
-                        Debug.Log("Exhibit cannot be reached");
                     }
                 }
             }

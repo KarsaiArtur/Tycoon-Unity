@@ -69,6 +69,6 @@ public class TerraformerMenu : ExtraMenu
 
     public override void UpdateWindow()
     {
-        throw new System.NotImplementedException();
+        
     }
 }

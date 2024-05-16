@@ -11,8 +11,11 @@ public class UIMenu : MonoBehaviour
     public static UIMenu Instance { get; private set; }
     public Menu curMenu = null;
     public ExtraMenu curExtraMenu = null;
+    public NotificationWindow curNotification = null;
     public int curSubMenuIndex;
     public int curPlaceableIndex;
+    public GameObject menuButtons;
+    public GameObject extraMenuButtons;
     public TextMeshProUGUI curName;
     public TextMeshProUGUI curPrice;
     private PlayerControl playerControl;
@@ -21,9 +24,12 @@ public class UIMenu : MonoBehaviour
     public Transform placeableListPanel;
     public Placeable curPlaceable;
 
+    public NotificationWindow notificationWindowPrefab;
     public GameObject infoPanelPrefab;
+    public GameObject animalInfoPanelPrefab;
     public PurchasableItemUi purchasableItemUIPrefab;
     public GameObject visitorInfoItemPrefab;
+    public GameObject animalInfoItemPrefab;
     public List<GameObject> exhibitCreateWindows;
 
     private void Awake()
@@ -31,6 +37,25 @@ public class UIMenu : MonoBehaviour
         Instance = this;
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
         gameObject.SetActive(isUIVisible);
+        foreach(var button in menuButtons.transform.GetComponentsInChildren<Button>())
+        {
+            button.transform.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                ResetButtonOutlines(menuButtons);
+                if (isUIVisible)
+                    button.transform.GetComponent<Outline>().enabled = true;
+            });
+        }
+
+        foreach (var button in extraMenuButtons.transform.GetComponentsInChildren<Button>())
+        {
+            button.transform.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                ResetButtonOutlines(extraMenuButtons);
+                if (isUIVisible)
+                    button.transform.GetComponent<Outline>().enabled = true;
+            });
+        }
     }
 
     private void OnDestroy()
@@ -128,12 +153,10 @@ public class UIMenu : MonoBehaviour
     {
         if (curExtraMenu?.GetName() == newMenu.GetName())
         {
-            Debug.Log("ON");
             isUIVisible = !isUIVisible;
         }
         else
         {
-            Debug.Log("OFF");
             curExtraMenu?.Destroy();
             curExtraMenu = null;
             curExtraMenu = Instantiate(newMenu, playerControl.canvas.transform.position, playerControl.canvas.transform.rotation);
@@ -141,5 +164,25 @@ public class UIMenu : MonoBehaviour
             isUIVisible = true;
         }
         curExtraMenu.SetActive(isUIVisible);
+    }
+
+    public void NewNotification(string text)
+    {
+        if(curNotification != null)
+            Destroy(curNotification.gameObject);
+
+        notificationWindowPrefab.SetText(text);
+        curNotification = Instantiate(notificationWindowPrefab);
+        curNotification.SetPosition(notificationWindowPrefab.transform.position);
+
+        Destroy(curNotification.gameObject, 15);
+    }
+
+    public void ResetButtonOutlines(GameObject menuButtons)
+    {
+        foreach(var outline in menuButtons.transform.GetComponentsInChildren<Outline>())
+        {
+            outline.enabled = false;
+        }
     }
 }

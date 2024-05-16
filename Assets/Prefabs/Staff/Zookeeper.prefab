@@ -101,8 +101,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
-  placeableName: 
-  placeablePrice: 0
+  placeableName: Zookeeper
+  placeablePrice: 500
   icon: {fileID: 0}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
@@ -112,7 +112,7 @@ MonoBehaviour:
   destinationExhibit: {fileID: 0}
   insideExhibit: {fileID: 0}
   isAvailable: 1
-  salary: 0
+  salary: 300
   workingState: 0
   destinationReached: 0
   jobAtExhibit: 

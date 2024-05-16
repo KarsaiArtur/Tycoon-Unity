@@ -890,7 +890,7 @@ MonoBehaviour:
   purchasableItemPrefabs: []
   purchasableItemInstances: []
   capacity: 10
-  hasRestroom: 0
+  hasRestroom: 1
   expense: 0
 --- !u!65 &4181061997898100527
 BoxCollider:

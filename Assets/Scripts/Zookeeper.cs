@@ -25,12 +25,42 @@ public class Zookeeper : Staff
             {
                 if (!exhibit.unreachableForStaff)
                 {
-                    if (!exhibit.isGettingFood)
+                    if (!exhibit.isGettingFood && !float.IsNaN(exhibit.food / (exhibit.animals.Count * 200)))
+                    {
                         animalNeeds.Add((exhibit, "food", exhibit.food / (exhibit.animals.Count * 200)));
-                    if (!exhibit.isGettingWater)
+                        if (insideExhibit != null)
+                        {
+                            if (insideExhibit == exhibit)
+                            {
+                                animalNeeds.Remove(animalNeeds.Last());
+                                animalNeeds.Add((exhibit, "food", exhibit.food / (exhibit.animals.Count * 200) - 0.1f));
+                            }
+                        }
+                    }
+                    if (!exhibit.isGettingWater && !float.IsNaN(exhibit.water / exhibit.waterCapacity))
+                    {
                         animalNeeds.Add((exhibit, "water", exhibit.water / exhibit.waterCapacity));
-                    if (!exhibit.isGettingCleaned)
+                        if (insideExhibit != null)
+                        {
+                            if (insideExhibit == exhibit)
+                            {
+                                animalNeeds.Remove(animalNeeds.Last());
+                                animalNeeds.Add((exhibit, "water", exhibit.water / exhibit.waterCapacity - 0.1f));
+                            }
+                        }
+                    }
+                    if (!exhibit.isGettingCleaned && !float.IsNaN(1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)))
+                    {
                         animalNeeds.Add((exhibit, "dropping", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)));
+                        if (insideExhibit != null)
+                        {
+                            if (insideExhibit == exhibit)
+                            {
+                                animalNeeds.Remove(animalNeeds.Last());
+                                animalNeeds.Add((exhibit, "dropping", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count) - 0.1f));
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -1,12 +1,7 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Placeable : MonoBehaviour, Clickable
 {
@@ -66,6 +61,13 @@ public class Placeable : MonoBehaviour, Clickable
         currentPlacingPriceInstance = currentPlacingPriceInstance == null ? Instantiate(currentPlacingPrice) : currentPlacingPriceInstance;
         currentPlacingPriceInstance.transform.SetParent(playerControl.canvas.transform);
         currentPlacingPriceInstance.text = "-" + placeablePrice + "$";
+        if (ZooManager.instance.money < placeablePrice)
+        {
+            currentPlacingPriceInstance.text = "Not Enough Money!";
+            currentPlacingPriceInstance.color = Color.red;
+        }
+        else
+            currentPlacingPriceInstance.color = Color.green;
         var zoomIn = playerControl.transform.position.y / 6.0f; ;
         var posi = new Vector3(Input.mousePosition.x + (500.0f / zoomIn), Input.mousePosition.y - (150.0f / zoomIn), 0);
         currentPlacingPriceInstance.transform.position = posi;
@@ -120,8 +122,6 @@ public class Placeable : MonoBehaviour, Clickable
     {
         return placeableName;
     }
-
-
 
     public virtual void DestroyPlaceable()
     {

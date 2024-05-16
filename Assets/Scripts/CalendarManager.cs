@@ -10,6 +10,7 @@ public class CalendarManager : MonoBehaviour
     float totalSeconds;
     public TextMeshProUGUI dateText;
     int secondsPerDay = 24;
+    DateTime startingDate = new DateTime(2024, 1, 1, 0, 0, 0);
     int timer = 0;
 
 
@@ -17,7 +18,7 @@ public class CalendarManager : MonoBehaviour
     private void Start()
     {
         instance = this;
-        currentDate = new DateTime(2024, 1, 1, 0, 0, 0);
+        currentDate = startingDate;
         SetDate();
     }
 
@@ -45,6 +46,16 @@ public class CalendarManager : MonoBehaviour
         if (currentDate.Day == 1)
         {
             ZooManager.instance.PayExpenses();
+            if (currentDate.Month == 1)
+            {
+                var bonus = (currentDate.Year - startingDate.Year) * 1000;
+                UIMenu.Instance.NewNotification("Happy New Year! Congratulations, you've made another year." + System.Environment.NewLine+
+                    "Here is a little bonus for your time: "+bonus +"$");
+            }
+            else
+            {
+                UIMenu.Instance.NewNotification("New month, new opportunities! The monthly expenses have been paid");
+            }
         }
     }
 

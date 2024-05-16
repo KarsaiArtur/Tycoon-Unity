@@ -46,5 +46,6 @@ public class VisitorManager : MonoBehaviour
         var newVisitor = Instantiate(visitorPrefabs[randomI], position, transform.rotation);
         newVisitor.transform.parent = transform;
         visitors.Add(newVisitor);
+        ZooManager.instance.allTimeVisitorCount++;
     }
 }
