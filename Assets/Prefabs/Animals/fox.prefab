@@ -312,7 +312,7 @@ Transform:
   m_GameObject: {fileID: 3132847544914457765}
   serializedVersion: 2
   m_LocalRotation: {x: 0.020592907, y: 0.9792638, z: -0.15072308, w: 0.1337943}
-  m_LocalPosition: {x: -4.83, y: 8.36, z: 17.65}
+  m_LocalPosition: {x: -0.135, y: 0.251, z: 0.547}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -540,7 +540,7 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Fox
-  placeablePrice: 850
+  placeablePrice: 800
   icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
@@ -553,6 +553,7 @@ MonoBehaviour:
   animator: {fileID: 7157752313310495021}
   exhibit: {fileID: 0}
   foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  reputationBonus: 0.03
   hunger: 100
   thirst: 100
   restroomNeeds: 100

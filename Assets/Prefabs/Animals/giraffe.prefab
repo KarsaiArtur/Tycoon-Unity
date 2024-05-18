@@ -230,6 +230,7 @@ MonoBehaviour:
   animator: {fileID: 4010818604138102683}
   exhibit: {fileID: 0}
   foodPrefab: {fileID: 8474453306234765502, guid: 19cada2424b7e1e49b0bb22e29124f17, type: 3}
+  reputationBonus: 0.07
   hunger: 100
   thirst: 100
   restroomNeeds: 100

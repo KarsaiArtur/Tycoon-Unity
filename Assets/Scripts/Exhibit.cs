@@ -8,6 +8,7 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public List<Grid> paths;
     public string exhibitName;
     public List<Animal> animals = new List<Animal>();
+    public List<Foliage> foliages = new List<Foliage>();
     public List<GameObject> animalDroppings = new();
     public Grid exitGrid;
     public Grid entranceGrid;
@@ -29,7 +30,7 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public bool isGettingWater = false;
     public bool isGettingCleaned = false;
 
-    void Start()
+    void Awake()
     {
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
     }
@@ -77,6 +78,11 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
                 }
             }
         }
+    }
+
+    public void AddAnimal(Animal animal)
+    {
+        animals.Add(animal);
     }
 
     public void FindPaths()
@@ -159,6 +165,7 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
 
     public void ClickedOn()
     {
+        Debug.Log(this.gameObject + " " + playerControl);
         playerControl.SetFollowedObject(this.gameObject, 7);
         playerControl.DestroyCurrentInfopopup();
         var newInfopopup = new GameObject().AddComponent<ExhibitInfopopup>();
@@ -206,7 +213,7 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
 
     public void SetUnreachableForStaff()
     {
-        UIMenu.Instance.NewNotification(exhibitName+" exhibit can no be reached by staffs! Please clear the entrance of the exhibit!");
+        UIMenu.Instance.NewNotification(exhibitName+" can not be reached by staffs! Please clear the entrance of the exhibit!");
         unreachableForStaff = true;
         isGettingFood = false;
         isGettingWater = false;

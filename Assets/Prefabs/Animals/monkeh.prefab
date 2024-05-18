@@ -255,7 +255,7 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Squirrel Monkey
-  placeablePrice: 700
+  placeablePrice: 850
   icon: {fileID: 0}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
@@ -268,6 +268,7 @@ MonoBehaviour:
   animator: {fileID: 7856306232705164593}
   exhibit: {fileID: 0}
   foodPrefab: {fileID: 8474453306234765502, guid: 19cada2424b7e1e49b0bb22e29124f17, type: 3}
+  reputationBonus: 0.04
   hunger: 100
   thirst: 100
   restroomNeeds: 100

@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.EventSystems.EventTrigger;
 
-public class VisitorInfopopup : InfoPopup
+public class VisitorInfoPopup : InfoPopup
 {
     Visitor visitor;
     List<GameObject> visitorInfoItemInstances;

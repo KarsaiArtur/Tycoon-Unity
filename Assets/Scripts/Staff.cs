@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Staff : Placeable
+public abstract class Staff : Placeable
 {
     public NavMeshAgent agent;
     bool placed = false;
@@ -193,7 +194,11 @@ public class Staff : Placeable
 
     public override void ClickedOn()
     {
-        throw new System.NotImplementedException();
+        playerControl.SetFollowedObject(this.gameObject, 5);
+        playerControl.DestroyCurrentInfopopup();
+        var newInfopopup = new GameObject().AddComponent<StaffInfoPopup>();
+        newInfopopup.SetClickable(this);
+        playerControl.SetInfopopup(newInfopopup);
     }
 
     public override void Place(Vector3 mouseHit)
@@ -209,4 +214,15 @@ public class Staff : Placeable
         StaffManager.instance.staffs.Add(this);
         placed = true;
     }
+
+    public void OnDestroy()
+    {
+        StaffManager.instance.staffs.Remove(this);
+    }
+
+    public abstract string GetCurrentAction();
+    public abstract void Fire();
+
+
+    
 }

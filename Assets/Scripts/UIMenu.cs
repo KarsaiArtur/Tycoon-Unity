@@ -27,9 +27,12 @@ public class UIMenu : MonoBehaviour
     public NotificationWindow notificationWindowPrefab;
     public GameObject infoPanelPrefab;
     public GameObject animalInfoPanelPrefab;
+    public GameObject exhibitInfoPanelPrefab;
+    public GameObject animalExhibitInfoPrefab;
     public PurchasableItemUi purchasableItemUIPrefab;
     public GameObject visitorInfoItemPrefab;
-    public GameObject animalInfoItemPrefab;
+    public GameObject animalInfoItemPrefab; 
+    public GameObject staffInfoPanelPrefab;
     public List<GameObject> exhibitCreateWindows;
 
     private void Awake()

@@ -1,9 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.AI.Navigation;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class Vet : Staff
 {
@@ -92,5 +89,14 @@ public class Vet : Staff
     public override void FindInsideDestination()
     {
         agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
+    }
+    public override string GetCurrentAction()
+    {
+        return "Healing animal";
+    }
+    public override void Fire()
+    {
+        if (animalToHeal != null)
+            animalToHeal.isGettingHealed = false;
     }
 }

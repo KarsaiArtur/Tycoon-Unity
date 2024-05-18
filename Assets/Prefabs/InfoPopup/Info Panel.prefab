@@ -283,7 +283,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3674596012782645526}
   m_Layer: 5
-  m_Name: InfoPanel
+  m_Name: Info Panel
   m_TagString: InfoPopup
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

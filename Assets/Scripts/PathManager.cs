@@ -124,7 +124,6 @@ public class PathManager : Placeable
         foreach (var path in paths)
         {
             path.SetTag("Placed Path");
-            path.transform.GetChild(0).tag = newTag;
         }
     }
 
@@ -132,6 +131,7 @@ public class PathManager : Placeable
     {
         foreach (var path in paths)
         {
+            path.gameObject.transform.position = new Vector3(path.gameObject.transform.position.x, path.gameObject.transform.position.y - Path.offsetDefault, path.gameObject.transform.position.z);
             Grid grid = gridManager.GetGrid(path.gameObject.transform.position);
             grid.isPath = true;
             if (!grid.isExhibit)

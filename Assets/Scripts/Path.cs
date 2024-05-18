@@ -10,6 +10,7 @@ public class Path : Placeable
     float curOffsetX = 0.5f;
     float curOffsetZ = 0.25f;
     public int index = 0;
+    public static float offsetDefault = 0.05f;
 
     public Path otherVariant;
 
@@ -29,7 +30,7 @@ public class Path : Placeable
             if (playerControl.placedTags.Contains(hit.collider.tag))
             {
                 playerControl.canBePlaced = false;
-                yOffset = 0.01f;
+                yOffset = offsetDefault;
             }
             if (hit.collider.CompareTag("Terrain"))
             {
@@ -87,7 +88,7 @@ public class Path : Placeable
             playerControl.canBePlaced = false;
             yPos.y += 0.5f;
         }
-        transform.position = new Vector3(playerControl.Round(pos.x), yPos.y, playerControl.Round(pos.z));
+        transform.position = new Vector3(playerControl.Round(pos.x), yPos.y + offsetDefault, playerControl.Round(pos.z));
     }
 
 
@@ -96,5 +97,14 @@ public class Path : Placeable
         float newNumber = number * Mathf.Pow(10, dec);
         newNumber = Mathf.Round(newNumber);
         return newNumber / Mathf.Pow(10, dec);
+    }
+
+    public override void SetTag(string newTag)
+    {
+        base.SetTag(newTag);
+        foreach (var transform in GetComponentsInChildren<Transform>())
+        {
+            transform.tag = newTag;
+        }
     }
 }

@@ -30,7 +30,7 @@ public class PlayerControl : MonoBehaviour
     public bool isClickableSelected = false;
     public List<GameObject> gates;
     public GameObject animalDroppingPrefab;
-    public List<string> placedTags = new List<string>() { "Placed", "Placed Fence", "Placed Path", };
+    public List<string> placedTags;
 
     private float maxTerrainHeight = 7;
     private float minTerrainHeight = -3;
@@ -83,6 +83,7 @@ public class PlayerControl : MonoBehaviour
 
     void Start()
     {
+        placedTags = new List<string>() { "Placed", "Placed Fence", "Placed Path"};
         angle = 90 - transform.eulerAngles.y;
         VirtualCamera.transform.rotation = GameCamera.transform.rotation;
         gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
@@ -283,6 +284,7 @@ public class PlayerControl : MonoBehaviour
             curPlaceable = placeable;
             var newSelected = Instantiate(placeable, new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
             m_Selected = newSelected;
+            canBePlaced = true;
             if (m_Selected.gameObject.CompareTag("Fence") && fenceIndex != 0)
                 ChangeFence(fenceIndex);
             else

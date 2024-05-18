@@ -18,6 +18,7 @@ public class Animal : Placeable
     bool placed = false;
     float terraintHeight;
     public AnimalFood foodPrefab;
+    public float reputationBonus;
 
     float time = 0;
     float stuckTime = 0;
@@ -90,7 +91,7 @@ public class Animal : Placeable
     {
         transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
         exhibit = gridManager.GetGrid(transform.position).exhibit;
-        exhibit.animals.Add(this);
+        exhibit.AddAnimal(this);
         if (exhibit.reachable && exhibit.animals.Count == 1)
         {
             exhibit.AddToReachableLists();
@@ -98,6 +99,7 @@ public class Animal : Placeable
         agent.Warp(transform.position);
         placed = true;
 
+        VisitorManager.instance.CalculateAnimalBonus(this);
         StartCoroutine(DecreaseNeeds());
     }
 
@@ -128,11 +130,11 @@ public class Animal : Placeable
             health = health > healthDetriment ? health - healthDetriment : 0;
 
             if (hunger < 33)
-                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) : 0;
             if (thirst < 33)
-                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) : 0;
             if (health < 33)
-                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) : 0;
 
             if (hunger < 20)
                 health = health > healthDetriment ? health - healthDetriment : 0;
@@ -146,7 +148,7 @@ public class Animal : Placeable
                 health = health > healthDetriment * 5 ? health - healthDetriment * 5 : 0;
 
             if (hunger > 75 && thirst > 75 && health > 75)
-                happiness = happiness + happinessDetriment > 100 ? 100 : happiness + happinessDetriment;
+                happiness = happiness + happinessDetriment * Mathf.Sqrt(exhibit.foliages.Count) > 100 ? 100 : happiness + happinessDetriment * Mathf.Sqrt(exhibit.foliages.Count);
 
             if (restroomNeeds == 0)
             {
@@ -326,7 +328,6 @@ public class Animal : Placeable
         newInfopopup.SetClickable(this);
         playerControl.SetInfopopup(newInfopopup);
     }
-
 
     public void RotateTowards(Vector3 to)
     {

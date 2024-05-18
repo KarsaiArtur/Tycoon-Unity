@@ -17,6 +17,7 @@ public class Decoration : Placeable
     {
         ChangeMaterial(0);
         navMeshObstacle.enabled = true;
+        gameObject.GetComponent<NavMeshObstacle>().enabled = true;
     }
 
     public override void Place(Vector3 mouseHit)

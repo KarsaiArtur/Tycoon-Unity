@@ -1,8 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using UnityEngine.ProBuilder.Shapes;
 
 public class Foliage : Placeable
 {
@@ -51,6 +49,10 @@ public class Foliage : Placeable
     {
         ChangeMaterial(0);
         navMeshObstacle.enabled = true;
+        if (GridManager.instance.GetGrid(transform.position).isExhibit)
+        {
+            GridManager.instance.GetGrid(transform.position).exhibit.foliages.Add(this);
+        }
     }
 
     public override void Place(Vector3 mouseHit)

@@ -114,7 +114,7 @@ public class Fence : Placeable
                     exhibit.entranceGrid = grid2.trueNeighbours[timesRotated % 4];
                 }
             }
-            playerControl.SetFollowedObject(gateInstance.gameObject, 7);
+            exhibit.ClickedOn();
             var placeable = gateInstance.GetComponent<Placeable>();
             placeable.placeablePrice = placeablePrice;
             placeable.Place(Vector3.zero);

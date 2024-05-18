@@ -1783,8 +1783,6 @@ MonoBehaviour:
   - {fileID: 7622653307599481166, guid: 9452550efc47f1644af74242781d4435, type: 3}
   - {fileID: 7622653307599481166, guid: b19d493c999631d49a99198c498314ce, type: 3}
   - {fileID: 7622653307599481166, guid: 426982e3aa8d24945a6c4f20ba83ebbe, type: 3}
-  - {fileID: 7622653307599481166, guid: ed8ceac05efad4e4aa2cf4b729584959, type: 3}
-  - {fileID: 7622653307599481166, guid: 5a360ea1d665a6b499d013eae4814c84, type: 3}
 --- !u!114 &197248730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3956,7 +3954,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   submenuPrefabs:
   - {fileID: 7622653307599481166, guid: 10355ba9100d79a4a98579d5f17953b7, type: 3}
-  - {fileID: 7622653307599481166, guid: 71057ab7650646148b3725fc1b727fe0, type: 3}
   - {fileID: 7622653307599481166, guid: 9cf88af194943d74a93ea1aff43dfca3, type: 3}
 --- !u!114 &722442072
 MonoBehaviour:
@@ -4619,7 +4616,6 @@ MonoBehaviour:
   fenceIndex: 0
   canBePlaced: 1
   terraForming: 0
-  npcControl: 0
   isMouseDown: 0
   isClickableSelected: 0
   gates:
@@ -4631,13 +4627,12 @@ MonoBehaviour:
   - Placed
   - Placed Fence
   modifiedChunks: []
-  maxDepth: 1
   TerraformColliderPrefab: {fileID: 341296805895960364, guid: ae2fd0c511054424793061c5b4db084a, type: 3}
   terrainCollided: 0
+  currentTerraformSize: 1
   startingCoords: []
   currentInfopopup: {fileID: 0}
   stopMovement: 0
-  currentTerraformSize: 1
   prefabs:
   - {fileID: 9180999491319586247, guid: c77fd55fc534a3543b53a44ab443d53d, type: 3}
   - {fileID: 2548022094330047049, guid: ea2af87f8d07b52458eb9f260d74d5f9, type: 3}
@@ -6888,9 +6883,12 @@ MonoBehaviour:
   notificationWindowPrefab: {fileID: 8664685219373420500, guid: 8fc8c8ce9b241d441bf34d718f37a4dd, type: 3}
   infoPanelPrefab: {fileID: 6859910806340130846, guid: 466aee2c656ca944eba2c75c208904ad, type: 3}
   animalInfoPanelPrefab: {fileID: 6859910806340130846, guid: 1af89f79dea9bbd4fa876a948a03a2cb, type: 3}
+  exhibitInfoPanelPrefab: {fileID: 6859910806340130846, guid: 68c842abeb7c1084ab72d5cdc7a4fcea, type: 3}
+  animalExhibitInfoPrefab: {fileID: 3715471709902465084, guid: 9083d6ff83060594295bb35c43cc832d, type: 3}
   purchasableItemUIPrefab: {fileID: 3816408874727558576, guid: 4da0d9f27636e724b87f989e71009968, type: 3}
   visitorInfoItemPrefab: {fileID: 3715471709902465084, guid: 5a9a418745ddbe74d975b2293ba73240, type: 3}
   animalInfoItemPrefab: {fileID: 3715471709902465084, guid: 8cbbec5209f9e2d48aa08cae8dc53e61, type: 3}
+  staffInfoPanelPrefab: {fileID: 6859910806340130846, guid: 157b563b27185bf469e1a892af194320, type: 3}
   exhibitCreateWindows:
   - {fileID: 2016135402113569128, guid: b6aa542f27738fe429aba40f75f2f44f, type: 3}
   - {fileID: 6410034903815843560, guid: 05c9c78e62dd0154fa1cbbe09c43547f, type: 3}

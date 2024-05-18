@@ -13,6 +13,7 @@ public class Building : Placeable, Visitable
     float curY = -100;
     bool collided = false;
     public Vector3 startingGridIndex;
+    float offsetYDefault = 0.05f;
 
     public Material[] materials;
     public List<Grid> gridList;
@@ -77,7 +78,8 @@ public class Building : Placeable, Visitable
 
                 foreach (RaycastHit hit2 in hits1)
                 {
-                    if (playerControl.placedTags.Contains(hit2.collider.tag) && playerControl.canBePlaced)
+                    var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(hit2.collider.tag) && hit2.collider.tag!="Placed Path");
+                    if (isTagPlaced.Any() && playerControl.canBePlaced)
                     {
                         playerControl.canBePlaced = false;
                         ChangeMaterial(2);
@@ -102,7 +104,8 @@ public class Building : Placeable, Visitable
 
                 foreach (RaycastHit hit2 in hits2)
                 {
-                    if (playerControl.placedTags.Contains(hit2.collider.tag) && playerControl.canBePlaced)
+                    var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(hit2.collider.tag) && hit2.collider.tag != "Placed Path");
+                    if (isTagPlaced.Any() && playerControl.canBePlaced)
                     {
                         playerControl.canBePlaced = false;
                         ChangeMaterial(2);
@@ -123,7 +126,7 @@ public class Building : Placeable, Visitable
                                 curY += 0.5f;
                         }
                         curY = Mathf.Floor(curY * 2) / 2;
-                        transform.position = new Vector3(playerControl.Round(mouseHit.x), curY + 0.5f, playerControl.Round(mouseHit.z));
+                        transform.position = new Vector3(playerControl.Round(mouseHit.x), curY + 0.5f+offsetYDefault, playerControl.Round(mouseHit.z));
                     }
                 }
             }
@@ -132,6 +135,7 @@ public class Building : Placeable, Visitable
 
     public override void FinalPlace()
     {
+        transform.position = new Vector3(transform.position.x, transform.position.y - offsetYDefault, transform.position.z);
         gridManager.buildings.Add(this);
         if (HasFood())
         {
@@ -219,7 +223,8 @@ public class Building : Placeable, Visitable
 
     void OnCollisionStay(Collision collision)
     {
-        if (playerControl.placedTags.Contains(collision.collider.tag) && !playerControl.placedTags.Contains(gameObject.tag))
+        var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(collision.collider.tag) && collision.collider.tag != "Placed Path");
+        if (isTagPlaced.Any() && !playerControl.placedTags.Contains(gameObject.tag))
         {
             collided = true;
             playerControl.canBePlaced = false;

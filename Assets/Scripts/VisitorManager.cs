@@ -1,7 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class VisitorManager : MonoBehaviour
 {
@@ -11,6 +9,8 @@ public class VisitorManager : MonoBehaviour
     private float timeTillSpawn  = 0;
     public float SpawnTime = 15;
     List<int> numberOfVisitors;
+    float animalBonus = 1;
+    List<(string animal, float bonus)> animalBonuses = new List<(string animal, float bonus)>();
 
     private void Start()
     {
@@ -25,9 +25,13 @@ public class VisitorManager : MonoBehaviour
             timeTillSpawn = Random.Range(SpawnTime - 5 < 1 ? 1 : SpawnTime - 5, SpawnTime + 5);
             SpawnTime = 15;
             if (GridManager.instance.reachableHappinessBuildings.Count > 0)
-                SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(GridManager.instance.reachableHappinessBuildings.Count));
+            {
+                SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(Mathf.Sqrt(GridManager.instance.reachableHappinessBuildings.Count)));
+            }
             SpawnTime = SpawnTime / ZooManager.instance.reputation * 75;
             SpawnTime = SpawnTime * ZooManager.instance.currentEntranceFee / ZooManager.instance.defaultEntranceFee;
+            SpawnTime = SpawnTime / animalBonus;
+            SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(animalBonuses.Count));
             //timeTillSpawn = 0.1f;
             ZooManager.instance.PayEntranceFee();
 
@@ -47,5 +51,21 @@ public class VisitorManager : MonoBehaviour
         newVisitor.transform.parent = transform;
         visitors.Add(newVisitor);
         ZooManager.instance.allTimeVisitorCount++;
+    }
+
+    public void CalculateAnimalBonus(Animal animal)
+    {
+        for (int i = 0; i < animalBonuses.Count; i++)
+        {
+            if (animalBonuses[i].animal == animal.GetName())
+            {
+                animalBonus += animalBonuses[i].bonus;
+                animalBonuses.Add((animal.GetName(), animalBonuses[i].bonus / 5));
+                animalBonuses.RemoveAt(i);
+                return;
+            }
+        }
+        animalBonus += animal.reputationBonus;
+        animalBonuses.Add((animal.GetName(), animal.reputationBonus));
     }
 }
