@@ -11,8 +11,7 @@ GameObject:
   - component: {fileID: 3617368597451996787}
   - component: {fileID: 7841547125551040964}
   - component: {fileID: 5954480816096368640}
-  - component: {fileID: 8343449359537209320}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -84,27 +83,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &8343449359537209320
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5812904967470616622}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &9176925788028766236
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,7 +93,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7223332289556840856}
   - component: {fileID: 7551650816147809122}
-  m_Layer: 0
+  - component: {fileID: 325801438119987265}
+  m_Layer: 6
   m_Name: Flat Mossy Stone Path
   m_TagString: Flat
   m_Icon: {fileID: 0}
@@ -157,5 +136,27 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 15f130b7f07485d43a5616ead26b6df6, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
+  defaultMaterials: []
   index: 0
   otherVariant: {fileID: 1622757161807058835, guid: 3aba12dcd0dc88a4bbe419c145746f5a, type: 3}
+--- !u!65 &325801438119987265
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9176925788028766236}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.94, y: 0.03, z: 0.94}
+  m_Center: {x: 0, y: 0, z: 0}

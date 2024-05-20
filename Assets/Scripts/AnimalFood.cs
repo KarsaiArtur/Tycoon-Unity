@@ -27,7 +27,8 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable
         {
             exhibit.foodPlaces.Remove(this);
             animal.destinationVisitable = null;
-            Destroy(gameObject);
+            if(gameObject != null)
+                Destroy(gameObject);
         }
     }
 }

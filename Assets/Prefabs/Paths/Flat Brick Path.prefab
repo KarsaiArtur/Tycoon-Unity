@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3617368597451996787}
   - component: {fileID: 7841547125551040964}
   - component: {fileID: 5954480816096368640}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Grass
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 7223332289556840856}
   - component: {fileID: 7551650816147809122}
   - component: {fileID: 7011993740827042270}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Flat Brick Path
   m_TagString: Flat
   m_Icon: {fileID: 0}
@@ -136,6 +136,7 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 37604f4a5b597f144b9804a2dd53d78b, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
+  defaultMaterials: []
   index: 0
   otherVariant: {fileID: 1622757161807058835, guid: 033117b863f6312489029e1decdb796a, type: 3}
 --- !u!65 &7011993740827042270
@@ -157,5 +158,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1, y: 0.03, z: 1}
+  m_Size: {x: 0.94, y: 0.03, z: 0.94}
   m_Center: {x: 0, y: 0, z: 0}

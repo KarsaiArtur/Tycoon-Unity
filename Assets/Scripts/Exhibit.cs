@@ -143,8 +143,8 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
 
     public Vector3 ChoosePosition(Grid grid)
     {
-        float offsetX = UnityEngine.Random.Range(0, 1.0f);
-        float offsetZ = UnityEngine.Random.Range(0, 1.0f);
+        float offsetX = Random.Range(0, 1.0f);
+        float offsetZ = Random.Range(0, 1.0f);
         return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
     }
 
@@ -165,7 +165,6 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
 
     public void ClickedOn()
     {
-        Debug.Log(this.gameObject + " " + playerControl);
         playerControl.SetFollowedObject(this.gameObject, 7);
         playerControl.DestroyCurrentInfopopup();
         var newInfopopup = new GameObject().AddComponent<ExhibitInfopopup>();

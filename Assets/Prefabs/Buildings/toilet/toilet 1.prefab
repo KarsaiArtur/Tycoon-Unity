@@ -879,7 +879,7 @@ MonoBehaviour:
   gridManager: {fileID: 0}
   placeableName: Public Restroom
   placeablePrice: 500
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 28994d40b7e58be4b8c953e668661c9f, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   defaultMaterials: []
@@ -889,9 +889,10 @@ MonoBehaviour:
   materials: []
   purchasableItemPrefabs: []
   purchasableItemInstances: []
+  defaultCapacity: 10
   capacity: 10
   hasRestroom: 1
-  expense: 0
+  expense: 100
 --- !u!65 &4181061997898100527
 BoxCollider:
   m_ObjectHideFlags: 0

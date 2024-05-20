@@ -97,7 +97,6 @@ public class Visitor : MonoBehaviour, Clickable
             if (restroomNeeds < 33)
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
 
-            //Debug.Log("Hunger: " + hunger + " Thirst: " + thirst + " Energy: " + energy + " Restroom: " + restroomNeeds + " Happiness: " + happiness);
             yield return new WaitForSeconds(1);
         }
     }
@@ -106,7 +105,6 @@ public class Visitor : MonoBehaviour, Clickable
     {
         if (placed)
         {
-
             animator.SetFloat("vertical", agent.velocity.magnitude / agent.speed);
 
             if (atDestination && GridManager.instance.reachableVisitables.Count != 0)
@@ -139,33 +137,6 @@ public class Visitor : MonoBehaviour, Clickable
                     atDestination = true;
                 }
             }
-
-            /*}
-            else
-            {
-                if (atDestination && GridManager.instance.buildings.Count != 0)
-                {
-                    ChooseDestinationB();
-                }
-                if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.01)
-                {
-                    agent.isStopped = true;
-                    time += Time.deltaTime;
-                    if (time > 5)
-                    {
-                        atDestination = true;
-                    }
-                }
-                else if (agent.velocity == Vector3.zero)
-                {
-                    time += Time.deltaTime;
-                    if (time > 5)
-                    {
-                        atDestination = true;
-                    }
-                }
-            }*/
-
         }
     }
 
@@ -215,6 +186,8 @@ public class Visitor : MonoBehaviour, Clickable
                 unvisitedHappinessBuildings.Remove((Exhibit)destinationVisitable);
                 break;
             case "leave":
+                if (GridManager.instance.reachableHappinessBuildings.Count - unvisitedHappinessBuildings.Count == 0)
+                    happiness = happiness - 25 > 0 ? happiness - 25 : 0;
                 destinationVisitable = ZooManager.instance;
                 break;
             default:
@@ -263,7 +236,7 @@ public class Visitor : MonoBehaviour, Clickable
             sum += (200 - happiness);
             probabilities.Add(("happiness", sum));
         }
-        sum += (100 + 10 * (GridManager.instance.reachableHappinessBuildings.Count - unvisitedHappinessBuildings.Count) - happiness);
+        sum += (100 + 50 * ((GridManager.instance.reachableHappinessBuildings.Count - unvisitedHappinessBuildings.Count) / GridManager.instance.reachableHappinessBuildings.Count) - happiness);
         if (unvisitedHappinessBuildings.Count == 0)
             sum += 100;
         probabilities.Add(("leave", sum));

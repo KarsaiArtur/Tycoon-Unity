@@ -52,3 +52,4 @@ MonoBehaviour:
   hungerBonus: 0
   thirstBonus: 20
   energyBonus: 5
+  probabilityToBuy: 1

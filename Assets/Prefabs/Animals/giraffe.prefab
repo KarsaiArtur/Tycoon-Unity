@@ -218,7 +218,7 @@ MonoBehaviour:
   gridManager: {fileID: 0}
   placeableName: Giraffe
   placeablePrice: 1200
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: b20ce7fe9bf5a93438b0f0aec9ac9492, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   defaultMaterials: []

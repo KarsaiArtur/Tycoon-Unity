@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -24,6 +25,12 @@ public class Decoration : Placeable
     {
         base.Place(mouseHit);
         transform.position = new Vector3(mouseHit.x, mouseHit.y + height / 2, mouseHit.z);
+
+        if (playerControl.canBePlaced && GridManager.instance.GetGrid(mouseHit).isExhibit)
+        {
+            playerControl.canBePlaced = false;
+            ChangeMaterial(2);
+        }
         if (!playerControl.canBePlaced)
         {
             ChangeMaterial(2);
@@ -36,7 +43,8 @@ public class Decoration : Placeable
 
     void OnCollisionStay(Collision collision)
     {
-        if (playerControl.placedTags.Contains(collision.collider.tag) && !tag.Equals("Placed"))
+        var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(collision.collider.tag) && collision.collider.tag != "Placed Path");
+        if (isTagPlaced.Any() && !tag.Equals("Placed"))
         {
             playerControl.canBePlaced = false;
         }

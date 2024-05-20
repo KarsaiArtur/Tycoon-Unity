@@ -1,25 +1,43 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class BuildingInfopopup : InfoPopup
 {
     Building building;
     List<PurchasableItemUi> purchasableItemsUI;
+    TextMeshProUGUI capacity;
 
     public override void Initialize()
     {
-        base.Initialize();
+        infoPanelInstance = Instantiate(UIMenu.Instance.buildingInfoPanelPrefab);
+        infoPanelInstance.transform.SetParent(playerControl.canvas.transform);
         purchasableItemsUI = new List<PurchasableItemUi>();
-        infoPanelInstance.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = building.GetName();
+        infoPanelInstance.transform.GetChild(0).Find("Name").GetComponent<TextMeshProUGUI>().text = building.GetName();
 
         foreach (PurchasableItems purchasableItem in building.purchasableItemInstances)
         {
             purchasableItemsUI.Add(AddPurchasableItemToUI(purchasableItem));
         }
+        infoPanelInstance.transform.GetChild(0).Find("Items").gameObject.active = purchasableItemsUI.Count == 0 ? false : true;
 
+        infoPanelInstance.transform.GetChild(0).Find("Info Panel").Find("Restroom").GetComponent<Image>().sprite = building.hasRestroom ? UIMenu.Instance.hasRestroom : UIMenu.Instance.noRestroom;
+        infoPanelInstance.transform.GetChild(0).Find("Info Panel").Find("Monthly Fee").GetComponent<TextMeshProUGUI>().text = "Maintance Expenses" + Environment.NewLine + building.expense + "$";
+        capacity = infoPanelInstance.transform.GetChild(0).Find("Info Panel").Find("Capacity").GetComponent<TextMeshProUGUI>();
+        capacity.text = "Capacity" + Environment.NewLine + (building.defaultCapacity - building.capacity) + "/" + building.defaultCapacity;
+        StartCoroutine(CheckCapacity());
+    }
+    IEnumerator CheckCapacity()
+    {
+        while (true)
+        {
+            capacity.text = "Capacity" + Environment.NewLine + (building.defaultCapacity - building.capacity) + "/" + building.defaultCapacity;
+            yield return new WaitForSeconds(1);
+        }
     }
 
 
@@ -35,18 +53,6 @@ public class BuildingInfopopup : InfoPopup
         newItem.transform.SetParent(infoPanelInstance.transform.GetChild(0).Find("DataPanel").transform);
         return newItem;
     }
-
-
-
-    /*public override void DestroyPanel()
-    {
-        foreach (GameObject purchasableItemUI in purchasableItemsUI)
-        {
-            Destroy(purchasableItemUI.gameObject);
-        }
-        purchasableItemsUI.Clear();
-        base.DestroyPanel();
-    }*/
 
 
 }

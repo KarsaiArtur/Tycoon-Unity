@@ -1,8 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class PathManager : Placeable
 {
@@ -113,10 +111,10 @@ public class PathManager : Placeable
         {
             path.ChangeMaterial(index);
         }
-        if(index == 0)
+        /*if(index == 0)
         {
             playerControl.ReloadGuestNavMesh();
-        }
+        }*/
     }
 
     public override void SetTag(string newTag)
@@ -163,6 +161,11 @@ public class PathManager : Placeable
                         {
                             grid.trueNeighbours[i].building.paths.Add(grid);
                         }
+
+                        if (grid.trueNeighbours[i].isBuilding && !grid.trueNeighbours[i].bench.paths.Contains(grid))
+                        {
+                            grid.trueNeighbours[i].bench.paths.Add(grid);
+                        }
                     }
                 }
             }
@@ -196,6 +199,21 @@ public class PathManager : Placeable
                 }
             }
         }
+        foreach (var bench in gridManager.benches)
+        {
+            if (!gridManager.reachableVisitables.Contains(bench) && bench.paths.Count > 0)
+            {
+                for (int i = 0; i < bench.paths.Count; i++)
+                {
+                    if (gridManager.ReachableAttractionBFS(bench.paths[i], gridManager.startingGrid))
+                    {
+                        bench.AddToReachableLists();
+                        break;
+                    }
+                }
+            }
+        }
+        playerControl.ReloadGuestNavMesh();
     }
 
     public override void DestroyPlaceable()

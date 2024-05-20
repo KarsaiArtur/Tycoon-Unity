@@ -521,7 +521,7 @@ MonoBehaviour:
   gridManager: {fileID: 0}
   placeableName: Park Bench
   placeablePrice: 200
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 189a4d382ea28f641bd4319593bd72f0, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   defaultMaterials: []

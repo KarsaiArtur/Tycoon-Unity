@@ -1,6 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,6 +6,7 @@ public abstract class Staff : Placeable
 {
     public NavMeshAgent agent;
     bool placed = false;
+    bool collided = false;
     public float time = 0;
     public Exhibit destinationExhibit;
     public Exhibit insideExhibit;
@@ -204,8 +203,44 @@ public abstract class Staff : Placeable
     public override void Place(Vector3 mouseHit)
     {
         base.Place(mouseHit);
-        playerControl.canBePlaced = true;
-        transform.position = new Vector3(playerControl.Round(mouseHit.x), mouseHit.y + 0.5f, playerControl.Round(mouseHit.z));
+
+        var terraintHeight = mouseHit.y;
+        Vector3 position = new Vector3(mouseHit.x, mouseHit.y + 0.01f, mouseHit.z);
+
+        RaycastHit[] hits = Physics.RaycastAll(position, -transform.up);
+
+        if (playerControl.canBePlaced)
+            ChangeMaterial(1);
+
+        if (!collided)
+            playerControl.canBePlaced = true;
+
+        foreach (RaycastHit hit in hits)
+        {
+            if (hit.collider.CompareTag("Terrain") && playerControl.canBePlaced && gridManager.GetGrid(hit.point).isExhibit)
+            {
+                playerControl.canBePlaced = false;
+                ChangeMaterial(2);
+            }
+        }
+
+        transform.position = position;
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(collision.collider.tag) && collision.collider.tag != "Placed Path");
+        if (isTagPlaced.Any() && !playerControl.placedTags.Contains(gameObject.tag))
+        {
+            collided = true;
+            playerControl.canBePlaced = false;
+            ChangeMaterial(2);
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        collided = false;
     }
 
     public override void FinalPlace()

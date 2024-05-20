@@ -213,7 +213,7 @@ MonoBehaviour:
   gridManager: {fileID: 0}
   placeableName: Jaguar
   placeablePrice: 1000
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d831f70cee32bb84a8bb4341ce15635e, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   defaultMaterials: []

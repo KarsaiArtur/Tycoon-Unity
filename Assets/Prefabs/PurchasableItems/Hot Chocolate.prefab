@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02b7da2c33cc22c4795ccb748f31af54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemName: 
   defaultPrice: 8
   currentPrice: 0
   icon: {fileID: 0}
@@ -51,3 +52,4 @@ MonoBehaviour:
   hungerBonus: 5
   thirstBonus: 5
   energyBonus: 15
+  probabilityToBuy: 0.9

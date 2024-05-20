@@ -16,6 +16,7 @@ public class Animal : Placeable
     public Exhibit exhibit;
     bool atDestination = true;
     bool placed = false;
+    bool collided = false;
     float terraintHeight;
     public AnimalFood foodPrefab;
     public float reputationBonus;
@@ -51,16 +52,15 @@ public class Animal : Placeable
         base.Place(mouseHit);
 
         terraintHeight = mouseHit.y;
-        Vector3 position = new Vector3(playerControl.Round(mouseHit.x), mouseHit.y + 0.5f, playerControl.Round(mouseHit.z));
+        Vector3 position = new Vector3(mouseHit.x, mouseHit.y + 0.01f, mouseHit.z);
 
         RaycastHit[] hits = Physics.RaycastAll(position, -transform.up);
 
         if (playerControl.canBePlaced)
-        {
             ChangeMaterial(1);
-        }
 
-        playerControl.canBePlaced = true;
+        if (!collided)
+            playerControl.canBePlaced = true;
 
         foreach (RaycastHit hit in hits)
         {
@@ -82,10 +82,21 @@ public class Animal : Placeable
         transform.position = position;
     }
 
-    /*public override void ChangeMaterial(int index)
+    void OnCollisionStay(Collision collision)
     {
-        gameObject.transform.GetChild(0).gameObject.GetComponent<SkinnedMeshRenderer>().material = SetMaterialColor(index, defaultMaterial);
-    }*/
+        var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(collision.collider.tag) && collision.collider.tag != "Placed Path");
+        if (isTagPlaced.Any() && !playerControl.placedTags.Contains(gameObject.tag))
+        {
+            collided = true;
+            playerControl.canBePlaced = false;
+            ChangeMaterial(2);
+        }
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        collided = false;
+    }
 
     public override void FinalPlace()
     {
@@ -154,7 +165,6 @@ public class Animal : Placeable
             {
                 Poop();
             }
-            //Debug.Log("Hunger: " + hunger + " Thirst: " + thirst + " Energy: " + energy + " Restroom: " + restroomNeeds + " Happiness: " + happiness);
             yield return new WaitForSeconds(1);
         }
     }
@@ -220,19 +230,6 @@ public class Animal : Placeable
         }
     }
 
-    //void ChooseDestination()
-    //{
-    //    int random = UnityEngine.Random.Range(0, exhibit.gridList.Count);
-    //    Grid randomGrid = exhibit.gridList[random];
-    //    float offsetX = UnityEngine.Random.Range(0, 1.0f);
-    //    float offsetZ = UnityEngine.Random.Range(0, 1.0f);
-    //    destination = new Vector3(randomGrid.coords[0].x + offsetX, randomGrid.coords[0].y, randomGrid.coords[0].z + offsetZ);
-    //    agent.SetDestination(destination);
-    //    atDestination = false;
-    //    time = 0;
-    //    agent.isStopped = false;
-    //}
-
     void ChooseDestination()
     {
         ChooseDestinationType();
@@ -250,16 +247,6 @@ public class Animal : Placeable
                     destination = exhibit.foodPlaces[random].transform.position;
                     destinationVisitable = exhibit.foodPlaces[random];
                 }
-                //else
-                //{
-                //    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
-                //    destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
-                //}
-                //float foodEaten = UnityEngine.Random.Range(40, 60);
-                //foodEaten = exhibit.food > foodEaten ? foodEaten : exhibit.food;
-                //foodEaten = hunger + foodEaten > 100 ? 100 - hunger : foodEaten;
-                //hunger += foodEaten;
-                //exhibit.food -= foodEaten;
                 break;
             case "drink":
                 if (exhibit.waterPlaces.Count > 0)
@@ -268,16 +255,6 @@ public class Animal : Placeable
                     destination = exhibit.waterPlaces[random].transform.position;
                     destinationVisitable = exhibit.waterPlaces[random];
                 }
-                //else
-                //{
-                //    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
-                //    destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
-                //}
-                //float waterDrunk = UnityEngine.Random.Range(40, 60);
-                //waterDrunk = exhibit.water > waterDrunk ? waterDrunk : exhibit.water;
-                //waterDrunk = thirst + waterDrunk > 100 ? 100 - thirst : waterDrunk;
-                //thirst += waterDrunk;
-                //exhibit.water -= waterDrunk;
                 break;
             case "wander":
                 destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
@@ -289,6 +266,13 @@ public class Animal : Placeable
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
                 destinationVisitable = null;
                 break;
+        }
+
+        if (!GridManager.instance.GetGrid(transform.position).isExhibit)
+        {
+            agent.enabled = false;
+            transform.position = new Vector3(destination.x, destination.y, destination.z);
+            agent.enabled = true;
         }
 
         agent.SetDestination(destination);

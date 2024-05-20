@@ -29,6 +29,11 @@ public class UIMenu : MonoBehaviour
     public GameObject animalInfoPanelPrefab;
     public GameObject exhibitInfoPanelPrefab;
     public GameObject animalExhibitInfoPrefab;
+    public GameObject buildingInfoPanelPrefab;
+    public Sprite hasRestroom;
+    public Sprite noRestroom;
+    public GameObject zooManagerInfoPrefab;
+    public GameObject zooManagerStaffInfoPrefab;
     public PurchasableItemUi purchasableItemUIPrefab;
     public GameObject visitorInfoItemPrefab;
     public GameObject animalInfoItemPrefab; 

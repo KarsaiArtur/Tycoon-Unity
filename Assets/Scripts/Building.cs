@@ -21,6 +21,7 @@ public class Building : Placeable, Visitable
 
     public List<PurchasableItems> purchasableItemPrefabs;
     public List<PurchasableItems> purchasableItemInstances;
+    public int defaultCapacity = 10;
     public int capacity = 10;
 
     public bool hasRestroom = false;
@@ -30,6 +31,7 @@ public class Building : Placeable, Visitable
     public override void Awake()
     {
         base.Awake();
+        capacity = defaultCapacity;
         foreach (PurchasableItems p in purchasableItemPrefabs)
         {
             p.currentPrice = p.defaultPrice;
@@ -55,12 +57,16 @@ public class Building : Placeable, Visitable
         int k = 0, l = 0;
 
         if (playerControl.canBePlaced)
-        {
             ChangeMaterial(1);
-        }
 
         if (!collided)
             playerControl.canBePlaced = true;
+
+        if (playerControl.canBePlaced && GridManager.instance.GetGrid(mouseHit).isExhibit)
+        {
+            playerControl.canBePlaced = false;
+            ChangeMaterial(2);
+        }
 
         for (int i = 0; i < Math.Abs(x) + 1; i++)
         {
@@ -212,7 +218,7 @@ public class Building : Placeable, Visitable
         {
             for (int j = 0; j < 4; j++)
             {
-                if (gridList[i].trueNeighbours[j] != null)
+                if (gridList[i].neighbours[j] != null)
                 {
                     if (gridList[i].trueNeighbours[j].isPath)
                         paths.Add(gridList[i].trueNeighbours[j]);
@@ -296,13 +302,13 @@ public class Building : Placeable, Visitable
         {
             if (item.hungerBonus > 10)
             {
-                sum += 100 - Mathf.Abs(100 - visitor.hunger + item.hungerBonus) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                sum += (100 - Mathf.Abs(100 - (visitor.hunger + item.hungerBonus))) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
                 probabilities.Add((index, sum));
             }
             index++;
         }
 
-        sum += 100;
+        sum += 50 + visitor.hunger;
         probabilities.Add((index, sum));
 
         var random = UnityEngine.Random.Range(0, sum);
@@ -319,13 +325,13 @@ public class Building : Placeable, Visitable
         {
             if (item.thirstBonus > 10)
             {
-                sum += 100 - Mathf.Abs(100 - visitor.thirst + item.thirstBonus) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                sum += (100 - Mathf.Abs(100 - (visitor.thirst + item.thirstBonus))) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
                 probabilities.Add((index, sum));
             }
             index++;
         }
 
-        sum += 100;
+        sum += 50 + visitor.thirst;
         probabilities.Add((index, sum));
 
         var random = UnityEngine.Random.Range(0, sum);
@@ -342,13 +348,13 @@ public class Building : Placeable, Visitable
         {
             if (item.energyBonus > 10)
             {
-                sum += 100 - Mathf.Abs(100 - visitor.energy + item.energyBonus) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                sum += (100 - Mathf.Abs(100 - (visitor.energy + item.energyBonus))) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
                 probabilities.Add((index, sum));
             }
             index++;
         }
 
-        sum += 100;
+        sum += 50 + visitor.energy;
         probabilities.Add((index, sum));
 
         var random = UnityEngine.Random.Range(0, sum);
@@ -365,13 +371,13 @@ public class Building : Placeable, Visitable
         {
             if (item.happinessBonus > 10)
             {
-                sum += 100 - Mathf.Abs(100 - visitor.happiness + item.happinessBonus) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                sum += (100 - Mathf.Abs(100 - (visitor.happiness + item.happinessBonus))) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
                 probabilities.Add((index, sum));
             }
             index++;
         }
 
-        sum += 100;
+        sum += 50 + visitor.happiness;
         probabilities.Add((index, sum));
 
         var random = UnityEngine.Random.Range(0, sum);

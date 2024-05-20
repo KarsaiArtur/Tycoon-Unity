@@ -1,15 +1,21 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Bench : Placeable
+public class Bench : Placeable, Visitable
 {
     float height;
     NavMeshObstacle navMeshObstacle;
     bool collided = false;
     float curY = -100;
+    public int capacity = 2;
+    public List<Grid> paths;
+    Grid grid;
 
     public override void Awake()
     {
+        base.Awake();
         height = gameObject.GetComponent<BoxCollider>().size.y;
         base.Awake();
         navMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
@@ -29,19 +35,20 @@ public class Bench : Placeable
                 break;
             }
         }
+
+        grid = GridManager.instance.GetGrid(transform.position);
+        grid.isBuilding = true;
+        grid.bench = this;
+        paths = new List<Grid>();
+        GridManager.instance.benches.Add(this);
+
+        FindPaths();
+        DecideIfReachable();
     }
 
     public override void Place(Vector3 mouseHit)
     {
         base.Place(mouseHit);
-
-        if (playerControl.canBePlaced)
-        {
-            ChangeMaterial(1);
-        }
-
-        if (!collided)
-            playerControl.canBePlaced = true;
 
         curY = -100;
         float curOffsetX = 0.3f;
@@ -52,9 +59,22 @@ public class Bench : Placeable
         RaycastHit[] hits1 = Physics.RaycastAll(position1, -transform.up);
         RaycastHit[] hits2 = Physics.RaycastAll(position2, -transform.up);
 
+        if (playerControl.canBePlaced)
+            ChangeMaterial(1);
+
+        if (!collided)
+            playerControl.canBePlaced = true;
+
+        if (playerControl.canBePlaced && GridManager.instance.GetGrid(mouseHit).isExhibit)
+        {
+            playerControl.canBePlaced = false;
+            ChangeMaterial(2);
+        }
+
         foreach (RaycastHit hit2 in hits1)
         {
-            if (playerControl.placedTags.Contains(hit2.collider.tag) && playerControl.canBePlaced)
+            var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(hit2.collider.tag) && hit2.collider.tag != "Placed Path");
+            if (isTagPlaced.Any() && playerControl.canBePlaced)
             {
                 playerControl.canBePlaced = false;
                 ChangeMaterial(2);
@@ -79,7 +99,8 @@ public class Bench : Placeable
 
         foreach (RaycastHit hit2 in hits2)
         {
-            if (playerControl.placedTags.Contains(hit2.collider.tag) && playerControl.canBePlaced)
+            var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(hit2.collider.tag) && hit2.collider.tag != "Placed Path");
+            if (isTagPlaced.Any() && playerControl.canBePlaced)
             {
                 playerControl.canBePlaced = false;
                 ChangeMaterial(2);
@@ -97,6 +118,7 @@ public class Bench : Placeable
                     if (curY < hit2.point.y)
                         curY += 0.5f;
                 }
+
                 curY = Mathf.Floor(curY * 2) / 2;
                 transform.position = new Vector3(playerControl.Round(mouseHit.x), curY + height / 2, playerControl.Round(mouseHit.z));
             }
@@ -105,7 +127,8 @@ public class Bench : Placeable
 
     void OnCollisionStay(Collision collision)
     {
-        if (playerControl.placedTags.Contains(collision.collider.tag) && !tag.Equals("Placed"))
+        var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(collision.collider.tag) && collision.collider.tag != "Placed Path" && collision.collider.tag != "Placed Fence");
+        if (isTagPlaced.Any() && !tag.Equals("Placed"))
         {
             collided = true;
             playerControl.canBePlaced = false;
@@ -124,5 +147,63 @@ public class Bench : Placeable
 
         float tempEnergy = Random.Range(40, 60);
         visitor.energy = visitor.energy + tempEnergy > 100 ? 100 : visitor.energy + tempEnergy;
+    }
+
+    public void FindPaths()
+    {
+        for (int j = 0; j < 4; j++)
+            if (grid.neighbours[j] != null)
+                if (grid.trueNeighbours[j].isPath)
+                    paths.Add(grid.trueNeighbours[j]);
+    }
+
+    public void DecideIfReachable()
+    {
+        if (paths.Count != 0)
+        {
+            for (int i = 0; i < paths.Count; i++)
+            {
+                if (gridManager.ReachableAttractionBFS(paths[i], gridManager.startingGrid))
+                {
+                    AddToReachableLists();
+                    break;
+                }
+            }
+        }
+    }
+
+    public List<Grid> GetPaths()
+    {
+        return new List<Grid>() { grid };
+    }
+
+    public Vector3 ChoosePosition(Grid grid)
+    {
+
+        float offsetX = Random.Range(0, 1.0f);
+        float offsetZ = Random.Range(0, 1.0f);
+        return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
+    }
+
+    public Grid GetStartingGrid()
+    {
+        return grid;
+    }
+
+    public void AddToReachableLists()
+    {
+        GridManager.instance.reachableBenches.Add(this);
+        GridManager.instance.reachableVisitables.Add(this);
+        GridManager.instance.reachableEnergyBuildings.Add(this);
+    }
+
+    public int GetCapacity()
+    {
+        return capacity;
+    }
+
+    public void SetCapacity(int newCapacity)
+    {
+        capacity = newCapacity;
     }
 }

@@ -69,6 +69,7 @@ MonoBehaviour:
   purchasableItemInstances: []
   capacity: 10
   hasRestroom: 1
+  expense: 300
 --- !u!65 &1551852019267658783
 BoxCollider:
   m_ObjectHideFlags: 0

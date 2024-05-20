@@ -20,6 +20,7 @@ public class Grid
     public bool isBuilding = false;
     public Exhibit exhibit;
     public Building building;
+    public Bench bench;
 
     public void SetNeighbour0(Grid neighbour)
     {

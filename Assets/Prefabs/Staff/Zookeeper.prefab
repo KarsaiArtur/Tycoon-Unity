@@ -81,6 +81,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7aed4db8b093ce8448f9666899a7b7b5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4132020209544191426}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 7aed4db8b093ce8448f9666899a7b7b5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: -3434993681927926491}
   m_SourcePrefab: {fileID: 100100000, guid: 7aed4db8b093ce8448f9666899a7b7b5, type: 3}
 --- !u!1 &3144529305929338641 stripped
 GameObject:
@@ -103,7 +106,7 @@ MonoBehaviour:
   gridManager: {fileID: 0}
   placeableName: Zookeeper
   placeablePrice: 500
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: e8815d8df658b7b4b8d3f1198cefb74a, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   defaultMaterials: []
@@ -159,3 +162,30 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 2.0164642, z: 0.8768265}
   m_Center: {x: 0, y: 1.0002352, z: 0.061586913}
+--- !u!54 &-3434993681927926491
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3144529305929338641}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0

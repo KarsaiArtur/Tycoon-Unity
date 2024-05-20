@@ -46,9 +46,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerControl: {fileID: 0}
+  gridManager: {fileID: 0}
   placeableName: 
   placeablePrice: 30
   icon: {fileID: 0}
+  currentPlacingPrice: {fileID: 0}
+  currentPlacingPriceInstance: {fileID: 0}
+  defaultMaterials: []
   index: 0
   otherVariant: {fileID: 7551650816147809122, guid: f36d8d3beb3d7354daa3936df8cc286b, type: 3}
 --- !u!1 &4549912904737251565

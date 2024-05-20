@@ -79,8 +79,9 @@ public class AnimalInfoPopup : InfoPopup
         animalInfoItemInstances[index].transform.Find("Progress Bar").GetChild(0).GetChild(0).GetComponent<Image>().color = c;
     }
 
-    private void OnDestroy()
+    public override void DestroyPanel()
     {
+        base.DestroyPanel();
         animalCam.SetActive(false);
     }
 }

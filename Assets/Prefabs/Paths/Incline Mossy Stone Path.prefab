@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2277817335244159535}
   - component: {fileID: 1622757161807058835}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Incline Mossy Stone Path
   m_TagString: Incline
   m_Icon: {fileID: 0}
@@ -52,6 +52,7 @@ MonoBehaviour:
   icon: {fileID: 0}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
+  defaultMaterials: []
   index: 0
   otherVariant: {fileID: 7551650816147809122, guid: 5792f775bb6100d4d94648f95e69e6aa, type: 3}
 --- !u!1 &4549912904737251565
@@ -66,7 +67,7 @@ GameObject:
   - component: {fileID: 2557107556088636492}
   - component: {fileID: 7505959427003502061}
   - component: {fileID: 7452719137497316148}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -218,6 +219,10 @@ PrefabInstance:
     - target: {fileID: 8890576900904086290, guid: f249076e40c699f4c817a8008159882e, type: 3}
       propertyPath: m_Name
       value: Cube
+      objectReference: {fileID: 0}
+    - target: {fileID: 8890576900904086290, guid: f249076e40c699f4c817a8008159882e, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

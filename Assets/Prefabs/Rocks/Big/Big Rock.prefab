@@ -1,0 +1,94 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4670496208201858416
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6995886077579787356}
+  - component: {fileID: -7873760092086206215}
+  - component: {fileID: 3293058049489718864}
+  m_Layer: 0
+  m_Name: Big Rock
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6995886077579787356
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4670496208201858416}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 36.18433, y: 12.016154, z: 48.11652}
+  m_LocalScale: {x: 0.35, y: 0.35, z: 0.35}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &-7873760092086206215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4670496208201858416}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7783d6ea26439045a9c4657051f135a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerControl: {fileID: 0}
+  gridManager: {fileID: 0}
+  placeableName: Big Rock
+  placeablePrice: 100
+  icon: {fileID: 21300000, guid: e4adf30c08223604b98ec99a24bcda78, type: 3}
+  currentPlacingPrice: {fileID: 0}
+  currentPlacingPriceInstance: {fileID: 0}
+  defaultMaterials: []
+  foligeVariants:
+  - {fileID: 2056580539962515297, guid: ed7846808517cc64297570438276057a, type: 3}
+  - {fileID: 5541205216334209475, guid: 93bd675666ca85241a462405b11f7454, type: 3}
+  - {fileID: 661995079816190296, guid: f26349d6a6a6f4a4bbcada68e86bd0f0, type: 3}
+  - {fileID: 5851876968396345473, guid: fb60fe564676e2a49b6fe27f5143dfb9, type: 3}
+  - {fileID: 4309238608797973318, guid: b1a681d432c2d9648a93556dbd9126b9, type: 3}
+  - {fileID: 5464185841952530544, guid: ae2b4f7fd9bd0014e86ea7d47dc3fb3e, type: 3}
+  - {fileID: 2493120322846172194, guid: 64f68196c2b1b7540ad9b5308998e82e, type: 3}
+  - {fileID: 3530011090113413941, guid: b0b723e8f3ebb8949980012d602d4703, type: 3}
+  - {fileID: 6744612498047020070, guid: d9b00935d8ee1924ea4b89974bc3ea18, type: 3}
+  - {fileID: 8431008862032062548, guid: 5beab8e831956e04489f9c7873518ebf, type: 3}
+  selectedVariantInstance: {fileID: 0}
+--- !u!54 &3293058049489718864
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4670496208201858416}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0

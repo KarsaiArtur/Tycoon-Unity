@@ -62,6 +62,20 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
         }
     }
 
+    public int GetExpenses()
+    {
+        float sum = 0;
+        foreach (var staff in StaffManager.instance.staffs)
+        {
+            sum += staff.salary;
+        }
+        foreach (var building in GridManager.instance.buildings)
+        {
+            sum += building.expense;
+        }
+        return (int)sum;
+    }
+
     public void ChangeMoney(float amount)
     {
         money += amount;
@@ -91,11 +105,9 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
     }
     public void ClickedOn()
     {
-        Debug.Log(gameObject);
         playerControl.SetFollowedObject(this.gameObject, 15);
         playerControl.DestroyCurrentInfopopup();
-        var newInfopopup = new GameObject().AddComponent<GateInfopopup>();
-        newInfopopup.SetClickable(this);
+        var newInfopopup = new GameObject().AddComponent<ZooManagerInfopopup>();
         playerControl.SetInfopopup(newInfopopup);
     }
 
