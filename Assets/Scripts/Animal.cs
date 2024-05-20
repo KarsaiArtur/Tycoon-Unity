@@ -14,7 +14,7 @@ public class Animal : Placeable
     public NavMeshAgent agent;
     public Animator animator;
     public Exhibit exhibit;
-    bool atDestination = true;
+    public bool atDestination = true;
     bool placed = false;
     bool collided = false;
     float terraintHeight;
@@ -22,6 +22,7 @@ public class Animal : Placeable
     public float reputationBonus;
 
     float time = 0;
+    float timeGoal = 0;
     float stuckTime = 0;
     bool destinationReached = false;
     Vector3 destination;
@@ -43,9 +44,11 @@ public class Animal : Placeable
 
     public bool isSick = false;
     public bool isGettingHealed = false;
+    public float requiredExhibitSpace = 1;
 
     public string action = "";
     public AnimalVisitable destinationVisitable;
+    bool isEating = false;
 
     public override void Place(Vector3 mouseHit)
     {
@@ -103,15 +106,23 @@ public class Animal : Placeable
         transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
         exhibit = gridManager.GetGrid(transform.position).exhibit;
         exhibit.AddAnimal(this);
-        if (exhibit.reachable && exhibit.animals.Count == 1)
-        {
-            exhibit.AddToReachableLists();
-        }
         agent.Warp(transform.position);
         placed = true;
 
         VisitorManager.instance.CalculateAnimalBonus(this);
         StartCoroutine(DecreaseNeeds());
+    }
+
+    public void Sell()
+    {
+        exhibit.RemoveAnimal(this);
+        VisitorManager.instance.DecreaseAnimalBonus(this);
+        ZooManager.instance.ChangeMoney(placeablePrice * 0.5f * health / 100);
+        if (currentPlacingPriceInstance != null)
+        {
+            Destroy(currentPlacingPriceInstance.gameObject);
+        }
+        Destroy(gameObject);
     }
 
     public void Start()
@@ -140,6 +151,8 @@ public class Animal : Placeable
             restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
             health = health > healthDetriment ? health - healthDetriment : 0;
 
+            if (exhibit.gridList.Count < requiredExhibitSpace || exhibit.gridList.Count < exhibit.occupiedSpace)
+                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) : 0;
             if (hunger < 33)
                 happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) : 0;
             if (thirst < 33)
@@ -159,7 +172,7 @@ public class Animal : Placeable
                 health = health > healthDetriment * 5 ? health - healthDetriment * 5 : 0;
 
             if (hunger > 75 && thirst > 75 && health > 75)
-                happiness = happiness + happinessDetriment * Mathf.Sqrt(exhibit.foliages.Count) > 100 ? 100 : happiness + happinessDetriment * Mathf.Sqrt(exhibit.foliages.Count);
+                happiness = happiness + happinessDetriment * Mathf.Sqrt(exhibit.foliages.Count + 1) > 100 ? 100 : happiness + happinessDetriment * Mathf.Sqrt(exhibit.foliages.Count + 1);
 
             if (restroomNeeds == 0)
             {
@@ -192,6 +205,7 @@ public class Animal : Placeable
             animator.SetFloat("vertical", agent.velocity.magnitude / agent.speed);
             if (atDestination)
             {
+                isEating = false;
                 ChooseDestination();
             }
             if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1)
@@ -200,13 +214,24 @@ public class Animal : Placeable
             }
             if (destinationReached && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.2)
             {
+                
                 agent.isStopped = true;
                 time += Time.deltaTime;
-                if (action == "food" || action == "drink")
+                agent.velocity = Vector3.zero;
+
+                animator.SetFloat("vertical", 0);
+                if (action == "food" && !isEating)
                 {
-                    //RotateTowards(agent.destination);
+                    isEating = true;
+                    GetComponentInChildren<Animator>().Play("Start Eating");
+                    transform.LookAt(destination);
                 }
-                if (time > 5)
+                if (action == "drink")
+                {
+                    transform.LookAt(destination);
+                }
+
+                if (time > timeGoal)
                 {
                     if (destinationVisitable != null)
                         destinationVisitable.Arrived(this);
@@ -217,7 +242,7 @@ public class Animal : Placeable
             {
                 animator.SetFloat("vertical", 0);
                 time += Time.deltaTime;
-                if (time > 5)
+                if (time > timeGoal)
                 {
                     atDestination = true;
                 }
@@ -278,6 +303,7 @@ public class Animal : Placeable
         agent.SetDestination(destination);
         atDestination = false;
         time = 0;
+        timeGoal = UnityEngine.Random.Range(4, 6);
         stuckTime = 0;
         agent.isStopped = false;
     }
@@ -311,17 +337,5 @@ public class Animal : Placeable
         var newInfopopup = new GameObject().AddComponent<AnimalInfoPopup>();
         newInfopopup.SetClickable(this);
         playerControl.SetInfopopup(newInfopopup);
-    }
-
-    public void RotateTowards(Vector3 to)
-    {
-
-        Quaternion _lookRotation = Quaternion.LookRotation(to - transform.position);
-
-        //over time
-        //transform.rotation = Quaternion.Slerp(transform.rotation, _lookRotation, Time.deltaTime * 20);
-
-        //instant
-        transform.rotation = _lookRotation;
     }
 }

@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Foliage : Placeable
+public class Nature : Placeable
 {
     public List<GameObject> foligeVariants;
     public GameObject selectedVariantInstance;

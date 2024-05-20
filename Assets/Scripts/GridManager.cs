@@ -27,21 +27,18 @@ public class GridManager : MonoBehaviour
     public Vector3[] tempCoords;
     public bool edgeChanged = false;
     public Grid[,] grids;
+    public List<Bench> benches = new List<Bench>();
     public List<Exhibit> exhibits = new List<Exhibit>();
     public List<Building> buildings = new List<Building>();
-    public List<Bench> benches = new List<Bench>();
     public List<Visitable> reachableBenches = new List<Visitable>();
-    public List<Visitable> foodBuildings = new List<Visitable>();
-    public List<Visitable> drinkBuildings = new List<Visitable>();
-    public List<Visitable> energyBuildings = new List<Visitable>();
-    public List<Visitable> restroomBuildings = new List<Visitable>();
-    public List<Visitable> happinessBuildings = new List<Visitable>();
+    public List<Visitable> reachableExhibits = new List<Visitable>();
+    public List<Visitable> reachableVisitables = new List<Visitable>();
     public List<Visitable> reachableFoodBuildings = new List<Visitable>();
     public List<Visitable> reachableDrinkBuildings = new List<Visitable>();
     public List<Visitable> reachableEnergyBuildings = new List<Visitable>();
+    public List<Visitable> reachableHappinessPlaces = new List<Visitable>();
     public List<Visitable> reachableRestroomBuildings = new List<Visitable>();
     public List<Visitable> reachableHappinessBuildings = new List<Visitable>();
-    public List<Visitable> reachableVisitables = new List<Visitable>();
     public Grid startingGrid;
 
     void Awake()

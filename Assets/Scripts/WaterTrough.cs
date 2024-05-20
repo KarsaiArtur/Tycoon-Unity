@@ -32,10 +32,12 @@ public class WaterTrough : Placeable, AnimalVisitable
         if (!playerControl.canBePlaced || !GridManager.instance.GetGrid(transform.position).isExhibit)
         {
             ChangeMaterial(2);
+            playerControl.canBePlaced = false;
         }
         else
         {
             ChangeMaterial(1);
+            playerControl.canBePlaced = true;
         }
     }
 

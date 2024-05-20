@@ -119,13 +119,13 @@ public class PlayerControl : MonoBehaviour
 
     public void PlaceObject()
     {
-        if (Input.GetMouseButtonDown(1))
-        {
-            Destroy(m_Selected.gameObject);
-            m_Selected = null;
-            objectTimesRotated = 0;
-        }
-        else if (Input.GetMouseButtonDown(0))
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    Destroy(m_Selected.gameObject);
+        //    m_Selected = null;
+        //    objectTimesRotated = 0;
+        //}
+        if (Input.GetMouseButtonDown(0))
         {
             isMouseDown = true;
             if (m_Selected !=null)

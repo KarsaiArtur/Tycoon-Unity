@@ -23,6 +23,7 @@ public class Building : Placeable, Visitable
     public List<PurchasableItems> purchasableItemInstances;
     public int defaultCapacity = 10;
     public int capacity = 10;
+    List<Visitor> visitors = new();
 
     public bool hasRestroom = false;
     public int expense = 0;
@@ -143,26 +144,6 @@ public class Building : Placeable, Visitable
     {
         transform.position = new Vector3(transform.position.x, transform.position.y - offsetYDefault, transform.position.z);
         gridManager.buildings.Add(this);
-        if (HasFood())
-        {
-            gridManager.foodBuildings.Add(this);
-        }
-        if (HasDrink())
-        {
-            gridManager.drinkBuildings.Add(this);
-        }
-        if (HasEnergy())
-        {
-            gridManager.energyBuildings.Add(this);
-        }
-        if (hasRestroom)
-        {
-            gridManager.restroomBuildings.Add(this);
-        }
-        if (HasHappiness())
-        {
-            gridManager.happinessBuildings.Add(this);
-        }
 
         gridList = new List<Grid>();
         paths = new List<Grid>();
@@ -195,6 +176,21 @@ public class Building : Placeable, Visitable
             }
         }
         
+    }
+
+    public void Sell()
+    {
+        ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
+        RemoveFromLists();
+        foreach (var visitor in visitors)
+        {
+            visitor.ChooseDestination();
+        }
+        if (currentPlacingPriceInstance != null)
+        {
+            Destroy(currentPlacingPriceInstance.gameObject);
+        }
+        Destroy(gameObject);
     }
 
     public void DecideIfReachable()
@@ -443,26 +439,39 @@ public class Building : Placeable, Visitable
 
     public void AddToReachableLists()
     {
+        gridManager.buildings.Remove(this);
         gridManager.reachableVisitables.Add(this);
         if (HasFood())
-        {
             gridManager.reachableFoodBuildings.Add(this);
-        }
         if (HasDrink())
-        {
             gridManager.reachableDrinkBuildings.Add(this);
-        }
         if (HasEnergy())
-        {
             gridManager.reachableEnergyBuildings.Add(this);
-        }
         if (hasRestroom)
-        {
             gridManager.reachableRestroomBuildings.Add(this);
-        }
         if (HasHappiness())
         {
-            gridManager.reachableRestroomBuildings.Add(this);
+            gridManager.reachableHappinessPlaces.Add(this);
+            gridManager.reachableHappinessBuildings.Add(this);
+        }
+    }
+
+    public void RemoveFromLists()
+    {
+        gridManager.buildings.Remove(this);
+        gridManager.reachableVisitables.Remove(this);
+        if (HasFood())
+            gridManager.reachableFoodBuildings.Remove(this);
+        if (HasDrink())
+            gridManager.reachableDrinkBuildings.Remove(this);
+        if (HasEnergy())
+            gridManager.reachableEnergyBuildings.Remove(this);
+        if (hasRestroom)
+            gridManager.reachableRestroomBuildings.Remove(this);
+        if (HasHappiness())
+        {
+            gridManager.reachableHappinessPlaces.Remove(this);
+            gridManager.reachableHappinessBuildings.Remove(this);
         }
     }
 
@@ -474,5 +483,15 @@ public class Building : Placeable, Visitable
     public void SetCapacity(int newCapacity)
     {
         capacity = newCapacity;
+    }
+
+    public void AddVisitor(Visitor visitor)
+    {
+        visitors.Add(visitor);
+    }
+
+    public void RemoveVisitor(Visitor visitor)
+    {
+        visitors.Remove(visitor);
     }
 }

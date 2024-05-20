@@ -18,7 +18,11 @@ public class Vet : Staff
 
         if (workingState == WorkingState.Working)
         {
-            animalToHeal.agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
+            if (animalToHeal != null && animalToHeal.agent.isOnNavMesh)
+            {
+                animalToHeal.agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
+                animalToHeal.atDestination = false;
+            }
         }
     }
 
@@ -78,22 +82,30 @@ public class Vet : Staff
 
     public override bool DoJob()
     {
-        float healthRecovered = Random.Range(40, 60);
-        animalToHeal.health = animalToHeal.health + healthRecovered > 100 ? 100 : animalToHeal.health + healthRecovered;
-        animalToHeal.isSick = false;
-        animalToHeal.healthDetriment = 0;
-        animalToHeal.isGettingHealed = false;
+        if (animalToHeal != null)
+        {
+            float healthRecovered = Random.Range(40, 60);
+            animalToHeal.health = animalToHeal.health + healthRecovered > 100 ? 100 : animalToHeal.health + healthRecovered;
+            animalToHeal.isSick = false;
+            animalToHeal.healthDetriment = 0;
+            animalToHeal.isGettingHealed = false;
+        }
         return true;
     }
 
     public override void FindInsideDestination()
     {
-        agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
+        if (animalToHeal != null)
+        {
+            agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
+        }
     }
+
     public override string GetCurrentAction()
     {
         return "Healing animal";
     }
+
     public override void Fire()
     {
         if (animalToHeal != null)

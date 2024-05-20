@@ -162,7 +162,7 @@ public class PathManager : Placeable
                             grid.trueNeighbours[i].building.paths.Add(grid);
                         }
 
-                        if (grid.trueNeighbours[i].isBuilding && !grid.trueNeighbours[i].bench.paths.Contains(grid))
+                        if (grid.trueNeighbours[i].isBench && !grid.trueNeighbours[i].bench.paths.Contains(grid))
                         {
                             grid.trueNeighbours[i].bench.paths.Add(grid);
                         }

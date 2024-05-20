@@ -8,6 +8,7 @@ public abstract class Staff : Placeable
     bool placed = false;
     bool collided = false;
     public float time = 0;
+    float timeGoal = 0;
     public Exhibit destinationExhibit;
     public Exhibit insideExhibit;
     public bool isAvailable = true;
@@ -101,7 +102,7 @@ public abstract class Staff : Placeable
                     case WorkingState.Working:
                         time += Time.deltaTime;
                         agent.isStopped = false;
-                        if (time > 10)
+                        if (time > timeGoal)
                         {
                             if (!DoJob())
                             {
@@ -144,6 +145,7 @@ public abstract class Staff : Placeable
     public void FindDestination(Exhibit exhibit)
     {
         time = 0;
+        timeGoal = Random.Range(9, 11);
         if (exhibit != null)
         {
             if (workingState == WorkingState.GoingToExhibitEntranceToEnter || workingState == WorkingState.GoingToExhibitEntranceToLeave)
@@ -256,8 +258,6 @@ public abstract class Staff : Placeable
     }
 
     public abstract string GetCurrentAction();
+
     public abstract void Fire();
-
-
-    
 }

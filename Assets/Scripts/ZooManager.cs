@@ -97,12 +97,14 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
     {
         ChangeMoney(currentEntranceFee);
     }
+
     public Vector3 ChoosePosition(Grid grid)
     {
         float offsetX = Random.Range(0.1f, 0.2f);
         float offsetZ = Random.Range(0, 0.75f);
         return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
     }
+
     public void ClickedOn()
     {
         playerControl.SetFollowedObject(this.gameObject, 15);
@@ -120,6 +122,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
     {
         return exitGrid;
     }
+
     public void AddToReachableLists()
     {
         return;
@@ -132,4 +135,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
 
     public void SetCapacity(int newCapacity) { }
 
+    public void AddVisitor(Visitor visitor) { }
+
+    public void RemoveVisitor(Visitor visitor) { }
 }

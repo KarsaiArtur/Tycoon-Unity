@@ -15,10 +15,11 @@ public class Visitor : MonoBehaviour, Clickable
     bool placed = false;
     Visitable destinationVisitable;
     PlayerControl playerControl;
-    List<Visitable> unvisitedHappinessBuildings = new();
+    List<Visitable> unvisitedExhibits = new();
     string visitorName;
 
     float time = 0;
+    float timeGoal = 0;
     Vector3 destination;
     public Exhibit currentExhibit;
     public Animal lookedAnimal;
@@ -38,9 +39,11 @@ public class Visitor : MonoBehaviour, Clickable
 
     public string action = "";
 
+
+
     public void Start()
     {
-        visitorName = "Szilva" + Random.Range(1, 1000);
+        visitorName = GenerateName();
         surface = GameObject.Find("NavMesh").GetComponent<NavMeshSurface>();
         agent.Warp(transform.position);
         placed = true;
@@ -58,9 +61,9 @@ public class Visitor : MonoBehaviour, Clickable
         restroomNeeds = Random.Range(50, 75);
         happiness = Random.Range(50, 75);
 
-        foreach (Exhibit exhibit in GridManager.instance.reachableHappinessBuildings)
+        foreach (Exhibit exhibit in GridManager.instance.reachableExhibits)
         {
-            unvisitedHappinessBuildings.Add(exhibit);
+            unvisitedExhibits.Add(exhibit);
         }
 
         StartCoroutine(DecreaseNeeds());
@@ -124,7 +127,7 @@ public class Visitor : MonoBehaviour, Clickable
                 {
                     RotateTowards(lookedAnimal.transform.position);
                 }
-                if (time > 15)
+                if (time > timeGoal)
                 {
                     atDestination = true;
                 }
@@ -132,7 +135,7 @@ public class Visitor : MonoBehaviour, Clickable
             else if (agent.velocity == Vector3.zero)
             {
                 time += Time.deltaTime;
-                if (time > 15)
+                if (time > timeGoal)
                 {
                     atDestination = true;
                 }
@@ -158,7 +161,7 @@ public class Visitor : MonoBehaviour, Clickable
         restroomNeedsDetriment = Random.Range(0.05f, 0.15f);
     }
 
-    void ChooseDestination()
+    public void ChooseDestination()
     {
         photoCamera.enabled = false;
         arrived = false;
@@ -182,11 +185,16 @@ public class Visitor : MonoBehaviour, Clickable
                 destinationVisitable = ChooseCloseDestination(GridManager.instance.reachableRestroomBuildings);
                 break;
             case "happiness":
-                destinationVisitable = ChooseCloseDestination(unvisitedHappinessBuildings);
-                unvisitedHappinessBuildings.Remove((Exhibit)destinationVisitable);
+                List<Visitable> tempVisitables = new();
+                tempVisitables.AddRange(unvisitedExhibits);
+                tempVisitables.AddRange(GridManager.instance.reachableHappinessBuildings);
+
+                destinationVisitable = ChooseCloseDestination(tempVisitables);
+                if (destinationVisitable is Exhibit)
+                    unvisitedExhibits.Remove((Exhibit)destinationVisitable);
                 break;
             case "leave":
-                if (GridManager.instance.reachableHappinessBuildings.Count - unvisitedHappinessBuildings.Count == 0)
+                if (GridManager.instance.reachableExhibits.Count - unvisitedExhibits.Count == 0)
                     happiness = happiness - 25 > 0 ? happiness - 25 : 0;
                 destinationVisitable = ZooManager.instance;
                 break;
@@ -195,6 +203,7 @@ public class Visitor : MonoBehaviour, Clickable
                 break;
         }
 
+        destinationVisitable.AddVisitor(this);
         destinationVisitable.SetCapacity(destinationVisitable.GetCapacity() - 1);
 
         int randomGridIndex = Random.Range(0, destinationVisitable.GetPaths().Count);
@@ -203,6 +212,7 @@ public class Visitor : MonoBehaviour, Clickable
         agent.SetDestination(destination);
         atDestination = false;
         time = 0;
+        timeGoal = Random.Range(11, 14);
         agent.isStopped = false;
     }
 
@@ -231,13 +241,13 @@ public class Visitor : MonoBehaviour, Clickable
             sum += (110 - restroomNeeds);
             probabilities.Add(("restroom", sum));
         }
-        if (unvisitedHappinessBuildings.Count > 0)
+        if (unvisitedExhibits.Count > 0 || GridManager.instance.reachableHappinessBuildings.Count > 0)
         {
             sum += (200 - happiness);
             probabilities.Add(("happiness", sum));
         }
-        sum += (100 + 50 * ((GridManager.instance.reachableHappinessBuildings.Count - unvisitedHappinessBuildings.Count) / GridManager.instance.reachableHappinessBuildings.Count) - happiness);
-        if (unvisitedHappinessBuildings.Count == 0)
+        sum += (100 + 50 * ((GridManager.instance.reachableExhibits.Count + 1 - unvisitedExhibits.Count) / (GridManager.instance.reachableExhibits.Count + 1)) - happiness);
+        if (unvisitedExhibits.Count == 0)
             sum += 100;
         probabilities.Add(("leave", sum));
 
@@ -350,4 +360,33 @@ public class Visitor : MonoBehaviour, Clickable
         //instant
         //transform.rotation = _lookRotation;
     }
+
+    List<string> firstName;
+    List<string> lastName;
+
+    string GenerateName()
+    {
+        firstName = new List<string>() { 
+            "James", "Mary", "Michael", "Patricia", "Robert", "Jennifer", "John", "Linda", "David", "Elizabeth", "Bradley", "Russell", "Lucas",
+            "William", "Barbara", "Richard", "Susan", "Joseph", "Jessica", "Thomas", "Karen", "Christopher", "Sarah", "Charles", "Lisa", "Daniel", 
+            "Nancy", "Matthew", "Sandra", "Anthony", "Mark", "Donald", "Emily", "Steven", "Andrew", "Paul", "Joshua", "Kenneth", "Kevin", "Brian", 
+            "Timothy", "Ronald", "George", "Jason", "Edward", "Jeffrey", "Ryan", "Jacob", "Nicholas", "Gary", "Eric", "Jonathan", "Stephen", "Larry", 
+            "Justin", "Scott", "Brandon", "Benjamin", "Samuel", "Gregory", "Alexander", "Patrick", "Frank", "Raymond", "Jack", "Dennis", "Jerry", "Tyler", 
+            "Aaron", "Jose", "Adam", "Nathan", "Henry", "Zachary", "Douglas", "Peter", "Kyle", "Noah", "Ethan", "Jeremy", "Christian", "Walter", "Keith", 
+            "Austin", "Roger", "Terry", "Sean", "Gerald", "Carl", "Dylan", "Harold", "Jordan", "Jesse", "Bryan", "Lawrence", "Arthur", "Gabriel", "Bruce", 
+            "Logan", "Billy", "Joe", "Alan", "Juan", "Elijah", "Willie", "Albert", "Wayne", "Randy", "Mason", "Vincent", "Liam", "Roy", "Bobby", "Caleb"
+             };
+        lastName = new List<string>() {
+            "Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez", "Hernandez", "Lopez", "Gonzales", 
+            "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson", "White", "Harris", "Sanchez", "Clark", 
+            "Ramirez", "Lewis", "Robinson", "Walker", "Young", "Allen", "King", "Wright", "Scott", "Torres", "Nguyen", "Hill", "Flores", "Green", "Adams", 
+            "Nelson", "Baker", "Hall", "Rivera", "Campbell", "Mitchell", "Carter", "Roberts", "Gomez", "Phillips", "Evans", "Turner", "Diaz", "Parker", 
+            "Cruz", "Edwards", "Collins", "Reyes", "Stewart", "Morris", "Morales", "Murphy", "Cook", "Rogers", "Gutierrez", "Ortiz", "Morgan", "Cooper", 
+            "Peterson", "Bailey", "Reed", "Kelly", "Howard", "Ramos", "Kim", "Cox", "Ward", "Richardson", "Watson", "Brooks", "Chavez", "Wood", "James", 
+            "Bennet", "Gray", "Mendoza", "Ruiz", "Hughes", "Price", "Alvarez", "Castillo", "Sanders", "Patel", "Myers", "Long", "Ross", "Foster", "Jimenez" };
+
+
+        return firstName[Random.Range(0, firstName.Count)] + " " + lastName[Random.Range(0, lastName.Count)];
+    }
+
 }

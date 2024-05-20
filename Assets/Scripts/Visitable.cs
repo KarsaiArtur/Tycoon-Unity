@@ -20,4 +20,8 @@ public interface Visitable
     public int GetCapacity();
 
     public void SetCapacity(int newCapacity);
+
+    public void AddVisitor(Visitor visitor);
+
+    public void RemoveVisitor(Visitor visitor);
 }

@@ -17,6 +17,7 @@ public class Grid
     public GridType gridType;
     public bool isPath = false;
     public bool isExhibit = false;
+    public bool isBench = false;
     public bool isBuilding = false;
     public Exhibit exhibit;
     public Building building;

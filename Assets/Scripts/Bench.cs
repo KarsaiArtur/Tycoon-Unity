@@ -12,6 +12,7 @@ public class Bench : Placeable, Visitable
     public int capacity = 2;
     public List<Grid> paths;
     Grid grid;
+    List<Visitor> visitors = new();
 
     public override void Awake()
     {
@@ -37,7 +38,7 @@ public class Bench : Placeable, Visitable
         }
 
         grid = GridManager.instance.GetGrid(transform.position);
-        grid.isBuilding = true;
+        grid.isBench = true;
         grid.bench = this;
         paths = new List<Grid>();
         GridManager.instance.benches.Add(this);
@@ -205,5 +206,15 @@ public class Bench : Placeable, Visitable
     public void SetCapacity(int newCapacity)
     {
         capacity = newCapacity;
+    }
+
+    public void AddVisitor(Visitor visitor)
+    {
+        visitors.Add(visitor);
+    }
+
+    public void RemoveVisitor(Visitor visitor)
+    {
+        visitors.Remove(visitor);
     }
 }

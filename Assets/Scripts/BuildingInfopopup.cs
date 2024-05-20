@@ -24,7 +24,10 @@ public class BuildingInfopopup : InfoPopup
             purchasableItemsUI.Add(AddPurchasableItemToUI(purchasableItem));
         }
         infoPanelInstance.transform.GetChild(0).Find("Items").gameObject.active = purchasableItemsUI.Count == 0 ? false : true;
-
+        infoPanelInstance.transform.Find("Sell").GetComponent<Button>().onClick.AddListener(() => {
+            building.Sell();
+            DestroyPanel();
+        });
         infoPanelInstance.transform.GetChild(0).Find("Info Panel").Find("Restroom").GetComponent<Image>().sprite = building.hasRestroom ? UIMenu.Instance.hasRestroom : UIMenu.Instance.noRestroom;
         infoPanelInstance.transform.GetChild(0).Find("Info Panel").Find("Monthly Fee").GetComponent<TextMeshProUGUI>().text = "Maintance Expenses" + Environment.NewLine + building.expense + "$";
         capacity = infoPanelInstance.transform.GetChild(0).Find("Info Panel").Find("Capacity").GetComponent<TextMeshProUGUI>();

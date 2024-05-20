@@ -24,8 +24,8 @@ public class VisitorManager : MonoBehaviour
         {
             timeTillSpawn = Random.Range(SpawnTime - 3 < 1 ? 1 : SpawnTime - 3, SpawnTime + 3);
             SpawnTime = 15;
-            if (GridManager.instance.reachableHappinessBuildings.Count > 0)
-                SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(Mathf.Sqrt(GridManager.instance.reachableHappinessBuildings.Count)));
+            if (GridManager.instance.reachableExhibits.Count > 0)
+                SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(Mathf.Sqrt(GridManager.instance.reachableExhibits.Count)));
             SpawnTime = SpawnTime / ZooManager.instance.reputation * 75;
             SpawnTime = SpawnTime * ZooManager.instance.currentEntranceFee / ZooManager.instance.defaultEntranceFee;
             SpawnTime = SpawnTime / animalBonus;
@@ -66,5 +66,19 @@ public class VisitorManager : MonoBehaviour
         }
         animalBonus += animal.reputationBonus;
         animalBonuses.Add((animal.GetName(), animal.reputationBonus));
+    }
+
+    public void DecreaseAnimalBonus(Animal animal)
+    {
+        for (int i = 0; i < animalBonuses.Count; i++)
+        {
+            if (animalBonuses[i].animal == animal.GetName())
+            {
+                animalBonus -= animalBonuses[i].bonus * 5;
+                animalBonuses.Add((animal.GetName(), animalBonuses[i].bonus * 5));
+                animalBonuses.RemoveAt(i);
+                return;
+            }
+        }
     }
 }

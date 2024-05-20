@@ -8,7 +8,7 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public List<Grid> paths;
     public string exhibitName;
     public List<Animal> animals = new List<Animal>();
-    public List<Foliage> foliages = new List<Foliage>();
+    public List<Nature> foliages = new List<Nature>();
     public List<GameObject> animalDroppings = new();
     public Grid exitGrid;
     public Grid entranceGrid;
@@ -29,6 +29,8 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public bool isGettingFood = false;
     public bool isGettingWater = false;
     public bool isGettingCleaned = false;
+    public float occupiedSpace = 0;
+    List<Visitor> visitors = new();
 
     void Awake()
     {
@@ -83,6 +85,21 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public void AddAnimal(Animal animal)
     {
         animals.Add(animal);
+        occupiedSpace += animal.requiredExhibitSpace / 2;
+        if (reachable && animals.Count == 1)
+        {
+            AddToReachableLists();
+        }
+    }
+
+    public void RemoveAnimal(Animal animal)
+    {
+        animals.Remove(animal);
+        occupiedSpace -= animal.requiredExhibitSpace / 2;
+        if (reachable && animals.Count == 0)
+        {
+            RemoveFromReachableLists();
+        }
     }
 
     public void FindPaths()
@@ -158,9 +175,18 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
         reachable = true;
         if (animals.Count > 0)
         {
+            GridManager.instance.reachableExhibits.Add(this);
             GridManager.instance.reachableVisitables.Add(this);
-            GridManager.instance.reachableHappinessBuildings.Add(this);
+            GridManager.instance.reachableHappinessPlaces.Add(this);
         }
+    }
+
+    public void RemoveFromReachableLists()
+    {
+        reachable = false;
+        GridManager.instance.reachableExhibits.Remove(this);
+        GridManager.instance.reachableVisitables.Remove(this);
+        GridManager.instance.reachableHappinessPlaces.Remove(this);
     }
 
     public void ClickedOn()
@@ -230,5 +256,15 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     {
         foodPlaces.Add(animalFood);
         food += animalFood.food;
+    }
+
+    public void AddVisitor(Visitor visitor)
+    {
+        visitors.Add(visitor);
+    }
+
+    public void RemoveVisitor(Visitor visitor)
+    {
+        visitors.Remove(visitor);
     }
 }
