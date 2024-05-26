@@ -54,7 +54,7 @@ public class CalendarManager : MonoBehaviour
             }
             else
             {
-                UIMenu.Instance.NewNotification("New month, new opportunities! The monthly expenses have been paid");
+                UIMenu.Instance.NewNotification("New month, new opportunities! The monthly expenses have been paid: -"+ZooManager.instance.GetExpenses()+"$");
             }
         }
     }

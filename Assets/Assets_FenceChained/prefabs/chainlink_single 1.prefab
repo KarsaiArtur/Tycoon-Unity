@@ -240,6 +240,9 @@ MonoBehaviour:
   placeableName: 
   placeablePrice: 0
   icon: {fileID: 0}
+  currentPlacingPrice: {fileID: 0}
+  currentPlacingPriceInstance: {fileID: 0}
+  defaultMaterials: []
   index: 0
   materials: []
 --- !u!1 &5382908708673630709
