@@ -152,13 +152,13 @@ public class Animal : Placeable
             health = health > healthDetriment ? health - healthDetriment : 0;
 
             if (exhibit.gridList.Count < requiredExhibitSpace || exhibit.gridList.Count < exhibit.occupiedSpace)
-                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) : 0;
+                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) : 0;
             if (hunger < 33)
-                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) : 0;
+                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) : 0;
             if (thirst < 33)
-                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) : 0;
+                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) : 0;
             if (health < 33)
-                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count) : 0;
+                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) : 0;
 
             if (hunger < 20)
                 health = health > healthDetriment ? health - healthDetriment : 0;
@@ -214,7 +214,6 @@ public class Animal : Placeable
             }
             if (destinationReached && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.2)
             {
-                
                 agent.isStopped = true;
                 time += Time.deltaTime;
                 agent.velocity = Vector3.zero;
@@ -240,6 +239,13 @@ public class Animal : Placeable
             }
             else if (agent.velocity == Vector3.zero)
             {
+                if (!GridManager.instance.GetGrid(transform.position).isExhibit)
+                {
+                    agent.enabled = false;
+                    transform.position = new Vector3(destination.x, destination.y, destination.z);
+                    agent.enabled = true;
+                }
+
                 animator.SetFloat("vertical", 0);
                 time += Time.deltaTime;
                 if (time > timeGoal)
@@ -315,12 +321,12 @@ public class Animal : Placeable
 
         if (exhibit.food > 0)
         {
-            sum += (110 - hunger);
+            sum += (100 - hunger);
             probabilities.Add(("food", sum));
         }
         if (exhibit.water > 0)
         {
-            sum += (110 - thirst);
+            sum += (100 - thirst);
             probabilities.Add(("drink", sum));
         }
         sum += 50;

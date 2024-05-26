@@ -32,8 +32,8 @@ public class PlayerControl : MonoBehaviour
     public GameObject animalDroppingPrefab;
     public List<string> placedTags;
 
-    private float maxTerrainHeight = 7;
-    private float minTerrainHeight = -3;
+    public float maxTerrainHeight = 7;
+    public float minTerrainHeight = -3;
     private GridManager gridM;
     private int coordIndex = 0;
     private float mouseDistnace = 0;

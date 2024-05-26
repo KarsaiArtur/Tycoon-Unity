@@ -144,7 +144,7 @@ public class Bench : Placeable, Visitable
 
     public void Arrived(Visitor visitor)
     {
-        visitor.SetIsVisible(false);
+        //visitor.SetIsVisible(false);
 
         float tempEnergy = Random.Range(40, 60);
         visitor.energy = visitor.energy + tempEnergy > 100 ? 100 : visitor.energy + tempEnergy;
@@ -180,7 +180,6 @@ public class Bench : Placeable, Visitable
 
     public Vector3 ChoosePosition(Grid grid)
     {
-
         float offsetX = Random.Range(0, 1.0f);
         float offsetZ = Random.Range(0, 1.0f);
         return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);

@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
@@ -45,15 +42,17 @@ public class Fence : Placeable
 
             if (hit2.collider.CompareTag("Terrain"))
             {
-                if (((hit2.point.y % 1 >= 0.6f && hit2.point.y % 1 <= 0.7f) || (hit2.point.y % 1 >= 0.1f && hit2.point.y % 1 <= 0.2f)) && playerControl.fenceIndex != 1)
+                if ((((Mathf.Abs(playerControl.minTerrainHeight) + 1 + hit2.point.y) % 1 >= 0.6f && (Mathf.Abs(playerControl.minTerrainHeight) + 1 + hit2.point.y) % 1 <= 0.7f) ||
+                    ((Mathf.Abs(playerControl.minTerrainHeight) + 1 + hit2.point.y) % 1 >= 0.1f && (Mathf.Abs(playerControl.minTerrainHeight) + 1 + hit2.point.y) % 1 <= 0.2f)) && playerControl.fenceIndex != 1)
                 {
                     playerControl.ChangeFence(1);
                 }
-                else if (((hit2.point.y % 1 >= 0.8f && hit2.point.y % 1 <= 0.9f) || (hit2.point.y % 1 >= 0.3f && hit2.point.y % 1 <= 0.4f)) && playerControl.fenceIndex != 2)
+                else if ((((Mathf.Abs(playerControl.minTerrainHeight) + 1 + hit2.point.y) % 1 >= 0.8f && (Mathf.Abs(playerControl.minTerrainHeight) + 1 + hit2.point.y) % 1 <= 0.9f) ||
+                    ((Mathf.Abs(playerControl.minTerrainHeight) + 1 + hit2.point.y) % 1 >= 0.3f && (Mathf.Abs(playerControl.minTerrainHeight) + 1 + hit2.point.y) % 1 <= 0.4f)) && playerControl.fenceIndex != 2)
                 {
                     playerControl.ChangeFence(2);
                 }
-                else if ((hit2.point.y % 1 == 0.5f || hit2.point.y % 1 == 0.0f) && playerControl.fenceIndex != 0)
+                else if (((Mathf.Abs(playerControl.minTerrainHeight) + 1 + hit2.point.y) % 1 == 0.5f || (Mathf.Abs(playerControl.minTerrainHeight) + 1 + hit2.point.y) % 1 == 0.0f) && playerControl.fenceIndex != 0)
                 {
                     playerControl.ChangeFence(0);
                 }
