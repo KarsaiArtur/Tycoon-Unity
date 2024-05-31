@@ -149,7 +149,6 @@ public class Animal : Placeable
             hunger = hunger > hungerDetriment ? hunger - hungerDetriment : 0;
             thirst = thirst > thirstDetriment ? thirst - thirstDetriment : 0;
             restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
-            health = health > healthDetriment ? health - healthDetriment : 0;
 
             if (exhibit.gridList.Count < requiredExhibitSpace || exhibit.gridList.Count < exhibit.occupiedSpace)
                 happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) : 0;
@@ -197,6 +196,7 @@ public class Animal : Placeable
             if (UnityEngine.Random.Range(0, 100) < 5)
             {
                 isSick = true;
+                healthDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
             }
         }
 

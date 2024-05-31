@@ -338,7 +338,7 @@ public class PlayerControl : MonoBehaviour
 
                 for (int i = 0; i < Mathf.Abs(startingHeight - gridM.coords[coordIndex].y) * 2; i++)
                 {
-                    price += ((3 + i * 2 + currentTerraformSize - 1) * (3 + i * 2 + currentTerraformSize - 1) - 4 * (i)) * 10;
+                    price += ((3 + i * 2 + currentTerraformSize - 1) * (3 + i * 2 + currentTerraformSize - 1) - 4 * (i)) * 3;
                 }
 
                 if (ZooManager.instance.money >= price)

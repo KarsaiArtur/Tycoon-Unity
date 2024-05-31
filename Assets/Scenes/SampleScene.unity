@@ -4510,6 +4510,8 @@ MonoBehaviour:
   placedTags:
   - Placed
   - Placed Fence
+  maxTerrainHeight: 7
+  minTerrainHeight: -3
   modifiedChunks: []
   TerraformColliderPrefab: {fileID: 341296805895960364, guid: ae2fd0c511054424793061c5b4db084a, type: 3}
   terrainCollided: 0
@@ -5449,7 +5451,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a52bebff53bbf854e97773204c03dc1b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 37.4
+      value: -63.66
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a52bebff53bbf854e97773204c03dc1b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -5457,7 +5459,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a52bebff53bbf854e97773204c03dc1b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 51.857
+      value: -4.7
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a52bebff53bbf854e97773204c03dc1b, type: 3}
       propertyPath: m_LocalRotation.w

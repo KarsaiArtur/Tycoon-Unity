@@ -39,15 +39,15 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
 
     void Update()
     {
-        if (unreachableForStaff)
-        {
-            time += Time.deltaTime;
-            if (time > 60)
-            {
-                unreachableForStaff = false;
-                time = 0;
-            }
-        }
+        //if (unreachableForStaff)
+        //{
+        //    time += Time.deltaTime;
+        //    if (time > 60)
+        //    {
+        //        unreachableForStaff = false;
+        //        time = 0;
+        //    }
+        //}
     }
 
     public void SetExhibit(HashSet<Grid> grids)

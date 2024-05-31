@@ -24,7 +24,6 @@ public class GridManager : MonoBehaviour
     private PlayerControl pControl;
     bool initializing = true;
 
-    public Vector3[] tempCoords;
     public bool edgeChanged = false;
     public Grid[,] grids;
     public List<Bench> benches = new List<Bench>();
@@ -53,21 +52,17 @@ public class GridManager : MonoBehaviour
         CreateTerrainElements();
 
         initializing = true;
+
         SetEdgeHeight();
+        SetSpawnHeight();
+
         foreach (Chunk chunk in terrainElements)
         {
             chunk.ReRender(int.Parse(chunk.name.Split('_')[0]), int.Parse(chunk.name.Split('_')[1]));
         }
 
-        tempCoords = new Vector3[coords.Length];
-        Array.Copy(coords, tempCoords, coords.Length);
-
         pControl.ReloadGuestNavMesh();
         pControl.ReloadAnimalNavMesh();
-
-        InitializeGrids();
-
-        SetSpawnHeight();
 
         reachableVisitables.Add(ZooManager.instance == null ? new GameObject().AddComponent<ZooManager>() : ZooManager.instance);
         startingGrid = GetGrid(new Vector3(35, 0, 50));
@@ -321,11 +316,13 @@ public class GridManager : MonoBehaviour
         if (index % (terrainWidth + 1) == terrainWidth - elementWidth || (index > (elementWidth) * (terrainWidth + 1) && index < (elementWidth + 1) * (terrainWidth + 1)) || index % (terrainWidth + 1) == elementWidth || (index < (terrainWidth + 1) * (terrainWidth + 1) - elementWidth * (terrainWidth + 1) && index > (terrainWidth + 1) * (terrainWidth + 1) - (elementWidth + 1) * (terrainWidth + 1)))
         {
             edgeChanged = true;
+            return;
         }
 
         if (coords[index].x >= 32 && coords[index].x <= 38 && coords[index].z >= 45 && coords[index].z <= 57)
         {
             edgeChanged = true;
+            return;
         }
 
         if (!initializing)

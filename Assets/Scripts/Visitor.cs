@@ -39,8 +39,6 @@ public class Visitor : MonoBehaviour, Clickable
 
     public string action = "";
 
-
-
     public void Start()
     {
         visitorName = GenerateName();
@@ -88,7 +86,7 @@ public class Visitor : MonoBehaviour, Clickable
             restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
 
             if (GetComponent<NavMeshAgent>().enabled)
-                if (agent.remainingDistance != 0)
+                if (!arrived)
                     energy = energy > energyDetriment ? energy - energyDetriment : 0;
 
             if (hunger < 33)
@@ -123,7 +121,7 @@ public class Visitor : MonoBehaviour, Clickable
                     arrived = true;
                     destinationVisitable.Arrived(this);
                 }
-                if(arrived && lookAtAnimals)
+                if(arrived && lookAtAnimals && lookedAnimal != null)
                 {
                     RotateTowards(lookedAnimal.transform.position);
                 }
@@ -335,7 +333,8 @@ public class Visitor : MonoBehaviour, Clickable
                     GetComponentInChildren<Animator>().Play("Checking Pictures");
                     randomRange = 10;
                     lookAtAnimals = false;
-                    lookedAnimal = currentExhibit.animals[Random.Range(0, currentExhibit.animals.Count)];
+                    if(currentExhibit.animals.Count!= 0)
+                        lookedAnimal = currentExhibit.animals[Random.Range(0, currentExhibit.animals.Count)];
                 }
                 else
                 {

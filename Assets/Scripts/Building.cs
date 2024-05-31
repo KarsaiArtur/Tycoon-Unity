@@ -284,7 +284,7 @@ public class Building : Placeable, Visitable
         }
         else
         {
-            visitor.happiness -= 10;
+            visitor.happiness = visitor.happiness - 10 > 0 ? visitor.happiness - 10 : 0;
         }
     }
 
