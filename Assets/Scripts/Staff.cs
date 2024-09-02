@@ -206,7 +206,6 @@ public abstract class Staff : Placeable
     {
         base.Place(mouseHit);
 
-        var terraintHeight = mouseHit.y;
         Vector3 position = new Vector3(mouseHit.x, mouseHit.y + 0.01f, mouseHit.z);
 
         RaycastHit[] hits = Physics.RaycastAll(position, -transform.up);

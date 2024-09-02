@@ -112,15 +112,12 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
                 {
                     if (gridList[i].trueNeighbours[j].isPath)
                         paths.Add(gridList[i].trueNeighbours[j]);
-                    if (gridList[i].trueNeighbours[j].trueNeighbours[j] != null)
-                        if (gridList[i].trueNeighbours[j].trueNeighbours[j].isPath)
-                            paths.Add(gridList[i].trueNeighbours[j].trueNeighbours[j]);
+                    if (gridList[i].trueNeighbours[j].trueNeighbours[j] != null && gridList[i].trueNeighbours[j].trueNeighbours[j].isPath)
+                        paths.Add(gridList[i].trueNeighbours[j].trueNeighbours[j]);
                 }
-                if (gridList[i].neighbours[j] == null && gridList[i].trueNeighbours[j] != null && gridList[i].neighbours[(j + 1) % 4] == null && gridList[i].trueNeighbours[(j + 1) % 4] != null)
-                {
-                    if (gridList[i].trueNeighbours[j].trueNeighbours[(j + 1) % 4].isPath)
-                        paths.Add(gridList[i].trueNeighbours[j].trueNeighbours[(j + 1) % 4]);
-                }
+                if (gridList[i].neighbours[j] == null && gridList[i].trueNeighbours[j] != null && gridList[i].neighbours[(j + 1) % 4] == null && 
+                    gridList[i].trueNeighbours[(j + 1) % 4] != null && gridList[i].trueNeighbours[j].trueNeighbours[(j + 1) % 4].isPath)
+                    paths.Add(gridList[i].trueNeighbours[j].trueNeighbours[(j + 1) % 4]);
             }
         }
     }
@@ -220,7 +217,7 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
         {
             if (staff.Count > 0)
                 foreach (Staff staffMember in staff)
-                    if (!(staffMember.workingState == Staff.WorkingState.Working) && !(staffMember.workingState == Staff.WorkingState.Resting))
+                    if (staffMember.workingState != Staff.WorkingState.Working && staffMember.workingState != Staff.WorkingState.Resting)
                         return;
             var gateObstacle = gameObject.GetComponent<NavMeshObstacle>();
             GetComponentInChildren<Animator>().Play("Close");

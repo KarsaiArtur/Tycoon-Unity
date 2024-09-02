@@ -67,18 +67,11 @@ public class Animal : Placeable
 
         foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.CompareTag("Terrain") && playerControl.canBePlaced && !gridManager.GetGrid(hit.point).isExhibit)
+            if (hit.collider.CompareTag("Terrain") && playerControl.canBePlaced && 
+                (!gridManager.GetGrid(hit.point).isExhibit || (gridManager.GetGrid(hit.point).exhibit.animals.Count > 0 && gridManager.GetGrid(hit.point).exhibit.animals[0].placeableName != placeableName)))
             {
                 playerControl.canBePlaced = false;
                 ChangeMaterial(2);
-            }
-            else if (hit.collider.CompareTag("Terrain") && playerControl.canBePlaced && gridManager.GetGrid(hit.point).exhibit.animals.Count > 0)
-            {
-                if (gridManager.GetGrid(hit.point).exhibit.animals[0].foodPrefab != foodPrefab)
-                {
-                    playerControl.canBePlaced = false;
-                    ChangeMaterial(2);
-                }
             }
         }
 
@@ -173,7 +166,7 @@ public class Animal : Placeable
             if (hunger > 75 && thirst > 75 && health > 75)
                 happiness = happiness + happinessDetriment * Mathf.Sqrt(exhibit.foliages.Count + 1) > 100 ? 100 : happiness + happinessDetriment * Mathf.Sqrt(exhibit.foliages.Count + 1);
 
-            if (restroomNeeds == 0)
+            if (restroomNeeds <= 0)
             {
                 Poop();
             }

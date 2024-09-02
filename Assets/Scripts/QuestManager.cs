@@ -61,10 +61,12 @@ public class QuestManager : MonoBehaviour
         {
             return;
         }
+
         if (questWindowOpened)
         {
             UIMenu.Instance.curExtraMenu?.UpdateWindow();
         }
+
         if (currentQuest.condition())
         {
             currentQuest.done = true;

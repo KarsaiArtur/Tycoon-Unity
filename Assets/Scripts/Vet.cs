@@ -16,13 +16,10 @@ public class Vet : Staff
     {
         base.Update();
 
-        if (workingState == WorkingState.Working)
+        if (workingState == WorkingState.Working && animalToHeal != null && animalToHeal.agent.isOnNavMesh)
         {
-            if (animalToHeal != null && animalToHeal.agent.isOnNavMesh)
-            {
-                animalToHeal.agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
-                animalToHeal.atDestination = false;
-            }
+            animalToHeal.agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
+            animalToHeal.atDestination = false;
         }
     }
 
@@ -42,6 +39,7 @@ public class Vet : Staff
                 }
             }
         }
+
         if (animalSickness.Count > 0)
         {
             FindAnimalToHeal(animalSickness);
@@ -51,12 +49,12 @@ public class Vet : Staff
     public void FindAnimalToHeal(List<(Exhibit exhibit, Animal animal, float health)> animalSickness)
     {
         animalSickness = animalSickness.OrderBy(x => x.health).ToList();
-        animalToHeal = animalSickness.First().animal;
+        animalToHeal = animalSickness[0].animal;
         if (animalToHeal.health < 75)
         {
             animalToHeal.isGettingHealed = true;
 
-            destinationExhibit = animalSickness.First().exhibit;
+            destinationExhibit = animalSickness[0].exhibit;
 
             if (insideExhibit != null)
             {

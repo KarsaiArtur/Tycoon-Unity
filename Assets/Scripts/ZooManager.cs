@@ -125,7 +125,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
 
     public void AddToReachableLists()
     {
-        return;
+        
     }
 
     public int GetCapacity()

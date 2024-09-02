@@ -29,64 +29,56 @@ public class Zookeeper : Staff
                     if (!exhibit.isGettingFood && !float.IsNaN(exhibit.food / (exhibit.animals.Count * 50)))
                     {
                         animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.animals.Count * 50)));
-                        if (insideExhibit != null)
+                        if (insideExhibit != null && insideExhibit == exhibit)
                         {
-                            if (insideExhibit == exhibit)
-                            {
-                                animalNeeds.Remove(animalNeeds.Last());
-                                animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.animals.Count * 50) - 0.1f));
-                            }
+                            animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
+                            animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.animals.Count * 50) - 0.1f));
                         }
                     }
                     if (!exhibit.isGettingWater && !float.IsNaN(exhibit.water / exhibit.waterCapacity))
                     {
                         animalNeeds.Add((exhibit, "Filling up water", exhibit.water / exhibit.waterCapacity));
-                        if (insideExhibit != null)
+                        if (insideExhibit != null && insideExhibit == exhibit)
                         {
-                            if (insideExhibit == exhibit)
-                            {
-                                animalNeeds.Remove(animalNeeds.Last());
-                                animalNeeds.Add((exhibit, "Filling up water", exhibit.water / exhibit.waterCapacity - 0.1f));
-                            }
+                            animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
+                            animalNeeds.Add((exhibit, "Filling up water", exhibit.water / exhibit.waterCapacity - 0.1f));
                         }
                     }
                     if (!exhibit.isGettingCleaned && !float.IsNaN(1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)))
                     {
                         animalNeeds.Add((exhibit, "Cleaning exhibit", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)));
-                        if (insideExhibit != null)
+                        if (insideExhibit != null && insideExhibit == exhibit)
                         {
-                            if (insideExhibit == exhibit)
-                            {
-                                animalNeeds.Remove(animalNeeds.Last());
-                                animalNeeds.Add((exhibit, "Cleaning exhibit", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count) - 0.1f));
-                            }
+                            animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
+                            animalNeeds.Add((exhibit, "Cleaning exhibit", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count) - 0.1f));
                         }
                     }
                 }
             }
         }
 
-        FindExhibitToWorkOn(animalNeeds);
+        if (animalNeeds.Count > 0)
+            FindExhibitToWorkOn(animalNeeds);
     }
 
     public void FindExhibitToWorkOn(List<(Exhibit exhibit, string need, float percent)> animalNeeds)
     {
         animalNeeds = animalNeeds.OrderBy(x => x.percent).ToList();
-        exhibitToWorkAt = animalNeeds.First().exhibit;
+        exhibitToWorkAt = animalNeeds[0].exhibit;
 
-        if (animalNeeds.First().percent < 0.75)
+        if (animalNeeds[0].percent < 0.75)
         {
-            if (animalNeeds.First().need == "Placing food")
+            if (animalNeeds[0].need == "Placing food")
             {
                 exhibitToWorkAt.isGettingFood = true;
                 jobAtExhibit = "Placing food";
             }
-            if (animalNeeds.First().need == "Filling up water")
+            if (animalNeeds[0].need == "Filling up water")
             {
                 exhibitToWorkAt.isGettingWater = true;
                 jobAtExhibit = "Filling up water";
             }
-            if (animalNeeds.First().need == "Cleaning exhibit")
+            if (animalNeeds[0].need == "Cleaning exhibit")
             {
                 exhibitToWorkAt.isGettingCleaned = true;
                 jobAtExhibit = "Cleaning exhibit";
@@ -136,7 +128,7 @@ public class Zookeeper : Staff
         }
         else if (jobAtExhibit == "Cleaning exhibit")
         {
-            var temp = exhibitToWorkAt.animalDroppings.ElementAt(0);
+            var temp = exhibitToWorkAt.animalDroppings[0];
             exhibitToWorkAt.animalDroppings.RemoveAt(0);
             Destroy(temp);
             if (exhibitToWorkAt.animalDroppings.Count == 0)
@@ -155,7 +147,6 @@ public class Zookeeper : Staff
         if (jobAtExhibit == "Cleaning exhibit")
         {
             time = 8;
-            Grid destinationGrid = exhibitToWorkAt.gridList[Random.Range(0, exhibitToWorkAt.gridList.Count)];
             agent.SetDestination(exhibitToWorkAt.animalDroppings[0].transform.position);
         }
         else if (jobAtExhibit == "Filling up water")

@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
+using static Cinemachine.CinemachineFreeLook;
 
 public class Visitor : MonoBehaviour, Clickable
 {
@@ -20,7 +21,6 @@ public class Visitor : MonoBehaviour, Clickable
 
     float time = 0;
     float timeGoal = 0;
-    Vector3 destination;
     public Exhibit currentExhibit;
     public Animal lookedAnimal;
 
@@ -59,7 +59,7 @@ public class Visitor : MonoBehaviour, Clickable
         restroomNeeds = Random.Range(50, 75);
         happiness = Random.Range(50, 75);
 
-        foreach (Exhibit exhibit in GridManager.instance.reachableExhibits)
+        foreach (Visitable exhibit in GridManager.instance.reachableExhibits)
         {
             unvisitedExhibits.Add(exhibit);
         }
@@ -85,9 +85,8 @@ public class Visitor : MonoBehaviour, Clickable
             energy = energy > energyDetriment ? energy - energyDetriment : 0;
             restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
 
-            if (GetComponent<NavMeshAgent>().enabled)
-                if (!arrived)
-                    energy = energy > energyDetriment ? energy - energyDetriment : 0;
+            if (GetComponent<NavMeshAgent>().enabled && !arrived)
+                energy = energy > energyDetriment ? energy - energyDetriment : 0;
 
             if (hunger < 33)
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
@@ -121,7 +120,7 @@ public class Visitor : MonoBehaviour, Clickable
                     arrived = true;
                     destinationVisitable.Arrived(this);
                 }
-                if(arrived && lookAtAnimals && lookedAnimal != null)
+                if(lookAtAnimals && lookedAnimal != null)
                 {
                     RotateTowards(lookedAnimal.transform.position);
                 }
@@ -188,7 +187,8 @@ public class Visitor : MonoBehaviour, Clickable
                 tempVisitables.AddRange(GridManager.instance.reachableHappinessBuildings);
 
                 destinationVisitable = ChooseCloseDestination(tempVisitables);
-                if (destinationVisitable is Exhibit)
+                var destinationExhibit = destinationVisitable as Exhibit; //castolás exhibitté
+                if (destinationExhibit != null) // ha exhibit
                     unvisitedExhibits.Remove((Exhibit)destinationVisitable);
                 break;
             case "leave":
@@ -206,7 +206,7 @@ public class Visitor : MonoBehaviour, Clickable
 
         int randomGridIndex = Random.Range(0, destinationVisitable.GetPaths().Count);
         Grid randomGrid = destinationVisitable.GetPaths()[randomGridIndex];
-        destination = destinationVisitable.ChoosePosition(randomGrid);
+        var destination = destinationVisitable.ChoosePosition(randomGrid);
         agent.SetDestination(destination);
         atDestination = false;
         time = 0;
@@ -360,11 +360,11 @@ public class Visitor : MonoBehaviour, Clickable
         //transform.rotation = _lookRotation;
     }
 
-    List<string> firstName;
-    List<string> lastName;
-
     string GenerateName()
     {
+        List<string> firstName;
+        List<string> lastName;
+
         firstName = new List<string>() { 
             "James", "Mary", "Michael", "Patricia", "Robert", "Jennifer", "John", "Linda", "David", "Elizabeth", "Bradley", "Russell", "Lucas",
             "William", "Barbara", "Richard", "Susan", "Joseph", "Jessica", "Thomas", "Karen", "Christopher", "Sarah", "Charles", "Lisa", "Daniel", 

@@ -83,7 +83,7 @@ public class Bench : Placeable, Visitable
 
             if (hit2.collider.CompareTag("Terrain"))
             {
-                if (curY == -100)
+                if (curY <= -99)
                     curY = hit2.point.y;
                 else if (curY != hit2.point.y)
                 {
@@ -153,9 +153,8 @@ public class Bench : Placeable, Visitable
     public void FindPaths()
     {
         for (int j = 0; j < 4; j++)
-            if (grid.neighbours[j] != null)
-                if (grid.trueNeighbours[j].isPath)
-                    paths.Add(grid.trueNeighbours[j]);
+            if (grid.neighbours[j] != null && grid.trueNeighbours[j].isPath)
+                 paths.Add(grid.trueNeighbours[j]);
     }
 
     public void DecideIfReachable()

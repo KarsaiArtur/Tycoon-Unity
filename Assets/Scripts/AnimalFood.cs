@@ -23,7 +23,8 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable
         exhibit.food -= foodEaten;
         food -= foodEaten;
         animal.restroomNeedsDetriment = Random.Range(0.2f, 0.3f);
-        if (food == 0)
+
+        if (food <= 0)
         {
             exhibit.foodPlaces.Remove(this);
             animal.destinationVisitable = null;

@@ -94,7 +94,7 @@ public class Building : Placeable, Visitable
 
                     if (hit2.collider.CompareTag("Terrain"))
                     {
-                        if (curY == -100)
+                        if (curY <= -99)
                             curY = hit2.point.y;
                         else if (curY != hit2.point.y)
                         {
@@ -120,7 +120,7 @@ public class Building : Placeable, Visitable
 
                     if (hit2.collider.CompareTag("Terrain"))
                     {
-                        if (curY == -100)
+                        if (curY <= -99)
                             curY = hit2.point.y;
                         else if (curY != hit2.point.y)
                         {
@@ -214,10 +214,9 @@ public class Building : Placeable, Visitable
         {
             for (int j = 0; j < 4; j++)
             {
-                if (gridList[i].neighbours[j] != null)
+                if (gridList[i].neighbours[j] != null && gridList[i].trueNeighbours[j].isPath)
                 {
-                    if (gridList[i].trueNeighbours[j].isPath)
-                        paths.Add(gridList[i].trueNeighbours[j]);
+                    paths.Add(gridList[i].trueNeighbours[j]);
                 }
             }
         }
@@ -439,7 +438,6 @@ public class Building : Placeable, Visitable
 
     public void AddToReachableLists()
     {
-        gridManager.buildings.Remove(this);
         gridManager.reachableVisitables.Add(this);
         if (HasFood())
             gridManager.reachableFoodBuildings.Add(this);

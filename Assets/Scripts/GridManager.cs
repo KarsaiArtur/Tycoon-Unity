@@ -53,6 +53,8 @@ public class GridManager : MonoBehaviour
 
         initializing = true;
 
+        InitializeGrids();
+
         SetEdgeHeight();
         SetSpawnHeight();
 
@@ -399,9 +401,8 @@ public class GridManager : MonoBehaviour
         for (int i = 0; i < 4; i++)
         {
             int chunkIndex = (int)(Mathf.Floor(coords[neighbourIndexes[i] + Math.Sign(neighbourIndexes[i] - index)].x / elementWidth) + Mathf.Floor(coords[neighbourIndexes[i] + Math.Sign(neighbourIndexes[i] - index)].z / elementWidth) * (terrainWidth / elementWidth));
-            if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth))
-                if (!pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
-                    pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+            if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth) && !pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
+                pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
         }
     }
 

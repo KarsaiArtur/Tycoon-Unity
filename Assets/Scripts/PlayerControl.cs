@@ -22,7 +22,7 @@ public class PlayerControl : MonoBehaviour
     int minZ = 20;
     int maxZ = 165;
     private float angle;
-    public float objectTimesRotated = 0;
+    public int objectTimesRotated = 0;
     public int fenceIndex = 0;
     public bool canBePlaced = true;
     public bool terraForming = false;
@@ -167,10 +167,10 @@ public class PlayerControl : MonoBehaviour
                 }
             }
         }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            HandleSelection();
-        }
+        //else if (Input.GetMouseButtonUp(0))
+        //{
+        //    HandleSelection();
+        //}
         if (m_Selected != null)
         {
             var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
@@ -245,12 +245,10 @@ public class PlayerControl : MonoBehaviour
         if (transform.position.y <= maxZoom && zoom > 0)
         {
             transform.position = new Vector3(transform.position.x, maxZoom, transform.position.z);
-            zoom = 0;
         }
         else if (transform.position.y >= minZoom && zoom < 0)
         {
             transform.position = new Vector3(transform.position.x, minZoom, transform.position.z);
-            zoom = 0;
         }
         else
         {
@@ -259,20 +257,20 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public void HandleSelection()
-    {
-        var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
-        {
-            if (placedTags.Contains(hit.collider.tag))
-            {
-                var building = hit.collider.GetComponentInParent<Placeable>();
-                m_Selected = building;
-                m_Selected.SetTag("Untagged");
-            }
-        }
-    }
+    //public void HandleSelection()
+    //{
+    //    var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
+    //    RaycastHit hit;
+    //    if (Physics.Raycast(ray, out hit))
+    //    {
+    //        if (placedTags.Contains(hit.collider.tag))
+    //        {
+    //            var building = hit.collider.GetComponentInParent<Placeable>();
+    //            m_Selected = building;
+    //            m_Selected.SetTag("Untagged");
+    //        }
+    //    }
+    //}
 
     public Placeable[] prefabs;
     public Placeable[] fences;
@@ -332,7 +330,7 @@ public class PlayerControl : MonoBehaviour
 
         if (Input.GetMouseButtonUp(0))
         {
-            if (startingHeight != -10 && coordIndex != 0)
+            if (startingHeight <= -10 && coordIndex != 0)
             {
                 int price = 0;
 
@@ -365,18 +363,15 @@ public class PlayerControl : MonoBehaviour
         {
             var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.CompareTag("Terrain"))
             {
-                if (hit.collider.gameObject.CompareTag("Terrain"))
-                {
-                    coordIndex = (int)(Mathf.Floor(hit.point.x) + Mathf.Floor(hit.point.z) * (gridM.terrainWidth + 1));
+                coordIndex = (int)(Mathf.Floor(hit.point.x) + Mathf.Floor(hit.point.z) * (gridM.terrainWidth + 1));
 
-                    if (!gridM.edgeChanged && !terrainCollided)
-                    {
-                        startingHeight = gridM.coords[coordIndex].y;
-                        startingCoords = new Vector3[gridM.coords.Length];
-                        Array.Copy(gridM.coords, startingCoords, gridM.coords.Length);
-                    }
+                if (!gridM.edgeChanged && !terrainCollided)
+                {
+                    startingHeight = gridM.coords[coordIndex].y;
+                    startingCoords = new Vector3[gridM.coords.Length];
+                    Array.Copy(gridM.coords, startingCoords, gridM.coords.Length);
                 }
             }
         }
@@ -512,9 +507,8 @@ public class PlayerControl : MonoBehaviour
             //gridM.tempCoords = null;
 
             int chunkIndex = (int)(Mathf.Floor(gridM.coords[coordIndex].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[coordIndex].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
-            if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth))
-                if (!modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
-                    modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
+            if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth) && !modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
+                modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
 
             foreach (Chunk tempChunk in modifiedChunks)
             {
