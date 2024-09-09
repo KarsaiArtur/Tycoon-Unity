@@ -8,6 +8,7 @@ using Cinemachine;
 
 public class PlayerControl : MonoBehaviour
 {
+    const float degToRad = (float)Math.PI / 180.0f;
     public Canvas canvas;
     float cameraSpeed = 10;
     float zoomSpeed = 10;
@@ -15,12 +16,13 @@ public class PlayerControl : MonoBehaviour
     public CinemachineVirtualCamera VirtualCamera;
     public Placeable m_Selected = null;
     public Placeable curPlaceable = null;
+    int cameraTimesRotated = 0;
     int maxZoom = 10;
     int minZoom = 30;
-    int minX = 30;
-    int maxX = 170;
-    int minZ = 20;
-    int maxZ = 165;
+    int minX;
+    int maxX;
+    int minZ;
+    int maxZ;
     private float angle;
     public int objectTimesRotated = 0;
     public int fenceIndex = 0;
@@ -89,6 +91,11 @@ public class PlayerControl : MonoBehaviour
         gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
         GameCamera.GetComponent<CinemachineBrain>().enabled = false;
 
+        minX = gridM.elementWidth;
+        maxX = gridM.terrainWidth + gridM.elementWidth;
+        minZ = gridM.elementWidth;
+        maxZ = gridM.terrainWidth + gridM.elementWidth;
+
         startingCoords = new Vector3[gridM.coords.Length];
         Array.Copy(gridM.coords, startingCoords, gridM.coords.Length);
     }
@@ -99,6 +106,7 @@ public class PlayerControl : MonoBehaviour
         {
             Move();
             Zoom();
+            Rotate();
             RotateObject();
 
             if (!MouseOverUI())
@@ -212,16 +220,24 @@ public class PlayerControl : MonoBehaviour
             if(currentInfopopup != null)
                 currentInfopopup.DestroyPanel();
         }
-        transform.position = transform.position + new Vector3(move.x * (float)Math.Cos(angle * 0.0174532925) + move.y * (float)Math.Sin(angle * 0.0174532925), 0, move.x * (float)Math.Sin(angle * 0.0174532925) - move.y * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
 
-        if (transform.position.x < minX)
-            transform.position = new Vector3(minX, transform.position.y, transform.position.z);
-        if (transform.position.x > maxX - transform.position.y)
-            transform.position = new Vector3(maxX - transform.position.y, transform.position.y, transform.position.z);
-        if (transform.position.z < minZ)
-            transform.position = new Vector3(transform.position.x, transform.position.y, minZ);
-        if (transform.position.z > maxZ - transform.position.y)
-            transform.position = new Vector3(transform.position.x, transform.position.y, maxZ - transform.position.y);
+        if (cameraTimesRotated == 0)
+            transform.position = transform.position + new Vector3(move.x * (float)Math.Cos(angle * degToRad) + move.y * (float)Math.Sin(angle * degToRad), 0, move.x * (float)Math.Sin(angle * degToRad) - move.y * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
+        if (cameraTimesRotated == 1)
+            transform.position = transform.position - new Vector3(move.y * (float)Math.Cos(angle * degToRad) - move.x * (float)Math.Sin(angle * degToRad), 0, move.y * (float)Math.Sin(angle * degToRad) + move.x * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
+        if (cameraTimesRotated == 2)
+            transform.position = transform.position - new Vector3(move.x * (float)Math.Cos(angle * degToRad) + move.y * (float)Math.Sin(angle * degToRad), 0, move.x * (float)Math.Sin(angle * degToRad) - move.y * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
+        if (cameraTimesRotated == 3)
+            transform.position = transform.position + new Vector3(move.y * (float)Math.Cos(angle * degToRad) - move.x * (float)Math.Sin(angle * degToRad), 0, move.y * (float)Math.Sin(angle * degToRad) + move.x * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
+
+        if (transform.position.x < minX + Math.Sign(cameraTimesRotated - 1.5) * (transform.position.y / 2))
+            transform.position = new Vector3(minX + Math.Sign(cameraTimesRotated - 1.5) * (transform.position.y / 2), transform.position.y, transform.position.z);
+        if (transform.position.x > maxX + Math.Sign(cameraTimesRotated - 1.5) * (transform.position.y / 2))
+            transform.position = new Vector3(maxX + Math.Sign(cameraTimesRotated - 1.5) * (transform.position.y / 2), transform.position.y, transform.position.z);
+        if (transform.position.z < minZ - (transform.position.y / 2) + Math.Sign(cameraTimesRotated % 3) * 2 * (transform.position.y / 2))
+            transform.position = new Vector3(transform.position.x, transform.position.y, minZ - (transform.position.y / 2) + Math.Sign(cameraTimesRotated % 3) * 2 * (transform.position.y / 2));
+        if (transform.position.z > maxZ - (transform.position.y / 2) + Math.Sign(cameraTimesRotated % 3) * 2 * (transform.position.y / 2))
+            transform.position = new Vector3(transform.position.x, transform.position.y, maxZ - (transform.position.y / 2) + Math.Sign(cameraTimesRotated % 3) * 2 * (transform.position.y / 2));
 
         MovementSpeedChange();
     }
@@ -254,6 +270,30 @@ public class PlayerControl : MonoBehaviour
         {
             transform.Translate(Vector3.forward * zoom * zoomSpeed);
             VirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_CameraDistance -= zoom * zoomSpeed;
+        }
+    }
+
+    void Rotate()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            float height = 0;
+            RaycastHit[] hits = Physics.RaycastAll(Camera.main.transform.position, Camera.main.transform.forward);
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider.CompareTag("Terrain"))
+                {
+                    height = hit.point.y;
+                }
+            }
+
+            float distance = (float)(Math.Tan((90 - transform.rotation.eulerAngles.x) * degToRad) * (transform.position.y - height));
+            float xOffset = (float)Math.Sin(transform.rotation.eulerAngles.y * degToRad) * distance;
+            float zOffset = (float)Math.Cos(transform.rotation.eulerAngles.y * degToRad) * distance;
+            transform.position = new Vector3(transform.position.x + xOffset - zOffset, transform.position.y, transform.position.z + zOffset + xOffset);
+
+            transform.rotation = Quaternion.Euler(50, transform.rotation.eulerAngles.y + 90, 0);
+            cameraTimesRotated = (cameraTimesRotated + 1) % 4;
         }
     }
 

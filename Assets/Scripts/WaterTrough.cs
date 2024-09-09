@@ -74,4 +74,14 @@ public class WaterTrough : Placeable, AnimalVisitable
         exhibit.water += 500 - water;
         water = 500;
     }
+
+    public void Remove()
+    {
+        ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
+        if (exhibit != null)
+        {
+            exhibit.RemoveWaterTrough(this);
+        }
+        Destroy(gameObject);
+    }
 }

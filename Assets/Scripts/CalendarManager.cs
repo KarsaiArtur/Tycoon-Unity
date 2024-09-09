@@ -1,8 +1,9 @@
 using UnityEngine;
 using System;
 using TMPro;
+using System.IO;
 
-public class CalendarManager : MonoBehaviour
+public class CalendarManager : MonoBehaviour, Saveable
 {
     public static CalendarManager instance;
     public DateTime currentDate;
@@ -10,15 +11,45 @@ public class CalendarManager : MonoBehaviour
     float totalSeconds;
     public TextMeshProUGUI dateText;
     int secondsPerDay = 24;
-    DateTime startingDate = new DateTime(2024, 1, 1, 0, 0, 0);
+    public DateTime startingDate = new DateTime(2024, 1, 1, 0, 0, 0);
     int timer = 0;
 
+        
+
+    class Data
+    {
+        public long currentDateInTicks;
+
+        public Data(DateTime date)
+        {
+            currentDateInTicks = date.Ticks;
+        }
+    }
+
+    public string DataToJson(){
+        Data data = new Data(currentDate);
+        return JsonUtility.ToJson(data);
+    }
+
+    public void FromJson(string json){
+        Data data = JsonUtility.FromJson<Data>(json);
+        SetData(new DateTime(data.currentDateInTicks));
+    }
+
+    public string GetFileName(){
+        return "CalendarManager.json";
+    }
+
+    void SetData(DateTime currentDate){ 
+        Debug.Log(currentDate);
+        this.currentDate = currentDate;
+    }
 
 
     private void Start()
     {
         instance = this;
-        currentDate = startingDate;
+        SetCurrentDate(startingDate);
         SetDate();
     }
 
@@ -41,7 +72,8 @@ public class CalendarManager : MonoBehaviour
 
     void AddDay()
     {
-        currentDate = currentDate.AddDays(1);
+        
+        SetCurrentDate(currentDate.AddDays(1));
         SetDate();
         if (currentDate.Day == 1)
         {
@@ -58,6 +90,12 @@ public class CalendarManager : MonoBehaviour
             }
         }
     }
+
+    public void SetCurrentDate(DateTime time)
+    {
+        currentDate = time;
+    }
+
 
     void SetDate()
     {

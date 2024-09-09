@@ -106,7 +106,7 @@ public class Animal : Placeable
         StartCoroutine(DecreaseNeeds());
     }
 
-    public void Sell()
+    public void Remove()
     {
         exhibit.RemoveAnimal(this);
         VisitorManager.instance.DecreaseAnimalBonus(this);

@@ -264,4 +264,14 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     {
         visitors.Remove(visitor);
     }
+
+    public void RemoveNature(Nature nature)
+    {
+        foliages.Remove(nature);
+    }
+
+    public void RemoveWaterTrough(WaterTrough waterTrough)
+    {
+        waterPlaces.Remove(waterTrough);
+    }
 }

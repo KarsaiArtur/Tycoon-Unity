@@ -45,6 +45,7 @@ public class Nature : Placeable
             Destroy(collider);
         }
     }
+
     public override void FinalPlace()
     {
         ChangeMaterial(0);
@@ -83,5 +84,15 @@ public class Nature : Placeable
             playerControl.canBePlaced = true;
             ChangeMaterial(1);
         }
+    }
+
+    public void Remove()
+    {
+        var tempGrid = GridManager.instance.GetGrid(transform.position);
+        if (tempGrid.isExhibit)
+        {
+            tempGrid.exhibit.RemoveNature(this);
+        }
+        Destroy(gameObject);
     }
 }

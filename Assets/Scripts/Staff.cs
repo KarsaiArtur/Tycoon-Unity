@@ -257,6 +257,4 @@ public abstract class Staff : Placeable
     }
 
     public abstract string GetCurrentAction();
-
-    public abstract void Fire();
 }

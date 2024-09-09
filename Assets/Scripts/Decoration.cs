@@ -58,4 +58,10 @@ public class Decoration : Placeable
             ChangeMaterial(1);
         }
     }
+
+    public void Remove()
+    {
+        ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
+        Destroy(gameObject);
+    }
 }

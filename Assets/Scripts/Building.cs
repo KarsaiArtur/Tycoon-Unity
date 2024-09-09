@@ -178,7 +178,7 @@ public class Building : Placeable, Visitable
         
     }
 
-    public void Sell()
+    public void Remove()
     {
         ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
         RemoveFromLists();

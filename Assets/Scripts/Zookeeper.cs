@@ -173,7 +173,7 @@ public class Zookeeper : Staff
         return jobAtExhibit;
     }
 
-    public override void Fire()
+    public void Remove()
     {
         if (exhibitToWorkAt != null)
         {

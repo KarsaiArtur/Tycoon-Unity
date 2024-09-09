@@ -25,7 +25,7 @@ public class BuildingInfopopup : InfoPopup
         }
         infoPanelInstance.transform.GetChild(0).Find("Items").gameObject.active = purchasableItemsUI.Count == 0 ? false : true;
         infoPanelInstance.transform.Find("Sell").GetComponent<Button>().onClick.AddListener(() => {
-            building.Sell();
+            building.Remove();
             DestroyPanel();
         });
         infoPanelInstance.transform.GetChild(0).Find("Info Panel").Find("Restroom").GetComponent<Image>().sprite = building.hasRestroom ? UIMenu.Instance.hasRestroom : UIMenu.Instance.noRestroom;

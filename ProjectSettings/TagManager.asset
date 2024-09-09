@@ -19,6 +19,7 @@ TagManager:
   - Placed Path
   - Camera
   - QuestManager
+  - Canvas
   layers:
   - Default
   - TransparentFX

@@ -80,6 +80,11 @@ public class Placeable : MonoBehaviour, Clickable
 
     }
 
+    public virtual void Remove()
+    {
+
+    }
+
     public virtual bool CalculateGrid(Vector3 mouseHit)
     {
         Vector3 newPos = new Vector3(playerControl.Round(mouseHit.x), 0, playerControl.Round(mouseHit.z));

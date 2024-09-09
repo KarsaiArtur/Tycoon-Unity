@@ -103,7 +103,7 @@ public class Vet : Staff
         return "Healing animal";
     }
 
-    public override void Fire()
+    public void Remove()
     {
         if (animalToHeal != null)
             animalToHeal.isGettingHealed = false;

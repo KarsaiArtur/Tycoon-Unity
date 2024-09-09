@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
 
-public class ZooManager : MonoBehaviour, Visitable, Clickable
+public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
 {
     public static ZooManager instance;
     public float money = 50000;
@@ -20,6 +21,46 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
     public List<float> latestVisitorHappinesses = new();
     int listSizeLimit = 25;
     public float reputation = 75;
+
+    class Data
+    {
+        public float money;
+        public int allTimeVisitorCount;
+        public float allTimeMoneyEarned;
+        public List<float> latestVisitorHappinesses;
+        public float reputation;
+
+        public Data(float money, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation)
+        {
+            this.money = money;
+            this.allTimeVisitorCount = allTimeVisitorCount;
+            this.allTimeMoneyEarned = allTimeMoneyEarned;
+            this.latestVisitorHappinesses = latestVisitorHappinesses;
+            this.reputation = reputation;
+        }
+    }
+
+    public string DataToJson(){
+        Data data = new Data(money, allTimeVisitorCount, allTimeMoneyEarned, latestVisitorHappinesses, reputation);
+        return JsonUtility.ToJson(data);
+    }
+
+    public void FromJson(string json){
+        Data data = JsonUtility.FromJson<Data>(json);
+        SetData(data.money, data.allTimeVisitorCount, data.allTimeMoneyEarned, data.latestVisitorHappinesses, data.reputation);
+    }
+
+    public string GetFileName(){
+        return "ZooManager.json";
+    }
+
+    void SetData(float money, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation){ 
+        this.money = money;
+        this.allTimeVisitorCount = allTimeVisitorCount;
+        this.allTimeMoneyEarned = allTimeMoneyEarned;
+        this.latestVisitorHappinesses = latestVisitorHappinesses;
+        this.reputation = reputation;
+    }
 
     public void Start()
     {
@@ -100,8 +141,8 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable
 
     public Vector3 ChoosePosition(Grid grid)
     {
-        float offsetX = Random.Range(0.1f, 0.2f);
-        float offsetZ = Random.Range(0, 0.75f);
+        float offsetX = UnityEngine.Random.Range(0.1f, 0.2f);
+        float offsetZ = UnityEngine.Random.Range(0, 0.75f);
         return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
     }
 

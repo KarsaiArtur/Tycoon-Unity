@@ -29,7 +29,7 @@ public class AnimalInfoPopup : InfoPopup
             newItem.transform.SetParent(infoPanelInstance.transform.GetChild(0).Find("DataPanel").transform);
         }
         infoPanelInstance.transform.GetChild(0).Find("Sell").GetComponent<Button>().onClick.AddListener(() => {
-            animal.Sell();
+            animal.Remove();
             DestroyPanel();
         });
         StartCoroutine(CheckAnimalAttributes());
