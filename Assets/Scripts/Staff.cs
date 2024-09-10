@@ -26,13 +26,13 @@ public abstract class Staff : Placeable
         Resting
     }
 
-    public void Start()
+    public virtual void Start()
     {
         isAvailable = true;
         workingState = WorkingState.Resting;
     }
 
-    public void Update()
+    public virtual void Update()
     {
         if (placed)
         {

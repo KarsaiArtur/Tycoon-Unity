@@ -9,7 +9,7 @@ public class Zookeeper : Staff
     public string jobAtExhibit;
     int waterTroughIndex = 0;
 
-    public void Start()
+    public override void Start()
     {
         base.Start();
         salary = 300;
@@ -112,9 +112,12 @@ public class Zookeeper : Staff
     {
         if (jobAtExhibit == "Placing food")
         {
-            var foodPrefab = exhibitToWorkAt.animals[0].foodPrefab;
-            var animalFood = Instantiate(foodPrefab, new Vector3(transform.position.x, transform.position.y+foodPrefab.transform.position.y, transform.position.z) , foodPrefab.transform.rotation);
-            animalFood.FinalPlace();
+            if (exhibitToWorkAt.animals.Count > 0)
+            {
+                var foodPrefab = exhibitToWorkAt.animals[0].foodPrefab;
+                var animalFood = Instantiate(foodPrefab, new Vector3(transform.position.x, transform.position.y + foodPrefab.transform.position.y, transform.position.z), foodPrefab.transform.rotation);
+                animalFood.FinalPlace();
+            }
             exhibitToWorkAt.isGettingFood = false;
             jobAtExhibit = "";
             return true;
@@ -173,7 +176,7 @@ public class Zookeeper : Staff
         return jobAtExhibit;
     }
 
-    public void Remove()
+    public override void Remove()
     {
         if (exhibitToWorkAt != null)
         {

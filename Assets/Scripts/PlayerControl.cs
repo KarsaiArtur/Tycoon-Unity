@@ -28,6 +28,7 @@ public class PlayerControl : MonoBehaviour
     public int fenceIndex = 0;
     public bool canBePlaced = true;
     public bool terraForming = false;
+    public bool deleting = false;
     public bool isMouseDown = false;
     public bool isClickableSelected = false;
     public List<GameObject> gates;
@@ -102,6 +103,11 @@ public class PlayerControl : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            deleting = !deleting;
+        }
+
         if (!stopMovement)
         {
             Move();
@@ -113,6 +119,8 @@ public class PlayerControl : MonoBehaviour
             {
                 if (terraForming)
                     Terraform(currentTerraformSize, currentTerraformSize);
+                else if (deleting)
+                    Delete();
                 else
                     PlaceObject();
             }
@@ -624,5 +632,22 @@ public class PlayerControl : MonoBehaviour
             gateTest.GetComponent<Animator>().Play("Close");
         }
         closed = !closed;
+    }
+
+    public void Delete()
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit))
+            {
+                if (placedTags.Contains(hit.collider.tag))
+                {
+                    var placeable = hit.collider.GetComponentInParent<Placeable>();
+                    placeable.Remove();
+                }
+            }
+        }
     }
 }

@@ -223,9 +223,8 @@ public class Bench : Placeable, Visitable
         visitors.Remove(visitor);
     }
 
-    public void Remove()
+    public override void Remove()
     {
-        ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
         GridManager.instance.benches.Remove(this);
         RemoveFromReachableLists();
         foreach (var visitor in visitors)

@@ -107,4 +107,9 @@ public class Path : Placeable
             transform.tag = newTag;
         }
     }
+
+    public override void Remove()
+    {
+
+    }
 }

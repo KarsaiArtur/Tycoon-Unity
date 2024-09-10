@@ -226,4 +226,9 @@ public class Fence : Placeable
                 playerControl.Spawn(UIMenu.Instance.curPlaceable);
             });
     }
+
+    public override void Remove()
+    {
+
+    }
 }

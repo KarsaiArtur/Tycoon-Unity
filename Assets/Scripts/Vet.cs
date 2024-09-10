@@ -6,13 +6,13 @@ public class Vet : Staff
 {
     Animal animalToHeal;
 
-    public void Start()
+    public override void Start()
     {
         base.Start();
         salary = 500;
     }
 
-    public void Update()
+    public override void Update()
     {
         base.Update();
 
@@ -103,7 +103,7 @@ public class Vet : Staff
         return "Healing animal";
     }
 
-    public void Remove()
+    public override void Remove()
     {
         if (animalToHeal != null)
             animalToHeal.isGettingHealed = false;

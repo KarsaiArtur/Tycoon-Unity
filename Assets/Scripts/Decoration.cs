@@ -59,9 +59,8 @@ public class Decoration : Placeable
         }
     }
 
-    public void Remove()
+    public override void Remove()
     {
-        ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
         Destroy(gameObject);
     }
 }

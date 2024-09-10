@@ -51,7 +51,6 @@ public class Placeable : MonoBehaviour, Clickable
 
     }
     
-
     public virtual void RotateY(float angle)
     {
         transform.Rotate(0, angle, 0);
