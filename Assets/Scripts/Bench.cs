@@ -196,6 +196,13 @@ public class Bench : Placeable, Visitable
         GridManager.instance.reachableEnergyBuildings.Add(this);
     }
 
+    public void RemoveFromReachableLists()
+    {
+        GridManager.instance.reachableBenches.Remove(this);
+        GridManager.instance.reachableVisitables.Remove(this);
+        GridManager.instance.reachableEnergyBuildings.Remove(this);
+    }
+
     public int GetCapacity()
     {
         return capacity;
@@ -214,5 +221,17 @@ public class Bench : Placeable, Visitable
     public void RemoveVisitor(Visitor visitor)
     {
         visitors.Remove(visitor);
+    }
+
+    public void Remove()
+    {
+        ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
+        GridManager.instance.benches.Remove(this);
+        RemoveFromReachableLists();
+        foreach (var visitor in visitors)
+        {
+            visitor.ChooseDestination();
+        }
+        Destroy(gameObject);
     }
 }

@@ -39,7 +39,6 @@ public class LoadMenu : MonoBehaviour
     {
         string json;
         string path = SetPath(text, saveable.GetFileName());
-        Debug.Log(path);
 
         if(File.Exists(path))
         {

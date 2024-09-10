@@ -88,6 +88,7 @@ public class Nature : Placeable
 
     public void Remove()
     {
+        ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
         var tempGrid = GridManager.instance.GetGrid(transform.position);
         if (tempGrid.isExhibit)
         {

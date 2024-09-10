@@ -25,14 +25,16 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     class Data
     {
         public float money;
+        public float currentEntranceFee;
         public int allTimeVisitorCount;
         public float allTimeMoneyEarned;
         public List<float> latestVisitorHappinesses;
         public float reputation;
 
-        public Data(float money, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation)
+        public Data(float money, float currentEntranceFee, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation)
         {
             this.money = money;
+            this.currentEntranceFee = currentEntranceFee;
             this.allTimeVisitorCount = allTimeVisitorCount;
             this.allTimeMoneyEarned = allTimeMoneyEarned;
             this.latestVisitorHappinesses = latestVisitorHappinesses;
@@ -41,21 +43,22 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     }
 
     public string DataToJson(){
-        Data data = new Data(money, allTimeVisitorCount, allTimeMoneyEarned, latestVisitorHappinesses, reputation);
+        Data data = new Data(money, currentEntranceFee, allTimeVisitorCount, allTimeMoneyEarned, latestVisitorHappinesses, reputation);
         return JsonUtility.ToJson(data);
     }
 
     public void FromJson(string json){
         Data data = JsonUtility.FromJson<Data>(json);
-        SetData(data.money, data.allTimeVisitorCount, data.allTimeMoneyEarned, data.latestVisitorHappinesses, data.reputation);
+        SetData(data.money, data.currentEntranceFee, data.allTimeVisitorCount, data.allTimeMoneyEarned, data.latestVisitorHappinesses, data.reputation);
     }
 
     public string GetFileName(){
         return "ZooManager.json";
     }
 
-    void SetData(float money, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation){ 
+    void SetData(float money, float currentEntranceFee, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation){ 
         this.money = money;
+        this.currentEntranceFee = currentEntranceFee;
         this.allTimeVisitorCount = allTimeVisitorCount;
         this.allTimeMoneyEarned = allTimeMoneyEarned;
         this.latestVisitorHappinesses = latestVisitorHappinesses;

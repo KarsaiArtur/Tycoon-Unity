@@ -41,7 +41,6 @@ public class CalendarManager : MonoBehaviour, Saveable
     }
 
     void SetData(DateTime currentDate){ 
-        Debug.Log(currentDate);
         this.currentDate = currentDate;
     }
 
