@@ -110,6 +110,23 @@ public class Path : Placeable
 
     public override void Remove()
     {
-
+        Grid tempGrid = GridManager.instance.GetGrid(transform.position);
+        tempGrid.isPath = false;
+        foreach (var exhibit in GridManager.instance.exhibits)
+        {
+            exhibit.RemovePath(this);
+            exhibit.DecideIfReachable();
+        }
+        foreach (var building in GridManager.instance.buildings)
+        {
+            building.RemovePath(this);
+            building.DecideIfReachable();
+        }
+        foreach (var bench in GridManager.instance.benches)
+        {
+            bench.RemovePath(this);
+            bench.DecideIfReachable();
+        }
+        Destroy(gameObject);
     }
 }

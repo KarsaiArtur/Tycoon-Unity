@@ -201,11 +201,14 @@ public class Building : Placeable, Visitable
             {
                 if (gridManager.ReachableAttractionBFS(paths[i], gridManager.startingGrid))
                 {
-                    AddToReachableLists();
-                    break;
+                    if (!GridManager.instance.reachableVisitables.Contains(this))
+                        AddToReachableLists();
+                    return;
                 }
             }
         }
+        if (GridManager.instance.reachableVisitables.Contains(this))
+            RemoveFromReachableLists();
     }
 
     public void FindPaths()
@@ -220,6 +223,12 @@ public class Building : Placeable, Visitable
                 }
             }
         }
+    }
+
+    public void RemovePath(Path path)
+    {
+        if (paths.Contains(GridManager.instance.GetGrid(path.transform.position)))
+            paths.Remove(GridManager.instance.GetGrid(path.transform.position));
     }
 
     void OnCollisionStay(Collision collision)
@@ -457,6 +466,11 @@ public class Building : Placeable, Visitable
     public void RemoveFromLists()
     {
         gridManager.buildings.Remove(this);
+        RemoveFromReachableLists();
+    }
+
+    public void RemoveFromReachableLists()
+    {
         gridManager.reachableVisitables.Remove(this);
         if (HasFood())
             gridManager.reachableFoodBuildings.Remove(this);

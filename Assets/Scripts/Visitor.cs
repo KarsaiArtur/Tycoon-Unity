@@ -14,6 +14,7 @@ public class Visitor : MonoBehaviour, Clickable
     bool atDestination = true;
     bool arrived = false;
     bool placed = false;
+    Vector3 destination;
     Visitable destinationVisitable;
     PlayerControl playerControl;
     List<Visitable> unvisitedExhibits = new();
@@ -111,7 +112,7 @@ public class Visitor : MonoBehaviour, Clickable
             {
                 ChooseDestination();
             }
-            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1)
+            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(destination.x, destination.z)) <= 0.1)
             {
                 agent.isStopped = true;
                 time += Time.deltaTime;
@@ -206,7 +207,7 @@ public class Visitor : MonoBehaviour, Clickable
 
         int randomGridIndex = Random.Range(0, destinationVisitable.GetPaths().Count);
         Grid randomGrid = destinationVisitable.GetPaths()[randomGridIndex];
-        var destination = destinationVisitable.ChoosePosition(randomGrid);
+        destination = destinationVisitable.ChoosePosition(randomGrid);
         agent.SetDestination(destination);
         atDestination = false;
         time = 0;

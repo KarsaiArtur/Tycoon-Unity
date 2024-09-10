@@ -39,15 +39,15 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
 
     void Update()
     {
-        //if (unreachableForStaff)
-        //{
-        //    time += Time.deltaTime;
-        //    if (time > 60)
-        //    {
-        //        unreachableForStaff = false;
-        //        time = 0;
-        //    }
-        //}
+        if (unreachableForStaff)
+        {
+            time += Time.deltaTime;
+            if (time > 60)
+            {
+                unreachableForStaff = false;
+                time = 0;
+            }
+        }
     }
 
     public void SetExhibit(HashSet<Grid> grids)
@@ -75,11 +75,14 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
             {
                 if (GridManager.instance.ReachableAttractionBFS(paths[i], GridManager.instance.startingGrid))
                 {
-                    AddToReachableLists();
-                    break;
+                    if (!reachable)
+                        AddToReachableLists();
+                    return;
                 }
             }
         }
+        if (reachable)
+            RemoveFromReachableLists();
     }
 
     public void AddAnimal(Animal animal)
@@ -120,6 +123,12 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
                     paths.Add(gridList[i].trueNeighbours[j].trueNeighbours[(j + 1) % 4]);
             }
         }
+    }
+
+    public void RemovePath(Path path)
+    {
+        if (paths.Contains(GridManager.instance.GetGrid(path.transform.position)))
+            paths.Remove(GridManager.instance.GetGrid(path.transform.position));
     }
 
     public List<Grid> GetPaths()

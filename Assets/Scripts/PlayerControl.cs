@@ -5,6 +5,9 @@ using UnityEngine.EventSystems;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
 using Cinemachine;
+using static UnityEngine.EventSystems.EventTrigger;
+using System.Collections;
+using Unity.VisualScripting;
 
 public class PlayerControl : MonoBehaviour
 {
@@ -106,6 +109,8 @@ public class PlayerControl : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             deleting = !deleting;
+            if (deleting)
+                StartCoroutine(Navmeshreload());
         }
 
         if (!stopMovement)
@@ -130,6 +135,15 @@ public class PlayerControl : MonoBehaviour
                 m_Selected.DestroyPlaceable();
                 Spawn(curPlaceable);
             }
+        }
+    }
+
+    IEnumerator Navmeshreload()
+    {
+        while (deleting)
+        {
+            ReloadGuestNavMesh();
+            yield return new WaitForSeconds(1);
         }
     }
 

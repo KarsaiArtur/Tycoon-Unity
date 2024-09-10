@@ -157,6 +157,12 @@ public class Bench : Placeable, Visitable
                  paths.Add(grid.trueNeighbours[j]);
     }
 
+    public void RemovePath(Path path)
+    {
+        if (paths.Contains(GridManager.instance.GetGrid(path.transform.position)))
+            paths.Remove(GridManager.instance.GetGrid(path.transform.position));
+    }
+
     public void DecideIfReachable()
     {
         if (paths.Count != 0)
@@ -165,11 +171,14 @@ public class Bench : Placeable, Visitable
             {
                 if (gridManager.ReachableAttractionBFS(paths[i], gridManager.startingGrid))
                 {
-                    AddToReachableLists();
-                    break;
+                    if (!GridManager.instance.reachableBenches.Contains(this))
+                        AddToReachableLists();
+                    return;
                 }
             }
         }
+        if (GridManager.instance.reachableBenches.Contains(this))
+            RemoveFromReachableLists();
     }
 
     public List<Grid> GetPaths()
