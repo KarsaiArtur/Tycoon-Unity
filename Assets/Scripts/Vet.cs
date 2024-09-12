@@ -103,6 +103,13 @@ public class Vet : Staff
         return "Healing animal";
     }
 
+    public override void SetToDefault()
+    {
+        base.SetToDefault();
+        animalToHeal.isGettingHealed = false;
+        animalToHeal = null;
+    }
+
     public override void Remove()
     {
         if (animalToHeal != null)

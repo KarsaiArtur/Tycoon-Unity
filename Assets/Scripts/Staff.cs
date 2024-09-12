@@ -48,6 +48,8 @@ public abstract class Staff : Placeable
                     case WorkingState.GoingToExhibitEntranceToEnter:
                         time += Time.deltaTime;
                         destinationExhibit.StaffArrived(1);
+                        if (!destinationExhibit.staffAtGate.Contains(this))
+                            destinationExhibit.staffAtGate.Add(this);
                         if (!destinationExhibit.staff.Contains(this))
                             destinationExhibit.staff.Add(this);
                         if (time > 1)
@@ -58,8 +60,8 @@ public abstract class Staff : Placeable
                         break;
                     case WorkingState.GoingToExhibitExitToEnter:
                         time += Time.deltaTime;
-                        if (destinationExhibit.staff.Contains(this))
-                            destinationExhibit.staff.Remove(this);
+                        if (destinationExhibit.staffAtGate.Contains(this))
+                            destinationExhibit.staffAtGate.Remove(this);
                         if (time > 1)
                         {
                             workingState = WorkingState.Working;
@@ -70,6 +72,8 @@ public abstract class Staff : Placeable
                         break;
                     case WorkingState.GoingToExhibitEntranceToLeave:
                         time += Time.deltaTime;
+                        if (insideExhibit.staffAtGate.Contains(this))
+                            insideExhibit.staffAtGate.Remove(this);
                         if (insideExhibit.staff.Contains(this))
                             insideExhibit.staff.Remove(this);
                         if (time > 1)
@@ -91,8 +95,8 @@ public abstract class Staff : Placeable
                     case WorkingState.GoingToExhibitExitToLeave:
                         time += Time.deltaTime;
                         insideExhibit.StaffArrived(1);
-                        if (!insideExhibit.staff.Contains(this))
-                            insideExhibit.staff.Add(this);
+                        if (!insideExhibit.staffAtGate.Contains(this))
+                            insideExhibit.staffAtGate.Add(this);
                         if (time > 1)
                         {
                             workingState = WorkingState.GoingToExhibitEntranceToLeave;
@@ -192,6 +196,14 @@ public abstract class Staff : Placeable
     public virtual bool DoJob() { return true; }
 
     public virtual void FindInsideDestination() { }
+
+    public virtual void SetToDefault()
+    {
+        destinationExhibit = null;
+        insideExhibit = null;
+        isAvailable = true;
+        workingState = WorkingState.Resting;
+    }
 
     public override void ClickedOn()
     {

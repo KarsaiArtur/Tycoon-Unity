@@ -1,20 +1,28 @@
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
+using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEngine;
 
-public class QuestManager : MonoBehaviour
+/////Saveable Attributes, DONT DELETE
+//////int currentQuestId,int numberOfDoneQuests,List<int> questPoolIds,bool questsCompleted/////
+
+public class QuestManager : MonoBehaviour, Saveable
 {
-    public Quest currentQuest;
+    public int currentQuestId;
     public int numberOfDoneQuests = 0;
     List<Quest> easyQuests = new List<Quest>();
     List<Quest> mediumQuests = new List<Quest>();
     List<Quest> hardQuests = new List<Quest>();
-    List<Quest> questPool = new List<Quest>();
+    List<int> questPoolIds = new List<int>();
     public bool questsCompleted = false;
     public int questsPerDifficutly = 5;
     public bool questWindowOpened = false;
+    static public QuestManager instance;
 
     void Start()
     {
+        instance = this;
         easyQuests.Add(new Quest("Start Your Dream Team", "Have 2 staff members of any kind", 1000, "Easy", () => { return StaffManager.instance.staffs.Count >= 2; }, () => { return StaffManager.instance.staffs.Count; }, 2));
         easyQuests.Add(new Quest("Build Your First Facilities", "Have 3 buildings of any kind", 1000, "Easy", () => { return GridManager.instance.buildings.Count >= 3; }, () => { return GridManager.instance.buildings.Count; }, 3));
         easyQuests.Add(new Quest("Attract the Curious", "Have 100 visitors all time", 1000, "Easy", () => { return ZooManager.instance.allTimeVisitorCount >= 100; }, () => { return ZooManager.instance.allTimeVisitorCount; }, 100));
@@ -49,9 +57,26 @@ public class QuestManager : MonoBehaviour
             () => { var animalCount = 0; foreach (var exhibit in GridManager.instance.exhibits) { animalCount += exhibit.animals.Count; } return animalCount >= 100; },
             () => { var animalCount = 0; foreach (var exhibit in GridManager.instance.exhibits) { animalCount += exhibit.animals.Count; } return animalCount; }, 100));
 
-        questPool = easyQuests;
-        currentQuest = questPool[Random.Range(0, questPool.Count)];
-        UIMenu.Instance.NewNotification("Current quest: " + currentQuest.questName + System.Environment.NewLine + currentQuest.description);
+        if(LoadMenu.loadedGame != null){
+            LoadMenu.instance.LoadData(this);
+        } else {
+            easyQuests.ForEach(element => questPoolIds.Add(element.id));
+            currentQuestId = questPoolIds[Random.Range(0, questPoolIds.Count)];
+        }
+        UIMenu.Instance.NewNotification("Current quest: " + findCurrentQuest().questName + System.Environment.NewLine + findCurrentQuest().description);
+    }
+
+    public Quest findCurrentQuest(){
+        Quest currentQuest = easyQuests.Where(quest => quest.id == currentQuestId).FirstOrDefault();
+        if(currentQuest != null){
+            return currentQuest;
+        }
+        currentQuest = mediumQuests.Where(quest => quest.id == currentQuestId).FirstOrDefault();
+        if(currentQuest != null){
+            return currentQuest;
+        }
+        currentQuest = hardQuests.Where(quest => quest.id == currentQuestId).FirstOrDefault();
+        return currentQuest;
     }
 
 
@@ -67,32 +92,77 @@ public class QuestManager : MonoBehaviour
             UIMenu.Instance.curExtraMenu?.UpdateWindow();
         }
 
-        if (currentQuest.condition())
+        if (findCurrentQuest().condition())
         {
-            currentQuest.done = true;
-            ZooManager.instance.ChangeMoney(currentQuest.reward);
-            var previousQuest = currentQuest;
+            findCurrentQuest().done = true;
+            ZooManager.instance.ChangeMoney(findCurrentQuest().reward);
+            var previousQuest = findCurrentQuest();
             numberOfDoneQuests++;
-            questPool.Remove(currentQuest);
+            questPoolIds.Remove(currentQuestId);
 
-            if (numberOfDoneQuests % questsPerDifficutly == 0 && currentQuest.difficulty == "Easy")
+            if (numberOfDoneQuests % questsPerDifficutly == 0 && findCurrentQuest().difficulty == "Easy")
             {
-                questPool = mediumQuests;
+                questPoolIds.Clear();
+                mediumQuests.ForEach(element => questPoolIds.Add(element.id));
             }
-            else if (numberOfDoneQuests % questsPerDifficutly == 0 && currentQuest.difficulty == "Medium")
+            else if (numberOfDoneQuests % questsPerDifficutly == 0 && findCurrentQuest().difficulty == "Medium")
             {
-                questPool = hardQuests;
+                questPoolIds.Clear();
+                hardQuests.ForEach(element => questPoolIds.Add(element.id));
             }
-            else if (numberOfDoneQuests % questsPerDifficutly == 0 && currentQuest.difficulty == "Hard")
+            else if (numberOfDoneQuests % questsPerDifficutly == 0 && findCurrentQuest().difficulty == "Hard")
             {
-                UIMenu.Instance.NewNotification("Quest completed: " + currentQuest.questName + System.Environment.NewLine + "You have completed all the quests!");
+                UIMenu.Instance.NewNotification("Quest completed: " + findCurrentQuest().questName + System.Environment.NewLine + "You have completed all the quests!");
                 questsCompleted = true;
                 return;
             }
 
-            currentQuest = questPool[Random.Range(0, questPool.Count)];
+            currentQuestId = questPoolIds[Random.Range(0, questPoolIds.Count)];
             if(!questsCompleted)
-                UIMenu.Instance.NewNotification("Quest completed: " + previousQuest.questName + System.Environment.NewLine + "Current quest: " + currentQuest.questName + System.Environment.NewLine + currentQuest.description);
+                UIMenu.Instance.NewNotification("Quest completed: " + previousQuest.questName + System.Environment.NewLine + "Current quest: " + findCurrentQuest().questName + System.Environment.NewLine + findCurrentQuest().description);
         }
+    }
+///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    class Data
+    {
+        public int currentQuestId;
+        public int numberOfDoneQuests;
+        public List<int> questPoolIds;
+        public bool questsCompleted;
+
+        public Data(int currentQuestId, int numberOfDoneQuests, List<int> questPoolIds, bool questsCompleted)
+        {
+           this.currentQuestId = currentQuestId;
+           this.numberOfDoneQuests = numberOfDoneQuests;
+           this.questPoolIds = questPoolIds;
+           this.questsCompleted = questsCompleted;
+        }
+    }
+
+    Data data;
+    
+    public string DataToJson(){
+        Data data = new Data(currentQuestId, numberOfDoneQuests, questPoolIds, questsCompleted);
+        return JsonUtility.ToJson(data);
+    }
+    
+    public void FromJson(string json){
+        data = JsonUtility.FromJson<Data>(json);
+        SetData(data.currentQuestId, data.numberOfDoneQuests, data.questPoolIds, data.questsCompleted);
+    }
+    
+    public string GetFileName(){
+        return "QuestManager.json";
+    }
+    
+    void SetData(int currentQuestId, int numberOfDoneQuests, List<int> questPoolIds, bool questsCompleted){ 
+        
+           this.currentQuestId = currentQuestId;
+           this.numberOfDoneQuests = numberOfDoneQuests;
+           this.questPoolIds = questPoolIds;
+           this.questsCompleted = questsCompleted;
     }
 }

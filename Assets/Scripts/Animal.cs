@@ -40,7 +40,6 @@ public class Animal : Placeable
     public float restroomNeedsDetriment = 0.25f;
     public float happinessDetriment = 0.25f;
     public float healthDetriment = 0.25f;
-    //age, gender, pregnancy
 
     public bool isSick = false;
     public bool isGettingHealed = false;
@@ -49,6 +48,8 @@ public class Animal : Placeable
     public string action = "";
     public AnimalVisitable destinationVisitable;
     bool isEating = false;
+
+    //age, sex, pregnancy, die!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     public override void Place(Vector3 mouseHit)
     {
@@ -108,7 +109,8 @@ public class Animal : Placeable
 
     public override void Remove()
     {
-        exhibit.RemoveAnimal(this);
+        if (exhibit != null)
+            exhibit.RemoveAnimal(this);
         VisitorManager.instance.DecreaseAnimalBonus(this);
         ZooManager.instance.ChangeMoney(placeablePrice * 0.5f * health / 100);
         if (currentPlacingPriceInstance != null)
@@ -143,14 +145,18 @@ public class Animal : Placeable
             thirst = thirst > thirstDetriment ? thirst - thirstDetriment : 0;
             restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
 
-            if (exhibit.gridList.Count < requiredExhibitSpace || exhibit.gridList.Count < exhibit.occupiedSpace)
-                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) : 0;
+            float foliageBonus = 1;
+            if (exhibit != null)
+                foliageBonus = Mathf.Sqrt(exhibit.foliages.Count + 1);
+
+            if (exhibit != null && (exhibit.gridList.Count < requiredExhibitSpace || exhibit.gridList.Count < exhibit.occupiedSpace))
+                happiness = happiness > happinessDetriment / foliageBonus ? happiness - happinessDetriment / foliageBonus : 0;
             if (hunger < 33)
-                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) : 0;
+                happiness = happiness > happinessDetriment / foliageBonus ? happiness - happinessDetriment / foliageBonus : 0;
             if (thirst < 33)
-                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) : 0;
+                happiness = happiness > happinessDetriment / foliageBonus ? happiness - happinessDetriment / foliageBonus : 0;
             if (health < 33)
-                happiness = happiness > happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) ? happiness - happinessDetriment / Mathf.Sqrt(exhibit.foliages.Count + 1) : 0;
+                happiness = happiness > happinessDetriment / foliageBonus ? happiness - happinessDetriment / foliageBonus : 0;
 
             if (hunger < 20)
                 health = health > healthDetriment ? health - healthDetriment : 0;
@@ -158,15 +164,15 @@ public class Animal : Placeable
                 health = health > healthDetriment ? health - healthDetriment : 0;
             if (happiness < 20)
                 health = health > healthDetriment ? health - healthDetriment : 0;
-            if (exhibit.animalDroppings.Count > exhibit.gridList.Count)
+            if (exhibit != null && exhibit.animalDroppings.Count > exhibit.gridList.Count)
                 health = health > healthDetriment ? health - healthDetriment : 0;
             if (isSick)
                 health = health > healthDetriment * 5 ? health - healthDetriment * 5 : 0;
 
             if (hunger > 75 && thirst > 75 && health > 75)
-                happiness = happiness + happinessDetriment * Mathf.Sqrt(exhibit.foliages.Count + 1) > 100 ? 100 : happiness + happinessDetriment * Mathf.Sqrt(exhibit.foliages.Count + 1);
+                happiness = happiness + happinessDetriment * foliageBonus > 100 ? 100 : happiness + happinessDetriment * foliageBonus;
 
-            if (restroomNeeds <= 0)
+            if (exhibit != null && restroomNeeds <= 0)
             {
                 Poop();
             }
@@ -195,6 +201,13 @@ public class Animal : Placeable
 
         if (placed)
         {
+            if (exhibit == null && GridManager.instance.GetGrid(transform.position).isExhibit)
+            {
+                exhibit = GridManager.instance.GetGrid(transform.position).exhibit;
+                exhibit.AddAnimal(this);
+                ChooseDestination();
+            }
+
             animator.SetFloat("vertical", agent.velocity.magnitude / agent.speed);
             if (atDestination)
             {
@@ -232,12 +245,12 @@ public class Animal : Placeable
             }
             else if (agent.velocity == Vector3.zero)
             {
-                if (!GridManager.instance.GetGrid(transform.position).isExhibit)
-                {
-                    agent.enabled = false;
-                    transform.position = new Vector3(destination.x, destination.y, destination.z);
-                    agent.enabled = true;
-                }
+                //if (!GridManager.instance.GetGrid(transform.position).isExhibit)
+                //{
+                //    agent.enabled = false;
+                //    transform.position = new Vector3(destination.x, destination.y, destination.z);
+                //    agent.enabled = true;
+                //}
 
                 animator.SetFloat("vertical", 0);
                 time += Time.deltaTime;
@@ -281,23 +294,29 @@ public class Animal : Placeable
                 }
                 break;
             case "wander":
-                destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                if (exhibit != null)
+                    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                else
+                    destinationGrid = GridManager.instance.grids[UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth), UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth)];
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
                 destinationVisitable = null;
                 break;
             default:
-                destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                if (exhibit != null)
+                    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                else
+                    destinationGrid = GridManager.instance.grids[UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth), UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth)];
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
                 destinationVisitable = null;
                 break;
         }
 
-        if (!GridManager.instance.GetGrid(transform.position).isExhibit)
-        {
-            agent.enabled = false;
-            transform.position = new Vector3(destination.x, destination.y, destination.z);
-            agent.enabled = true;
-        }
+        //if (!GridManager.instance.GetGrid(transform.position).isExhibit)
+        //{
+        //    agent.enabled = false;
+        //    transform.position = new Vector3(destination.x, destination.y, destination.z);
+        //    agent.enabled = true;
+        //}
 
         agent.SetDestination(destination);
         atDestination = false;
@@ -312,12 +331,12 @@ public class Animal : Placeable
         var probabilities = new List<(string action, float probability)>();
         float sum = 0;
 
-        if (exhibit.food > 0)
+        if (exhibit != null && exhibit.food > 0)
         {
             sum += (100 - hunger);
             probabilities.Add(("food", sum));
         }
-        if (exhibit.water > 0)
+        if (exhibit != null && exhibit.water > 0)
         {
             sum += (100 - thirst);
             probabilities.Add(("drink", sum));

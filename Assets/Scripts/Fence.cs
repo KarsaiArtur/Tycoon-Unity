@@ -19,7 +19,8 @@ public class Fence : Placeable
 
     public override void Place(Vector3 mouseHit)
     {
-        base.Place(mouseHit);
+        if (!playerControl.deleting)
+            base.Place(mouseHit);
 
         Vector3 position = new Vector3(playerControl.Round(mouseHit.x) + curOffsetX, mouseHit.y + 1.5f, playerControl.Round(mouseHit.z) + curOffsetZ);
 
@@ -84,14 +85,15 @@ public class Fence : Placeable
     public override void FinalPlace()
     {
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
-        gridManager.grids[(int)grid1.coords[0].x - gridManager.elementWidth, (int)grid1.coords[0].z - gridManager.elementWidth].neighbours[(timesRotated + 2) % 4] = null;
-        gridManager.grids[(int)grid2.coords[0].x - gridManager.elementWidth, (int)grid2.coords[0].z - gridManager.elementWidth].neighbours[timesRotated] = null;
+        grid1.neighbours[(timesRotated + 2) % 4] = null;
+        grid2.neighbours[timesRotated] = null;
 
         if (BFS(grid1, grid2) != null)
         {
             HashSet<Grid> tempGrids = BFS(grid1, gridManager.startingGrid);
             GameObject gateInstance = Instantiate(playerControl.gates[playerControl.fenceIndex], playerControl.m_Selected.transform.position, transform.rotation);
             Exhibit exhibit = gateInstance.AddComponent<Exhibit>();
+            exhibit.timesRotated = timesRotated;
             CreateExhibitWindow(exhibit);
             //UnityEditorInternal.ComponentUtility.MoveComponentUp(exhibit);
             //emiatt nem lehet buildelni
@@ -114,12 +116,16 @@ public class Fence : Placeable
                     exhibit.entranceGrid = grid2.trueNeighbours[timesRotated % 4];
                 }
             }
-            exhibit.ClickedOn();
-            var placeable = gateInstance.GetComponent<Placeable>();
-            placeable.placeablePrice = placeablePrice;
-            placeable.Place(Vector3.zero);
-            placeable.Paid();
-            ZooManager.instance.ChangeMoney(placeablePrice);
+
+            if (!playerControl.deleting)
+            {
+                exhibit.ClickedOn();
+                var placeable = gateInstance.GetComponent<Placeable>();
+                placeable.placeablePrice = placeablePrice;
+                placeable.Place(Vector3.zero);
+                placeable.Paid();
+                ZooManager.instance.ChangeMoney(placeablePrice);
+            }
             DestroyPlaceable();
         }
     }
@@ -229,6 +235,47 @@ public class Fence : Placeable
 
     public override void Remove()
     {
+        grid1.neighbours[(timesRotated + 2) % 4] = grid2;
+        grid2.neighbours[timesRotated] = grid1;
 
+        if (grid1.isExhibit)
+        {
+            var pos1 = grid1.exhibit.gameObject.transform.position;
+            var rotated1 = grid1.exhibit.timesRotated;
+            grid1.exhibit.exitGrid.neighbours[(grid1.exhibit.timesRotated + 2) % 4] = grid1.exhibit.entranceGrid;
+            grid1.exhibit.entranceGrid.neighbours[grid1.exhibit.timesRotated] = grid1.exhibit.exitGrid;
+            grid1.exhibit.Delete();
+
+            if (grid2.isExhibit)
+            {
+                var pos2 = grid2.exhibit.gameObject.transform.position;
+                var rotated2 = grid2.exhibit.timesRotated;
+                grid2.exhibit.Delete();
+                RemoveHelper(pos2, rotated2);
+            }
+
+            RemoveHelper(pos1, rotated1);
+        }
+        else if (grid2.isExhibit)
+        {
+            var pos2 = grid2.exhibit.gameObject.transform.position;
+            var rotated2 = grid2.exhibit.timesRotated;
+            grid2.exhibit.Delete();
+            RemoveHelper(pos2, rotated2);
+        }
+
+        Destroy(gameObject);
+    }
+
+    private void RemoveHelper(Vector3 pos, int rotated)
+    {
+        playerControl.m_Selected = Instantiate(playerControl.fences[0], pos, new Quaternion(0, 0, 0, 0));
+        for (int i = 0; i < rotated; i++)
+            playerControl.m_Selected.RotateY(90);
+        playerControl.m_Selected.Place(pos);
+        playerControl.m_Selected.SetTag("Placed");
+        playerControl.m_Selected.ChangeMaterial(0);
+        playerControl.m_Selected.FinalPlace();
+        playerControl.m_Selected = null;
     }
 }

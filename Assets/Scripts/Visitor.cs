@@ -112,7 +112,7 @@ public class Visitor : MonoBehaviour, Clickable
             {
                 ChooseDestination();
             }
-            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(destination.x, destination.z)) <= 0.1)
+            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1)
             {
                 agent.isStopped = true;
                 time += Time.deltaTime;
@@ -188,7 +188,7 @@ public class Visitor : MonoBehaviour, Clickable
                 tempVisitables.AddRange(GridManager.instance.reachableHappinessBuildings);
 
                 destinationVisitable = ChooseCloseDestination(tempVisitables);
-                var destinationExhibit = destinationVisitable as Exhibit; //castolás exhibitté
+                var destinationExhibit = destinationVisitable as Exhibit; //castolï¿½s exhibittï¿½
                 if (destinationExhibit != null) // ha exhibit
                     unvisitedExhibits.Remove((Exhibit)destinationVisitable);
                 break;

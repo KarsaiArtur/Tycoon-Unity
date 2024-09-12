@@ -32,4 +32,9 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable
                 Destroy(gameObject);
         }
     }
+
+    public void Delete()
+    {
+        Destroy(gameObject);
+    }
 }

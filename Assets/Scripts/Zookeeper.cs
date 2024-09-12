@@ -176,6 +176,12 @@ public class Zookeeper : Staff
         return jobAtExhibit;
     }
 
+    public override void SetToDefault()
+    {
+        base.SetToDefault();
+        exhibitToWorkAt = null;
+    }
+
     public override void Remove()
     {
         if (exhibitToWorkAt != null)

@@ -1,10 +1,12 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//[RequireComponent(typeof(MeshFilter))]
-//[RequireComponent(typeof(MeshRenderer))]
-public class GridManager : MonoBehaviour
+/////Saveable Attributes, DONT DELETE
+//////Vector3[] coords/////
+
+public class GridManager : MonoBehaviour, Saveable
 {
     public static GridManager instance;
     public int terrainWidth, elementWidth;
@@ -23,9 +25,10 @@ public class GridManager : MonoBehaviour
     public float edgeHeight;
     private PlayerControl pControl;
     bool initializing = true;
-
     public bool edgeChanged = false;
     public Grid[,] grids;
+    public Grid startingGrid;
+
     public List<Bench> benches = new List<Bench>();
     public List<Exhibit> exhibits = new List<Exhibit>();
     public List<Building> buildings = new List<Building>();
@@ -38,7 +41,6 @@ public class GridManager : MonoBehaviour
     public List<Visitable> reachableHappinessPlaces = new List<Visitable>();
     public List<Visitable> reachableRestroomBuildings = new List<Visitable>();
     public List<Visitable> reachableHappinessBuildings = new List<Visitable>();
-    public Grid startingGrid;
 
     void Awake()
     {
@@ -48,7 +50,15 @@ public class GridManager : MonoBehaviour
     void Start()
     {
         instance = this;
-        CreateCoords();
+        terrainWidth += elementWidth * 2;
+
+        if(LoadMenu.loadedGame != null){
+            LoadMenu.instance.LoadData(this);
+        } else{
+            CreateCoords();
+        }
+
+        
         CreateTerrainElements();
 
         initializing = true;
@@ -71,6 +81,8 @@ public class GridManager : MonoBehaviour
         initializing = false;
         edgeChanged = false;
     }
+
+
 
     public void InitializeGrids()
     {
@@ -133,7 +145,6 @@ public class GridManager : MonoBehaviour
 
     private void CreateCoords()
     {
-        terrainWidth += elementWidth * 2;
 
         coords = new Vector3[(terrainWidth + 1) * (terrainWidth + 1)];
 
@@ -434,5 +445,40 @@ public class GridManager : MonoBehaviour
             }
         }
         return false;
+    }
+
+    ///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    class Data
+    {
+        public Vector3[] coords;
+
+        public Data(Vector3[] coords)
+        {
+           this.coords = coords;
+        }
+    }
+
+    Data data;
+    
+    public string DataToJson(){
+        Data data = new Data(coords);
+        return JsonUtility.ToJson(data);
+    }
+    
+    public void FromJson(string json){
+        data = JsonUtility.FromJson<Data>(json);
+        SetData(data.coords);
+    }
+    
+    public string GetFileName(){
+        return "GridManager.json";
+    }
+    
+    void SetData(Vector3[] coords){ 
+        
+           this.coords = coords;
     }
 }

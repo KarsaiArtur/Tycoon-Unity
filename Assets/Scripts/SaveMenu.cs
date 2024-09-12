@@ -20,6 +20,8 @@ public class SaveMenu : MonoBehaviour
     public void SaveGame(){
         SaveData(text.text, CalendarManager.instance);
         SaveData(text.text, ZooManager.instance);
+        SaveData(text.text, GridManager.instance);
+        SaveData(text.text, QuestManager.instance);
         DestroyWindow();
     }
 

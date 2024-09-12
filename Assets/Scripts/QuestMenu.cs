@@ -49,10 +49,10 @@ public class QuestMenu : ExtraMenu
     public override void UpdateWindow()
     {
         progression.text = questManager.numberOfDoneQuests + "/" + (questManager.questsPerDifficutly * 3);
-        questName.text = questManager.currentQuest.questName;
-        difficulty.text = questManager.currentQuest.difficulty;
-        description.text = questManager.currentQuest.description;
-        currentQuestProgression.text = questManager.currentQuest.progression.Invoke() + "/" + questManager.currentQuest.goal;
-        reward.text = "Reward: "+questManager.currentQuest.reward+" $";
+        questName.text = questManager.findCurrentQuest().questName;
+        difficulty.text = questManager.findCurrentQuest().difficulty;
+        description.text = questManager.findCurrentQuest().description;
+        currentQuestProgression.text = questManager.findCurrentQuest().progression.Invoke() + "/" + questManager.findCurrentQuest().goal;
+        reward.text = "Reward: "+questManager.findCurrentQuest().reward+" $";
     }
 }

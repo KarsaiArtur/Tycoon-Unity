@@ -5,6 +5,9 @@ using System.Linq;
 using TMPro;
 using UnityEngine;
 
+/////Saveable Attributes, DONT DELETE
+//////float money,float currentEntranceFee,int allTimeVisitorCount,float allTimeMoneyEarned,List<float> latestVisitorHappinesses,float reputation/////
+
 public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
 {
     public static ZooManager instance;
@@ -22,53 +25,17 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     int listSizeLimit = 25;
     public float reputation = 75;
 
-    class Data
-    {
-        public float money;
-        public float currentEntranceFee;
-        public int allTimeVisitorCount;
-        public float allTimeMoneyEarned;
-        public List<float> latestVisitorHappinesses;
-        public float reputation;
 
-        public Data(float money, float currentEntranceFee, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation)
-        {
-            this.money = money;
-            this.currentEntranceFee = currentEntranceFee;
-            this.allTimeVisitorCount = allTimeVisitorCount;
-            this.allTimeMoneyEarned = allTimeMoneyEarned;
-            this.latestVisitorHappinesses = latestVisitorHappinesses;
-            this.reputation = reputation;
-        }
-    }
-
-    public string DataToJson(){
-        Data data = new Data(money, currentEntranceFee, allTimeVisitorCount, allTimeMoneyEarned, latestVisitorHappinesses, reputation);
-        return JsonUtility.ToJson(data);
-    }
-
-    public void FromJson(string json){
-        Data data = JsonUtility.FromJson<Data>(json);
-        SetData(data.money, data.currentEntranceFee, data.allTimeVisitorCount, data.allTimeMoneyEarned, data.latestVisitorHappinesses, data.reputation);
-    }
-
-    public string GetFileName(){
-        return "ZooManager.json";
-    }
-
-    void SetData(float money, float currentEntranceFee, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation){ 
-        this.money = money;
-        this.currentEntranceFee = currentEntranceFee;
-        this.allTimeVisitorCount = allTimeVisitorCount;
-        this.allTimeMoneyEarned = allTimeMoneyEarned;
-        this.latestVisitorHappinesses = latestVisitorHappinesses;
-        this.reputation = reputation;
+    public void Awake(){
+        instance = this;
     }
 
     public void Start()
     {
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
-        instance = this;
+        if(LoadMenu.loadedGame != null){
+            LoadMenu.instance.LoadData(this);
+        }
         moneyText = GameObject.Find("MoneyText").GetComponent<TextMeshProUGUI>();
         moneyText.text = money.ToString() + " $";
 
@@ -182,4 +149,54 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public void AddVisitor(Visitor visitor) { }
 
     public void RemoveVisitor(Visitor visitor) { }
+    
+    ///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    class Data
+    {
+        public float money;
+        public float currentEntranceFee;
+        public int allTimeVisitorCount;
+        public float allTimeMoneyEarned;
+        public List<float> latestVisitorHappinesses;
+        public float reputation;
+
+        public Data(float money, float currentEntranceFee, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation)
+        {
+           this.money = money;
+           this.currentEntranceFee = currentEntranceFee;
+           this.allTimeVisitorCount = allTimeVisitorCount;
+           this.allTimeMoneyEarned = allTimeMoneyEarned;
+           this.latestVisitorHappinesses = latestVisitorHappinesses;
+           this.reputation = reputation;
+        }
+    }
+
+    Data data;
+    
+    public string DataToJson(){
+        Data data = new Data(money, currentEntranceFee, allTimeVisitorCount, allTimeMoneyEarned, latestVisitorHappinesses, reputation);
+        return JsonUtility.ToJson(data);
+    }
+    
+    public void FromJson(string json){
+        data = JsonUtility.FromJson<Data>(json);
+        SetData(data.money, data.currentEntranceFee, data.allTimeVisitorCount, data.allTimeMoneyEarned, data.latestVisitorHappinesses, data.reputation);
+    }
+    
+    public string GetFileName(){
+        return "ZooManager.json";
+    }
+    
+    void SetData(float money, float currentEntranceFee, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation){ 
+        
+           this.money = money;
+           this.currentEntranceFee = currentEntranceFee;
+           this.allTimeVisitorCount = allTimeVisitorCount;
+           this.allTimeMoneyEarned = allTimeMoneyEarned;
+           this.latestVisitorHappinesses = latestVisitorHappinesses;
+           this.reputation = reputation;
+    }
 }

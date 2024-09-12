@@ -3,6 +3,9 @@ using System;
 using TMPro;
 using System.IO;
 
+/////Saveable Attributes, DONT DELETE
+//////DateTime currentDate/////
+
 public class CalendarManager : MonoBehaviour, Saveable
 {
     public static CalendarManager instance;
@@ -14,41 +17,15 @@ public class CalendarManager : MonoBehaviour, Saveable
     public DateTime startingDate = new DateTime(2024, 1, 1, 0, 0, 0);
     int timer = 0;
 
-        
-
-    class Data
-    {
-        public long currentDateInTicks;
-
-        public Data(DateTime date)
-        {
-            currentDateInTicks = date.Ticks;
-        }
-    }
-
-    public string DataToJson(){
-        Data data = new Data(currentDate);
-        return JsonUtility.ToJson(data);
-    }
-
-    public void FromJson(string json){
-        Data data = JsonUtility.FromJson<Data>(json);
-        SetData(new DateTime(data.currentDateInTicks));
-    }
-
-    public string GetFileName(){
-        return "CalendarManager.json";
-    }
-
-    void SetData(DateTime currentDate){ 
-        this.currentDate = currentDate;
-    }
-
 
     private void Start()
     {
         instance = this;
-        SetCurrentDate(startingDate);
+        if(LoadMenu.loadedGame != null){
+            LoadMenu.instance.LoadData(this);
+        } else{
+            SetCurrentDate(startingDate);
+        }
         SetDate();
     }
 
@@ -99,5 +76,40 @@ public class CalendarManager : MonoBehaviour, Saveable
     void SetDate()
     {
         dateText.text = currentDate.ToString("yyyy. MM. dd.");
+    }
+
+    ///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    class Data
+    {
+        public long currentDate;
+
+        public Data(DateTime currentDate)
+        {
+           this.currentDate = currentDate.Ticks;
+        }
+    }
+
+    Data data;
+    
+    public string DataToJson(){
+        Data data = new Data(currentDate);
+        return JsonUtility.ToJson(data);
+    }
+    
+    public void FromJson(string json){
+        data = JsonUtility.FromJson<Data>(json);
+        SetData(new DateTime(data.currentDate));
+    }
+    
+    public string GetFileName(){
+        return "CalendarManager.json";
+    }
+    
+    void SetData(DateTime currentDate){ 
+        
+           this.currentDate = currentDate;
     }
 }

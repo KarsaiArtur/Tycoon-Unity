@@ -109,8 +109,7 @@ public class PlayerControl : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.F))
         {
             deleting = !deleting;
-            if (deleting)
-                StartCoroutine(Navmeshreload());
+            ReloadGuestNavMesh();
         }
 
         if (!stopMovement)
@@ -138,22 +137,36 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    IEnumerator Navmeshreload()
-    {
-        while (deleting)
-        {
-            ReloadGuestNavMesh();
-            yield return new WaitForSeconds(1);
-        }
-    }
-
     public void PlaceObject()
     {
         //if (Input.GetMouseButtonDown(1))
         //{
-        //    Destroy(m_Selected.gameObject);
-        //    m_Selected = null;
-        //    objectTimesRotated = 0;
+        //    var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
+        //    RaycastHit[] hits = Physics.RaycastAll(ray);
+        //    foreach (RaycastHit hit in hits)
+        //    {
+        //        if (hit.collider.CompareTag("Terrain"))
+        //        {
+        //            Debug.Log("self " + GridManager.instance.GetGrid(hit.point).coords[0]);
+        //            if (GridManager.instance.GetGrid(hit.point).neighbours[0] == null)
+        //                Debug.Log("0 null");
+        //            else
+        //                Debug.Log("0 " + GridManager.instance.GetGrid(hit.point).neighbours[0].coords[0]);
+        //            if (GridManager.instance.GetGrid(hit.point).neighbours[1] == null)
+        //                Debug.Log("1 null");
+        //            else
+        //                Debug.Log("1 " + GridManager.instance.GetGrid(hit.point).neighbours[1].coords[0]);
+        //            if (GridManager.instance.GetGrid(hit.point).neighbours[2] == null)
+        //                Debug.Log("2 null");
+        //            else
+        //                Debug.Log("2 " + GridManager.instance.GetGrid(hit.point).neighbours[2].coords[0]);
+        //            if (GridManager.instance.GetGrid(hit.point).neighbours[3] == null)
+        //                Debug.Log("3 null");
+        //            else
+        //                Debug.Log("3 " + GridManager.instance.GetGrid(hit.point).neighbours[3].coords[0]);
+        //            Debug.Log(GridManager.instance.GetGrid(hit.point).isExhibit);
+        //        }
+        //    }
         //}
         if (Input.GetMouseButtonDown(0))
         {
@@ -660,6 +673,7 @@ public class PlayerControl : MonoBehaviour
                 {
                     var placeable = hit.collider.GetComponentInParent<Placeable>();
                     placeable.Remove();
+                    ReloadGuestNavMesh();
                 }
             }
         }
