@@ -171,6 +171,14 @@ public class Building : Placeable, Visitable
         {
             if (child.tag.Equals("Frame"))
             {
+                foreach(var renderer in child.GetComponentsInChildren<Renderer>()){
+                    if(renderer != null){
+                        renderers.RemoveAll(element => element.name.Equals(renderer.name));
+                        defaultMaterials.RemoveAll(element => element.rendererHashCode == renderer.GetHashCode());
+                    }
+                }
+                
+            
                 Destroy(child.gameObject);
                 break;
             }
@@ -180,16 +188,13 @@ public class Building : Placeable, Visitable
 
     public override void Remove()
     {
+        base.Remove();
+
         ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
         RemoveFromLists();
         foreach (var visitor in visitors)
-        {
             visitor.ChooseDestination();
-        }
-        if (currentPlacingPriceInstance != null)
-        {
-            Destroy(currentPlacingPriceInstance.gameObject);
-        }
+            
         Destroy(gameObject);
     }
 

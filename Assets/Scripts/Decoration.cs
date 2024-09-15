@@ -61,6 +61,8 @@ public class Decoration : Placeable
 
     public override void Remove()
     {
+        base.Remove();
+
         Destroy(gameObject);
     }
 }

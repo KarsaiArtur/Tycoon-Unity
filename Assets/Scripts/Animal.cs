@@ -17,39 +17,48 @@ public class Animal : Placeable
     public bool atDestination = true;
     bool placed = false;
     bool collided = false;
-    float terraintHeight;
+    float terraintHeight = -101;
     public AnimalFood foodPrefab;
     public float reputationBonus;
 
     float time = 0;
-    float timeGoal = 0;
-    float stuckTime = 0;
-    bool destinationReached = false;
-    Vector3 destination;
+float timeGoal = 0;
+float stuckTime = 0;
+public bool destinationReached = false;
+Vector3 destination;
+public string action = "";
+public AnimalVisitable destinationVisitable;
+bool isEating = false;
 
-    DateTime prevDay;
+public float hunger = 100;
+public float thirst = 100;
+public float restroomNeeds = 100;
+public float happiness = 100;
+public float health = 100;
 
-    public float hunger = 100;
-    public float thirst = 100;
-    public float restroomNeeds = 100;
-    public float happiness = 100;
-    public float health = 100;
+public float hungerDetriment = 0.25f;
+public float thirstDetriment = 0.5f;
+public float restroomNeedsDetriment = 0.25f;
+public float happinessDetriment = 0.25f;
+public float healthDetriment = 0.25f;
 
-    public float hungerDetriment = 0.25f;
-    public float thirstDetriment = 0.5f;
-    public float restroomNeedsDetriment = 0.25f;
-    public float happinessDetriment = 0.25f;
-    public float healthDetriment = 0.25f;
+DateTime prevDay;
+public bool isSick = false;
+public bool isGettingHealed = false;
+public float requiredExhibitSpace = 1;
+public float age = 0;
+public int lifeExpectancy = 50;
+DateTime birthDate;
 
-    public bool isSick = false;
-    public bool isGettingHealed = false;
-    public float requiredExhibitSpace = 1;
-
-    public string action = "";
-    public AnimalVisitable destinationVisitable;
-    bool isEating = false;
-
-    //age, sex, pregnancy, die!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+public bool isMale = true;
+public int reproductionAgeMonth = 1;
+public int pregnancyDurationMonth = 1;
+public bool isPregnant = false;
+public int pregnancyTimeMonth = 0;
+public int averageNumberOfBabies = 1;
+int dayOfConception = 0;
+public int fertility = 100;
+Animal matingPartner;
 
     public override void Place(Vector3 mouseHit)
     {
@@ -97,11 +106,16 @@ public class Animal : Placeable
 
     public override void FinalPlace()
     {
-        transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
+        if (terraintHeight > -100)
+            transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
+        else
+            transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         exhibit = gridManager.GetGrid(transform.position).exhibit;
         exhibit.AddAnimal(this);
         agent.Warp(transform.position);
         placed = true;
+        birthDate = CalendarManager.instance.currentDate;
+        age = UnityEngine.Random.Range((int)Math.Ceiling((double)reproductionAgeMonth / 12), (int)Mathf.Floor((float)lifeExpectancy / 5));
 
         VisitorManager.instance.CalculateAnimalBonus(this);
         StartCoroutine(DecreaseNeeds());
@@ -109,10 +123,14 @@ public class Animal : Placeable
 
     public override void Remove()
     {
+        base.Remove();
+
+        ZooManager.instance.ChangeMoney(-placeablePrice * 0.2f);
+        ZooManager.instance.ChangeMoney(placeablePrice * 0.5f * health / 100 * (1 - age / lifeExpectancy));
+
         if (exhibit != null)
             exhibit.RemoveAnimal(this);
         VisitorManager.instance.DecreaseAnimalBonus(this);
-        ZooManager.instance.ChangeMoney(placeablePrice * 0.5f * health / 100);
         if (currentPlacingPriceInstance != null)
         {
             Destroy(currentPlacingPriceInstance.gameObject);
@@ -134,6 +152,8 @@ public class Animal : Placeable
         happiness = UnityEngine.Random.Range(50, 100);
         health = UnityEngine.Random.Range(75, 100);
 
+        fertility = UnityEngine.Random.Range(50, 100);
+
         prevDay = CalendarManager.instance.currentDate;
     }
 
@@ -142,6 +162,8 @@ public class Animal : Placeable
         while (true)
         {
             hunger = hunger > hungerDetriment ? hunger - hungerDetriment : 0;
+            if (isPregnant)
+                hunger = hunger > hungerDetriment ? hunger - hungerDetriment : 0;
             thirst = thirst > thirstDetriment ? thirst - thirstDetriment : 0;
             restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
 
@@ -172,12 +194,22 @@ public class Animal : Placeable
             if (hunger > 75 && thirst > 75 && health > 75)
                 happiness = happiness + happinessDetriment * foliageBonus > 100 ? 100 : happiness + happinessDetriment * foliageBonus;
 
+            if (health <= 0)
+                Die();
+
             if (exhibit != null && restroomNeeds <= 0)
-            {
                 Poop();
-            }
+
             yield return new WaitForSeconds(1);
         }
+    }
+
+    public void Die()
+    {
+        Remove();
+        Debug.Log(placeableName + " died");
+        //notification
+        //corpse?
     }
 
     void Poop()
@@ -185,6 +217,18 @@ public class Animal : Placeable
         var animalDropping = Instantiate(playerControl.animalDroppingPrefab, transform.position, transform.rotation);
         exhibit.animalDroppings.Add(animalDropping);
         restroomNeeds = UnityEngine.Random.Range(75f, 100f);
+    }
+
+    void Mate()
+    {
+        if (!isMale)
+        {
+            isPregnant = true;
+            pregnancyTimeMonth = 0;
+            dayOfConception = CalendarManager.instance.currentDate.Day;
+            Debug.Log(placeableName + " is pregnant");
+            //notification
+        }
     }
 
     public void Update()
@@ -196,6 +240,52 @@ public class Animal : Placeable
             {
                 isSick = true;
                 healthDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
+            }
+
+            if (birthDate.Day == CalendarManager.instance.currentDate.Day)
+            {
+                age += 1f/12f;
+                Debug.Log("Age: " + age);
+                if (UnityEngine.Random.Range(lifeExpectancy - lifeExpectancy / 10, lifeExpectancy + lifeExpectancy / 5) < age)
+                    Die();
+            }
+
+            if (isPregnant && dayOfConception == CalendarManager.instance.currentDate.Day)
+            {
+                pregnancyTimeMonth++;
+                if (pregnancyTimeMonth >= pregnancyDurationMonth)
+                {
+                    var numberOfBabies = UnityEngine.Random.Range((int)Math.Ceiling((double)averageNumberOfBabies - averageNumberOfBabies / 2), (int)Math.Ceiling((double)averageNumberOfBabies + averageNumberOfBabies / 2) + 1);
+                    for (int i = 0; i < numberOfBabies; i++)
+                    {
+                        var baby = Instantiate(this, transform.position, transform.rotation);
+                        baby.isMale = UnityEngine.Random.Range(0, 2) == 0;
+                        baby.FinalPlace();
+                        age = 0;
+                        Debug.Log(numberOfBabies + " " + placeableName + "babies born");
+                        //notification
+                        //anination?
+                    }
+                    isPregnant = false;
+                }
+            }
+
+            if (exhibit != null && !isMale && !isPregnant && action != "mating" && age * 12 >= reproductionAgeMonth && happiness >= 80)
+            {
+                var potentialMates = exhibit.animals.Where(animal => animal.placeableName == placeableName && animal.isMale && animal.age * 12 >= animal.reproductionAgeMonth && animal.happiness >= 80);
+                if (potentialMates.Any())
+                {
+                    matingPartner = potentialMates.ElementAt(UnityEngine.Random.Range(0, potentialMates.Count()));
+                    matingPartner.matingPartner = this;
+                    Debug.Log(matingPartner);
+                    if (UnityEngine.Random.Range(0, fertility + matingPartner.fertility) == 1)
+                    {
+                        action = "mating";
+                        matingPartner.action = "mating";
+                        ChooseDestination();
+                        matingPartner.ChooseDestination();
+                    }
+                }
             }
         }
 
@@ -235,12 +325,32 @@ public class Animal : Placeable
                 {
                     transform.LookAt(destination);
                 }
+                if (action == "mating")
+                {
+                    Debug.Log(matingPartner);
+                    if (matingPartner.destinationReached) // valamiért NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+                    {
+                        if (!(isPregnant || matingPartner.isPregnant))
+                        {
+                            timeGoal = time + 5;
+                            Mate();
+                        }
+                        //animation?
+                    }
+                    else
+                        timeGoal = 30;
+                }
 
                 if (time > timeGoal)
                 {
                     if (destinationVisitable != null)
                         destinationVisitable.Arrived(this);
                     atDestination = true;
+                    if (isPregnant || (matingPartner != null && matingPartner.isPregnant))
+                    {
+                        matingPartner = null;
+                        matingPartner.matingPartner = null;
+                    }
                 }
             }
             else if (agent.velocity == Vector3.zero)
@@ -269,7 +379,8 @@ public class Animal : Placeable
 
     void ChooseDestination()
     {
-        ChooseDestinationType();
+        if (action != "mating")
+            ChooseDestinationType();
         Grid destinationGrid;
         int random;
         float offsetX = UnityEngine.Random.Range(0, 1.0f);
@@ -299,6 +410,14 @@ public class Animal : Placeable
                 else
                     destinationGrid = GridManager.instance.grids[UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth), UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth)];
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
+                destinationVisitable = null;
+                break;
+            case "mating":
+                if (isMale)
+                    destination = matingPartner.transform.position;
+                else
+                    destination = transform.position;
+
                 destinationVisitable = null;
                 break;
             default:

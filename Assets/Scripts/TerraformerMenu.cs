@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,13 +13,18 @@ public class TerraformerMenu : ExtraMenu
     public Slider slider;
     public TextMeshProUGUI currentSize;
     public PlayerControl playerControl;
+    public GameObject icon;
+    public GameObject terraformerIconPrefab;
 
     public void Awake()
     {
         plus.onClick.AddListener(() => ChangeValue(1));
         minus.onClick.AddListener(() => ChangeValue(-1));
+        minus.enabled = false;
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
-        playerControl.currentTerraformSize = 1;
+        icon = Instantiate(terraformerIconPrefab, Vector3.zero, Quaternion.identity);
+        icon.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform);
+        playerControl.SetTerraformerSize(1);
         playerControl.ChangeTerraformer();
     }
 
@@ -39,12 +45,22 @@ public class TerraformerMenu : ExtraMenu
             minus.enabled = true;
         }
         currentSize.SetText(slider.value + "x" + slider.value);
-        playerControl.currentTerraformSize = (int)slider.value;
+        playerControl.SetTerraformerSize((int)slider.value);
+    }
+
+    public void Update(){
+        if(icon != null){
+            icon.transform.position = new Vector2(Input.mousePosition.x + 70, Input.mousePosition.y - 45);
+        }
     }
 
     public override void Destroy()
     {
-        playerControl.ChangeTerraformer();
+        if(gameObject.active){
+            playerControl.ChangeTerraformer();
+        }
+        
+        Destroy(icon.gameObject);
         Destroy(gameObject);
     }
     public override void SetActive(bool isVisible)
@@ -53,6 +69,7 @@ public class TerraformerMenu : ExtraMenu
         {
             playerControl.ChangeTerraformer();
         }
+        icon.gameObject.SetActive(isVisible);
         gameObject.SetActive(isVisible);
     }
 

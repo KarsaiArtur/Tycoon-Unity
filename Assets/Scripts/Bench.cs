@@ -30,8 +30,15 @@ public class Bench : Placeable, Visitable
 
         foreach (var child in GetComponentsInChildren<BoxCollider>())
         {
+
             if (child.tag.Equals("Frame"))
             {
+                foreach(var renderer in child.GetComponentsInChildren<Renderer>()){
+                    if(renderer != null){
+                        renderers.RemoveAll(element => element.name.Equals(renderer.name));
+                        defaultMaterials.RemoveAll(element => element.rendererHashCode == renderer.GetHashCode());
+                    }
+                }
                 Destroy(child.gameObject);
                 break;
             }
@@ -234,6 +241,8 @@ public class Bench : Placeable, Visitable
 
     public override void Remove()
     {
+        base.Remove();
+
         GridManager.instance.benches.Remove(this);
         RemoveFromReachableLists();
         foreach (var visitor in visitors)

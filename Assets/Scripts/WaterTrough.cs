@@ -77,10 +77,11 @@ public class WaterTrough : Placeable, AnimalVisitable
 
     public override void Remove()
     {
+        base.Remove();
+
         if (exhibit != null)
-        {
             exhibit.RemoveWaterTrough(this);
-        }
+            
         Destroy(gameObject);
     }
 }

@@ -18,7 +18,7 @@ public class StaffInfoPopup : InfoPopup
         infoPanelInstance.transform.SetParent(playerControl.canvas.transform);
         infoPanelInstance.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = staff.GetName();
         infoPanelInstance.transform.GetChild(0).Find("DataPanel").Find("Fire Staff").GetComponent<Button>().onClick.AddListener(() => {
-            Destroy(staff.gameObject);
+            staff.Remove();
             DestroyPanel();
         });
         infoPanelInstance.transform.GetChild(0).Find("DataPanel").Find("Salary").GetComponent<TextMeshProUGUI>().text = "Salary: "+staff.salary+"$/Month";

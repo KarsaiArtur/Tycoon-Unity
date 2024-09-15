@@ -12,6 +12,8 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public List<GameObject> animalDroppings = new();
     public Grid exitGrid;
     public Grid entranceGrid;
+    public Grid grid1;
+    public Grid grid2;
     public int timesRotated = 0;
     PlayerControl playerControl;
     public bool isOpen = false;
@@ -286,43 +288,47 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
         waterPlaces.Remove(waterTrough);
     }
 
-    public void Delete()
+    public void Remove()
+{
+    grid1.neighbours[(timesRotated + 2) % 4] = grid2;
+    grid2.neighbours[timesRotated] = grid1;
+
+    GridManager.instance.exhibits.Remove(this);
+    RemoveFromReachableLists();
+
+    foreach (var grid in gridList)
     {
-        GridManager.instance.exhibits.Remove(this);
-        RemoveFromReachableLists();
-        foreach (var grid in gridList)
-        {
-            grid.isExhibit = false;
-            grid.exhibit = null;
-        }
-        foreach (var animal in animals)
-        {
-            animal.exhibit = null;
-        }
-        foreach (var staffMember in staff)
-        {
-            staffMember.SetToDefault();
-        }
-        foreach (var staffMember in staffAtGate)
-        {
-            staffMember.SetToDefault();
-        }
-        foreach (var visitor in visitors)
-        {
-            visitor.ChooseDestination();
-        }
-        foreach (var animalDropping in animalDroppings)
-        {
-            Destroy(animalDropping);
-        }
-        foreach (var foodPlace in foodPlaces)
-        {
-            foodPlace.Delete();
-        }
-        while (waterPlaces.Count > 0)
-        {
-            waterPlaces[0].Remove();
-        }
-        Destroy(gameObject);
+        grid.isExhibit = false;
+        grid.exhibit = null;
     }
+    foreach (var animal in animals)
+    {
+        animal.exhibit = null;
+    }
+    foreach (var staffMember in staff)
+    {
+        staffMember.SetToDefault();
+    }
+    foreach (var staffMember in staffAtGate)
+    {
+        staffMember.SetToDefault();
+    }
+    foreach (var visitor in visitors)
+    {
+        visitor.ChooseDestination();
+    }
+    foreach (var animalDropping in animalDroppings)
+    {
+        Destroy(animalDropping);
+    }
+    foreach (var foodPlace in foodPlaces)
+    {
+        foodPlace.Delete();
+    }
+    while (waterPlaces.Count > 0)
+    {
+        waterPlaces[0].Remove();
+    }
+    Destroy(gameObject);
+}
 }

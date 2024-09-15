@@ -19,7 +19,8 @@ public class UIMenu : MonoBehaviour
     public TextMeshProUGUI curName;
     public TextMeshProUGUI curPrice;
     private PlayerControl playerControl;
-    public bool isUIVisible = false;
+    public bool isMenuVisible = false;
+    public bool isExtraMenuVisible = false;
     public Transform submenuPanel;
     public Transform placeableListPanel;
     public Placeable curPlaceable;
@@ -40,17 +41,22 @@ public class UIMenu : MonoBehaviour
     public GameObject staffInfoPanelPrefab;
     public List<GameObject> exhibitCreateWindows;
 
+    const float defaultMenuButtonWidth = 137.7f;
+    const float defaultMenuButtonHeight = 100;
+    const float defaultMenuIconSize = 100;
+
+
     private void Awake()
     {
         Instance = this;
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
-        gameObject.SetActive(isUIVisible);
+        gameObject.SetActive(isMenuVisible);
         foreach(var button in menuButtons.transform.GetComponentsInChildren<Button>())
         {
             button.transform.GetComponent<Button>().onClick.AddListener(() =>
             {
                 ResetButtonOutlines(menuButtons);
-                if (isUIVisible)
+                if (isMenuVisible)
                     button.transform.GetComponent<Outline>().enabled = true;
             });
         }
@@ -60,7 +66,7 @@ public class UIMenu : MonoBehaviour
             button.transform.GetComponent<Button>().onClick.AddListener(() =>
             {
                 ResetButtonOutlines(extraMenuButtons);
-                if (isUIVisible)
+                if (isExtraMenuVisible)
                     button.transform.GetComponent<Outline>().enabled = true;
             });
         }
@@ -75,20 +81,45 @@ public class UIMenu : MonoBehaviour
     {
         DestroyPlaceables();
         DestroySubmenus();
+        RectTransform curMenuRectTransform;
+        RectTransform iconRectTransform;
         if (curMenu == newMenu)
         {
+            curMenuRectTransform = curMenu.GetComponent<RectTransform>();
+            curMenuRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, defaultMenuButtonHeight);
+            curMenuRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, defaultMenuButtonWidth);
+            iconRectTransform = curMenu.transform.GetChild(0).GetComponent<RectTransform>();
+            iconRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, defaultMenuIconSize);
+            iconRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, defaultMenuIconSize);
+
             playerControl.DestroyPlaceableInHand();
             curMenu = null;
-            isUIVisible = false;
+            isMenuVisible = false;
         }
         else
         {
+            if(curMenu != null){
+                curMenuRectTransform = curMenu.GetComponent<RectTransform>();
+                curMenuRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, defaultMenuButtonHeight);
+                curMenuRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, defaultMenuButtonWidth);
+                iconRectTransform = curMenu.transform.GetChild(0).GetComponent<RectTransform>();
+                iconRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, defaultMenuIconSize);
+                iconRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, defaultMenuIconSize);
+            }
             curMenu = newMenu;
+
+            curMenuRectTransform = curMenu.GetComponent<RectTransform>();
+            curMenuRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, defaultMenuButtonHeight*1.2f);
+            curMenuRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, defaultMenuButtonWidth*1.2f);
+            iconRectTransform = curMenu.transform.GetChild(0).GetComponent<RectTransform>();
+            iconRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, defaultMenuIconSize*1.2f);
+            iconRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, defaultMenuIconSize*1.2f);
+
             curSubMenuIndex = 0;
             SpawnSubmenus();
-            isUIVisible = true;
+            isMenuVisible = true;
         }
-        gameObject.SetActive(isUIVisible);
+        gameObject.SetActive(isMenuVisible);
     }
 
     public void SetPlaceable(int placeableIndex, int offset)
@@ -161,7 +192,7 @@ public class UIMenu : MonoBehaviour
     {
         if (curExtraMenu?.GetName() == newMenu.GetName())
         {
-            isUIVisible = !isUIVisible;
+            isExtraMenuVisible = !isExtraMenuVisible;
         }
         else
         {
@@ -169,9 +200,9 @@ public class UIMenu : MonoBehaviour
             curExtraMenu = null;
             curExtraMenu = Instantiate(newMenu, playerControl.canvas.transform.position, playerControl.canvas.transform.rotation);
             curExtraMenu.SetPosition(newMenu.transform.position);
-            isUIVisible = true;
+            isExtraMenuVisible = true;
         }
-        curExtraMenu.SetActive(isUIVisible);
+        curExtraMenu.SetActive(isExtraMenuVisible);
     }
 
     public void NewNotification(string text)

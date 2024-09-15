@@ -171,6 +171,7 @@ public class Zookeeper : Staff
             agent.SetDestination(new Vector3(destinationGrid.coords[0].x + Random.Range(0, 1.0f), destinationGrid.coords[0].y, destinationGrid.coords[0].z + Random.Range(0, 1.0f)));
         }
     }
+
     public override string GetCurrentAction()
     {
         return jobAtExhibit;
@@ -184,20 +185,23 @@ public class Zookeeper : Staff
 
     public override void Remove()
     {
+        base.Remove();
+
         if (exhibitToWorkAt != null)
         {
-            if (jobAtExhibit == "food")
+            if (jobAtExhibit == "Placing food")
             {
                 exhibitToWorkAt.isGettingFood = false;
             }
-            else if (jobAtExhibit == "water")
+            else if (jobAtExhibit == "Filling up water")
             {
                 exhibitToWorkAt.isGettingWater = false;
             }
-            else if (jobAtExhibit == "dropping")
+            else if (jobAtExhibit == "Cleaning exhibit")
             {
                 exhibitToWorkAt.isGettingCleaned = false;
             }
         }
+        Destroy(gameObject);
     }
 }

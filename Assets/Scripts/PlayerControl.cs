@@ -28,6 +28,7 @@ public class PlayerControl : MonoBehaviour
     int maxZ;
     private float angle;
     public int objectTimesRotated = 0;
+    public Vector3 deletePosition;
     public int fenceIndex = 0;
     public bool canBePlaced = true;
     public bool terraForming = false;
@@ -52,10 +53,13 @@ public class PlayerControl : MonoBehaviour
 
     public InfoPopup currentInfopopup;
     public bool stopMovement = false;
+    public LineRenderer terraformerLine;
 
     public void ChangeTerraformer()
     {
         terraForming = !terraForming;
+        SetTerraformerSize(currentTerraformSize);
+        terraformerLine.gameObject.SetActive(terraForming);
         if(!terraForming)
         {
             animalNavMesh.UpdateNavMesh(animalNavMesh.navMeshData);
@@ -71,6 +75,15 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    public void ChangeDelete(){
+        deleting = !deleting;
+        if(chosenForDelete != null){
+            chosenForDelete.ChangeMaterial(0);
+            chosenForDelete = null;
+        }
+        ReloadGuestNavMesh();
+    }
+
     private bool MouseOverUI()
     {
         PointerEventData eventData = new PointerEventData(EventSystem.current);
@@ -79,7 +92,7 @@ public class PlayerControl : MonoBehaviour
         EventSystem.current.RaycastAll(eventData, raycastResults);
         foreach (RaycastResult result in raycastResults)
         {
-            if (!result.gameObject.tag.Equals("Price") && !result.gameObject.tag.Equals("InfoPopup"))
+            if (!result.gameObject.tag.Equals("Price") && !result.gameObject.tag.Equals("InfoPopup") && !result.gameObject.tag.Equals("NotUI"))
             {
                 return true;
             }
@@ -106,12 +119,6 @@ public class PlayerControl : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.F))
-        {
-            deleting = !deleting;
-            ReloadGuestNavMesh();
-        }
-
         if (!stopMovement)
         {
             Move();
@@ -151,19 +158,19 @@ public class PlayerControl : MonoBehaviour
         //            if (GridManager.instance.GetGrid(hit.point).neighbours[0] == null)
         //                Debug.Log("0 null");
         //            else
-        //                Debug.Log("0 " + GridManager.instance.GetGrid(hit.point).neighbours[0].coords[0]);
+        //                Debug.Log("0 " + GridManager.instance.GetGrid(hit.point).neighbours[0].coords[0] + " " + GridManager.instance.GetGrid(hit.point).trueNeighbours[0].coords[0]);
         //            if (GridManager.instance.GetGrid(hit.point).neighbours[1] == null)
         //                Debug.Log("1 null");
         //            else
-        //                Debug.Log("1 " + GridManager.instance.GetGrid(hit.point).neighbours[1].coords[0]);
+        //                Debug.Log("1 " + GridManager.instance.GetGrid(hit.point).neighbours[1].coords[0] + " " + GridManager.instance.GetGrid(hit.point).trueNeighbours[1].coords[0]);
         //            if (GridManager.instance.GetGrid(hit.point).neighbours[2] == null)
         //                Debug.Log("2 null");
         //            else
-        //                Debug.Log("2 " + GridManager.instance.GetGrid(hit.point).neighbours[2].coords[0]);
+        //                Debug.Log("2 " + GridManager.instance.GetGrid(hit.point).neighbours[2].coords[0] + " " + GridManager.instance.GetGrid(hit.point).trueNeighbours[2].coords[0]);
         //            if (GridManager.instance.GetGrid(hit.point).neighbours[3] == null)
         //                Debug.Log("3 null");
         //            else
-        //                Debug.Log("3 " + GridManager.instance.GetGrid(hit.point).neighbours[3].coords[0]);
+        //                Debug.Log("3 " + GridManager.instance.GetGrid(hit.point).neighbours[3].coords[0] + " " + GridManager.instance.GetGrid(hit.point).trueNeighbours[3].coords[0]);
         //            Debug.Log(GridManager.instance.GetGrid(hit.point).isExhibit);
         //        }
         //    }
@@ -235,9 +242,7 @@ public class PlayerControl : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R) && m_Selected != null)
         {
             m_Selected.RotateY(90);
-            objectTimesRotated++;
-            if (objectTimesRotated == 4)
-                objectTimesRotated = 0;
+            objectTimesRotated = (objectTimesRotated + 1) % 4;
         }
     }
 
@@ -369,7 +374,10 @@ public class PlayerControl : MonoBehaviour
     public void SpawnFence(int i)
     {
         fenceIndex = i;
-        m_Selected = Instantiate(fences[fenceIndex], new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
+        if (!deleting)
+            m_Selected = Instantiate(fences[fenceIndex], new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
+        else
+            m_Selected = Instantiate(fences[fenceIndex], deletePosition, new Quaternion(0, 0, 0, 0));
     }
 
     public void ChangeFence(int index)
@@ -399,12 +407,53 @@ public class PlayerControl : MonoBehaviour
         return newPath;
     }
 
+    public void SetTerraformerSize(int size){
+        currentTerraformSize = size;
+        terraformerLine.positionCount = currentTerraformSize * currentTerraformSize * 5;
+
+        if(prevHit != null){
+            Debug.Log(prevHit);
+            int currentPosition = 0;
+            Vector3 pos;
+
+            for(int j = 0; j < currentTerraformSize; j++){
+                if(j % 2 == 0){
+                    for(int i = 0; i < currentTerraformSize; i++){
+                        pos = (Vector3)prevHit + new Vector3(i, 0, j);
+                        Grid grid = gridM.GetGrid(pos);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                    }
+                }
+                else{
+                    for(int i = currentTerraformSize - 1; i >= 0; i--){
+                        pos = (Vector3)prevHit + new Vector3(i, 0, j);
+                        Grid grid = gridM.GetGrid(pos);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                    }
+                }
+
+            }
+        }
+    }
+
     public void Terraform(int xWidth, int zWidth)
     {
+        
+       
         //Vector3 startingGrid;
 
         if (Input.GetMouseButtonUp(0))
         {
+            gridM.ReloadGrids();
+
             if (startingHeight <= -10 && coordIndex != 0)
             {
                 int price = 0;
@@ -581,6 +630,8 @@ public class PlayerControl : MonoBehaviour
 
             //gridM.tempCoords = null;
 
+            gridM.ReloadGrids();
+
             int chunkIndex = (int)(Mathf.Floor(gridM.coords[coordIndex].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[coordIndex].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
             if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth) && !modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
                 modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
@@ -591,8 +642,78 @@ public class PlayerControl : MonoBehaviour
                     tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
             }
             modifiedChunks = new List<Chunk>();
+
+            Grid startGrid = gridM.GetGrid(gridM.coords[coordIndex]);
+
+            int currentPosition = 0;
+            Vector3 pos;
+
+            for(int j = 0; j < zWidth; j++){
+                    if(j % 2 == 0){
+                        for(int i = 0; i < xWidth; i++){
+                            pos = startGrid.coords[0] + new Vector3(i + 0.2f, 0, j + 0.2f);
+                            Grid grid = gridM.GetGrid(pos);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                        }
+                    }
+                    else{
+                        for(int i = xWidth - 1; i >= 0; i--){
+                            pos = startGrid.coords[0] + new Vector3(i + 0.2f, 0, j + 0.2f);
+                            Grid grid = gridM.GetGrid(pos);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                        }
+                    }
+
+                }
+        }
+        else {
+            var ray2 = GameCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit2;
+            if (Physics.Raycast(ray2, out hit2) && hit2.collider.gameObject.CompareTag("Terrain"))
+            {
+
+                int currentPosition = 0;
+                Vector3 pos;
+
+                for(int j = 0; j < zWidth; j++){
+                    if(j % 2 == 0){
+                        for(int i = 0; i < xWidth; i++){
+                            pos = hit2.point + new Vector3(i, 0, j);
+                            Grid grid = gridM.GetGrid(pos);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                        }
+                    }
+                    else{
+                        for(int i = xWidth - 1; i >= 0; i--){
+                            pos = hit2.point + new Vector3(i, 0, j);
+                            Grid grid = gridM.GetGrid(pos);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
+                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                        }
+                    }
+
+                }
+                prevHit = hit2.point;
+            }
         }
     }
+
+    Vector3? prevHit = null;
 
     public void DestroyPlaceableInHand()
     {
@@ -661,9 +782,40 @@ public class PlayerControl : MonoBehaviour
         closed = !closed;
     }
 
+    Placeable chosenForDelete;
+    Placeable prevChosenForDelete;
+
     public void Delete()
     {
-        if (Input.GetMouseButtonDown(0))
+        var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (placedTags.Contains(hit.collider.tag))
+            {
+                chosenForDelete = hit.collider.GetComponentInParent<Placeable>();
+                if(prevChosenForDelete != null && prevChosenForDelete != chosenForDelete)
+                {
+                    prevChosenForDelete.ChangeMaterial(0);
+                }
+                if(prevChosenForDelete != chosenForDelete)
+                {
+                    prevChosenForDelete = chosenForDelete;
+                    prevChosenForDelete.ChangeMaterial(2);
+                }
+                if (Input.GetMouseButtonDown(0))
+                {
+                    chosenForDelete.Remove();
+                    ReloadGuestNavMesh();
+                }
+            }
+            else if(prevChosenForDelete != null)
+            {
+                prevChosenForDelete.ChangeMaterial(0);
+                prevChosenForDelete = null;
+            }
+        }
+        /*if (Input.GetMouseButtonDown(0))
         {
             var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -675,7 +827,12 @@ public class PlayerControl : MonoBehaviour
                     placeable.Remove();
                     ReloadGuestNavMesh();
                 }
+                else if (hit.collider.GetComponentInParent<Exhibit>())
+                {
+                    var exhibit = hit.collider.GetComponentInParent<Exhibit>();
+                    exhibit.Remove();
+                }
             }
-        }
+        }*/
     }
 }

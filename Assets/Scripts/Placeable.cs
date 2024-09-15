@@ -14,8 +14,8 @@ public class Placeable : MonoBehaviour, Clickable
     public static Vector3 startingPoint = new Vector3(-1, -1, -1);
     public TextMeshProUGUI currentPlacingPrice;
     public TextMeshProUGUI currentPlacingPriceInstance;
-    public List<Material> defaultMaterials;
-    List<Renderer> renderers;
+    public List<Renderer> renderers;
+    public List<(int rendererHashCode, Material material)> defaultMaterials;
     int previousMaterialIndex  = -1;
 
     public virtual void Awake()
@@ -29,6 +29,7 @@ public class Placeable : MonoBehaviour, Clickable
             placeableName = name.Remove(name.Length - "(Clone)".Length);
         }
 
+        defaultMaterials = new List<(int, Material)>();
         renderers = new List<Renderer>(GetComponentsInChildren<MeshRenderer>());
         List<Renderer> renderers2 = new List<Renderer>(GetComponentsInChildren<SkinnedMeshRenderer>());
 
@@ -36,19 +37,18 @@ public class Placeable : MonoBehaviour, Clickable
         {
             foreach (var material in renderer.sharedMaterials)
             {
-                defaultMaterials.Add(material);
+                defaultMaterials.Add((renderer.GetHashCode(), material));
             }
         }
         foreach (var renderer in renderers2)
         {
             foreach (var material in renderer.sharedMaterials)
             {
-                defaultMaterials.Add(material);
+                defaultMaterials.Add((renderer.GetHashCode(), material));
             }
         }
 
         renderers2.ForEach(r => renderers.Add(r));
-
     }
     
     public virtual void RotateY(float angle)
@@ -81,7 +81,13 @@ public class Placeable : MonoBehaviour, Clickable
 
     public virtual void Remove()
     {
+        if (currentPlacingPriceInstance != null)
+            Destroy(currentPlacingPriceInstance.gameObject);
 
+        ZooManager.instance.ChangeMoney(placeablePrice * 0.2f);
+
+        if (gameObject.GetComponent<Exhibit>())
+            gameObject.GetComponent<Exhibit>().Remove();
     }
 
     public virtual bool CalculateGrid(Vector3 mouseHit)
@@ -100,7 +106,7 @@ public class Placeable : MonoBehaviour, Clickable
                 var newMaterials = renderers[i].sharedMaterials;
                 for (int j = 0; j < newMaterials.Length; j++)
                 {
-                    newMaterials[j] = SetMaterialColor(index, defaultMaterials[k]);
+                    newMaterials[j] = SetMaterialColor(index, defaultMaterials[k].material);
                     k++;
                 }
                 renderers[i].materials = newMaterials;
@@ -116,6 +122,7 @@ public class Placeable : MonoBehaviour, Clickable
 
     public virtual void Change(Placeable placeable)
     {
+
     }
 
     public virtual void ClickedOn()
@@ -145,8 +152,8 @@ public class Placeable : MonoBehaviour, Clickable
 
     IEnumerator MoveText(float distance)
     {
-        while(distance > 0) {
-
+        while(distance > 0)
+        {
             var posi = new Vector3(currentPlacingPriceInstance.transform.position.x, currentPlacingPriceInstance.transform.position.y + 0.3f, 0);
             currentPlacingPriceInstance.transform.position = posi;
             distance -= 0.01f;

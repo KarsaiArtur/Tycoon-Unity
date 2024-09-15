@@ -20,6 +20,7 @@ TagManager:
   - Camera
   - QuestManager
   - Canvas
+  - NotUI
   layers:
   - Default
   - TransparentFX

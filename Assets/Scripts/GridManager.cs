@@ -82,8 +82,6 @@ public class GridManager : MonoBehaviour, Saveable
         edgeChanged = false;
     }
 
-
-
     public void InitializeGrids()
     {
         int baseIndex = elementWidth * (terrainWidth + 1) + elementWidth;
@@ -134,6 +132,27 @@ public class GridManager : MonoBehaviour, Saveable
                     grids[j, i].neighbours[3] = null;
                     grids[j, i].trueNeighbours[3] = null;
                 }
+
+                grids[j, i].coords[0] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j];
+                grids[j, i].coords[1] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j + 1];
+                grids[j, i].coords[2] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j + terrainWidth + 1];
+                grids[j, i].coords[3] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j + terrainWidth + 2];
+            }
+        }
+    }
+
+    public void ReloadGrids()
+    {
+        int baseIndex = elementWidth * (terrainWidth + 1) + elementWidth;
+        int bonusIndex = 0;
+        for (int i = 0; i < terrainWidth - 2 * elementWidth; i++)
+        {
+            for (int j = 0; j < terrainWidth - 2 * elementWidth; j++)
+            {
+                if (j > terrainWidth - elementWidth - 1)
+                    bonusIndex = elementWidth;
+                else
+                    bonusIndex = 0;
 
                 grids[j, i].coords[0] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j];
                 grids[j, i].coords[1] = coords[baseIndex + bonusIndex + i * (terrainWidth + 1) + j + 1];

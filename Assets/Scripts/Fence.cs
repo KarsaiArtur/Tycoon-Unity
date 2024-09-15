@@ -94,6 +94,8 @@ public class Fence : Placeable
             GameObject gateInstance = Instantiate(playerControl.gates[playerControl.fenceIndex], playerControl.m_Selected.transform.position, transform.rotation);
             Exhibit exhibit = gateInstance.AddComponent<Exhibit>();
             exhibit.timesRotated = timesRotated;
+            exhibit.grid1 = grid1;
+            exhibit.grid2 = grid2;
             CreateExhibitWindow(exhibit);
             //UnityEditorInternal.ComponentUtility.MoveComponentUp(exhibit);
             //emiatt nem lehet buildelni
@@ -235,6 +237,8 @@ public class Fence : Placeable
 
     public override void Remove()
     {
+        base.Remove();
+
         grid1.neighbours[(timesRotated + 2) % 4] = grid2;
         grid2.neighbours[timesRotated] = grid1;
 
@@ -242,15 +246,14 @@ public class Fence : Placeable
         {
             var pos1 = grid1.exhibit.gameObject.transform.position;
             var rotated1 = grid1.exhibit.timesRotated;
-            grid1.exhibit.exitGrid.neighbours[(grid1.exhibit.timesRotated + 2) % 4] = grid1.exhibit.entranceGrid;
-            grid1.exhibit.entranceGrid.neighbours[grid1.exhibit.timesRotated] = grid1.exhibit.exitGrid;
-            grid1.exhibit.Delete();
+
+            grid1.exhibit.Remove();
 
             if (grid2.isExhibit)
             {
                 var pos2 = grid2.exhibit.gameObject.transform.position;
                 var rotated2 = grid2.exhibit.timesRotated;
-                grid2.exhibit.Delete();
+                grid2.exhibit.Remove();
                 RemoveHelper(pos2, rotated2);
             }
 
@@ -260,7 +263,8 @@ public class Fence : Placeable
         {
             var pos2 = grid2.exhibit.gameObject.transform.position;
             var rotated2 = grid2.exhibit.timesRotated;
-            grid2.exhibit.Delete();
+
+            grid2.exhibit.Remove();
             RemoveHelper(pos2, rotated2);
         }
 
@@ -270,12 +274,16 @@ public class Fence : Placeable
     private void RemoveHelper(Vector3 pos, int rotated)
     {
         playerControl.m_Selected = Instantiate(playerControl.fences[0], pos, new Quaternion(0, 0, 0, 0));
+        playerControl.objectTimesRotated = rotated;
+        playerControl.deletePosition = pos;
         for (int i = 0; i < rotated; i++)
             playerControl.m_Selected.RotateY(90);
+        playerControl.m_Selected.Place(pos);
         playerControl.m_Selected.Place(pos);
         playerControl.m_Selected.SetTag("Placed");
         playerControl.m_Selected.ChangeMaterial(0);
         playerControl.m_Selected.FinalPlace();
+        playerControl.objectTimesRotated = 0;
         playerControl.m_Selected = null;
     }
 }

@@ -41,9 +41,9 @@ public class Vet : Staff
         }
 
         if (animalSickness.Count > 0)
-        {
             FindAnimalToHeal(animalSickness);
-        }
+        else
+            isAvailable = true;
     }
 
     public void FindAnimalToHeal(List<(Exhibit exhibit, Animal animal, float health)> animalSickness)
@@ -112,7 +112,10 @@ public class Vet : Staff
 
     public override void Remove()
     {
+        base.Remove();
+
         if (animalToHeal != null)
             animalToHeal.isGettingHealed = false;
+        Destroy(gameObject);
     }
 }
