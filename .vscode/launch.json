@@ -2,15 +2,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "C#: <project-name> Debug",
+            "name": "SaveableCodeGenerator",
             "type": "dotnet",
             "request": "launch",
             "projectPath": "${workspaceFolder}/CodeGenerator/SaveableCodeGenerator/SaveableCodeGenerator.csproj"
+        },
+        {
+            "name": "IdToObjectCodeGenerator",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/CodeGenerator/IdToObjectCodeGenerator/SaveableCodeGenerator.csproj"
         },
         {
             "name": "Attach to Unity",
             "type": "vstuc",
             "request": "attach"
         }
-     ]
+    ]
 }

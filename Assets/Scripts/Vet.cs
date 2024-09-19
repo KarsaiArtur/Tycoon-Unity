@@ -32,8 +32,9 @@ public class Vet : Staff
         {
             if (exhibit.animals.Count > 0 && !exhibit.unreachableForStaff)
             {
-                foreach (Animal animal in exhibit.animals)
+                foreach (var animalId in exhibit.animals)
                 {
+                    var animal = animalId;
                     if (!animal.isGettingHealed)
                         animalSickness.Add((exhibit, animal, animal.health));
                 }

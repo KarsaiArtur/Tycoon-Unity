@@ -1,27 +1,60 @@
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
+/////Saveable Attributes, DONT DELETE
+//////Grid[] neighbours,Grid[] trueNeighbours/////
+//////SERIALIZABLE:YES/
 
 public class Grid
 {
-    public enum GridType
-    {
-        Flat,
-        StraightSlope,
-        DiagonalSlope,
-        HalfSlope,
-        Else
-    }
-
     public Vector3[] coords;
     public Grid[] neighbours;
     public Grid[] trueNeighbours;
-    public GridType gridType;
     public bool isPath = false;
-    public bool isExhibit = false;
-    public bool isBench = false;
-    public bool isBuilding = false;
-    public Exhibit exhibit;
-    public Building building;
-    public Bench bench;
+    public string exhibitId;
+    public string buildingId;
+    public string benchId;
+    Exhibit exhibit;
+    Building building;
+    Bench bench;
+    public List<Nature> natures = new();
+
+    public Exhibit GetExhibit(string id = null)
+    {
+        id ??=exhibitId;
+
+        if(id != exhibitId || exhibit == null)
+        {
+            exhibitId = id;
+            exhibit = ExhibitManager.instance.exhibits.Where((element) => element._id == exhibitId).FirstOrDefault();
+        }
+        return exhibit;
+    }
+
+    public Building GetBuilding(string id = null)
+    {
+        id ??=buildingId;
+
+        if(id != buildingId || building == null)
+        {
+            buildingId = id;
+            building = BuildingManager.instance.buildings.Where((element) => element._id == buildingId).FirstOrDefault();
+        }
+        return building;
+    }
+
+    public Bench GetBench(string id = null)
+    {
+        id ??=benchId;
+
+        if(id != benchId || bench == null)
+        {
+            benchId = id;
+            bench = BenchManager.instance.benches.Where((element) => element._id == benchId).FirstOrDefault();
+        }
+        return bench;
+    }
 
     public void SetNeighbour0(Grid neighbour)
     {

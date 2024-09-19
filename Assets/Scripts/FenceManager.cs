@@ -4,15 +4,17 @@ using UnityEngine;
 
 public class FenceManager : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+    static public FenceManager instance;
+    public List<Fence> fences;
+    void Start(){
+        instance = this;
+        if(LoadMenu.loadedGame != null){
+            //LoadMenu.instance.LoadData(this);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+    public void AddList(Fence fence){
+        fences.Add(fence);
+        fence.transform.SetParent(FenceManager.instance.transform);
     }
 }

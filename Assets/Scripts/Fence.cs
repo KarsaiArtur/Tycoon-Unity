@@ -92,7 +92,7 @@ public class Fence : Placeable
         {
             HashSet<Grid> tempGrids = BFS(grid1, gridManager.startingGrid);
             GameObject gateInstance = Instantiate(playerControl.gates[playerControl.fenceIndex], playerControl.m_Selected.transform.position, transform.rotation);
-            Exhibit exhibit = gateInstance.AddComponent<Exhibit>();
+            Exhibit exhibit = gateInstance.GetComponent<Exhibit>();
             exhibit.timesRotated = timesRotated;
             exhibit.grid1 = grid1;
             exhibit.grid2 = grid2;
@@ -129,6 +129,10 @@ public class Fence : Placeable
                 ZooManager.instance.ChangeMoney(placeablePrice);
             }
             DestroyPlaceable();
+        }
+        else
+        {
+            FenceManager.instance.AddList(this);
         }
     }
 
@@ -237,34 +241,35 @@ public class Fence : Placeable
 
     public override void Remove()
     {
+        FenceManager.instance.fences.Remove(this);
         base.Remove();
 
         grid1.neighbours[(timesRotated + 2) % 4] = grid2;
         grid2.neighbours[timesRotated] = grid1;
 
-        if (grid1.isExhibit)
+        if (grid1.GetExhibit() != null)
         {
-            var pos1 = grid1.exhibit.gameObject.transform.position;
-            var rotated1 = grid1.exhibit.timesRotated;
+            var pos1 = grid1.GetExhibit().gameObject.transform.position;
+            var rotated1 = grid1.GetExhibit().timesRotated;
 
-            grid1.exhibit.Remove();
+            grid1.GetExhibit().Remove();
 
-            if (grid2.isExhibit)
+            if (grid2.GetExhibit() != null)
             {
-                var pos2 = grid2.exhibit.gameObject.transform.position;
-                var rotated2 = grid2.exhibit.timesRotated;
-                grid2.exhibit.Remove();
+                var pos2 = grid2.GetExhibit().gameObject.transform.position;
+                var rotated2 = grid2.GetExhibit().timesRotated;
+                grid2.GetExhibit().Remove();
                 RemoveHelper(pos2, rotated2);
             }
 
             RemoveHelper(pos1, rotated1);
         }
-        else if (grid2.isExhibit)
+        else if (grid2.GetExhibit() != null)
         {
-            var pos2 = grid2.exhibit.gameObject.transform.position;
-            var rotated2 = grid2.exhibit.timesRotated;
+            var pos2 = grid2.GetExhibit().gameObject.transform.position;
+            var rotated2 = grid2.GetExhibit().timesRotated;
 
-            grid2.exhibit.Remove();
+            grid2.GetExhibit().Remove();
             RemoveHelper(pos2, rotated2);
         }
 

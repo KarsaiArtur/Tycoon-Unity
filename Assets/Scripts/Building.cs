@@ -4,6 +4,10 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.AI;
 
+/////Saveable Attributes, DONT DELETE
+//////List<Grid> paths,List<PurchasableItems> purchasableItemInstances,int capacity,List<Visitor> visitors,int itemsBought/////
+//////SERIALIZABLE:YES/
+
 public class Building : Placeable, Visitable
 {
     public int x;
@@ -63,7 +67,7 @@ public class Building : Placeable, Visitable
         if (!collided)
             playerControl.canBePlaced = true;
 
-        if (playerControl.canBePlaced && GridManager.instance.GetGrid(mouseHit).isExhibit)
+        if (playerControl.canBePlaced && GridManager.instance.GetGrid(mouseHit).GetExhibit() != null)
         {
             playerControl.canBePlaced = false;
             ChangeMaterial(2);
@@ -142,6 +146,7 @@ public class Building : Placeable, Visitable
 
     public override void FinalPlace()
     {
+        BuildingManager.instance.AddList(this);
         transform.position = new Vector3(transform.position.x, transform.position.y - offsetYDefault, transform.position.z);
         gridManager.buildings.Add(this);
 
@@ -158,8 +163,7 @@ public class Building : Placeable, Visitable
 
         for (int i = 0; i < gridList.Count; i++)
         {
-            gridList[i].isBuilding = true;
-            gridList[i].building = this;
+            gridList[i].GetBuilding(_id);
         }
 
         FindPaths();
@@ -172,13 +176,13 @@ public class Building : Placeable, Visitable
             if (child.tag.Equals("Frame"))
             {
                 foreach(var renderer in child.GetComponentsInChildren<Renderer>()){
-                    if(renderer != null){
+                    if(renderer != null)
+                    {
                         renderers.RemoveAll(element => element.name.Equals(renderer.name));
                         defaultMaterials.RemoveAll(element => element.rendererHashCode == renderer.GetHashCode());
                     }
                 }
                 
-            
                 Destroy(child.gameObject);
                 break;
             }
@@ -189,6 +193,7 @@ public class Building : Placeable, Visitable
     public override void Remove()
     {
         base.Remove();
+        BuildingManager.instance.buildings.Remove(this);
 
         ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
         RemoveFromLists();

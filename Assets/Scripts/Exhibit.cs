@@ -2,12 +2,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Exhibit : MonoBehaviour, Visitable, Clickable
+public class Exhibit : Placeable, Visitable, Clickable
 {
     public List<Grid> gridList;
     public List<Grid> paths;
     public string exhibitName;
+    public List<string> animalIds = new List<string>();
+    /////GENERATE
     public List<Animal> animals = new List<Animal>();
+    public List<string> foliageIds = new List<string>();
     public List<Nature> foliages = new List<Nature>();
     public List<GameObject> animalDroppings = new();
     public Grid exitGrid;
@@ -15,7 +18,6 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public Grid grid1;
     public Grid grid2;
     public int timesRotated = 0;
-    PlayerControl playerControl;
     public bool isOpen = false;
     public static int exhibitCount = 0;
     public bool reachable = false;
@@ -34,10 +36,13 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public bool isGettingWater = false;
     public bool isGettingCleaned = false;
     public float occupiedSpace = 0;
+    public bool isMixed = false;
     List<Visitor> visitors = new();
 
-    void Awake()
+    override public void Awake()
     {
+        base.Awake();
+        ExhibitManager.instance.AddList(this);
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
     }
 
@@ -63,8 +68,8 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
 
         for (int i = 0; i < gridList.Count; i++)
         {
-            gridList[i].isExhibit = true;
-            gridList[i].exhibit = this;
+            gridList[i].GetExhibit(_id);
+            foliages.AddRange(gridList[i].natures);
         }
 
         FindPaths();
@@ -143,7 +148,7 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
     public void Arrived(Visitor visitor)
     {
         if (animals.Count > 0)
-            foreach (Animal animal in animals)
+            foreach (var animal in animals)
                 visitor.happiness = visitor.happiness + animal.happiness / 25 > 100 ? 100 : visitor.happiness + animal.happiness / 25;
         visitor.currentExhibit = this;
         visitor.TakePictures();
@@ -199,7 +204,7 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
         GridManager.instance.reachableHappinessPlaces.Remove(this);
     }
 
-    public void ClickedOn()
+    override public void ClickedOn()
     {
         playerControl.SetFollowedObject(this.gameObject, 7);
         playerControl.DestroyCurrentInfopopup();
@@ -208,7 +213,7 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
         playerControl.SetInfopopup(newInfopopup);
     }
 
-    public string GetName()
+    override public string GetName()
     {
         return exhibitName;
     }
@@ -288,47 +293,48 @@ public class Exhibit : MonoBehaviour, Visitable, Clickable
         waterPlaces.Remove(waterTrough);
     }
 
-    public void Remove()
-{
-    grid1.neighbours[(timesRotated + 2) % 4] = grid2;
-    grid2.neighbours[timesRotated] = grid1;
+    public override void Remove()
+    {
+        ExhibitManager.instance.exhibits.Remove(this);
+        grid1.neighbours[(timesRotated + 2) % 4] = grid2;
+        grid2.neighbours[timesRotated] = grid1;
 
-    GridManager.instance.exhibits.Remove(this);
-    RemoveFromReachableLists();
+        GridManager.instance.exhibits.Remove(this);
+        RemoveFromReachableLists();
 
-    foreach (var grid in gridList)
-    {
-        grid.isExhibit = false;
-        grid.exhibit = null;
+        foreach (var grid in gridList)
+        {
+            grid.GetExhibit("");
+        }
+        foreach (var animal in animals)
+        {
+            animal.exhibit = null;
+            GridManager.instance.freeAnimals.Add(animal);
+        }
+        foreach (var staffMember in staff)
+        {
+            staffMember.SetToDefault();
+        }
+        foreach (var staffMember in staffAtGate)
+        {
+            staffMember.SetToDefault();
+        }
+        foreach (var visitor in visitors)
+        {
+            visitor.ChooseDestination();
+        }
+        foreach (var animalDropping in animalDroppings)
+        {
+            Destroy(animalDropping);
+        }
+        foreach (var foodPlace in foodPlaces)
+        {
+            foodPlace.Delete();
+        }
+        while (waterPlaces.Count > 0)
+        {
+            waterPlaces[0].Remove();
+        }
+        Destroy(gameObject);
     }
-    foreach (var animal in animals)
-    {
-        animal.exhibit = null;
-    }
-    foreach (var staffMember in staff)
-    {
-        staffMember.SetToDefault();
-    }
-    foreach (var staffMember in staffAtGate)
-    {
-        staffMember.SetToDefault();
-    }
-    foreach (var visitor in visitors)
-    {
-        visitor.ChooseDestination();
-    }
-    foreach (var animalDropping in animalDroppings)
-    {
-        Destroy(animalDropping);
-    }
-    foreach (var foodPlace in foodPlaces)
-    {
-        foodPlace.Delete();
-    }
-    while (waterPlaces.Count > 0)
-    {
-        waterPlaces[0].Remove();
-    }
-    Destroy(gameObject);
-}
 }

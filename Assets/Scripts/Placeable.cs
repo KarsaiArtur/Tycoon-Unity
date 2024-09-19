@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,8 @@ using UnityEngine;
 
 public class Placeable : MonoBehaviour, Clickable
 {
+
+    public string _id;
     public PlayerControl playerControl;
     public GridManager gridManager;
     public string placeableName;
@@ -20,6 +23,7 @@ public class Placeable : MonoBehaviour, Clickable
 
     public virtual void Awake()
     {
+        _id = Guid.NewGuid().ToString();
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
         gridManager = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
         currentPlacingPrice = GameObject.Find("Placing Price").GetComponent<TextMeshProUGUI>();

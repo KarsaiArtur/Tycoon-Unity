@@ -77,7 +77,8 @@ public class PlayerControl : MonoBehaviour
 
     public void ChangeDelete(){
         deleting = !deleting;
-        if(chosenForDelete != null){
+        if(chosenForDelete != null)
+        {
             chosenForDelete.ChangeMaterial(0);
             chosenForDelete = null;
         }
@@ -330,8 +331,9 @@ public class PlayerControl : MonoBehaviour
             float distance = (float)(Math.Tan((90 - transform.rotation.eulerAngles.x) * degToRad) * (transform.position.y - height));
             float xOffset = (float)Math.Sin(transform.rotation.eulerAngles.y * degToRad) * distance;
             float zOffset = (float)Math.Cos(transform.rotation.eulerAngles.y * degToRad) * distance;
-            transform.position = new Vector3(transform.position.x + xOffset - zOffset, transform.position.y, transform.position.z + zOffset + xOffset);
 
+            transform.position = new Vector3(transform.position.x + xOffset - zOffset, transform.position.y, transform.position.z + zOffset + xOffset);
+            VirtualCamera.ForceCameraPosition(new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.Euler(50, transform.rotation.eulerAngles.y + 90, 0));
             transform.rotation = Quaternion.Euler(50, transform.rotation.eulerAngles.y + 90, 0);
             cameraTimesRotated = (cameraTimesRotated + 1) % 4;
         }
@@ -416,9 +418,11 @@ public class PlayerControl : MonoBehaviour
             int currentPosition = 0;
             Vector3 pos;
 
-            for(int j = 0; j < currentTerraformSize; j++){
+            for(int j = 0; j < currentTerraformSize; j++)
+            {
                 if(j % 2 == 0){
-                    for(int i = 0; i < currentTerraformSize; i++){
+                    for(int i = 0; i < currentTerraformSize; i++)
+                    {
                         pos = (Vector3)prevHit + new Vector3(i, 0, j);
                         Grid grid = gridM.GetGrid(pos);
                         terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
@@ -428,8 +432,10 @@ public class PlayerControl : MonoBehaviour
                         terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
                     }
                 }
-                else{
-                    for(int i = currentTerraformSize - 1; i >= 0; i--){
+                else
+                {
+                    for(int i = currentTerraformSize - 1; i >= 0; i--)
+                    {
                         pos = (Vector3)prevHit + new Vector3(i, 0, j);
                         Grid grid = gridM.GetGrid(pos);
                         terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
@@ -446,15 +452,13 @@ public class PlayerControl : MonoBehaviour
 
     public void Terraform(int xWidth, int zWidth)
     {
-        
-       
         //Vector3 startingGrid;
 
         if (Input.GetMouseButtonUp(0))
         {
             gridM.ReloadGrids();
 
-            if (startingHeight <= -10 && coordIndex != 0)
+            if (startingHeight > -10 && coordIndex != 0)
             {
                 int price = 0;
 
@@ -648,44 +652,52 @@ public class PlayerControl : MonoBehaviour
             int currentPosition = 0;
             Vector3 pos;
 
-            for(int j = 0; j < zWidth; j++){
-                    if(j % 2 == 0){
-                        for(int i = 0; i < xWidth; i++){
-                            pos = startGrid.coords[0] + new Vector3(i + 0.2f, 0, j + 0.2f);
-                            Grid grid = gridM.GetGrid(pos);
-                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-                            terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
-                            terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
-                            terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
-                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-                        }
+            for(int j = 0; j < zWidth; j++)
+            {
+                if(j % 2 == 0)
+                {
+                    for(int i = 0; i < xWidth; i++)
+                    {
+                        pos = startGrid.coords[0] + new Vector3(i + 0.2f, 0, j + 0.2f);
+                        Grid grid = gridM.GetGrid(pos);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
                     }
-                    else{
-                        for(int i = xWidth - 1; i >= 0; i--){
-                            pos = startGrid.coords[0] + new Vector3(i + 0.2f, 0, j + 0.2f);
-                            Grid grid = gridM.GetGrid(pos);
-                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-                            terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
-                            terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
-                            terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
-                            terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-                        }
-                    }
-
                 }
+                else
+                {
+                    for(int i = xWidth - 1; i >= 0; i--)
+                    {
+                        pos = startGrid.coords[0] + new Vector3(i + 0.2f, 0, j + 0.2f);
+                        Grid grid = gridM.GetGrid(pos);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
+                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
+                    }
+                }
+
+            }
         }
-        else {
+        else
+        {
             var ray2 = GameCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit2;
             if (Physics.Raycast(ray2, out hit2) && hit2.collider.gameObject.CompareTag("Terrain"))
             {
-
                 int currentPosition = 0;
                 Vector3 pos;
 
-                for(int j = 0; j < zWidth; j++){
-                    if(j % 2 == 0){
-                        for(int i = 0; i < xWidth; i++){
+                for(int j = 0; j < zWidth; j++)
+                {
+                    if(j % 2 == 0)
+                    {
+                        for(int i = 0; i < xWidth; i++)
+                        {
                             pos = hit2.point + new Vector3(i, 0, j);
                             Grid grid = gridM.GetGrid(pos);
                             terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
@@ -695,8 +707,10 @@ public class PlayerControl : MonoBehaviour
                             terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
                         }
                     }
-                    else{
-                        for(int i = xWidth - 1; i >= 0; i--){
+                    else
+                    {
+                        for(int i = xWidth - 1; i >= 0; i--)
+                        {
                             pos = hit2.point + new Vector3(i, 0, j);
                             Grid grid = gridM.GetGrid(pos);
                             terraformerLine.SetPosition(currentPosition++, grid.coords[3]);

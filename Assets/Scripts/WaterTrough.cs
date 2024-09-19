@@ -14,14 +14,15 @@ public class WaterTrough : Placeable, AnimalVisitable
         base.Awake();
         navMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
     }
+    
     public override void FinalPlace()
     {
         ChangeMaterial(0);
         navMeshObstacle.enabled = true;
-        if (GridManager.instance.GetGrid(transform.position).isExhibit)
+        if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
         {
-            GridManager.instance.GetGrid(transform.position).exhibit.AddWaterPlace(this);
-            exhibit = GridManager.instance.GetGrid(transform.position).exhibit;
+            GridManager.instance.GetGrid(transform.position).GetExhibit().AddWaterPlace(this);
+            exhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
         }
     }
 
@@ -29,7 +30,7 @@ public class WaterTrough : Placeable, AnimalVisitable
     {
         base.Place(mouseHit);
         transform.position = new Vector3(mouseHit.x, mouseHit.y + height / 2, mouseHit.z);
-        if (!playerControl.canBePlaced || !GridManager.instance.GetGrid(transform.position).isExhibit)
+        if (!playerControl.canBePlaced || GridManager.instance.GetGrid(transform.position).GetExhibit() == null)
         {
             ChangeMaterial(2);
             playerControl.canBePlaced = false;

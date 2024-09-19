@@ -22,6 +22,7 @@ public class SaveMenu : MonoBehaviour
         SaveData(text.text, ZooManager.instance);
         SaveData(text.text, GridManager.instance);
         SaveData(text.text, QuestManager.instance);
+        SaveData(text.text, NatureManager.instance);
         DestroyWindow();
     }
 

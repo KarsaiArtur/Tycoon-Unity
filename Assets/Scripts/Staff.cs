@@ -137,7 +137,7 @@ public abstract class Staff : Placeable
                 {
                     destinationReached = false;
                     destinationExhibit = null;
-                    insideExhibit = GridManager.instance.GetGrid(transform.position).exhibit;
+                    insideExhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
                     workingState = WorkingState.Resting;
                     isAvailable = true;
                     time = 0;
@@ -164,7 +164,7 @@ public abstract class Staff : Placeable
                         exhibit.SetUnreachableForStaff();
                         destinationReached = false;
                         destinationExhibit = null;
-                        insideExhibit = GridManager.instance.GetGrid(transform.position).exhibit;
+                        insideExhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
                         workingState = WorkingState.Resting;
                         isAvailable = true;
                         time = 0;
@@ -230,7 +230,7 @@ public abstract class Staff : Placeable
 
         foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.CompareTag("Terrain") && playerControl.canBePlaced && gridManager.GetGrid(hit.point).isExhibit)
+            if (hit.collider.CompareTag("Terrain") && playerControl.canBePlaced && gridManager.GetGrid(hit.point).GetExhibit() != null)
             {
                 playerControl.canBePlaced = false;
                 ChangeMaterial(2);

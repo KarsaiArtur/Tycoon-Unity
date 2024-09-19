@@ -43,10 +43,10 @@ GameObject:
   - component: {fileID: 7938570108452785221}
   - component: {fileID: 979567048276793886}
   - component: {fileID: 8020980787763179810}
-  - component: {fileID: -1041495364021333853}
+  - component: {fileID: 135352077319337724}
   m_Layer: 0
   m_Name: InclinedGate 2
-  m_TagString: Untagged
+  m_TagString: Placed
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -104,7 +104,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1.09, y: 1.43, z: 0.16}
   m_Center: {x: 0, y: -0.18, z: 0.5}
---- !u!114 &-1041495364021333853
+--- !u!114 &135352077319337724
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -113,9 +113,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 3145295711143037553}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 92e4d539a1f85944d87148ae7166fc3c, type: 3}
+  m_Script: {fileID: 11500000, guid: b7c3b67c457b1be45b01f3df09d2590f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: 
@@ -123,7 +124,29 @@ MonoBehaviour:
   icon: {fileID: 0}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
+  renderers: []
+  exhibitName: 
+  animalIds: []
+  animals: []
+  foliageIds: []
+  foliages: []
+  animalDroppings: []
+  timesRotated: 0
+  isOpen: 0
+  reachable: 0
+  staff: []
+  staffAtGate: []
+  unreachableForStaff: 0
+  food: 0
+  water: 0
+  waterCapacity: 0
+  foodPlaces: []
+  waterPlaces: []
+  isGettingFood: 0
+  isGettingWater: 0
+  isGettingCleaned: 0
+  occupiedSpace: 0
+  isMixed: 0
 --- !u!1 &3703858568900742765
 GameObject:
   m_ObjectHideFlags: 0

@@ -56,6 +56,4 @@ public class BuildingInfopopup : InfoPopup
         newItem.transform.SetParent(infoPanelInstance.transform.GetChild(0).Find("DataPanel").transform);
         return newItem;
     }
-
-
 }

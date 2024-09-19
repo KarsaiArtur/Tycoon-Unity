@@ -9,6 +9,8 @@ using UnityEngine.AI;
 public class Animal : Placeable
 {
     public Material[] materials;
+    Vector3 defaultScale;
+    float defaultSpeed;
     public NavMeshSurface surface;
     public List<NavMeshBuildSource> buildSource;
     public NavMeshAgent agent;
@@ -22,43 +24,51 @@ public class Animal : Placeable
     public float reputationBonus;
 
     float time = 0;
-float timeGoal = 0;
-float stuckTime = 0;
-public bool destinationReached = false;
-Vector3 destination;
-public string action = "";
-public AnimalVisitable destinationVisitable;
-bool isEating = false;
+    float timeGoal = 0;
+    float stuckTime = 0;
+    public bool destinationReached = false;
+    Vector3 destination;
+    Vector3 dangerPos;
+    public string action = "";
+    public AnimalVisitable destinationVisitable;
+    bool isEating = false;
 
-public float hunger = 100;
-public float thirst = 100;
-public float restroomNeeds = 100;
-public float happiness = 100;
-public float health = 100;
+    public float hunger = 100;
+    public float thirst = 100;
+    public float restroomNeeds = 100;
+    public float happiness = 100;
+    public float health = 100;
 
-public float hungerDetriment = 0.25f;
-public float thirstDetriment = 0.5f;
-public float restroomNeedsDetriment = 0.25f;
-public float happinessDetriment = 0.25f;
-public float healthDetriment = 0.25f;
+    public float hungerDetriment = 0.25f;
+    public float thirstDetriment = 0.5f;
+    public float restroomNeedsDetriment = 0.25f;
+    public float happinessDetriment = 0.25f;
+    public float healthDetriment = 0.25f;
 
-DateTime prevDay;
-public bool isSick = false;
-public bool isGettingHealed = false;
-public float requiredExhibitSpace = 1;
-public float age = 0;
-public int lifeExpectancy = 50;
-DateTime birthDate;
+    DateTime prevDay;
+    public bool isSick = false;
+    public bool isGettingHealed = false;
+    public float requiredExhibitSpace = 1;
+    public float age = 0;
+    public int lifeExpectancy = 10;
+    public int fullGrownAgeMonth = 12;
+    List<float> sizeAges = new();
+    DateTime birthDate;
 
-public bool isMale = true;
-public int reproductionAgeMonth = 1;
-public int pregnancyDurationMonth = 1;
-public bool isPregnant = false;
-public int pregnancyTimeMonth = 0;
-public int averageNumberOfBabies = 1;
-int dayOfConception = 0;
-public int fertility = 100;
-Animal matingPartner;
+    public bool isMale = true;
+    public int reproductionAgeMonth = 1;
+    public int pregnancyDurationMonth = 1;
+    public bool isPregnant = false;
+    public int pregnancyTimeMonth = 0;
+    public int averageNumberOfBabies = 1;
+    int dayOfConception = 0;
+    public int fertility = 100;
+    Animal matingPartner;
+
+    public bool isAgressive = false;
+    public int dangerLevel = 0;
+    int fleeDistance = 5;
+    Animal target;
 
     public override void Place(Vector3 mouseHit)
     {
@@ -77,8 +87,8 @@ Animal matingPartner;
 
         foreach (RaycastHit hit in hits)
         {
-            if (hit.collider.CompareTag("Terrain") && playerControl.canBePlaced && 
-                (!gridManager.GetGrid(hit.point).isExhibit || (gridManager.GetGrid(hit.point).exhibit.animals.Count > 0 && gridManager.GetGrid(hit.point).exhibit.animals[0].placeableName != placeableName)))
+            if (hit.collider.CompareTag("Terrain") && playerControl.canBePlaced &&
+                (gridManager.GetGrid(hit.point).GetExhibit() == null || (gridManager.GetGrid(hit.point).GetExhibit().animals.Count > 0 && gridManager.GetGrid(hit.point).GetExhibit().animals[0].placeableName != placeableName)))
             {
                 playerControl.canBePlaced = false;
                 ChangeMaterial(2);
@@ -106,16 +116,16 @@ Animal matingPartner;
 
     public override void FinalPlace()
     {
+        AnimalManager.instance.AddList(this);
         if (terraintHeight > -100)
             transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
         else
             transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        exhibit = gridManager.GetGrid(transform.position).exhibit;
+        exhibit = gridManager.GetGrid(transform.position).GetExhibit();
         exhibit.AddAnimal(this);
         agent.Warp(transform.position);
         placed = true;
         birthDate = CalendarManager.instance.currentDate;
-        age = UnityEngine.Random.Range((int)Math.Ceiling((double)reproductionAgeMonth / 12), (int)Mathf.Floor((float)lifeExpectancy / 5));
 
         VisitorManager.instance.CalculateAnimalBonus(this);
         StartCoroutine(DecreaseNeeds());
@@ -123,13 +133,17 @@ Animal matingPartner;
 
     public override void Remove()
     {
+        AnimalManager.instance.animals.Remove(this);
         base.Remove();
 
         ZooManager.instance.ChangeMoney(-placeablePrice * 0.2f);
-        ZooManager.instance.ChangeMoney(placeablePrice * 0.5f * health / 100 * (1 - age / lifeExpectancy));
+        ZooManager.instance.ChangeMoney(Mathf.Floor(placeablePrice * 0.5f * health / 100 * (1 - age / lifeExpectancy)));
 
         if (exhibit != null)
             exhibit.RemoveAnimal(this);
+        else
+            gridManager.freeAnimals.Remove(this);
+
         VisitorManager.instance.DecreaseAnimalBonus(this);
         if (currentPlacingPriceInstance != null)
         {
@@ -154,7 +168,61 @@ Animal matingPartner;
 
         fertility = UnityEngine.Random.Range(50, 100);
 
+        age = UnityEngine.Random.Range((int)Math.Ceiling((double)lifeExpectancy / 10), (int)Mathf.Floor((float)lifeExpectancy / 5));
+        defaultScale = transform.localScale;
+        defaultSpeed = agent.speed;
+
+        for (int i = 0; i < 6; i++)
+            sizeAges.Add((float)i * fullGrownAgeMonth / 5);
+
+        for (int i = 0; i < 6; i++)
+        {
+            if (age * 12 >= sizeAges[i])
+                transform.localScale = defaultScale * (0.5f + i * 0.1f);
+        }
+
         prevDay = CalendarManager.instance.currentDate;
+    }
+
+    public void Update()
+    {
+        if (placed)
+        {
+            NewDay();
+
+            if (exhibit != null && exhibit.isMixed)
+            {
+                exhibit.isMixed = false;
+                foreach (var animal in exhibit.animals)
+                {
+                    if (animal.placeableName != placeableName)
+                        exhibit.isMixed = true;
+                }
+            }
+
+            if (exhibit != null && exhibit.isMixed)
+            {
+                FleeAndAttack(exhibit.animals);
+            }
+
+            if (exhibit == null)
+            {
+                FleeAndAttack(GridManager.instance.freeAnimals);
+            }
+
+            if (CalendarManager.instance.currentDate != prevDay)
+            {
+                CheckPregnancy();
+                FindMatingPartner();
+            }
+
+            if (exhibit == null && GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
+            {
+                CheckIfInsideExhibit();
+            }
+
+            CheckDestination();
+        }
     }
 
     IEnumerator DecreaseNeeds()
@@ -206,10 +274,22 @@ Animal matingPartner;
 
     public void Die()
     {
-        Remove();
+        health = 0;
         Debug.Log(placeableName + " died");
         //notification
         //corpse?
+        Remove();
+    }
+
+    public void Damage()
+    {
+        target.health = target.health - 20 * dangerLevel / target.dangerLevel;
+        Debug.Log(placeableName + " damaged");
+        if (target.health <= 0)
+        {
+            target.Die();
+            target = null;
+        }
     }
 
     void Poop()
@@ -231,7 +311,7 @@ Animal matingPartner;
         }
     }
 
-    public void Update()
+    void NewDay()
     {
         if (CalendarManager.instance.currentDate != prevDay)
         {
@@ -244,147 +324,247 @@ Animal matingPartner;
 
             if (birthDate.Day == CalendarManager.instance.currentDate.Day)
             {
-                age += 1f/12f;
+                age += 1f / 12f;
                 Debug.Log("Age: " + age);
+
+                for (int i = 0; i < 6; i++)
+                {
+                    if (age * 12 >= sizeAges[i])
+                        transform.localScale = defaultScale * (0.5f + i * 0.1f);
+                }
+
                 if (UnityEngine.Random.Range(lifeExpectancy - lifeExpectancy / 10, lifeExpectancy + lifeExpectancy / 5) < age)
                     Die();
             }
+        }
+    }
 
-            if (isPregnant && dayOfConception == CalendarManager.instance.currentDate.Day)
+    void FleeAndAttack(List<Animal> animals)
+    {
+        action = "";
+        float minDistance = 100;
+        foreach (Animal animal in animals)
+        {
+            if (((dangerLevel + 2 <= animal.dangerLevel && !animal.isAgressive) || (dangerLevel <= animal.dangerLevel + 1 && !isAgressive && animal.isAgressive) || dangerLevel < animal.dangerLevel && isAgressive && animal.isAgressive)
+                && animal.placeableName != placeableName && minDistance > Vector3.Distance(transform.position, animal.transform.position))
             {
-                pregnancyTimeMonth++;
-                if (pregnancyTimeMonth >= pregnancyDurationMonth)
-                {
-                    var numberOfBabies = UnityEngine.Random.Range((int)Math.Ceiling((double)averageNumberOfBabies - averageNumberOfBabies / 2), (int)Math.Ceiling((double)averageNumberOfBabies + averageNumberOfBabies / 2) + 1);
-                    for (int i = 0; i < numberOfBabies; i++)
-                    {
-                        var baby = Instantiate(this, transform.position, transform.rotation);
-                        baby.isMale = UnityEngine.Random.Range(0, 2) == 0;
-                        baby.FinalPlace();
-                        age = 0;
-                        Debug.Log(numberOfBabies + " " + placeableName + "babies born");
-                        //notification
-                        //anination?
-                    }
-                    isPregnant = false;
-                }
+                minDistance = Vector3.Distance(transform.position, animal.transform.position);
+                dangerPos = animal.transform.position;
             }
-
-            if (exhibit != null && !isMale && !isPregnant && action != "mating" && age * 12 >= reproductionAgeMonth && happiness >= 80)
+        }
+        if (exhibit == null)
+        {
+            foreach (Visitor visitor in VisitorManager.instance.visitors)
             {
-                var potentialMates = exhibit.animals.Where(animal => animal.placeableName == placeableName && animal.isMale && animal.age * 12 >= animal.reproductionAgeMonth && animal.happiness >= 80);
-                if (potentialMates.Any())
+                if (dangerLevel < visitor.dangerLevel && minDistance > Vector3.Distance(transform.position, visitor.transform.position))
                 {
-                    matingPartner = potentialMates.ElementAt(UnityEngine.Random.Range(0, potentialMates.Count()));
-                    matingPartner.matingPartner = this;
-                    Debug.Log(matingPartner);
-                    if (UnityEngine.Random.Range(0, fertility + matingPartner.fertility) == 1)
-                    {
-                        action = "mating";
-                        matingPartner.action = "mating";
-                        ChooseDestination();
-                        matingPartner.ChooseDestination();
-                    }
+                    minDistance = Vector3.Distance(transform.position, visitor.transform.position);
+                    dangerPos = visitor.transform.position;
                 }
             }
         }
-
-        if (placed)
+        if (minDistance < fleeDistance)
         {
-            if (exhibit == null && GridManager.instance.GetGrid(transform.position).isExhibit)
+            action = "fleeing";
+            agent.speed = defaultSpeed * 4;
+            Debug.Log(placeableName + " Fleeing");
+            ChooseDestination();
+        }
+        else if (isAgressive)
+        {
+            minDistance = 100;
+            if (exhibit == null)
             {
-                exhibit = GridManager.instance.GetGrid(transform.position).exhibit;
-                exhibit.AddAnimal(this);
-                ChooseDestination();
-            }
-
-            animator.SetFloat("vertical", agent.velocity.magnitude / agent.speed);
-            if (atDestination)
-            {
-                isEating = false;
-                ChooseDestination();
-            }
-            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1)
-            {
-                destinationReached = true;
-            }
-            if (destinationReached && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.2)
-            {
-                agent.isStopped = true;
-                time += Time.deltaTime;
-                agent.velocity = Vector3.zero;
-
-                animator.SetFloat("vertical", 0);
-                if (action == "food" && !isEating)
+                foreach (Visitor visitor in VisitorManager.instance.visitors)
                 {
-                    isEating = true;
-                    GetComponentInChildren<Animator>().Play("Start Eating");
-                    transform.LookAt(destination);
-                }
-                if (action == "drink")
-                {
-                    transform.LookAt(destination);
-                }
-                if (action == "mating")
-                {
-                    Debug.Log(matingPartner);
-                    if (matingPartner.destinationReached) // valamiért NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL
+                    if (dangerLevel > visitor.dangerLevel && minDistance > Vector3.Distance(transform.position, visitor.transform.position))
                     {
-                        if (!(isPregnant || matingPartner.isPregnant))
-                        {
-                            timeGoal = time + 5;
-                            Mate();
-                        }
-                        //animation?
-                    }
-                    else
-                        timeGoal = 30;
-                }
-
-                if (time > timeGoal)
-                {
-                    if (destinationVisitable != null)
-                        destinationVisitable.Arrived(this);
-                    atDestination = true;
-                    if (isPregnant || (matingPartner != null && matingPartner.isPregnant))
-                    {
-                        matingPartner = null;
-                        matingPartner.matingPartner = null;
+                        minDistance = Vector3.Distance(transform.position, visitor.transform.position);
+                        dangerPos = visitor.transform.position;
                     }
                 }
             }
-            else if (agent.velocity == Vector3.zero)
+            foreach (Animal animal in animals)
             {
-                //if (!GridManager.instance.GetGrid(transform.position).isExhibit)
-                //{
-                //    agent.enabled = false;
-                //    transform.position = new Vector3(destination.x, destination.y, destination.z);
-                //    agent.enabled = true;
-                //}
-
-                animator.SetFloat("vertical", 0);
-                time += Time.deltaTime;
-                if (time > timeGoal)
+                if (((dangerLevel > animal.dangerLevel) || dangerLevel >= animal.dangerLevel && !animal.isAgressive) && animal.placeableName != placeableName && minDistance > Vector3.Distance(transform.position, animal.transform.position))
                 {
-                    atDestination = true;
+                    minDistance = Vector3.Distance(transform.position, animal.transform.position);
+                    dangerPos = animal.transform.position;
+                    target = animal;
                 }
             }
-            stuckTime += Time.deltaTime;
-            if (stuckTime > 60)
+            if (minDistance < fleeDistance)
+            {
+                action = "attacking";
+                agent.speed = defaultSpeed * 4;
+                Debug.Log(placeableName + " Attacking");
+                ChooseDestination();
+            }
+        }
+        if (action != "fleeing" && action != "attacking")
+        {
+            agent.speed = defaultSpeed;
+            target = null;
+        }
+    }
+
+    void CheckPregnancy()
+    {
+        if (isPregnant && dayOfConception == CalendarManager.instance.currentDate.Day)
+        {
+            pregnancyTimeMonth++;
+            if (pregnancyTimeMonth >= pregnancyDurationMonth)
+            {
+                var numberOfBabies = UnityEngine.Random.Range((int)Math.Ceiling((double)averageNumberOfBabies - averageNumberOfBabies / 2), (int)Math.Ceiling((double)averageNumberOfBabies + averageNumberOfBabies / 2) + 1);
+                for (int i = 0; i < numberOfBabies; i++)
+                {
+                    var baby = Instantiate(this, transform.position, transform.rotation);
+                    baby.isMale = UnityEngine.Random.Range(0, 2) == 0;
+                    baby.FinalPlace();
+                    age = 0;
+                    Debug.Log(numberOfBabies + " " + placeableName + "babies born");
+                    //notification
+                    //anination?
+                }
+                isPregnant = false;
+            }
+        }
+    }
+
+    void FindMatingPartner()
+    {
+        if (exhibit != null && !isMale && !isPregnant && action != "mating" && action != "fleeing" && action != "attacking" && age * 12 >= reproductionAgeMonth && happiness >= 80)
+        {
+            var potentialMates = exhibit.animals.Where(animal => animal.placeableName == placeableName && animal.isMale && animal.age * 12 >= animal.reproductionAgeMonth && animal.happiness >= 80);
+            if (potentialMates.Any())
+            {
+                var matingPartnerId = potentialMates.ElementAt(UnityEngine.Random.Range(0, potentialMates.Count()));
+                matingPartner = matingPartnerId;
+                matingPartner.matingPartner = this;
+                if (UnityEngine.Random.Range(0, fertility + matingPartner.fertility) == 1)
+                {
+                    action = "mating";
+                    matingPartner.action = "mating";
+                    ChooseDestination();
+                    matingPartner.ChooseDestination();
+                }
+            }
+        }
+    }
+
+    void CheckIfInsideExhibit()
+    {
+        exhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
+        exhibit.AddAnimal(this);
+        gridManager.freeAnimals.Remove(this);
+        agent.speed = defaultSpeed;
+        target = null;
+        action = "";
+
+        foreach (var animal in exhibit.animals)
+        {
+            if (animal.placeableName != placeableName)
+                exhibit.isMixed = true;
+        }
+
+        ChooseDestination();
+    }
+
+    void CheckDestination()
+    {
+        animator.SetFloat("vertical", agent.velocity.magnitude / agent.speed);
+        if (atDestination)
+        {
+            isEating = false;
+            ChooseDestination();
+        }
+        if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1
+            || (action == "mating" && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.5))
+        {
+            destinationReached = true;
+        }
+        if (action == "attacking" && target != null && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.5)
+        {
+            Damage();
+        }
+        else if (destinationReached && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.2)
+        {
+            agent.isStopped = true;
+            time += Time.deltaTime;
+            agent.velocity = Vector3.zero;
+
+            animator.SetFloat("vertical", 0);
+            if (action == "food" && !isEating)
+            {
+                isEating = true;
+                GetComponentInChildren<Animator>().Play("Start Eating");
+                transform.LookAt(destination);
+            }
+            if (action == "drink")
+            {
+                transform.LookAt(destination);
+            }
+            if (action == "mating")
+            {
+                if (matingPartner.destinationReached)
+                {
+                    if (!(isPregnant || matingPartner.isPregnant))
+                    {
+                        timeGoal = time + 5;
+                        Mate();
+                    }
+                    //animation?
+                }
+                else
+                    timeGoal = 30;
+            }
+
+            if (time > timeGoal)
+            {
+                if (destinationVisitable != null)
+                    destinationVisitable.Arrived(this);
+                atDestination = true;
+                if (matingPartner != null && (isPregnant || matingPartner.isPregnant))
+                {
+                    action = "";
+                    matingPartner.action = "";
+                    matingPartner.matingPartner = null;
+                    matingPartner = null;
+                }
+            }
+        }
+        else if (agent.velocity == Vector3.zero)
+        {
+            //if (!GridManager.instance.GetGrid(transform.position).isExhibit)
+            //{
+            //    agent.enabled = false;
+            //    transform.position = new Vector3(destination.x, destination.y, destination.z);
+            //    agent.enabled = true;
+            //}
+
+            animator.SetFloat("vertical", 0);
+            time += Time.deltaTime;
+            if (time > timeGoal)
             {
                 atDestination = true;
             }
+        }
+        stuckTime += Time.deltaTime;
+        if (stuckTime > 60)
+        {
+            atDestination = true;
         }
     }
 
     void ChooseDestination()
     {
-        if (action != "mating")
+        if (action != "mating" && action != "fleeing" && action != "attacking")
             ChooseDestinationType();
         Grid destinationGrid;
         int random;
         float offsetX = UnityEngine.Random.Range(0, 1.0f);
         float offsetZ = UnityEngine.Random.Range(0, 1.0f);
+        destinationVisitable = null;
 
         switch (action)
         {
@@ -410,15 +590,18 @@ Animal matingPartner;
                 else
                     destinationGrid = GridManager.instance.grids[UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth), UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth)];
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
-                destinationVisitable = null;
                 break;
             case "mating":
                 if (isMale)
                     destination = matingPartner.transform.position;
                 else
                     destination = transform.position;
-
-                destinationVisitable = null;
+                break;
+            case "fleeing":
+                destination = transform.position + (transform.position - dangerPos).normalized * 10;
+                break;
+            case "attacking":
+                destination = dangerPos;
                 break;
             default:
                 if (exhibit != null)
@@ -426,7 +609,6 @@ Animal matingPartner;
                 else
                     destinationGrid = GridManager.instance.grids[UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth), UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth)];
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
-                destinationVisitable = null;
                 break;
         }
 
@@ -439,6 +621,7 @@ Animal matingPartner;
 
         agent.SetDestination(destination);
         atDestination = false;
+        destinationReached = false;
         time = 0;
         timeGoal = UnityEngine.Random.Range(4, 6);
         stuckTime = 0;

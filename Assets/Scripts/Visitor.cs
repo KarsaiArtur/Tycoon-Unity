@@ -39,6 +39,8 @@ public class Visitor : MonoBehaviour, Clickable
     MeshRenderer photoCamera;
 
     public string action = "";
+    bool isFleeing = false;
+    public int dangerLevel = 3;
 
     public void Start()
     {
@@ -106,6 +108,8 @@ public class Visitor : MonoBehaviour, Clickable
     {
         if (placed)
         {
+            Flee();
+
             animator.SetFloat("vertical", agent.velocity.magnitude / agent.speed);
 
             if (atDestination && GridManager.instance.reachableVisitables.Count != 0)
@@ -137,6 +141,25 @@ public class Visitor : MonoBehaviour, Clickable
                 if (time > timeGoal)
                 {
                     atDestination = true;
+                }
+            }
+        }
+    }
+
+    void Flee()
+    {
+        if (GridManager.instance.freeAnimals.Count > 0 && !isFleeing)
+        {
+            foreach (Animal animal in GridManager.instance.freeAnimals)
+            {
+                if (((dangerLevel - 2 < animal.dangerLevel && animal.isAgressive) || dangerLevel < animal.dangerLevel) && Vector3.Distance(transform.position, animal.transform.position) < 10)
+                {
+                    isFleeing = true;
+                    happiness = happiness - 50 > 0 ? happiness - 50 : 0;
+                    agent.speed *= 3;
+                    destinationVisitable = ZooManager.instance;
+                    Debug.Log("Human Fleeing from " + animal.placeableName);
+                    break;
                 }
             }
         }
@@ -323,7 +346,8 @@ public class Visitor : MonoBehaviour, Clickable
 
     IEnumerator CheckPictures()
     {
-        lookedAnimal = currentExhibit.animals[Random.Range(0, currentExhibit.animals.Count)];
+        var lookedAnimalId = currentExhibit.animals[Random.Range(0, currentExhibit.animals.Count)];
+        lookedAnimal = lookedAnimalId;
         randomRange = 10;
         while (arrived)
         {
@@ -336,7 +360,8 @@ public class Visitor : MonoBehaviour, Clickable
                     randomRange = 10;
                     lookAtAnimals = false;
                     if(currentExhibit.animals.Count!= 0)
-                        lookedAnimal = currentExhibit.animals[Random.Range(0, currentExhibit.animals.Count)];
+                        lookedAnimalId = currentExhibit.animals[Random.Range(0, currentExhibit.animals.Count)];
+                        lookedAnimal = lookedAnimalId;
                 }
                 else
                 {
@@ -350,7 +375,6 @@ public class Visitor : MonoBehaviour, Clickable
 
     public void RotateTowards(Vector3 to)
     {
-
         Quaternion _lookRotation =
             Quaternion.LookRotation(to - transform.position);
 

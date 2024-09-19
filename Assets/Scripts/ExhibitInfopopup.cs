@@ -42,12 +42,13 @@ public class ExhibitInfopopup : InfoPopup
             animalCount = exhibit.animals.Count;
             for (int i=0; i < animalCount; i++)
             {
-                if (exhibit.animals[i].health <= 33)
+                var animal = exhibit.animals[i];
+                if (animal.health <= 33)
                 {
                     animalInfos[i].transform.Find("Health").transform.GetComponent<Image>().enabled = true;
                     animalInfos[i].transform.Find("Health").GetChild(0).transform.GetComponent<Image>().enabled = true;
                 }
-                else if (exhibit.animals[i].health > 33  && animalInfos[i].transform.Find("Health").gameObject.active)
+                else if (animal.health > 33  && animalInfos[i].transform.Find("Health").gameObject.active)
                 {
                     animalInfos[i].transform.Find("Health").transform.GetComponent<Image>().enabled = false;
                     animalInfos[i].transform.Find("Health").GetChild(0).transform.GetComponent<Image>().enabled = false;

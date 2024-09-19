@@ -29,6 +29,8 @@ public class GridManager : MonoBehaviour, Saveable
     public Grid[,] grids;
     public Grid startingGrid;
 
+    public List<Animal> freeAnimals = new List<Animal>();
+
     public List<Bench> benches = new List<Bench>();
     public List<Exhibit> exhibits = new List<Exhibit>();
     public List<Building> buildings = new List<Building>();
@@ -44,17 +46,19 @@ public class GridManager : MonoBehaviour, Saveable
 
     void Awake()
     {
+        instance = this;
         pControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
     }
 
     void Start()
     {
-        instance = this;
         terrainWidth += elementWidth * 2;
 
         if(LoadMenu.loadedGame != null){
             LoadMenu.instance.LoadData(this);
-        } else{
+        }
+        else
+        {
             CreateCoords();
         }
 
@@ -470,25 +474,25 @@ public class GridManager : MonoBehaviour, Saveable
     ///GENERATED CODE, DONT MODIFY
     ///******************************
 
-    class Data
+    public class GridManagerData
     {
         public Vector3[] coords;
 
-        public Data(Vector3[] coords)
+        public GridManagerData(Vector3[] coords)
         {
            this.coords = coords;
         }
     }
 
-    Data data;
+    GridManagerData data; 
     
     public string DataToJson(){
-        Data data = new Data(coords);
+        GridManagerData data = new GridManagerData(coords);
         return JsonUtility.ToJson(data);
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<Data>(json);
+        data = JsonUtility.FromJson<GridManagerData>(json);
         SetData(data.coords);
     }
     

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,12 +19,12 @@ public class Bench : Placeable, Visitable
     {
         base.Awake();
         height = gameObject.GetComponent<BoxCollider>().size.y;
-        base.Awake();
         navMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
     }
 
     public override void FinalPlace()
     {
+        BenchManager.instance.AddList(this);
         ChangeMaterial(0);
         navMeshObstacle.enabled = true;
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
@@ -34,7 +35,8 @@ public class Bench : Placeable, Visitable
             if (child.tag.Equals("Frame"))
             {
                 foreach(var renderer in child.GetComponentsInChildren<Renderer>()){
-                    if(renderer != null){
+                    if(renderer != null)
+                    {
                         renderers.RemoveAll(element => element.name.Equals(renderer.name));
                         defaultMaterials.RemoveAll(element => element.rendererHashCode == renderer.GetHashCode());
                     }
@@ -45,8 +47,7 @@ public class Bench : Placeable, Visitable
         }
 
         grid = GridManager.instance.GetGrid(transform.position);
-        grid.isBench = true;
-        grid.bench = this;
+        grid.GetBench(_id);
         paths = new List<Grid>();
         GridManager.instance.benches.Add(this);
 
@@ -73,7 +74,7 @@ public class Bench : Placeable, Visitable
         if (!collided)
             playerControl.canBePlaced = true;
 
-        if (playerControl.canBePlaced && GridManager.instance.GetGrid(mouseHit).isExhibit)
+        if (playerControl.canBePlaced && GridManager.instance.GetGrid(mouseHit).GetExhibit() != null)
         {
             playerControl.canBePlaced = false;
             ChangeMaterial(2);
@@ -241,6 +242,7 @@ public class Bench : Placeable, Visitable
 
     public override void Remove()
     {
+        BenchManager.instance.benches.Remove(this);
         base.Remove();
 
         GridManager.instance.benches.Remove(this);

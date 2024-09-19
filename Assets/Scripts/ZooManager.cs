@@ -26,14 +26,16 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public float reputation = 75;
 
 
-    public void Awake(){
+    public void Awake()
+    {
         instance = this;
     }
 
     public void Start()
     {
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
-        if(LoadMenu.loadedGame != null){
+        if(LoadMenu.loadedGame != null)
+        {
             LoadMenu.instance.LoadData(this);
         }
         moneyText = GameObject.Find("MoneyText").GetComponent<TextMeshProUGUI>();
@@ -58,6 +60,8 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
             if (playerControl.currentInfopopup.DidVisitorLeft(visitor))
                 playerControl.DestroyCurrentInfopopup();
         }
+        VisitorManager.instance.visitors.Remove(visitor);
+
         Destroy(visitor.gameObject);
     }
 
@@ -154,7 +158,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     ///GENERATED CODE, DONT MODIFY
     ///******************************
 
-    class Data
+    public class ZooManagerData
     {
         public float money;
         public float currentEntranceFee;
@@ -163,7 +167,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         public List<float> latestVisitorHappinesses;
         public float reputation;
 
-        public Data(float money, float currentEntranceFee, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation)
+        public ZooManagerData(float money, float currentEntranceFee, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation)
         {
            this.money = money;
            this.currentEntranceFee = currentEntranceFee;
@@ -174,15 +178,15 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         }
     }
 
-    Data data;
+    ZooManagerData data; 
     
     public string DataToJson(){
-        Data data = new Data(money, currentEntranceFee, allTimeVisitorCount, allTimeMoneyEarned, latestVisitorHappinesses, reputation);
+        ZooManagerData data = new ZooManagerData(money, currentEntranceFee, allTimeVisitorCount, allTimeMoneyEarned, latestVisitorHappinesses, reputation);
         return JsonUtility.ToJson(data);
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<Data>(json);
+        data = JsonUtility.FromJson<ZooManagerData>(json);
         SetData(data.money, data.currentEntranceFee, data.allTimeVisitorCount, data.allTimeMoneyEarned, data.latestVisitorHappinesses, data.reputation);
     }
     

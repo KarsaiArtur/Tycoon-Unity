@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PathManager : Placeable
@@ -132,39 +133,39 @@ public class PathManager : Placeable
             path.gameObject.transform.position = new Vector3(path.gameObject.transform.position.x, path.gameObject.transform.position.y - Path.offsetDefault, path.gameObject.transform.position.z);
             Grid grid = gridManager.GetGrid(path.gameObject.transform.position);
             grid.isPath = true;
-            if (!grid.isExhibit)
+            if (grid.GetExhibit() == null)
             {
                 for (int i = 0; i < 4; i++)
                 {
                     if (grid.trueNeighbours[i] != null)
                     {
-                        if (grid.trueNeighbours[i].isExhibit && !grid.trueNeighbours[i].exhibit.paths.Contains(grid))
+                        if (grid.trueNeighbours[i].GetExhibit() != null && !grid.trueNeighbours[i].GetExhibit().paths.Contains(grid))
                         {
-                            grid.trueNeighbours[i].exhibit.paths.Add(grid);
+                            grid.trueNeighbours[i].GetExhibit().paths.Add(grid);
                         }
                         if (grid.trueNeighbours[i].trueNeighbours[i] != null)
                         {
-                            if (grid.trueNeighbours[i].trueNeighbours[i].isExhibit && !grid.trueNeighbours[i].trueNeighbours[i].exhibit.paths.Contains(grid))
+                            if (grid.trueNeighbours[i].trueNeighbours[i].GetExhibit() != null && !grid.trueNeighbours[i].trueNeighbours[i].GetExhibit().paths.Contains(grid))
                             {
-                                grid.trueNeighbours[i].trueNeighbours[i].exhibit.paths.Add(grid);
+                                grid.trueNeighbours[i].trueNeighbours[i].GetExhibit().paths.Add(grid);
                             }
                         }
                         if (grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4] != null)
                         {
-                            if (grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].isExhibit && !grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].exhibit.paths.Contains(grid))
+                            if (grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit() != null && !grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit().paths.Contains(grid))
                             {
-                                grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].exhibit.paths.Add(grid);
+                                grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit().paths.Add(grid);
                             }
                         }
 
-                        if (grid.trueNeighbours[i].isBuilding && !grid.trueNeighbours[i].building.paths.Contains(grid))
+                        if (grid.trueNeighbours[i].GetBuilding() != null && !grid.trueNeighbours[i].GetBuilding().paths.Contains(grid))
                         {
-                            grid.trueNeighbours[i].building.paths.Add(grid);
+                            grid.trueNeighbours[i].GetBuilding().paths.Add(grid);
                         }
 
-                        if (grid.trueNeighbours[i].isBench && !grid.trueNeighbours[i].bench.paths.Contains(grid))
+                        if (grid.trueNeighbours[i].GetBench() != null && !grid.trueNeighbours[i].GetBench().paths.Contains(grid))
                         {
-                            grid.trueNeighbours[i].bench.paths.Add(grid);
+                            grid.trueNeighbours[i].GetBench().paths.Add(grid);
                         }
                     }
                 }

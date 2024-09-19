@@ -17,13 +17,15 @@ public class CalendarManager : MonoBehaviour, Saveable
     public DateTime startingDate = new DateTime(2024, 1, 1, 0, 0, 0);
     int timer = 0;
 
-
     private void Start()
     {
         instance = this;
-        if(LoadMenu.loadedGame != null){
+        if(LoadMenu.loadedGame != null)
+        {
             LoadMenu.instance.LoadData(this);
-        } else{
+        }
+        else
+        {
             SetCurrentDate(startingDate);
         }
         SetDate();
@@ -48,7 +50,6 @@ public class CalendarManager : MonoBehaviour, Saveable
 
     void AddDay()
     {
-        
         SetCurrentDate(currentDate.AddDays(1));
         SetDate();
         if (currentDate.Day == 1)
@@ -82,25 +83,25 @@ public class CalendarManager : MonoBehaviour, Saveable
     ///GENERATED CODE, DONT MODIFY
     ///******************************
 
-    class Data
+    public class CalendarManagerData
     {
         public long currentDate;
 
-        public Data(DateTime currentDate)
+        public CalendarManagerData(DateTime currentDate)
         {
            this.currentDate = currentDate.Ticks;
         }
     }
 
-    Data data;
+    CalendarManagerData data; 
     
     public string DataToJson(){
-        Data data = new Data(currentDate);
+        CalendarManagerData data = new CalendarManagerData(currentDate);
         return JsonUtility.ToJson(data);
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<Data>(json);
+        data = JsonUtility.FromJson<CalendarManagerData>(json);
         SetData(new DateTime(data.currentDate));
     }
     

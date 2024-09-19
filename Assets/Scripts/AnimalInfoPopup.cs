@@ -45,6 +45,7 @@ public class AnimalInfoPopup : InfoPopup
             ("Health",  () => { return animal.health; } )
         };
     }
+    
     IEnumerator CheckAnimalAttributes()
     {
         while (true)

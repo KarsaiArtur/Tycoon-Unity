@@ -16,6 +16,7 @@ public class Decoration : Placeable
 
     public override void FinalPlace()
     {
+        DecorationManager.instance.AddList(this);
         ChangeMaterial(0);
         navMeshObstacle.enabled = true;
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
@@ -26,7 +27,7 @@ public class Decoration : Placeable
         base.Place(mouseHit);
         transform.position = new Vector3(mouseHit.x, mouseHit.y + height / 2, mouseHit.z);
 
-        if (playerControl.canBePlaced && GridManager.instance.GetGrid(mouseHit).isExhibit)
+        if (playerControl.canBePlaced && GridManager.instance.GetGrid(mouseHit).GetExhibit() != null)
         {
             playerControl.canBePlaced = false;
             ChangeMaterial(2);
@@ -61,6 +62,7 @@ public class Decoration : Placeable
 
     public override void Remove()
     {
+        DecorationManager.instance.decorations.Remove(this);
         base.Remove();
 
         Destroy(gameObject);

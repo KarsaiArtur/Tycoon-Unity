@@ -7,10 +7,10 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable
 
     public void FinalPlace()
     {
-        if (GridManager.instance.GetGrid(transform.position).isExhibit)
+        if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
         {
-            GridManager.instance.GetGrid(transform.position).exhibit.AddFoodPlace(this);
-            exhibit = GridManager.instance.GetGrid(transform.position).exhibit;
+            GridManager.instance.GetGrid(transform.position).GetExhibit().AddFoodPlace(this);
+            exhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
         }
     }
 
@@ -28,7 +28,7 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable
         {
             exhibit.foodPlaces.Remove(this);
             animal.destinationVisitable = null;
-            if(gameObject != null)
+            if (gameObject != null)
                 Destroy(gameObject);
         }
     }
