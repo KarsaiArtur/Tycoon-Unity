@@ -1,13 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
-using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class Bench : Placeable, Visitable
 {
     float height;
-    NavMeshObstacle navMeshObstacle;
     bool collided = false;
     float curY = -100;
     public int capacity = 2;
@@ -19,40 +17,40 @@ public class Bench : Placeable, Visitable
     {
         base.Awake();
         height = gameObject.GetComponent<BoxCollider>().size.y;
-        navMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
     }
 
     public override void FinalPlace()
     {
         BenchManager.instance.AddList(this);
         ChangeMaterial(0);
-        navMeshObstacle.enabled = true;
+
+        grid = GridManager.instance.GetGrid(transform.position);
+        grid.GetBench(_id);
+        paths = new List<Grid>();
+        //GridManager.instance.benches.Add(this);
+        GridManager.instance.visitables.Add(this);
+
+        FindPaths();
+        DecideIfReachable();
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
 
         foreach (var child in GetComponentsInChildren<BoxCollider>())
         {
-
             if (child.tag.Equals("Frame"))
             {
-                foreach(var renderer in child.GetComponentsInChildren<Renderer>()){
-                    if(renderer != null)
+                foreach (var renderer in child.GetComponentsInChildren<Renderer>())
+                {
+                    if (renderer != null)
                     {
                         renderers.RemoveAll(element => element.name.Equals(renderer.name));
                         defaultMaterials.RemoveAll(element => element.rendererHashCode == renderer.GetHashCode());
                     }
                 }
+
                 Destroy(child.gameObject);
                 break;
             }
         }
-
-        grid = GridManager.instance.GetGrid(transform.position);
-        grid.GetBench(_id);
-        paths = new List<Grid>();
-        GridManager.instance.benches.Add(this);
-
-        FindPaths();
-        DecideIfReachable();
     }
 
     public override void Place(Vector3 mouseHit)
@@ -179,13 +177,13 @@ public class Bench : Placeable, Visitable
             {
                 if (gridManager.ReachableAttractionBFS(paths[i], gridManager.startingGrid))
                 {
-                    if (!GridManager.instance.reachableBenches.Contains(this))
+                    if (!GridManager.instance.reachableEnergyBuildings.Contains(this))
                         AddToReachableLists();
                     return;
                 }
             }
         }
-        if (GridManager.instance.reachableBenches.Contains(this))
+        if (GridManager.instance.reachableEnergyBuildings.Contains(this))
             RemoveFromReachableLists();
     }
 
@@ -208,14 +206,14 @@ public class Bench : Placeable, Visitable
 
     public void AddToReachableLists()
     {
-        GridManager.instance.reachableBenches.Add(this);
+        //GridManager.instance.reachableBenches.Add(this);
         GridManager.instance.reachableVisitables.Add(this);
         GridManager.instance.reachableEnergyBuildings.Add(this);
     }
 
     public void RemoveFromReachableLists()
     {
-        GridManager.instance.reachableBenches.Remove(this);
+        //GridManager.instance.reachableBenches.Remove(this);
         GridManager.instance.reachableVisitables.Remove(this);
         GridManager.instance.reachableEnergyBuildings.Remove(this);
     }
@@ -245,7 +243,8 @@ public class Bench : Placeable, Visitable
         BenchManager.instance.benches.Remove(this);
         base.Remove();
 
-        GridManager.instance.benches.Remove(this);
+        //GridManager.instance.benches.Remove(this);
+        GridManager.instance.visitables.Remove(this);
         RemoveFromReachableLists();
         foreach (var visitor in visitors)
         {

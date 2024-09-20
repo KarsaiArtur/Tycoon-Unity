@@ -102,20 +102,14 @@ public class Fence : Placeable
 
             if (tempGrids != null)
             {
-                exhibit.SetExhibit(tempGrids);
-                gridManager.exhibits.Add(exhibit);
-                exhibit.exitGrid = grid1;
-                exhibit.entranceGrid = grid1.trueNeighbours[(timesRotated + 2) % 4];
+                exhibit.SetExhibit(tempGrids, grid1, grid1.trueNeighbours[(timesRotated + 2) % 4]);
             }
             else
             {
                 tempGrids = BFS(grid2, gridManager.startingGrid);
                 if (tempGrids != null)
                 {
-                    exhibit.SetExhibit(tempGrids);
-                    gridManager.exhibits.Add(exhibit);
-                    exhibit.exitGrid = grid2;
-                    exhibit.entranceGrid = grid2.trueNeighbours[timesRotated % 4];
+                    exhibit.SetExhibit(tempGrids, grid2, grid2.trueNeighbours[timesRotated % 4]);
                 }
             }
 

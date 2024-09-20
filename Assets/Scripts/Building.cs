@@ -149,6 +149,7 @@ public class Building : Placeable, Visitable
         BuildingManager.instance.AddList(this);
         transform.position = new Vector3(transform.position.x, transform.position.y - offsetYDefault, transform.position.z);
         gridManager.buildings.Add(this);
+        gridManager.visitables.Add(this);
 
         gridList = new List<Grid>();
         paths = new List<Grid>();
@@ -175,8 +176,9 @@ public class Building : Placeable, Visitable
         {
             if (child.tag.Equals("Frame"))
             {
-                foreach(var renderer in child.GetComponentsInChildren<Renderer>()){
-                    if(renderer != null)
+                foreach (var renderer in child.GetComponentsInChildren<Renderer>())
+                {
+                    if (renderer != null)
                     {
                         renderers.RemoveAll(element => element.name.Equals(renderer.name));
                         defaultMaterials.RemoveAll(element => element.rendererHashCode == renderer.GetHashCode());
@@ -187,7 +189,6 @@ public class Building : Placeable, Visitable
                 break;
             }
         }
-        
     }
 
     public override void Remove()
@@ -195,7 +196,6 @@ public class Building : Placeable, Visitable
         base.Remove();
         BuildingManager.instance.buildings.Remove(this);
 
-        ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
         RemoveFromLists();
         foreach (var visitor in visitors)
             visitor.ChooseDestination();
@@ -476,6 +476,7 @@ public class Building : Placeable, Visitable
     public void RemoveFromLists()
     {
         gridManager.buildings.Remove(this);
+        gridManager.visitables.Remove(this);
         RemoveFromReachableLists();
     }
 

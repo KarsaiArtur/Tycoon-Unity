@@ -203,4 +203,9 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
            this.latestVisitorHappinesses = latestVisitorHappinesses;
            this.reputation = reputation;
     }
+
+    public void RemovePath(Path path)
+    {
+
+    }
 }

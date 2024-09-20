@@ -172,46 +172,62 @@ public class PathManager : Placeable
             }
         }
 
-        foreach (var exhibit in gridManager.exhibits)
+        //foreach (var exhibit in gridManager.exhibits)
+        //{
+        //    if (!gridManager.reachableVisitables.Contains(exhibit) && exhibit.paths.Count > 0)
+        //    {
+        //        for (int i = 0; i < exhibit.paths.Count; i++)
+        //        {
+        //            if (gridManager.ReachableAttractionBFS(exhibit.paths[i], gridManager.startingGrid))
+        //            {
+        //                exhibit.AddToReachableLists();
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
+        //foreach (var building in gridManager.buildings)
+        //{
+        //    if (!gridManager.reachableVisitables.Contains(building) && building.paths.Count > 0)
+        //    {
+        //        for (int i = 0; i < building.paths.Count; i++)
+        //        {
+        //            if (gridManager.ReachableAttractionBFS(building.paths[i], gridManager.startingGrid))
+        //            {
+        //                building.AddToReachableLists();
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
+        //foreach (var bench in gridManager.benches)
+        //{
+        //    if (!gridManager.reachableVisitables.Contains(bench) && bench.paths.Count > 0)
+        //    {
+        //        for (int i = 0; i < bench.paths.Count; i++)
+        //        {
+        //            if (gridManager.ReachableAttractionBFS(bench.paths[i], gridManager.startingGrid))
+        //            {
+        //                bench.AddToReachableLists();
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
+
+        foreach (var visitable in gridManager.visitables)
         {
-            if (!gridManager.reachableVisitables.Contains(exhibit) && exhibit.paths.Count > 0)
+            if (!gridManager.reachableVisitables.Contains(visitable) && visitable.GetPaths().Count > 0)
             {
-                for (int i = 0; i < exhibit.paths.Count; i++)
+                for (int i = 0; i < visitable.GetPaths().Count; i++)
                 {
-                    if (gridManager.ReachableAttractionBFS(exhibit.paths[i], gridManager.startingGrid))
+                    if (gridManager.ReachableAttractionBFS(visitable.GetPaths()[i], gridManager.startingGrid))
                     {
-                        exhibit.AddToReachableLists();
+                        visitable.AddToReachableLists();
                         break;
                     }
                 }
-            }
-        }
-        foreach (var building in gridManager.buildings)
-        {
-            if (!gridManager.reachableVisitables.Contains(building) && building.paths.Count > 0)
-            {
-                for (int i = 0; i < building.paths.Count; i++)
-                {
-                    if (gridManager.ReachableAttractionBFS(building.paths[i], gridManager.startingGrid))
-                    {
-                        building.AddToReachableLists();
-                        break;
-                    }
-                }
-            }
-        }
-        foreach (var bench in gridManager.benches)
-        {
-            if (!gridManager.reachableVisitables.Contains(bench) && bench.paths.Count > 0)
-            {
-                for (int i = 0; i < bench.paths.Count; i++)
-                {
-                    if (gridManager.ReachableAttractionBFS(bench.paths[i], gridManager.startingGrid))
-                    {
-                        bench.AddToReachableLists();
-                        break;
-                    }
-                }
+                playerControl.ReloadGuestNavMesh();
             }
         }
         playerControl.ReloadGuestNavMesh();

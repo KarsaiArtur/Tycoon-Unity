@@ -5,9 +5,6 @@ using UnityEngine.EventSystems;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
 using Cinemachine;
-using static UnityEngine.EventSystems.EventTrigger;
-using System.Collections;
-using Unity.VisualScripting;
 
 public class PlayerControl : MonoBehaviour
 {

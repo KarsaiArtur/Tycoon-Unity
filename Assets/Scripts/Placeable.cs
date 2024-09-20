@@ -7,7 +7,6 @@ using UnityEngine;
 
 public class Placeable : MonoBehaviour, Clickable
 {
-
     public string _id;
     public PlayerControl playerControl;
     public GridManager gridManager;

@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class Path : Placeable
 {
@@ -114,20 +110,25 @@ public class Path : Placeable
         {
             Grid tempGrid = GridManager.instance.GetGrid(transform.position);
             tempGrid.isPath = false;
-            foreach (var exhibit in GridManager.instance.exhibits)
+            //foreach (var exhibit in GridManager.instance.exhibits)
+            //{
+            //    exhibit.RemovePath(this);
+            //    exhibit.DecideIfReachable();
+            //}
+            //foreach (var building in GridManager.instance.buildings)
+            //{
+            //    building.RemovePath(this);
+            //    building.DecideIfReachable();
+            //}
+            //foreach (var bench in GridManager.instance.benches)
+            //{
+            //    bench.RemovePath(this);
+            //    bench.DecideIfReachable();
+            //}
+            foreach (var visitable in GridManager.instance.visitables)
             {
-                exhibit.RemovePath(this);
-                exhibit.DecideIfReachable();
-            }
-            foreach (var building in GridManager.instance.buildings)
-            {
-                building.RemovePath(this);
-                building.DecideIfReachable();
-            }
-            foreach (var bench in GridManager.instance.benches)
-            {
-                bench.RemovePath(this);
-                bench.DecideIfReachable();
+                visitable.RemovePath(this);
+                visitable.DecideIfReachable();
             }
             Destroy(gameObject);
         }

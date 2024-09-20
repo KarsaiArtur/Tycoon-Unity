@@ -31,10 +31,11 @@ public class GridManager : MonoBehaviour, Saveable
 
     public List<Animal> freeAnimals = new List<Animal>();
 
-    public List<Bench> benches = new List<Bench>();
+    //public List<Bench> benches = new List<Bench>();
+    public List<Visitable> visitables = new List<Visitable>();
     public List<Exhibit> exhibits = new List<Exhibit>();
     public List<Building> buildings = new List<Building>();
-    public List<Visitable> reachableBenches = new List<Visitable>();
+    //public List<Visitable> reachableBenches = new List<Visitable>();
     public List<Visitable> reachableExhibits = new List<Visitable>();
     public List<Visitable> reachableVisitables = new List<Visitable>();
     public List<Visitable> reachableFoodBuildings = new List<Visitable>();

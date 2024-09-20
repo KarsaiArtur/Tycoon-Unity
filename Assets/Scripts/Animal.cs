@@ -427,6 +427,7 @@ public class Animal : Placeable
                     //anination?
                 }
                 isPregnant = false;
+                pregnancyTimeMonth = 0;
             }
         }
     }

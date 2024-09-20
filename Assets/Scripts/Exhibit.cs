@@ -61,7 +61,7 @@ public class Exhibit : Placeable, Visitable, Clickable
         }
     }
 
-    public void SetExhibit(HashSet<Grid> grids)
+    public void SetExhibit(HashSet<Grid> grids, Grid exitG, Grid entranceG)
     {
         gateObstacleCenter = gameObject.GetComponent<NavMeshObstacle>().center;
         gridList = new List<Grid>(grids);
@@ -76,6 +76,11 @@ public class Exhibit : Placeable, Visitable, Clickable
 
         FindPaths();
         DecideIfReachable();
+
+        GridManager.instance.exhibits.Add(this);
+        GridManager.instance.visitables.Add(this);
+        exitGrid = exitG;
+        entranceGrid = entranceG;
     }
 
     public void DecideIfReachable()
@@ -302,6 +307,7 @@ public class Exhibit : Placeable, Visitable, Clickable
         grid2.neighbours[timesRotated] = grid1;
 
         GridManager.instance.exhibits.Remove(this);
+        GridManager.instance.visitables.Remove(this);
         RemoveFromReachableLists();
 
         foreach (var grid in gridList)

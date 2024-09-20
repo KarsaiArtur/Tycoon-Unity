@@ -7,6 +7,8 @@ public interface Visitable
 
     public abstract void DecideIfReachable();
 
+    public abstract void RemovePath(Path path);
+
     public abstract List<Grid> GetPaths();
 
     public abstract void Arrived(Visitor visitor);
