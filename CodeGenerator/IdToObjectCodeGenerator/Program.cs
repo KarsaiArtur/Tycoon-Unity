@@ -32,7 +32,6 @@ public class MyProgram{
         files = files.Where(file => file.EndsWith(".cs")).ToList();
 
         foreach(var file in files){
-            isSerializable = false;
             generateCode(file);
         }
     }
@@ -48,14 +47,33 @@ public class MyProgram{
             return;
         }
 
-        string temp = "";
         if(!fileContent.Contains("/////GENERATE")){
             return;
         }
 
-        fileContent.IndexOf()
+        System.Console.WriteLine(path);
+        foreach(var index in AllIndexesOf(fileContent, "/////GENERATE")){
+            var temp = fileContent.Substring(index + "/////GENERATE".Length);
+            temp = temp.Substring(temp.IndexOf("public ") + "public ".Length);
+            temp = temp.Substring(0, temp.IndexOf("="));
+            var split = temp.Split(" ");
+            
+            var name = split[1];
+            var isList = false;
+            var type = "";
 
-        string className = temp.Substring("class".Length);
+            if(split[0].Contains("List")){
+                isList = true;
+            }
+            else{
+                type = split[0];
+            }
+            attributes.Add(new Attribute(type, name, isList));
+        }
+
+        return;
+
+        string className =  "";//temp.Substring("class".Length);
         className = className.Substring(0, className.IndexOf(":")).Replace(" ", "");
 
         string end = fileContent.Substring(fileContent.LastIndexOf("}"));
@@ -72,15 +90,12 @@ public class MyProgram{
                 isList = true;
             }
             
-            bool isPrimitive = primitives.Contains(attribute[0]) ? true : false;
-            attributes.Add(new Attribute(attribute[0], attribute[1], isList, isPrimitive));
         }
 
         
         if(fileContent.Contains("SERIALIZABLE")){
             string serializable = fileContent.Substring(fileContent.IndexOf("SERIALIZABLE:"));
             serializable = serializable.Substring(0, serializable.IndexOf("/"));
-            isSerializable = serializable.Contains("YES") ? true : false;
         }
         
         string generatedCode = 
@@ -96,10 +111,8 @@ public class MyProgram{
     fileName = fileName.Substring(0, fileName.IndexOf(".cs")) +".json";
     generatedCode += writeGetFileName(fileName);
     generatedCode += writeSetData();
-    if(isSerializable){
         generatedCode += writeToDataClass(className);
         generatedCode += writeFromDataClass(className);
-    }
 
         string editedCode = fileContent.Substring(0, fileContent.LastIndexOf("}"));
 
@@ -114,11 +127,11 @@ public class MyProgram{
     }
 
     static string attributesWithType(){
-        var finalAttribute = attributes[0].isPrimitive ? attributes[0].type : attributes[0].type + "Data";
+        var finalAttribute = attributes[0].type;
         finalAttribute = attributes[0].isList ? $"List<{finalAttribute}>" : finalAttribute;
         string _string = $"{finalAttribute} {attributes[0].name}";
         foreach(var attribute in attributes.Skip(1)){
-            finalAttribute = attribute.isPrimitive ? attribute.type : attribute.type + "Data";
+            finalAttribute = attribute.type;
             finalAttribute = attribute.isList ? $"List<{finalAttribute}>" : finalAttribute;
             _string += $", {finalAttribute} {attribute.name}";
         }
@@ -181,9 +194,7 @@ $"           this.{attriButeName} = {attribute.name}{finalAttribute};";
 
     static string writeDataClass(string className){
         string classString = 
-(isSerializable ? @"    [Serializable]
-" : "")
-+ $"    public class {className}Data"+@"
+$"    public class {className}Data"+@"
     {";
         foreach(var attribute in attributes){
             string finalAttribute = "";
@@ -192,7 +203,7 @@ $"           this.{attriButeName} = {attribute.name}{finalAttribute};";
                 "DateTime" => "long",
                 _ => attribute.type,
             };
-            finalAttribute = attribute.isPrimitive ? finalAttribute : finalAttribute + "Data";
+            finalAttribute = finalAttribute;
             finalAttribute = attribute.isList ? $"List<{finalAttribute}>" : finalAttribute;
             string attributeString =
 $"        public {finalAttribute} {attribute.name};";
@@ -254,7 +265,6 @@ $"        public {className}Data(";
      static string toDataList(){
         string _string = "";
         foreach(var attribute in attributes){
-            if(!attribute.isPrimitive){
                 if(attribute.isList){
                     _string += System.Environment.NewLine
 + $"        List<{attribute.type}Data> {attribute.name} = new List<{attribute.type}Data>();" + System.Environment.NewLine
@@ -262,12 +272,9 @@ $"        public {className}Data(";
 + $"            {attribute.name}.Add(element.ToData()" + @");
         }
 ";              
-                }
-                else{
                     _string += System.Environment.NewLine
 + $"        var {attribute.name} = new {attribute.type}Data({attribute.name})";
                     
-                }
             }
         }
         return _string;
@@ -276,7 +283,6 @@ $"        public {className}Data(";
      static string fromDataList(string beforeAttribute = ""){
         string _string = "";
         foreach(var attribute in attributes){
-            if(!attribute.isPrimitive){
                 if(attribute.isList){
                     _string += System.Environment.NewLine
 + $"        foreach(var element in {attribute.name}){{" + System.Environment.NewLine
@@ -291,17 +297,12 @@ $"        public {className}Data(";
 + $"        var {attribute.name} = new {attribute.type}Data({attribute.name})";
                     
                 }
-            }
-            else{
-                {
                 string attriButeName = attribute.name.Equals("position") || attribute.name.Equals("rotation") ? $"transform.{attribute.name}" : attribute.name;
             
                 string attributeString =
     $"           this.{attriButeName} = {beforeAttribute}{attribute.name};";
                 _string += System.Environment.NewLine + attributeString;
             }
-            }
-        }
         return _string;
      }
 
@@ -322,5 +323,18 @@ $"        public {className}Data(";
     }
 ";
      }
+
+    public static int[] AllIndexesOf(string str, string substr, bool ignoreCase = false)
+    {
+        var indexes = new List<int>();
+        int index = 0;
+
+        while ((index = str.IndexOf(substr, index, ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal)) != -1)
+        {
+            indexes.Add(index++);
+        }
+
+        return indexes.ToArray();
+    }
 }
 

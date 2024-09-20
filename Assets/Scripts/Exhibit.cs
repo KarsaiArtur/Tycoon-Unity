@@ -10,8 +10,10 @@ public class Exhibit : Placeable, Visitable, Clickable
     public List<string> animalIds = new List<string>();
     /////GENERATE
     public List<Animal> animals = new List<Animal>();
+    /////GENERATE
     public List<string> foliageIds = new List<string>();
     public List<Nature> foliages = new List<Nature>();
+    /////GENERATE
     public List<GameObject> animalDroppings = new();
     public Grid exitGrid;
     public Grid entranceGrid;

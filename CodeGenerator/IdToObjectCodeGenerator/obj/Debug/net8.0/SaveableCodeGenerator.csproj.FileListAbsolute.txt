@@ -21,3 +21,10 @@ d:\egyetem\egyetem\önlab\Tycoon-Unity\Tycoon-Unity\CodeGenerator\IdToObjectCode
 d:\egyetem\egyetem\önlab\Tycoon-Unity\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\SaveableCodeGenerator.dll
 d:\egyetem\egyetem\önlab\Tycoon-Unity\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\refint\SaveableCodeGenerator.dll
 d:\egyetem\egyetem\önlab\Tycoon-Unity\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\SaveableCodeGenerator.pdb
+d:\egyetem\egyetem\önlab\Tycoon-Unity\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\bin\Debug\net8.0\SaveableCodeGenerator.exe
+D:\egyetem\egyetem\önlab\Tycoon-Unity\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\bin\Debug\net8.0\SaveableCodeGenerator.deps.json
+D:\egyetem\egyetem\önlab\Tycoon-Unity\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\bin\Debug\net8.0\SaveableCodeGenerator.runtimeconfig.json
+d:\egyetem\egyetem\önlab\Tycoon-Unity\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\bin\Debug\net8.0\SaveableCodeGenerator.dll
+d:\egyetem\egyetem\önlab\Tycoon-Unity\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\bin\Debug\net8.0\SaveableCodeGenerator.pdb
+D:\egyetem\egyetem\önlab\Tycoon-Unity\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\SaveableCodeGenerator.genruntimeconfig.cache
+D:\egyetem\egyetem\önlab\Tycoon-Unity\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\ref\SaveableCodeGenerator.dll
