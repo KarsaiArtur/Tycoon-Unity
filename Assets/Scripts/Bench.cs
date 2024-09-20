@@ -1,17 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.AI;
 
-public class Bench : Placeable, Visitable
+public class Bench : BuildingAncestor
 {
     float height;
-    bool collided = false;
-    float curY = -100;
-    public int capacity = 2;
-    public List<Grid> paths;
     Grid grid;
-    List<Visitor> visitors = new();
 
     public override void Awake()
     {
@@ -26,31 +20,9 @@ public class Bench : Placeable, Visitable
 
         grid = GridManager.instance.GetGrid(transform.position);
         grid.GetBench(_id);
-        paths = new List<Grid>();
         //GridManager.instance.benches.Add(this);
-        GridManager.instance.visitables.Add(this);
-
-        FindPaths();
-        DecideIfReachable();
-        gameObject.GetComponent<NavMeshObstacle>().enabled = true;
-
-        foreach (var child in GetComponentsInChildren<BoxCollider>())
-        {
-            if (child.tag.Equals("Frame"))
-            {
-                foreach (var renderer in child.GetComponentsInChildren<Renderer>())
-                {
-                    if (renderer != null)
-                    {
-                        renderers.RemoveAll(element => element.name.Equals(renderer.name));
-                        defaultMaterials.RemoveAll(element => element.rendererHashCode == renderer.GetHashCode());
-                    }
-                }
-
-                Destroy(child.gameObject);
-                break;
-            }
-        }
+        
+        base.FinalPlace();
     }
 
     public override void Place(Vector3 mouseHit)
@@ -143,12 +115,7 @@ public class Bench : Placeable, Visitable
         }
     }
 
-    void OnCollisionExit(Collision collision)
-    {
-        collided = false;
-    }
-
-    public void Arrived(Visitor visitor)
+    public override void Arrived(Visitor visitor)
     {
         //visitor.SetIsVisible(false);
 
@@ -156,100 +123,40 @@ public class Bench : Placeable, Visitable
         visitor.energy = visitor.energy + tempEnergy > 100 ? 100 : visitor.energy + tempEnergy;
     }
 
-    public void FindPaths()
+    public override void FindPaths()
     {
         for (int j = 0; j < 4; j++)
             if (grid.neighbours[j] != null && grid.trueNeighbours[j].isPath)
                  paths.Add(grid.trueNeighbours[j]);
     }
 
-    public void RemovePath(Path path)
-    {
-        if (paths.Contains(GridManager.instance.GetGrid(path.transform.position)))
-            paths.Remove(GridManager.instance.GetGrid(path.transform.position));
-    }
-
-    public void DecideIfReachable()
-    {
-        if (paths.Count != 0)
-        {
-            for (int i = 0; i < paths.Count; i++)
-            {
-                if (gridManager.ReachableAttractionBFS(paths[i], gridManager.startingGrid))
-                {
-                    if (!GridManager.instance.reachableEnergyBuildings.Contains(this))
-                        AddToReachableLists();
-                    return;
-                }
-            }
-        }
-        if (GridManager.instance.reachableEnergyBuildings.Contains(this))
-            RemoveFromReachableLists();
-    }
-
-    public List<Grid> GetPaths()
-    {
-        return new List<Grid>() { grid };
-    }
-
-    public Vector3 ChoosePosition(Grid grid)
-    {
-        float offsetX = Random.Range(0, 1.0f);
-        float offsetZ = Random.Range(0, 1.0f);
-        return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
-    }
-
-    public Grid GetStartingGrid()
+    public override Grid GetStartingGrid()
     {
         return grid;
     }
 
-    public void AddToReachableLists()
+    public override void AddToReachableLists()
     {
         //GridManager.instance.reachableBenches.Add(this);
         GridManager.instance.reachableVisitables.Add(this);
         GridManager.instance.reachableEnergyBuildings.Add(this);
     }
 
-    public void RemoveFromReachableLists()
+    public override void RemoveFromReachableLists()
     {
         //GridManager.instance.reachableBenches.Remove(this);
         GridManager.instance.reachableVisitables.Remove(this);
         GridManager.instance.reachableEnergyBuildings.Remove(this);
     }
 
-    public int GetCapacity()
+    public override void RemoveFromLists()
     {
-        return capacity;
-    }
-
-    public void SetCapacity(int newCapacity)
-    {
-        capacity = newCapacity;
-    }
-
-    public void AddVisitor(Visitor visitor)
-    {
-        visitors.Add(visitor);
-    }
-
-    public void RemoveVisitor(Visitor visitor)
-    {
-        visitors.Remove(visitor);
+        GridManager.instance.visitables.Remove(this);
+        RemoveFromReachableLists();
     }
 
     public override void Remove()
     {
         BenchManager.instance.benches.Remove(this);
-        base.Remove();
-
-        //GridManager.instance.benches.Remove(this);
-        GridManager.instance.visitables.Remove(this);
-        RemoveFromReachableLists();
-        foreach (var visitor in visitors)
-        {
-            visitor.ChooseDestination();
-        }
-        Destroy(gameObject);
     }
 }

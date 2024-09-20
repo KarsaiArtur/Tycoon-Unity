@@ -8,26 +8,21 @@ using UnityEngine.AI;
 //////List<Grid> paths,List<PurchasableItems> purchasableItemInstances,int capacity,List<Visitor> visitors,int itemsBought/////
 //////SERIALIZABLE:YES/
 
-public class Building : Placeable, Visitable
+public class Building : BuildingAncestor
 {
     public int x;
     public int z;
     float curOffsetX = 0.3f;
     float curOffsetZ = 0.2f;
-    float curY = -100;
-    bool collided = false;
     public Vector3 startingGridIndex;
     float offsetYDefault = 0.05f;
 
     public Material[] materials;
     public List<Grid> gridList;
-    public List<Grid> paths;
 
     public List<PurchasableItems> purchasableItemPrefabs;
     public List<PurchasableItems> purchasableItemInstances;
     public int defaultCapacity = 10;
-    public int capacity = 10;
-    List<Visitor> visitors = new();
 
     public bool hasRestroom = false;
     public int expense = 0;
@@ -137,7 +132,7 @@ public class Building : Placeable, Visitable
                                 curY += 0.5f;
                         }
                         curY = Mathf.Floor(curY * 2) / 2;
-                        transform.position = new Vector3(playerControl.Round(mouseHit.x), curY + 0.5f+offsetYDefault, playerControl.Round(mouseHit.z));
+                        transform.position = new Vector3(playerControl.Round(mouseHit.x), curY + 0.5f + offsetYDefault, playerControl.Round(mouseHit.z));
                     }
                 }
             }
@@ -149,10 +144,8 @@ public class Building : Placeable, Visitable
         BuildingManager.instance.AddList(this);
         transform.position = new Vector3(transform.position.x, transform.position.y - offsetYDefault, transform.position.z);
         gridManager.buildings.Add(this);
-        gridManager.visitables.Add(this);
 
         gridList = new List<Grid>();
-        paths = new List<Grid>();
 
         for (int i = 0; i < Math.Abs(x) + 1; i++)
         {
@@ -167,61 +160,18 @@ public class Building : Placeable, Visitable
             gridList[i].GetBuilding(_id);
         }
 
-        FindPaths();
-        DecideIfReachable();
         gameObject.GetComponent<BoxCollider>().isTrigger = false;
-        gameObject.GetComponent<NavMeshObstacle>().enabled = true;
 
-        foreach(var child in GetComponentsInChildren<BoxCollider>())
-        {
-            if (child.tag.Equals("Frame"))
-            {
-                foreach (var renderer in child.GetComponentsInChildren<Renderer>())
-                {
-                    if (renderer != null)
-                    {
-                        renderers.RemoveAll(element => element.name.Equals(renderer.name));
-                        defaultMaterials.RemoveAll(element => element.rendererHashCode == renderer.GetHashCode());
-                    }
-                }
-                
-                Destroy(child.gameObject);
-                break;
-            }
-        }
+        base.FinalPlace();
     }
 
     public override void Remove()
     {
         base.Remove();
         BuildingManager.instance.buildings.Remove(this);
-
-        RemoveFromLists();
-        foreach (var visitor in visitors)
-            visitor.ChooseDestination();
-            
-        Destroy(gameObject);
     }
 
-    public void DecideIfReachable()
-    {
-        if (paths.Count != 0)
-        {
-            for (int i = 0; i < paths.Count; i++)
-            {
-                if (gridManager.ReachableAttractionBFS(paths[i], gridManager.startingGrid))
-                {
-                    if (!GridManager.instance.reachableVisitables.Contains(this))
-                        AddToReachableLists();
-                    return;
-                }
-            }
-        }
-        if (GridManager.instance.reachableVisitables.Contains(this))
-            RemoveFromReachableLists();
-    }
-
-    public void FindPaths()
+    public override void FindPaths()
     {
         for (int i = 0; i < gridList.Count; i++)
         {
@@ -235,12 +185,6 @@ public class Building : Placeable, Visitable
         }
     }
 
-    public void RemovePath(Path path)
-    {
-        if (paths.Contains(GridManager.instance.GetGrid(path.transform.position)))
-            paths.Remove(GridManager.instance.GetGrid(path.transform.position));
-    }
-
     void OnCollisionStay(Collision collision)
     {
         var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(collision.collider.tag) && collision.collider.tag != "Placed Path");
@@ -252,23 +196,13 @@ public class Building : Placeable, Visitable
         }
     }
 
-    void OnCollisionExit(Collision collision)
-    {
-        collided = false;
-    }
-
     /*public override void ChangeMaterial(int index)
     {
         gameObject.transform.GetChild(0).GetChild(1).gameObject.GetComponent<MeshRenderer>().material = materials[index];
         gameObject.transform.GetChild(0).GetChild(2).gameObject.GetComponent<MeshRenderer>().material = materials[index];
     }*/
 
-    public List<Grid> GetPaths()
-    {
-        return paths;
-    }
-
-    public void Arrived(Visitor visitor)
+    public override void Arrived(Visitor visitor)
     {
         visitor.SetIsVisible(false);
 
@@ -434,13 +368,6 @@ public class Building : Placeable, Visitable
         return false;
     }
 
-    public Vector3 ChoosePosition(Grid grid)
-    {
-        float offsetX = UnityEngine.Random.Range(0, 1.0f);
-        float offsetZ = UnityEngine.Random.Range(0, 1.0f);
-        return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
-    }
-
     public override void ClickedOn()
     {
         playerControl.SetFollowedObject(this.gameObject, 7);
@@ -450,12 +377,12 @@ public class Building : Placeable, Visitable
         playerControl.SetInfopopup(newInfopopup);
     }
 
-    public Grid GetStartingGrid()
+    public override Grid GetStartingGrid()
     {
         return gridList[0];
     }
 
-    public void AddToReachableLists()
+    public override void AddToReachableLists()
     {
         gridManager.reachableVisitables.Add(this);
         if (HasFood())
@@ -473,14 +400,14 @@ public class Building : Placeable, Visitable
         }
     }
 
-    public void RemoveFromLists()
+    public override void RemoveFromLists()
     {
         gridManager.buildings.Remove(this);
         gridManager.visitables.Remove(this);
         RemoveFromReachableLists();
     }
 
-    public void RemoveFromReachableLists()
+    public override void RemoveFromReachableLists()
     {
         gridManager.reachableVisitables.Remove(this);
         if (HasFood())
@@ -496,25 +423,5 @@ public class Building : Placeable, Visitable
             gridManager.reachableHappinessPlaces.Remove(this);
             gridManager.reachableHappinessBuildings.Remove(this);
         }
-    }
-
-    public int GetCapacity()
-    {
-        return capacity;
-    }
-
-    public void SetCapacity(int newCapacity)
-    {
-        capacity = newCapacity;
-    }
-
-    public void AddVisitor(Visitor visitor)
-    {
-        visitors.Add(visitor);
-    }
-
-    public void RemoveVisitor(Visitor visitor)
-    {
-        visitors.Remove(visitor);
     }
 }
