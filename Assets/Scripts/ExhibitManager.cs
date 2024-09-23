@@ -5,7 +5,7 @@ using UnityEngine;
 public class ExhibitManager : MonoBehaviour
 {
     static public ExhibitManager instance;
-    public List<Exhibit> exhibits;
+    public List<Exhibit> exhibitList;
     void Start(){
         instance = this;
         if(LoadMenu.loadedGame != null){
@@ -14,7 +14,7 @@ public class ExhibitManager : MonoBehaviour
     }
 
     public void AddList(Exhibit exhibit){
-        exhibits.Add(exhibit);
+        exhibitList.Add(exhibit);
         exhibit.transform.SetParent(ExhibitManager.instance.transform);
     }
 }

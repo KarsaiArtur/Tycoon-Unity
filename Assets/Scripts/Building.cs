@@ -384,7 +384,7 @@ public class Building : BuildingAncestor
 
     public override void AddToReachableLists()
     {
-        gridManager.reachableVisitables.Add(this);
+        reachable = true;
         if (HasFood())
             gridManager.reachableFoodBuildings.Add(this);
         if (HasDrink())
@@ -395,7 +395,6 @@ public class Building : BuildingAncestor
             gridManager.reachableRestroomBuildings.Add(this);
         if (HasHappiness())
         {
-            gridManager.reachableHappinessPlaces.Add(this);
             gridManager.reachableHappinessBuildings.Add(this);
         }
     }
@@ -409,7 +408,7 @@ public class Building : BuildingAncestor
 
     public override void RemoveFromReachableLists()
     {
-        gridManager.reachableVisitables.Remove(this);
+        reachable = false;
         if (HasFood())
             gridManager.reachableFoodBuildings.Remove(this);
         if (HasDrink())
@@ -420,7 +419,6 @@ public class Building : BuildingAncestor
             gridManager.reachableRestroomBuildings.Remove(this);
         if (HasHappiness())
         {
-            gridManager.reachableHappinessPlaces.Remove(this);
             gridManager.reachableHappinessBuildings.Remove(this);
         }
     }

@@ -94,8 +94,6 @@ public class Fence : Placeable
             GameObject gateInstance = Instantiate(playerControl.gates[playerControl.fenceIndex], playerControl.m_Selected.transform.position, transform.rotation);
             Exhibit exhibit = gateInstance.GetComponent<Exhibit>();
             exhibit.timesRotated = timesRotated;
-            exhibit.grid1 = grid1;
-            exhibit.grid2 = grid2;
             CreateExhibitWindow(exhibit);
             //UnityEditorInternal.ComponentUtility.MoveComponentUp(exhibit);
             //emiatt nem lehet buildelni

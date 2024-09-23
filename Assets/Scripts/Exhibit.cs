@@ -1,28 +1,24 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Exhibit : Placeable, Visitable, Clickable
+public class Exhibit : Placeable, Visitable
 {
     public List<Grid> gridList;
     public List<Grid> paths;
     public string exhibitName;
-    public List<string> animalIds = new List<string>();
     /////GENERATE
-    public List<Animal> animals = new List<Animal>();
+    private List<Animal> animals;
     /////GENERATE
-    public List<string> foliageIds = new List<string>();
-    public List<Nature> foliages = new List<Nature>();
-    /////GENERATE
+    private List<Nature> foliages;
     public List<GameObject> animalDroppings = new();
     public Grid exitGrid;
     public Grid entranceGrid;
-    public Grid grid1;
-    public Grid grid2;
     public int timesRotated = 0;
     public bool isOpen = false;
     public static int exhibitCount = 0;
-    public bool reachable = false;
+    bool reachable = false;
     public List<Staff> staff = new();
     public List<Staff> staffAtGate = new();
     Vector3 gateObstacleCenter;
@@ -198,8 +194,6 @@ public class Exhibit : Placeable, Visitable, Clickable
         if (animals.Count > 0)
         {
             GridManager.instance.reachableExhibits.Add(this);
-            GridManager.instance.reachableVisitables.Add(this);
-            GridManager.instance.reachableHappinessPlaces.Add(this);
         }
     }
 
@@ -207,8 +201,6 @@ public class Exhibit : Placeable, Visitable, Clickable
     {
         reachable = false;
         GridManager.instance.reachableExhibits.Remove(this);
-        GridManager.instance.reachableVisitables.Remove(this);
-        GridManager.instance.reachableHappinessPlaces.Remove(this);
     }
 
     override public void ClickedOn()
@@ -300,11 +292,28 @@ public class Exhibit : Placeable, Visitable, Clickable
         waterPlaces.Remove(waterTrough);
     }
 
+    public bool GetReachable()
+    {
+        return reachable;
+    }
+
+    public void SetReachable(bool newReachable)
+    {
+        reachable = newReachable;
+    }
+
     public override void Remove()
     {
         ExhibitManager.instance.exhibits.Remove(this);
-        grid1.neighbours[(timesRotated + 2) % 4] = grid2;
-        grid2.neighbours[timesRotated] = grid1;
+
+        for (int i = 0; i < exitGrid.trueNeighbours.Length; i++)
+        {
+            if (exitGrid.trueNeighbours[i] == entranceGrid)
+            {
+                exitGrid.neighbours[i] = entranceGrid;
+                entranceGrid.neighbours[(i + 2) % 4] = exitGrid;
+            }
+        }
 
         GridManager.instance.exhibits.Remove(this);
         GridManager.instance.visitables.Remove(this);
@@ -344,5 +353,58 @@ public class Exhibit : Placeable, Visitable, Clickable
             waterPlaces[0].Remove();
         }
         Destroy(gameObject);
+    }
+    ////GENERATED
+
+    public List<string> animalsIds = new List<string>();
+    public List<Animal> GetAnimals()
+    {
+        if(animals == null)
+        {
+             animals = new List<Animal>();
+             foreach(var element in animals){
+                animals.Add(AnimalManager.instance.animalList.Where((e) => e._id == element._id).FirstOrDefault());
+             }
+        }
+        return animals;
+    }
+    public void AddAnimals(Animal animal)
+    {
+        animalsIds.Add(animal._id);
+        if(animals == null){
+             animals = new List<Animal>();
+        }
+        animals.Add(animal);
+    }
+    public void RemoveAnimals(Animal animal)
+    {
+        animalsIds.Remove(animal._id);
+        animals.Remove(animal);
+    }
+
+    public List<string> foliagesIds = new List<string>();
+    public List<Nature> GetFoliages()
+    {
+        if(foliages == null)
+        {
+             foliages = new List<Nature>();
+             foreach(var element in foliages){
+                foliages.Add(NatureManager.instance.natureList.Where((e) => e._id == element._id).FirstOrDefault());
+             }
+        }
+        return foliages;
+    }
+    public void AddFoliages(Nature nature)
+    {
+        foliagesIds.Add(nature._id);
+        if(foliages == null){
+             foliages = new List<Nature>();
+        }
+        foliages.Add(nature);
+    }
+    public void RemoveFoliages(Nature nature)
+    {
+        foliagesIds.Remove(nature._id);
+        foliages.Remove(nature);
     }
 }

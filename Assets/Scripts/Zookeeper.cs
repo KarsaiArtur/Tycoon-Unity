@@ -21,12 +21,17 @@ public class Zookeeper : Staff
 
         var animalNeeds = new List<(Exhibit exhibit, string need, float percent)>();
         if (GridManager.instance.exhibits.Count > 0)
+        foreach (Exhibit exhibit in GridManager.instance.exhibits)
         {
             foreach (Exhibit exhibit in GridManager.instance.exhibits)
+            if (!exhibit.unreachableForStaff)
             {
                 if (!exhibit.unreachableForStaff)
+                if (!exhibit.isGettingFood && !float.IsNaN(exhibit.food / (exhibit.animals.Count * 50)))
                 {
                     if (!exhibit.isGettingFood && !float.IsNaN(exhibit.food / (exhibit.animals.Count * 50)))
+                    animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.animals.Count * 50)));
+                    if (insideExhibit != null && insideExhibit == exhibit)
                     {
                         animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.animals.Count * 50)));
                         if (insideExhibit != null && insideExhibit == exhibit)
@@ -34,8 +39,15 @@ public class Zookeeper : Staff
                             animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
                             animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.animals.Count * 50) - 0.1f));
                         }
+                        animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
+                        animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.animals.Count * 50) - 0.1f));
                     }
                     if (!exhibit.isGettingWater && !float.IsNaN(exhibit.water / exhibit.waterCapacity))
+                }
+                if (!exhibit.isGettingWater && !float.IsNaN(exhibit.water / exhibit.waterCapacity))
+                {
+                    animalNeeds.Add((exhibit, "Filling up water", exhibit.water / exhibit.waterCapacity));
+                    if (insideExhibit != null && insideExhibit == exhibit)
                     {
                         animalNeeds.Add((exhibit, "Filling up water", exhibit.water / exhibit.waterCapacity));
                         if (insideExhibit != null && insideExhibit == exhibit)
@@ -43,8 +55,15 @@ public class Zookeeper : Staff
                             animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
                             animalNeeds.Add((exhibit, "Filling up water", exhibit.water / exhibit.waterCapacity - 0.1f));
                         }
+                        animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
+                        animalNeeds.Add((exhibit, "Filling up water", exhibit.water / exhibit.waterCapacity - 0.1f));
                     }
                     if (!exhibit.isGettingCleaned && !float.IsNaN(1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)))
+                }
+                if (!exhibit.isGettingCleaned && !float.IsNaN(1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)))
+                {
+                    animalNeeds.Add((exhibit, "Cleaning exhibit", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)));
+                    if (insideExhibit != null && insideExhibit == exhibit)
                     {
                         animalNeeds.Add((exhibit, "Cleaning exhibit", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)));
                         if (insideExhibit != null && insideExhibit == exhibit)
@@ -52,6 +71,8 @@ public class Zookeeper : Staff
                             animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
                             animalNeeds.Add((exhibit, "Cleaning exhibit", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count) - 0.1f));
                         }
+                        animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
+                        animalNeeds.Add((exhibit, "Cleaning exhibit", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count) - 0.1f));
                     }
                 }
             }

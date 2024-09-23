@@ -8,7 +8,6 @@ using UnityEngine.AI;
 //////string _id,Vector3 position,int selectedPrefabId,Quaternion rotation,int placeablePrice,string tag/////
 //////SERIALIZABLE:YES/
 
-
 public class Nature : Placeable, Saveable
 {
     float height;

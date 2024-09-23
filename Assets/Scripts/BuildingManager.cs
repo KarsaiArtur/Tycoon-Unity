@@ -5,7 +5,7 @@ using UnityEngine;
 public class BuildingManager : MonoBehaviour
 {
     static public BuildingManager instance;
-    public List<Building> buildings;
+    public List<Building> buildingList;
     void Start(){
         instance = this;
         if(LoadMenu.loadedGame != null){
@@ -14,7 +14,7 @@ public class BuildingManager : MonoBehaviour
     }
 
     public void AddList(Building building){
-        buildings.Add(building);
+        buildingList.Add(building);
         building.transform.SetParent(NatureManager.instance.transform);
     }
 }

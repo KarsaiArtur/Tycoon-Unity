@@ -138,14 +138,14 @@ public class Bench : BuildingAncestor
     public override void AddToReachableLists()
     {
         //GridManager.instance.reachableBenches.Add(this);
-        GridManager.instance.reachableVisitables.Add(this);
+        reachable = true;
         GridManager.instance.reachableEnergyBuildings.Add(this);
     }
 
     public override void RemoveFromReachableLists()
     {
         //GridManager.instance.reachableBenches.Remove(this);
-        GridManager.instance.reachableVisitables.Remove(this);
+        reachable = false;
         GridManager.instance.reachableEnergyBuildings.Remove(this);
     }
 

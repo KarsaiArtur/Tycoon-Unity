@@ -6,7 +6,7 @@ using UnityEngine;
 public class AnimalManager : MonoBehaviour
 {
     static public AnimalManager instance;
-    public List<Animal> animals;
+    public List<Animal> animalList;
     void Start(){
         instance = this;
         if(LoadMenu.loadedGame != null){
@@ -15,12 +15,12 @@ public class AnimalManager : MonoBehaviour
     }
 
     public void AddList(Animal animal){
-        animals.Add(animal);
+        animalList.Add(animal);
         animal.transform.SetParent(AnimalManager.instance.transform);
     }
 
     public Animal GetById(string id){
-        foreach(var animal in animals){
+        foreach(var animal in animalList){
             if(animal._id.Equals(id)){
                 return animal;
             }

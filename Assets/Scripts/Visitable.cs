@@ -26,4 +26,8 @@ public interface Visitable
     public void AddVisitor(Visitor visitor);
 
     public void RemoveVisitor(Visitor visitor);
+
+    public bool GetReachable();
+
+    public void SetReachable(bool newReachable);
 }

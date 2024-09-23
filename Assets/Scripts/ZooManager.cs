@@ -25,7 +25,6 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     int listSizeLimit = 25;
     public float reputation = 75;
 
-
     public void Awake()
     {
         instance = this;
@@ -138,10 +137,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         return exitGrid;
     }
 
-    public void AddToReachableLists()
-    {
-        
-    }
+    public void AddToReachableLists() { }
 
     public int GetCapacity()
     {
@@ -153,6 +149,13 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public void AddVisitor(Visitor visitor) { }
 
     public void RemoveVisitor(Visitor visitor) { }
+
+    public bool GetReachable()
+    {
+        return true;
+    }
+
+    public void SetReachable(bool newReachable) { }
     
     ///******************************
     ///GENERATED CODE, DONT MODIFY

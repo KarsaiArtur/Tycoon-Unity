@@ -2,9 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-/////Saveable Attributes, DONT DELETE
-//////Grid[] neighbours,Grid[] trueNeighbours/////
-//////SERIALIZABLE:YES/
 
 public class Grid
 {
@@ -12,49 +9,13 @@ public class Grid
     public Grid[] neighbours;
     public Grid[] trueNeighbours;
     public bool isPath = false;
-    public string exhibitId;
-    public string buildingId;
-    public string benchId;
-    Exhibit exhibit;
-    Building building;
-    Bench bench;
+    /////GENERATE
+    private Exhibit exhibit;
+    /////GENERATE
+    private Building building;
+    /////GENERATE
+    private Bench bench;
     public List<Nature> natures = new();
-
-    public Exhibit GetExhibit(string id = null)
-    {
-        id ??=exhibitId;
-
-        if(id != exhibitId || exhibit == null)
-        {
-            exhibitId = id;
-            exhibit = ExhibitManager.instance.exhibits.Where((element) => element._id == exhibitId).FirstOrDefault();
-        }
-        return exhibit;
-    }
-
-    public Building GetBuilding(string id = null)
-    {
-        id ??=buildingId;
-
-        if(id != buildingId || building == null)
-        {
-            buildingId = id;
-            building = BuildingManager.instance.buildings.Where((element) => element._id == buildingId).FirstOrDefault();
-        }
-        return building;
-    }
-
-    public Bench GetBench(string id = null)
-    {
-        id ??=benchId;
-
-        if(id != benchId || bench == null)
-        {
-            benchId = id;
-            bench = BenchManager.instance.benches.Where((element) => element._id == benchId).FirstOrDefault();
-        }
-        return bench;
-    }
 
     public void SetNeighbour0(Grid neighbour)
     {
@@ -70,5 +31,45 @@ public class Grid
         neighbour.neighbours[3] = this;
         trueNeighbours[1] = neighbour;
         neighbour.trueNeighbours[3] = this;
+    }
+////GENERATED
+
+    public string exhibitId;
+    public Exhibit GetExhibit(string id = null)
+    {
+        id ??=exhibitId;
+
+        if(id != exhibitId || exhibit == null)
+        {
+            exhibitId = id;
+            exhibit = ExhibitManager.instance.exhibitList.Where((element) => element._id == exhibitId).FirstOrDefault();
+        }
+        return exhibit;
+    }
+
+    public string buildingId;
+    public Building GetBuilding(string id = null)
+    {
+        id ??=buildingId;
+
+        if(id != buildingId || building == null)
+        {
+            buildingId = id;
+            building = BuildingManager.instance.buildingList.Where((element) => element._id == buildingId).FirstOrDefault();
+        }
+        return building;
+    }
+
+    public string benchId;
+    public Bench GetBench(string id = null)
+    {
+        id ??=benchId;
+
+        if(id != benchId || bench == null)
+        {
+            benchId = id;
+            bench = BenchManager.instance.benchList.Where((element) => element._id == benchId).FirstOrDefault();
+        }
+        return bench;
     }
 }

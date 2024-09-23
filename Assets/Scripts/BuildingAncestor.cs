@@ -9,6 +9,7 @@ public abstract class BuildingAncestor : Placeable, Visitable
     public int capacity = 2;
     public List<Grid> paths;
     protected List<Visitor> visitors = new();
+    protected bool reachable = false;
 
     public override void FinalPlace()
     {
@@ -57,13 +58,13 @@ public abstract class BuildingAncestor : Placeable, Visitable
             {
                 if (gridManager.ReachableAttractionBFS(paths[i], gridManager.startingGrid))
                 {
-                    if (!GridManager.instance.reachableVisitables.Contains(this))
+                    if (!reachable)
                         AddToReachableLists();
                     return;
                 }
             }
         }
-        if (GridManager.instance.reachableVisitables.Contains(this))
+        if (reachable)
             RemoveFromReachableLists();
     }
 
@@ -108,6 +109,16 @@ public abstract class BuildingAncestor : Placeable, Visitable
     public List<Grid> GetPaths()
     {
         return paths;
+    }
+
+    public bool GetReachable()
+    {
+        return reachable;
+    }
+
+    public void SetReachable(bool newReachable)
+    {
+        reachable = newReachable;
     }
 
     public abstract void FindPaths();

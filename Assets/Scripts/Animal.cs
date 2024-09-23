@@ -28,7 +28,6 @@ public class Animal : Placeable
     float stuckTime = 0;
     public bool destinationReached = false;
     Vector3 destination;
-    Vector3 dangerPos;
     public string action = "";
     public AnimalVisitable destinationVisitable;
     bool isEating = false;
@@ -69,6 +68,7 @@ public class Animal : Placeable
     public int dangerLevel = 0;
     int fleeDistance = 5;
     Animal target;
+    Vector3 dangerPos;
 
     public override void Place(Vector3 mouseHit)
     {

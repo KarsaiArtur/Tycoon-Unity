@@ -20,7 +20,7 @@ public class VisitorManager : MonoBehaviour
 
     void Update()
     {
-        if (timeTillSpawn <= 0 && GridManager.instance.reachableVisitables.Count > 1)
+        if (timeTillSpawn <= 0 && GridManager.instance.CanOpen())
         {
             timeTillSpawn = Random.Range(SpawnTime - 3 < 1 ? 1 : SpawnTime - 3, SpawnTime + 3);
             SpawnTime = 15;

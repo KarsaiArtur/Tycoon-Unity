@@ -11,7 +11,7 @@
             "name": "IdToObjectCodeGenerator",
             "type": "dotnet",
             "request": "launch",
-            "projectPath": "${workspaceFolder}/CodeGenerator/IdToObjectCodeGenerator/SaveableCodeGenerator.csproj"
+            "projectPath": "${workspaceFolder}/CodeGenerator/IdToObjectCodeGenerator/IdToObjectCodeGenerator.csproj"
         },
         {
             "name": "Attach to Unity",

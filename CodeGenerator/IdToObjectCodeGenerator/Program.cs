@@ -1,4 +1,4 @@
-// See https://aka.ms/new-console-template for more information
+﻿// See https://aka.ms/new-console-template for more information
 
 using System.Collections;
 using System.Data;
@@ -51,11 +51,12 @@ public class MyProgram{
             return;
         }
 
+        string generatedCode = "////GENERATED" + System.Environment.NewLine;
         System.Console.WriteLine(path);
         foreach(var index in AllIndexesOf(fileContent, "/////GENERATE")){
             var temp = fileContent.Substring(index + "/////GENERATE".Length);
-            temp = temp.Substring(temp.IndexOf("public ") + "public ".Length);
-            temp = temp.Substring(0, temp.IndexOf("="));
+            temp = temp.Substring(temp.IndexOf("private ") + "private ".Length);
+            temp = temp[..temp.IndexOf(";")];
             var split = temp.Split(" ");
             
             var name = split[1];
@@ -64,46 +65,108 @@ public class MyProgram{
 
             if(split[0].Contains("List")){
                 isList = true;
+                type = split[0].Replace("List<", "").Replace(">", "");
             }
             else{
                 type = split[0];
             }
-            attributes.Add(new Attribute(type, name, isList));
-        }
-
-        return;
-
-        string className =  "";//temp.Substring("class".Length);
-        className = className.Substring(0, className.IndexOf(":")).Replace(" ", "");
-
-        string end = fileContent.Substring(fileContent.LastIndexOf("}"));
-
-        string attributesString = fileContent.Substring(fileContent.IndexOf("//////"));
-        attributesString = attributesString.Substring(0, attributesString.LastIndexOf("/////")).Replace("/", "").Replace(System.Environment.NewLine, "");
-        
-        foreach(var st in attributesString.Split(",")){
-            string[] attribute = st.Split(" ");
-            bool isList = false;
-            if(attribute[0].Contains("List")){
-                attribute[0] = attribute[0].Substring(attribute[0].IndexOf("<")+1);
-                attribute[0] = attribute[0].Substring(0, attribute[0].IndexOf(">"));
-                isList = true;
+            var attribute = new Attribute(type, name, isList);
+            generatedCode += writeIdAttribute(attribute);
+            if(!attribute.isList){
+                generatedCode += writeGetFunction(attribute);
+            } else{
+                generatedCode += writeGetListFunction(attribute);
+                generatedCode += writeAddListFunction(attribute);
+                generatedCode += writeRemoveListFunction(attribute);
             }
-            
-        }
-
-        
-        if(fileContent.Contains("SERIALIZABLE")){
-            string serializable = fileContent.Substring(fileContent.IndexOf("SERIALIZABLE:"));
-            serializable = serializable.Substring(0, serializable.IndexOf("/"));
         }
         
-        string generatedCode = 
-@"///******************************
-    ///GENERATED CODE, DONT MODIFY
-    ///******************************
+        string end;
+        string beforeCode;
 
-";  
+        if(!fileContent.Contains("Saveable")){
+            if(fileContent.Contains("////GENERATED")){
+                beforeCode = fileContent.Substring(0, fileContent.LastIndexOf("////GENERATED"));
+            } else{
+                beforeCode = fileContent.Substring(0, fileContent.LastIndexOf("}"));
+            }
+            end = fileContent.Substring(fileContent.LastIndexOf("}"));
+        } else{
+            beforeCode = fileContent.Substring(0, fileContent.LastIndexOf("///******************************"));;
+            end = fileContent.Substring(fileContent.IndexOf("///******************************"));
+        }
+
+        string newContent = beforeCode + generatedCode + end;
+        File.WriteAllText(path, newContent);
+        
+        return;
+    }
+
+    static string writeGetFunction(Attribute attribute){
+        var name = attribute.name[0].ToString().ToUpper() + attribute.name[1..];
+        var managerList = attribute.type.ToLower() + "List";
+return $"    public {attribute.type} Get{name}(string id = null)"+@"
+    {
+"+$"        id ??={attribute.name}Id;"+@"
+
+"+$"        if(id != {attribute.name}Id || {attribute.name} == null)"+@"
+        {
+"+$"            {attribute.name}Id = id;"+@"
+"+$"            {attribute.name} = {attribute.type}Manager.instance.{managerList}.Where((element) => element._id == {attribute.name}Id).FirstOrDefault();"+@"
+        }
+"+$"        return {attribute.name};" +@"
+    }
+";
+    }
+    static string writeIdAttribute(Attribute attribute){
+        return attribute.isList ? System.Environment.NewLine+$"    public List<string> {attribute.name}Ids = new List<string>();"+System.Environment.NewLine
+                : System.Environment.NewLine+$"    public string {attribute.name}Id;"+System.Environment.NewLine;
+    }
+
+    static string writeGetListFunction(Attribute attribute){
+        var name = attribute.name[0].ToString().ToUpper() + attribute.name[1..];
+        var managerList = attribute.type.ToLower() + "List";
+return $"    public List<{attribute.type}> Get{name}()"+@"
+    {
+"+$"        if({attribute.name} == null)"+@"
+        {
+"+$"             {attribute.name} = new List<{attribute.type}>();"+@"
+"+$"             foreach(var element in {attribute.name}){{"+@"
+"+$"                {attribute.name}.Add({attribute.type}Manager.instance.{managerList}.Where((e) => e._id == element._id).FirstOrDefault());"+@"
+"+$"             }}"+@"
+        }
+"+$"        return {attribute.name};" +@"
+    }
+";
+    }
+
+    static string writeAddListFunction(Attribute attribute){
+        var name = attribute.name[0].ToString().ToUpper() + attribute.name[1..];
+        var type = attribute.type.ToLower();
+return $"    public void Add{name}({attribute.type} {type})"+@"
+    {
+"+$"        {attribute.name}Ids.Add({type}._id);"+@"
+"+$"        if({attribute.name} == null){{"+@"
+"+$"             {attribute.name} = new List<{attribute.type}>();"+@"
+"+$"        }}"+@"
+"+$"        {attribute.name}.Add({type});" +@"
+    }
+";
+    }
+
+    static string writeRemoveListFunction(Attribute attribute){
+        var name = attribute.name[0].ToString().ToUpper() + attribute.name[1..];
+        var type = attribute.type.ToLower();
+return $"    public void Remove{name}({attribute.type} {type})"+@"
+    {
+"+$"        {attribute.name}Ids.Remove({type}._id);"+@"
+"+$"        {attribute.name}.Remove({type});" +@"
+    }
+";
+    }
+
+        /*
+
     generatedCode += writeDataClass(className);
     generatedCode += writeDataToJson(className);
     generatedCode += writeFromJson(className);
@@ -322,7 +385,7 @@ $"        public {className}Data(";
         "+fromDataList("data.")+@"
     }
 ";
-     }
+     }*/
 
     public static int[] AllIndexesOf(string str, string substr, bool ignoreCase = false)
     {

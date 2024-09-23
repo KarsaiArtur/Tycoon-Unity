@@ -10,7 +10,7 @@ using static Nature;
 public class NatureManager : MonoBehaviour, Saveable
 {
     static public NatureManager instance;
-    public List<Nature> natures;
+    public List<Nature> natureList;
     void Start(){
         instance = this;
         if(LoadMenu.loadedGame != null){
@@ -18,7 +18,7 @@ public class NatureManager : MonoBehaviour, Saveable
         }
     }
     public void AddList(Nature nature){
-        natures.Add(nature);
+        natureList.Add(nature);
         nature.transform.SetParent(NatureManager.instance.transform);
     }
     

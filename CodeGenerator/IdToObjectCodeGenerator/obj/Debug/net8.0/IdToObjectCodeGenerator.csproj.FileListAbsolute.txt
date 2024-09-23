@@ -1,0 +1,15 @@
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\bin\Debug\net8.0\IdToObjectCodeGenerator.exe
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\bin\Debug\net8.0\IdToObjectCodeGenerator.deps.json
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\bin\Debug\net8.0\IdToObjectCodeGenerator.runtimeconfig.json
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\bin\Debug\net8.0\IdToObjectCodeGenerator.dll
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\bin\Debug\net8.0\IdToObjectCodeGenerator.pdb
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\IdToObjectCodeGenerator.GeneratedMSBuildEditorConfig.editorconfig
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\IdToObjectCodeGenerator.AssemblyInfoInputs.cache
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\IdToObjectCodeGenerator.AssemblyInfo.cs
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\IdToObjectCodeGenerator.csproj.CoreCompileInputs.cache
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\IdToObjectCodeGenerator.sourcelink.json
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\IdToObjectCodeGenerator.dll
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\refint\IdToObjectCodeGenerator.dll
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\IdToObjectCodeGenerator.pdb
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\IdToObjectCodeGenerator.genruntimeconfig.cache
+c:\Users\artur\Desktop\egyetem\6. félév\önlab\Tycoon-Unity\CodeGenerator\IdToObjectCodeGenerator\obj\Debug\net8.0\ref\IdToObjectCodeGenerator.dll

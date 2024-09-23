@@ -217,7 +217,7 @@ public class PathManager : Placeable
 
         foreach (var visitable in gridManager.visitables)
         {
-            if (!gridManager.reachableVisitables.Contains(visitable) && visitable.GetPaths().Count > 0)
+            if (!visitable.GetReachable() && visitable.GetPaths().Count > 0)
             {
                 for (int i = 0; i < visitable.GetPaths().Count; i++)
                 {

@@ -32,16 +32,14 @@ public class GridManager : MonoBehaviour, Saveable
     public List<Animal> freeAnimals = new List<Animal>();
 
     //public List<Bench> benches = new List<Bench>();
-    public List<Visitable> visitables = new List<Visitable>();
-    public List<Exhibit> exhibits = new List<Exhibit>();
-    public List<Building> buildings = new List<Building>();
+    public List<Visitable> visitables = new List<Visitable>(); // lehet majd helyettes�thet� ha majd lesz m�r bench, building �s exhibit manager
+    public List<Exhibit> exhibits = new List<Exhibit>(); // nem kell majd ha m�r el lesz t�rolva a manager�ben
+    public List<Building> buildings = new List<Building>(); // nem kell majd ha m�r el lesz t�rolva a manager�ben
     //public List<Visitable> reachableBenches = new List<Visitable>();
     public List<Visitable> reachableExhibits = new List<Visitable>();
-    public List<Visitable> reachableVisitables = new List<Visitable>();
     public List<Visitable> reachableFoodBuildings = new List<Visitable>();
     public List<Visitable> reachableDrinkBuildings = new List<Visitable>();
     public List<Visitable> reachableEnergyBuildings = new List<Visitable>();
-    public List<Visitable> reachableHappinessPlaces = new List<Visitable>();
     public List<Visitable> reachableRestroomBuildings = new List<Visitable>();
     public List<Visitable> reachableHappinessBuildings = new List<Visitable>();
 
@@ -81,7 +79,6 @@ public class GridManager : MonoBehaviour, Saveable
         pControl.ReloadGuestNavMesh();
         pControl.ReloadAnimalNavMesh();
 
-        reachableVisitables.Add(ZooManager.instance == null ? new GameObject().AddComponent<ZooManager>() : ZooManager.instance);
         startingGrid = GetGrid(new Vector3(35, 0, 50));
         initializing = false;
         edgeChanged = false;
@@ -468,6 +465,13 @@ public class GridManager : MonoBehaviour, Saveable
                 return true;
             }
         }
+        return false;
+    }
+
+    public bool CanOpen()
+    {
+        if (reachableExhibits.Count > 0 || reachableFoodBuildings.Count > 0 || reachableDrinkBuildings.Count > 0 || reachableEnergyBuildings.Count > 0 || reachableRestroomBuildings.Count > 0 || reachableHappinessBuildings.Count > 0)
+            return true;
         return false;
     }
 

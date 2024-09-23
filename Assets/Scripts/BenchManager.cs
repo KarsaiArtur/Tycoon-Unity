@@ -5,7 +5,7 @@ using UnityEngine;
 public class BenchManager : MonoBehaviour
 {
     static public BenchManager instance;
-    public List<Bench> benches;
+    public List<Bench> benchList;
     void Start(){
         instance = this;
         if(LoadMenu.loadedGame != null){

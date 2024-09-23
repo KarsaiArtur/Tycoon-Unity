@@ -19,6 +19,7 @@ public class Visitor : MonoBehaviour, Clickable
     PlayerControl playerControl;
     List<Visitable> unvisitedExhibits = new();
     string visitorName;
+    MeshRenderer photoCamera;
 
     float time = 0;
     float timeGoal = 0;
@@ -36,7 +37,6 @@ public class Visitor : MonoBehaviour, Clickable
     float energyDetriment = 0.25f;
     float restroomNeedsDetriment = 0.25f;
     float happinessDetriment = 0.25f;
-    MeshRenderer photoCamera;
 
     public string action = "";
     bool isFleeing = false;
@@ -112,7 +112,7 @@ public class Visitor : MonoBehaviour, Clickable
 
             animator.SetFloat("vertical", agent.velocity.magnitude / agent.speed);
 
-            if (atDestination && GridManager.instance.reachableVisitables.Count != 0)
+            if (atDestination)
             {
                 ChooseDestination();
             }
