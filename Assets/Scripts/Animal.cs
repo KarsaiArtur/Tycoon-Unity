@@ -69,6 +69,7 @@ public class Animal : Placeable
     int fleeDistance = 5;
     Animal target;
     Vector3 dangerPos;
+    float attackCooldown = 1;
 
     public override void Place(Vector3 mouseHit)
     {
@@ -190,6 +191,11 @@ public class Animal : Placeable
         {
             NewDay();
 
+            if (action == "attacking")
+            {
+                attackCooldown += Time.deltaTime;
+            }
+
             if (exhibit != null && exhibit.isMixed)
             {
                 exhibit.isMixed = false;
@@ -283,12 +289,16 @@ public class Animal : Placeable
 
     public void Damage()
     {
-        target.health = target.health - 20 * dangerLevel / target.dangerLevel;
-        Debug.Log(placeableName + " damaged");
-        if (target.health <= 0)
+        if (attackCooldown >= 2)
         {
-            target.Die();
-            target = null;
+            target.health = target.health - 20 * dangerLevel / target.dangerLevel;
+            Debug.Log(placeableName + " damaged");
+            if (target.health <= 0)
+            {
+                target.Die();
+                target = null;
+            }
+            attackCooldown = 0;
         }
     }
 
@@ -398,6 +408,7 @@ public class Animal : Placeable
                 action = "attacking";
                 agent.speed = defaultSpeed * 4;
                 Debug.Log(placeableName + " Attacking");
+                attackCooldown = 1;
                 ChooseDestination();
             }
         }

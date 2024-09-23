@@ -4,7 +4,6 @@ using System.Linq;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
-using static Cinemachine.CinemachineFreeLook;
 
 public class Visitor : MonoBehaviour, Clickable
 {
@@ -155,12 +154,14 @@ public class Visitor : MonoBehaviour, Clickable
                 if (((dangerLevel - 2 < animal.dangerLevel && animal.isAgressive) || dangerLevel < animal.dangerLevel) && Vector3.Distance(transform.position, animal.transform.position) < 10)
                 {
                     isFleeing = true;
-                    happiness = happiness - 50 > 0 ? happiness - 50 : 0;
-                    agent.speed *= 3;
-                    destinationVisitable = ZooManager.instance;
-                    Debug.Log("Human Fleeing from " + animal.placeableName);
-                    break;
+                    int scaredMultiplier = animal.isAgressive ? animal.dangerLevel : animal.dangerLevel - 2;
+                    happiness = happiness - 10 * scaredMultiplier > 0 ? happiness - 10 * scaredMultiplier : 0;
                 }
+            }
+            if (isFleeing)
+            {
+                agent.speed *= 3;
+                destinationVisitable = ZooManager.instance;
             }
         }
     }
