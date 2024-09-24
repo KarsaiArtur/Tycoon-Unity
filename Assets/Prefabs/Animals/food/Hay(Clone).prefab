@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1963703805890489857}
   - component: {fileID: 3250127433182177992}
   - component: {fileID: 8474453306234765502}
+  - component: {fileID: 4584544278016413676}
   m_Layer: 0
   m_Name: Hay(Clone)
   m_TagString: Untagged
@@ -97,3 +98,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   food: 200
+  exhibitId: 
+--- !u!65 &4584544278016413676
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 779709148117535165}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0012098798, y: 0.00070510973, z: 0.0013705841}
+  m_Center: {x: 0.00001264435, y: 0.000043753615, z: 0.0009233555}

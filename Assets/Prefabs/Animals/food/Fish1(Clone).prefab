@@ -3827,6 +3827,7 @@ GameObject:
   m_Component:
   - component: {fileID: 91162143002234337}
   - component: {fileID: 63179339203581416}
+  - component: {fileID: 7359960544836057110}
   m_Layer: 0
   m_Name: Fish1(Clone)
   m_TagString: Untagged
@@ -3865,6 +3866,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   food: 200
+  exhibitId: 
+--- !u!65 &7359960544836057110
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4306678023325213529}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 3.3007917, y: 8.971785, z: 8.639836}
+  m_Center: {x: 1.150399, y: -1.6648605, z: -0.87622255}
 --- !u!1 &4307809297544220201
 GameObject:
   m_ObjectHideFlags: 0

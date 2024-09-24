@@ -178,6 +178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1493876487756627552}
   - component: {fileID: -6171456068034794058}
+  - component: {fileID: 7984464003103821380}
   m_Layer: 0
   m_Name: model(Clone) (2)
   m_TagString: Untagged
@@ -217,6 +218,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   food: 200
+  exhibitId: 
+--- !u!65 &7984464003103821380
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5166779458239892980}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.2735631, y: 2.2009506, z: 3.1773322}
+  m_Center: {x: -0.6367885, y: 0.08135555, z: 0.72093827}
 --- !u!1 &5255134848660245129
 GameObject:
   m_ObjectHideFlags: 0

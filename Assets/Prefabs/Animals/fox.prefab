@@ -1601,6 +1601,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 375d94d5519830348ab7ecd7abaf41cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Fox
@@ -1608,16 +1609,18 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
+  renderers: []
   materials:
   - {fileID: 2100000, guid: e8eee43141a377848a3027dbe52e5f3e, type: 2}
   - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
   surface: {fileID: 0}
   agent: {fileID: 2486490622030957150}
   animator: {fileID: 2037630761735449962}
-  exhibit: {fileID: 0}
+  atDestination: 1
   foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
   reputationBonus: 0.03
+  destinationReached: 0
+  action: 
   hunger: 100
   thirst: 100
   restroomNeeds: 100
@@ -1630,7 +1633,22 @@ MonoBehaviour:
   healthDetriment: 0.25
   isSick: 0
   isGettingHealed: 0
-  action: 
+  requiredExhibitSpace: 1
+  age: 0
+  lifeExpectancy: 10
+  fullGrownAgeMonth: 12
+  isMale: 1
+  reproductionAgeMonth: 1
+  pregnancyDurationMonth: 1
+  isPregnant: 0
+  pregnancyTimeMonth: 0
+  averageNumberOfBabies: 1
+  fertility: 100
+  isAgressive: 1
+  dangerLevel: 2
+  exhibitId: 
+  matingPartnerId: 
+  targetId: 
 --- !u!65 &6309891695454204294
 BoxCollider:
   m_ObjectHideFlags: 0

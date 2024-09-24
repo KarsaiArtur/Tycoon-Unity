@@ -168,7 +168,7 @@ public class Building : BuildingAncestor
     public override void Remove()
     {
         base.Remove();
-        BuildingManager.instance.buildings.Remove(this);
+        BuildingManager.instance.buildingList.Remove(this);
     }
 
     public override void FindPaths()

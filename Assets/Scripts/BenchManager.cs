@@ -14,7 +14,7 @@ public class BenchManager : MonoBehaviour
     }
 
     public void AddList(Bench bench){
-        benches.Add(bench);
+        benchList.Add(bench);
         bench.transform.SetParent(BenchManager.instance.transform);
     }
 }

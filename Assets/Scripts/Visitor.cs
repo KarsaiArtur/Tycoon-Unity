@@ -7,6 +7,7 @@ using UnityEngine.AI;
 
 public class Visitor : MonoBehaviour, Clickable
 {
+    public string _id;
     public Animator animator;
     public NavMeshSurface surface;
     public NavMeshAgent agent;
@@ -22,7 +23,8 @@ public class Visitor : MonoBehaviour, Clickable
 
     float time = 0;
     float timeGoal = 0;
-    public Exhibit currentExhibit;
+    /////GENERATE
+    private Exhibit currentExhibit;
     public Animal lookedAnimal;
 
     public float hunger = 100;
@@ -43,6 +45,7 @@ public class Visitor : MonoBehaviour, Clickable
 
     public void Start()
     {
+        _id = System.Guid.NewGuid().ToString();
         visitorName = GenerateName();
         surface = GameObject.Find("NavMesh").GetComponent<NavMeshSurface>();
         agent.Warp(transform.position);
@@ -190,6 +193,7 @@ public class Visitor : MonoBehaviour, Clickable
         arrived = false;
         SetIsVisible(true);
         destinationVisitable?.SetCapacity(destinationVisitable.GetCapacity() + 1);
+        destinationVisitable?.RemoveVisitor(this);
 
         ChooseDestinationType();
 
@@ -347,7 +351,7 @@ public class Visitor : MonoBehaviour, Clickable
 
     IEnumerator CheckPictures()
     {
-        var lookedAnimalId = currentExhibit.animals[Random.Range(0, currentExhibit.animals.Count)];
+        var lookedAnimalId = GetCurrentExhibit().GetAnimals()[Random.Range(0, GetCurrentExhibit().GetAnimals().Count)];
         lookedAnimal = lookedAnimalId;
         randomRange = 10;
         while (arrived)
@@ -360,8 +364,8 @@ public class Visitor : MonoBehaviour, Clickable
                     GetComponentInChildren<Animator>().Play("Checking Pictures");
                     randomRange = 10;
                     lookAtAnimals = false;
-                    if(currentExhibit.animals.Count!= 0)
-                        lookedAnimalId = currentExhibit.animals[Random.Range(0, currentExhibit.animals.Count)];
+                    if(GetCurrentExhibit().GetAnimals().Count !=  0)
+                        lookedAnimalId = GetCurrentExhibit().GetAnimals()[Random.Range(0, GetCurrentExhibit().GetAnimals().Count)];
                         lookedAnimal = lookedAnimalId;
                 }
                 else
@@ -415,4 +419,18 @@ public class Visitor : MonoBehaviour, Clickable
         return firstName[Random.Range(0, firstName.Count)] + " " + lastName[Random.Range(0, lastName.Count)];
     }
 
+////GENERATED
+
+    public string currentExhibitId;
+    public Exhibit GetCurrentExhibit(string id = null)
+    {
+        id ??=currentExhibitId;
+
+        if(id != currentExhibitId || currentExhibit == null)
+        {
+            currentExhibitId = id;
+            currentExhibit = ExhibitManager.instance.exhibitList.Where((element) => element._id == currentExhibitId).FirstOrDefault();
+        }
+        return currentExhibit;
+    }
 }

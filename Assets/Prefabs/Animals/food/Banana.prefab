@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 91162143002234337}
   - component: {fileID: 63179339203581416}
+  - component: {fileID: 4725240412694757483}
   m_Layer: 0
   m_Name: Banana
   m_TagString: Untagged
@@ -46,6 +47,28 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   food: 200
+  exhibitId: 
+--- !u!65 &4725240412694757483
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4306678023325213529}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 2.4283693, y: 8.29868, z: 7.827996}
+  m_Center: {x: 0.7141855, y: -2.849382, z: -0.6391101}
 --- !u!1001 &649136090154730876
 PrefabInstance:
   m_ObjectHideFlags: 0

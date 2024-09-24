@@ -153,7 +153,7 @@ public class Placeable : MonoBehaviour, Clickable
         StartCoroutine(MoveText(distance));
     }
 
-    IEnumerator MoveText(float distance)
+    public virtual IEnumerator MoveText(float distance)
     {
         while(distance > 0)
         {
@@ -162,8 +162,9 @@ public class Placeable : MonoBehaviour, Clickable
             distance -= 0.01f;
             yield return new WaitForSeconds(.01f);
         }
-        if (currentPlacingPriceInstance != null)
+        if (currentPlacingPriceInstance != null){
             Destroy(currentPlacingPriceInstance.gameObject);
+        }
     }
 
     public virtual string GetPrice()
@@ -202,5 +203,9 @@ public class Placeable : MonoBehaviour, Clickable
                 break;
         }
         return newMaterial;
+    }
+    public virtual Placeable GetById(string id)
+    {
+        return null;
     }
 }

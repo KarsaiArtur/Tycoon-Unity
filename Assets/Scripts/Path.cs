@@ -87,6 +87,12 @@ public class Path : Placeable
         transform.position = new Vector3(playerControl.Round(pos.x), yPos.y + offsetDefault, playerControl.Round(pos.z));
     }
 
+    public override void FinalPlace()
+    {
+        Debug.Log("OKK");
+        PathManager.instance.AddList(this);
+    }
+
 
     float RoundToDecimal(float number, int dec)
     {
@@ -108,6 +114,7 @@ public class Path : Placeable
     {
         if (CompareTag("Placed Path"))
         {
+            PathManager.instance.pathList.Remove(this);
             Grid tempGrid = GridManager.instance.GetGrid(transform.position);
             tempGrid.isPath = false;
             //foreach (var exhibit in GridManager.instance.exhibits)

@@ -1284,10 +1284,10 @@ RectTransform:
   - {fileID: 1113633615}
   m_Father: {fileID: 356780204}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 92.35, y: -146.81999}
-  m_SizeDelta: {x: 177.1, y: 91.2}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &71450503
 MonoBehaviour:
@@ -1655,9 +1655,9 @@ RectTransform:
   - {fileID: 603574108}
   m_Father: {fileID: 1887784016}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 68.85, y: -50}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 137.7, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &197248726
@@ -3273,6 +3273,50 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 498646294}
   m_CullTransparentMesh: 1
+--- !u!1 &514829325
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 514829328}
+  - component: {fileID: 514829326}
+  m_Layer: 0
+  m_Name: Animal Visitable Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &514829326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514829325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9c60b4d5430e3e4f8b9dc5dbe7ef4bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &514829328
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514829325}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.1226826, y: 8.784784, z: 8.090322}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &519142072
 GameObject:
   m_ObjectHideFlags: 0
@@ -3317,7 +3361,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ddea128d346e964b830872224405cc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  benches: []
+  benchList: []
 --- !u!1 &555166525
 GameObject:
   m_ObjectHideFlags: 0
@@ -3354,9 +3398,9 @@ RectTransform:
   - {fileID: 412058045}
   m_Father: {fileID: 1887784016}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 68.85, y: -365}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 137.7, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &555166527
@@ -4222,9 +4266,9 @@ RectTransform:
   - {fileID: 861478088}
   m_Father: {fileID: 1887784016}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 68.85, y: -155}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 137.7, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &722442068
@@ -4689,10 +4733,10 @@ RectTransform:
   - {fileID: 1091832714}
   m_Father: {fileID: 356780204}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 92.35, y: -243.03998}
-  m_SizeDelta: {x: 177.1, y: 91.2}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &844894565
 MonoBehaviour:
@@ -5534,7 +5578,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65d6a935bce49b44583f3b9c0f8b5dec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  staffs: []
+  staffList: []
 --- !u!4 &986834872
 Transform:
   m_ObjectHideFlags: 0
@@ -5979,7 +6023,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f585aef89ae3254e9eaa9c933a2b131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  natures: []
+  natureList: []
 --- !u!4 &1112355689
 Transform:
   m_ObjectHideFlags: 0
@@ -6114,7 +6158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b86ee820d98bc384c993f443c6fbeec1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exhibits: []
+  exhibitList: []
 --- !u!1001 &1175280217
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7013,7 +7057,6 @@ MonoBehaviour:
   edgeHeight: 3.5
   edgeChanged: 0
   freeAnimals: []
-  benches: []
   exhibits: []
   buildings: []
 --- !u!4 &1266772830
@@ -7704,10 +7747,10 @@ RectTransform:
   - {fileID: 208618999}
   m_Father: {fileID: 356780204}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 92.35, y: -50.6}
-  m_SizeDelta: {x: 177.1, y: 91.2}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1392065403
 MonoBehaviour:
@@ -8006,9 +8049,9 @@ RectTransform:
   - {fileID: 732199756}
   m_Father: {fileID: 1887784016}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 68.85, y: -260}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 137.7, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1463805439
@@ -8770,6 +8813,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1700265254}
+  - component: {fileID: 1700265255}
   m_Layer: 0
   m_Name: Path Manager
   m_TagString: Untagged
@@ -8792,6 +8836,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1700265255
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1700265253}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4871506c81b405428c5f5a3c93f6371, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pathList: []
 --- !u!1 &1709069451
 GameObject:
   m_ObjectHideFlags: 0
@@ -9241,7 +9298,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a010408a44f8bc14fa59bf669adea9cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildings: []
+  buildingList: []
 --- !u!1 &1987200992
 GameObject:
   m_ObjectHideFlags: 0
@@ -9528,7 +9585,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 33a54087c6b934d49b06d614ad4dba7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  visitors: []
+  visitorList: []
   visitorPrefabs:
   - {fileID: 1682552002351489573, guid: 7fbbfad835b9d5442bccb1f491e5a2be, type: 3}
   SpawnTime: 15
@@ -9759,7 +9816,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a0cd9a45c7d9d740bdaf0ba315cb1c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  animals: []
+  animalList: []
 --- !u!1001 &2093149937
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10589,5 +10646,6 @@ SceneRoots:
   - {fileID: 1216317258}
   - {fileID: 1700265254}
   - {fileID: 2085136935}
+  - {fileID: 514829328}
   - {fileID: 2041725130}
   - {fileID: 986834872}

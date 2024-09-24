@@ -18,13 +18,4 @@ public class AnimalManager : MonoBehaviour
         animalList.Add(animal);
         animal.transform.SetParent(AnimalManager.instance.transform);
     }
-
-    public Animal GetById(string id){
-        foreach(var animal in animalList){
-            if(animal._id.Equals(id)){
-                return animal;
-            }
-        }
-        return null;
-    }
 }

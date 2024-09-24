@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -6,7 +7,8 @@ public class WaterTrough : Placeable, AnimalVisitable
     float height;
     NavMeshObstacle navMeshObstacle;
     public float water = 500;
-    Exhibit exhibit;
+    /////GENERATE
+    private Exhibit exhibit;
 
     public override void Awake()
     {
@@ -17,12 +19,13 @@ public class WaterTrough : Placeable, AnimalVisitable
     
     public override void FinalPlace()
     {
+        AnimalVisitableManager.instance.AddList(this);
         ChangeMaterial(0);
         navMeshObstacle.enabled = true;
         if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
         {
             GridManager.instance.GetGrid(transform.position).GetExhibit().AddWaterPlace(this);
-            exhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
+            GetExhibit(GridManager.instance.GetGrid(transform.position).GetExhibit()._id);
         }
     }
 
@@ -65,24 +68,39 @@ public class WaterTrough : Placeable, AnimalVisitable
         waterDrunk = water > waterDrunk ? waterDrunk : water;
         waterDrunk = animal.thirst + waterDrunk > 100 ? 100 - animal.thirst : waterDrunk;
         animal.thirst += waterDrunk;
-        exhibit.water -= waterDrunk;
+        GetExhibit().water -= waterDrunk;
         water -= waterDrunk;
         animal.restroomNeedsDetriment = Random.Range(0.2f, 0.3f);
     }
 
     public void FillWithWater()
     {
-        exhibit.water += 500 - water;
+        GetExhibit().water += 500 - water;
         water = 500;
     }
 
     public override void Remove()
     {
+        AnimalVisitableManager.instance.animalvisitableList.Remove(this);
         base.Remove();
 
-        if (exhibit != null)
-            exhibit.RemoveWaterTrough(this);
+        if (GetExhibit() != null)
+            GetExhibit().RemoveWaterTrough(this);
             
         Destroy(gameObject);
+    }
+////GENERATED
+
+    public string exhibitId;
+    public Exhibit GetExhibit(string id = null)
+    {
+        id ??=exhibitId;
+
+        if(id != exhibitId || exhibit == null)
+        {
+            exhibitId = id;
+            exhibit = ExhibitManager.instance.exhibitList.Where((element) => element._id == exhibitId).FirstOrDefault();
+        }
+        return exhibit;
     }
 }

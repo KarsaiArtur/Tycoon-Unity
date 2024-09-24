@@ -48,10 +48,10 @@ public abstract class Staff : Placeable
                     case WorkingState.GoingToExhibitEntranceToEnter:
                         time += Time.deltaTime;
                         destinationExhibit.StaffArrived(1);
-                        if (!destinationExhibit.staffAtGate.Contains(this))
-                            destinationExhibit.staffAtGate.Add(this);
-                        if (!destinationExhibit.staff.Contains(this))
-                            destinationExhibit.staff.Add(this);
+                        if (!destinationExhibit.GetStaffsAtGate().Contains(this))
+                            destinationExhibit.AddStaffsAtGate(this);
+                        if (!destinationExhibit.GetStaffs().Contains(this))
+                            destinationExhibit.AddStaffs(this);
                         if (time > 1)
                         {
                             workingState = WorkingState.GoingToExhibitExitToEnter;
@@ -60,8 +60,8 @@ public abstract class Staff : Placeable
                         break;
                     case WorkingState.GoingToExhibitExitToEnter:
                         time += Time.deltaTime;
-                        if (destinationExhibit.staffAtGate.Contains(this))
-                            destinationExhibit.staffAtGate.Remove(this);
+                        if (destinationExhibit.GetStaffsAtGate().Contains(this))
+                            destinationExhibit.RemoveStaffsAtGate(this);
                         if (time > 1)
                         {
                             workingState = WorkingState.Working;
@@ -72,10 +72,10 @@ public abstract class Staff : Placeable
                         break;
                     case WorkingState.GoingToExhibitEntranceToLeave:
                         time += Time.deltaTime;
-                        if (insideExhibit.staffAtGate.Contains(this))
-                            insideExhibit.staffAtGate.Remove(this);
-                        if (insideExhibit.staff.Contains(this))
-                            insideExhibit.staff.Remove(this);
+                        if (insideExhibit.GetStaffsAtGate().Contains(this))
+                            insideExhibit.RemoveStaffsAtGate(this);
+                        if (insideExhibit.GetStaffs().Contains(this))
+                            insideExhibit.RemoveStaffs(this);
                         if (time > 1)
                         {
                             if (destinationExhibit == null)
@@ -95,8 +95,8 @@ public abstract class Staff : Placeable
                     case WorkingState.GoingToExhibitExitToLeave:
                         time += Time.deltaTime;
                         insideExhibit.StaffArrived(1);
-                        if (!insideExhibit.staffAtGate.Contains(this))
-                            insideExhibit.staffAtGate.Add(this);
+                        if (!insideExhibit.GetStaffsAtGate().Contains(this))
+                            insideExhibit.AddStaffsAtGate(this);
                         if (time > 1)
                         {
                             workingState = WorkingState.GoingToExhibitEntranceToLeave;
@@ -200,7 +200,10 @@ public abstract class Staff : Placeable
     public virtual void SetToDefault()
     {
         destinationExhibit = null;
-        insideExhibit = null;
+        if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
+            insideExhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
+        else
+            insideExhibit = null;
         isAvailable = true;
         workingState = WorkingState.Resting;
     }
@@ -259,13 +262,13 @@ public abstract class Staff : Placeable
     public override void FinalPlace()
     {
         agent.Warp(transform.position);
-        StaffManager.instance.staffs.Add(this);
+        StaffManager.instance.AddList(this);
         placed = true;
     }
 
     public void OnDestroy()
     {
-        StaffManager.instance.staffs.Remove(this);
+        StaffManager.instance.staffList.Remove(this);
     }
 
     public abstract string GetCurrentAction();

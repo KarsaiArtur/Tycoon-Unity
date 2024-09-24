@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "emsoVcEZEbJUyORO2l5PVfOHt0K9lfFFy8NH1ZYOoOD++7u6nSG+fx0Pkf8pIW1dm3YL2PyjAurvrPQDDiu4ag==",
+  "dgSpecHash": "cjZJH4HEEHEnauXNL71GEHRoBurY9H1poV0s6frWKk4/kVlztCBhPYc84LCZGDOXNgpkk6TIWnznA4zCi7XnrA==",
   "success": true,
-  "projectFilePath": "c:\\Users\\artur\\Desktop\\egyetem\\6. félév\\önlab\\Tycoon-Unity\\CodeGenerator\\IdToObjectCodeGenerator\\IdToObjectCodeGenerator.csproj",
+  "projectFilePath": "D:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\IdToObjectCodeGenerator\\SaveableCodeGenerator.csproj",
   "expectedPackageFiles": [],
   "logs": []
 }

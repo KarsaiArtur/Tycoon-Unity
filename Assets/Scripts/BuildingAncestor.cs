@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,7 +9,8 @@ public abstract class BuildingAncestor : Placeable, Visitable
     protected float curY = -100;
     public int capacity = 2;
     public List<Grid> paths;
-    protected List<Visitor> visitors = new();
+    /////GENERATE
+    private List<Visitor> visitors;
     protected bool reachable = false;
 
     public override void FinalPlace()
@@ -44,7 +46,7 @@ public abstract class BuildingAncestor : Placeable, Visitable
         base.Remove();
 
         RemoveFromLists();
-        foreach (var visitor in visitors)
+        foreach (var visitor in GetVisitors())
             visitor.ChooseDestination();
 
         Destroy(gameObject);
@@ -98,12 +100,12 @@ public abstract class BuildingAncestor : Placeable, Visitable
 
     public void AddVisitor(Visitor visitor)
     {
-        visitors.Add(visitor);
+        AddVisitors(visitor);
     }
 
     public void RemoveVisitor(Visitor visitor)
     {
-        visitors.Remove(visitor);
+        RemoveVisitors(visitor);
     }
 
     public List<Grid> GetPaths()
@@ -132,4 +134,31 @@ public abstract class BuildingAncestor : Placeable, Visitable
     public abstract void RemoveFromReachableLists();
 
     public abstract void RemoveFromLists();
+////GENERATED
+
+    public List<string> visitorsIds = new List<string>();
+    public List<Visitor> GetVisitors()
+    {
+        if(visitors == null)
+        {
+             visitors = new List<Visitor>();
+             foreach(var element in visitors){
+                visitors.Add(VisitorManager.instance.visitorList.Where((e) => e._id == element._id).FirstOrDefault());
+             }
+        }
+        return visitors;
+    }
+    public void AddVisitors(Visitor visitor)
+    {
+        visitorsIds.Add(visitor._id);
+        if(visitors == null){
+             visitors = new List<Visitor>();
+        }
+        visitors.Add(visitor);
+    }
+    public void RemoveVisitors(Visitor visitor)
+    {
+        visitorsIds.Remove(visitor._id);
+        visitors.Remove(visitor);
+    }
 }

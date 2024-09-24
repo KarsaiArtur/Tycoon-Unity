@@ -61,19 +61,19 @@ public class ZooManagerInfopopup : InfoPopup
             infoPanelInstance.transform.GetChild(0).Find("Expenses").GetComponent<TextMeshProUGUI>().text = "Monthly expenses" + System.Environment.NewLine + zooManager.GetExpenses();
             infoPanelInstance.transform.GetChild(0).Find("Rep").GetComponent<TextMeshProUGUI>().text = "Current reputation" + System.Environment.NewLine + (int)zooManager.reputation+"/100";
             infoPanelInstance.transform.GetChild(0).Find("Visitors").GetComponent<TextMeshProUGUI>().text = "All time visitor count" + System.Environment.NewLine + (int)zooManager.allTimeVisitorCount;
-            if (staffCount != StaffManager.instance.staffs.Count)
+            if (staffCount != StaffManager.instance.staffList.Count)
             {
                 DestroyStaffInfos();
                 CreateStaffInfos();
             }
-            staffCount = StaffManager.instance.staffs.Count;
+            staffCount = StaffManager.instance.staffList.Count;
             yield return new WaitForSeconds(1);
         }
     }
 
     public void CreateStaffInfos()
     {
-        foreach (var staff in StaffManager.instance.staffs)
+        foreach (var staff in StaffManager.instance.staffList)
         {
             var staffInfo = Instantiate(UIMenu.Instance.zooManagerStaffInfoPrefab);
             staffInfo.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = staff.placeableName;

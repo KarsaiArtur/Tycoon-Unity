@@ -209,6 +209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 375d94d5519830348ab7ecd7abaf41cd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Jaguar
@@ -216,16 +217,18 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: d831f70cee32bb84a8bb4341ce15635e, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
+  renderers: []
   materials:
   - {fileID: 2100000, guid: e8eee43141a377848a3027dbe52e5f3e, type: 2}
   - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
   surface: {fileID: 0}
   agent: {fileID: 2434493180020881593}
   animator: {fileID: 6091641609604937966}
-  exhibit: {fileID: 0}
+  atDestination: 1
   foodPrefab: {fileID: -6171456068034794058, guid: 23b12887481305549a503723ba52a206, type: 3}
   reputationBonus: 0.06
+  destinationReached: 0
+  action: 
   hunger: 100
   thirst: 100
   restroomNeeds: 100
@@ -238,7 +241,22 @@ MonoBehaviour:
   healthDetriment: 0.25
   isSick: 0
   isGettingHealed: 0
-  action: 
+  requiredExhibitSpace: 1
+  age: 0
+  lifeExpectancy: 10
+  fullGrownAgeMonth: 12
+  isMale: 1
+  reproductionAgeMonth: 1
+  pregnancyDurationMonth: 1
+  isPregnant: 0
+  pregnancyTimeMonth: 0
+  averageNumberOfBabies: 1
+  fertility: 100
+  isAgressive: 1
+  dangerLevel: 5
+  exhibitId: 
+  matingPartnerId: 
+  targetId: 
 --- !u!195 &2434493180020881593
 NavMeshAgent:
   m_ObjectHideFlags: 0

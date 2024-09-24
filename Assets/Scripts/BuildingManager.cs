@@ -15,6 +15,6 @@ public class BuildingManager : MonoBehaviour
 
     public void AddList(Building building){
         buildingList.Add(building);
-        building.transform.SetParent(NatureManager.instance.transform);
+        building.transform.SetParent(BuildingManager.instance.transform);
     }
 }

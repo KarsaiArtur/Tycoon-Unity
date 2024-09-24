@@ -41,7 +41,7 @@ public class NatureManager : MonoBehaviour, Saveable
     public string DataToJson(){
 
         List<NatureData> natures = new List<NatureData>();
-        foreach(var element in this.natures){
+        foreach(var element in this.natureList){
             natures.Add(element.ToData());
         }
         NatureManagerData data = new NatureManagerData(natures);

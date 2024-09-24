@@ -30,9 +30,9 @@ public class Vet : Staff
         var animalSickness = new List<(Exhibit exhibit, Animal animal, float health)>();
         foreach (Exhibit exhibit in GridManager.instance.exhibits)
         {
-            if (exhibit.animals.Count > 0 && !exhibit.unreachableForStaff)
+            if (exhibit.GetAnimals().Count > 0 && !exhibit.unreachableForStaff)
             {
-                foreach (var animalId in exhibit.animals)
+                foreach (var animalId in exhibit.GetAnimals())
                 {
                     var animal = animalId;
                     if (!animal.isGettingHealed)

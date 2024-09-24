@@ -1,16 +1,25 @@
+using System.Linq;
 using UnityEngine;
 
 public class AnimalFood : MonoBehaviour, AnimalVisitable
 {
+    public string _id;
     public float food = 200;
-    Exhibit exhibit;
+    /////GENERATE
+    private Exhibit exhibit;
+
+    public void Awake(){
+        _id = System.Guid.NewGuid().ToString();
+    }
 
     public void FinalPlace()
     {
+        tag = "Placed";
+        AnimalVisitableManager.instance.AddList(this);
         if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
         {
             GridManager.instance.GetGrid(transform.position).GetExhibit().AddFoodPlace(this);
-            exhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
+            GetExhibit(GridManager.instance.GetGrid(transform.position).GetExhibit()._id);
         }
     }
 
@@ -20,14 +29,14 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable
         foodEaten = food > foodEaten ? foodEaten : food;
         foodEaten = animal.hunger + foodEaten > 100 ? 100 - animal.hunger : foodEaten;
         animal.hunger += foodEaten;
-        exhibit.food -= foodEaten;
+        GetExhibit().food -= foodEaten;
         food -= foodEaten;
         animal.restroomNeedsDetriment = Random.Range(0.2f, 0.3f);
 
         if (food <= 0)
         {
-            exhibit.foodPlaces.Remove(this);
-            animal.destinationVisitable = null;
+            GetExhibit().RemoveFoodPlaces(this);
+            animal.GetDestinationVisitable("");
             if (gameObject != null)
                 Destroy(gameObject);
         }
@@ -35,6 +44,21 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable
 
     public void Delete()
     {
+        AnimalVisitableManager.instance.animalvisitableList.Remove(this);
         Destroy(gameObject);
+    }
+////GENERATED
+
+    public string exhibitId;
+    public Exhibit GetExhibit(string id = null)
+    {
+        id ??=exhibitId;
+
+        if(id != exhibitId || exhibit == null)
+        {
+            exhibitId = id;
+            exhibit = ExhibitManager.instance.exhibitList.Where((element) => element._id == exhibitId).FirstOrDefault();
+        }
+        return exhibit;
     }
 }

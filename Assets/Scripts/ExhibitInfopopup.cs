@@ -34,15 +34,15 @@ public class ExhibitInfopopup : InfoPopup
             infoPanelInstance.transform.GetChild(0).Find("Name").GetComponent<TextMeshProUGUI>().text = exhibit.GetName();
             infoPanelInstance.transform.GetChild(0).Find("Water").GetComponent<TextMeshProUGUI>().text = "Water supply" + System.Environment.NewLine + (int)exhibit.water;
             infoPanelInstance.transform.GetChild(0).Find("Food").GetComponent<TextMeshProUGUI>().text = "Food supply" + System.Environment.NewLine + (int)exhibit.food; 
-            if (animalCount != exhibit.animals.Count)
+            if (animalCount != exhibit.GetAnimals().Count)
             {
                 DestroyAnimalInfos();
                 CreateAnimalInfos();
             }
-            animalCount = exhibit.animals.Count;
+            animalCount = exhibit.GetAnimals().Count;
             for (int i=0; i < animalCount; i++)
             {
-                var animal = exhibit.animals[i];
+                var animal = exhibit.GetAnimals()[i];
                 if (animal.health <= 33)
                 {
                     animalInfos[i].transform.Find("Health").transform.GetComponent<Image>().enabled = true;
@@ -60,7 +60,7 @@ public class ExhibitInfopopup : InfoPopup
 
     public void CreateAnimalInfos()
     {
-        foreach (var animal in exhibit.animals)
+        foreach (var animal in exhibit.GetAnimals())
         {
             var animalInfo = Instantiate(UIMenu.Instance.animalExhibitInfoPrefab);
             animalInfo.transform.Find("Name").GetComponent<TextMeshProUGUI>().text = animal.placeableName;

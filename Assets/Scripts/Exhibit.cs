@@ -19,8 +19,10 @@ public class Exhibit : Placeable, Visitable
     public bool isOpen = false;
     public static int exhibitCount = 0;
     bool reachable = false;
-    public List<Staff> staff = new();
-    public List<Staff> staffAtGate = new();
+    /////GENERATE
+    private List<Staff> staffs;
+    /////GENERATE
+    private List<Staff> staffsAtGate;
     Vector3 gateObstacleCenter;
     float time = 0;
     public bool unreachableForStaff = false;
@@ -28,14 +30,17 @@ public class Exhibit : Placeable, Visitable
     public float food = 0;
     public float water = 0;
     public float waterCapacity = 0;
-    public List<AnimalFood> foodPlaces = new();
-    public List<WaterTrough> waterPlaces = new();
+    /////GENERATE
+    private List<AnimalFood> foodPlaces;
+    /////GENERATE
+    private List<WaterTrough> waterPlaces;
     public bool isGettingFood = false;
     public bool isGettingWater = false;
     public bool isGettingCleaned = false;
     public float occupiedSpace = 0;
     public bool isMixed = false;
-    List<Visitor> visitors = new();
+    /////GENERATE
+    private List<Visitor> visitors;
 
     override public void Awake()
     {
@@ -67,7 +72,7 @@ public class Exhibit : Placeable, Visitable
         for (int i = 0; i < gridList.Count; i++)
         {
             gridList[i].GetExhibit(_id);
-            foliages.AddRange(gridList[i].natures);
+            gridList[i].natures.ForEach((element) => AddFoliages(element));
         }
 
         FindPaths();
@@ -99,9 +104,9 @@ public class Exhibit : Placeable, Visitable
 
     public void AddAnimal(Animal animal)
     {
-        animals.Add(animal);
+        AddAnimals(animal);
         occupiedSpace += animal.requiredExhibitSpace / 2;
-        if (reachable && animals.Count == 1)
+        if (reachable && GetAnimals().Count == 1)
         {
             AddToReachableLists();
         }
@@ -109,9 +114,9 @@ public class Exhibit : Placeable, Visitable
 
     public void RemoveAnimal(Animal animal)
     {
-        animals.Remove(animal);
+        RemoveAnimals(animal);
         occupiedSpace -= animal.requiredExhibitSpace / 2;
-        if (reachable && animals.Count == 0)
+        if (reachable && GetAnimals().Count == 0)
         {
             RemoveFromReachableLists();
         }
@@ -150,10 +155,10 @@ public class Exhibit : Placeable, Visitable
 
     public void Arrived(Visitor visitor)
     {
-        if (animals.Count > 0)
-            foreach (var animal in animals)
+        if (GetAnimals().Count > 0)
+            foreach (var animal in GetAnimals())
                 visitor.happiness = visitor.happiness + animal.happiness / 25 > 100 ? 100 : visitor.happiness + animal.happiness / 25;
-        visitor.currentExhibit = this;
+        visitor.GetCurrentExhibit(_id);
         visitor.TakePictures();
     }
 
@@ -191,7 +196,7 @@ public class Exhibit : Placeable, Visitable
     public void AddToReachableLists()
     {
         reachable = true;
-        if (animals.Count > 0)
+        if (GetAnimals().Count > 0)
         {
             GridManager.instance.reachableExhibits.Add(this);
         }
@@ -232,8 +237,8 @@ public class Exhibit : Placeable, Visitable
     {
         if (isOpen)
         {
-            if (staffAtGate.Count > 0)
-                foreach (Staff staffMember in staffAtGate)
+            if (GetStaffsAtGate().Count > 0)
+                foreach (Staff staffMember in GetStaffsAtGate())
                     if (staffMember.workingState != Staff.WorkingState.Working && staffMember.workingState != Staff.WorkingState.Resting)
                         return;
             var gateObstacle = gameObject.GetComponent<NavMeshObstacle>();
@@ -261,35 +266,35 @@ public class Exhibit : Placeable, Visitable
 
     public void AddWaterPlace(WaterTrough waterPlace)
     {
-        waterPlaces.Add(waterPlace);
+        AddWaterPlaces(waterPlace);
         water += 500;
         waterCapacity += 500;
     }
 
     public void AddFoodPlace(AnimalFood animalFood)
     {
-        foodPlaces.Add(animalFood);
+        AddFoodPlaces(animalFood);
         food += animalFood.food;
     }
 
     public void AddVisitor(Visitor visitor)
     {
-        visitors.Add(visitor);
+        AddVisitors(visitor);
     }
 
     public void RemoveVisitor(Visitor visitor)
     {
-        visitors.Remove(visitor);
+        RemoveVisitors(visitor);
     }
 
     public void RemoveNature(Nature nature)
     {
-        foliages.Remove(nature);
+        RemoveFoliages(nature);
     }
 
     public void RemoveWaterTrough(WaterTrough waterTrough)
     {
-        waterPlaces.Remove(waterTrough);
+        RemoveWaterPlaces(waterTrough);
     }
 
     public bool GetReachable()
@@ -304,7 +309,7 @@ public class Exhibit : Placeable, Visitable
 
     public override void Remove()
     {
-        ExhibitManager.instance.exhibits.Remove(this);
+        ExhibitManager.instance.exhibitList.Remove(this);
 
         for (int i = 0; i < exitGrid.trueNeighbours.Length; i++)
         {
@@ -323,20 +328,20 @@ public class Exhibit : Placeable, Visitable
         {
             grid.GetExhibit("");
         }
-        foreach (var animal in animals)
+        foreach (var animal in GetAnimals())
         {
-            animal.exhibit = null;
+            animal.GetExhibit("");
             GridManager.instance.freeAnimals.Add(animal);
         }
-        foreach (var staffMember in staff)
+        foreach (var staffMember in GetStaffs())
         {
             staffMember.SetToDefault();
         }
-        foreach (var staffMember in staffAtGate)
+        foreach (var staffMember in GetStaffsAtGate())
         {
             staffMember.SetToDefault();
         }
-        foreach (var visitor in visitors)
+        foreach (var visitor in GetVisitors())
         {
             visitor.ChooseDestination();
         }
@@ -344,16 +349,21 @@ public class Exhibit : Placeable, Visitable
         {
             Destroy(animalDropping);
         }
-        foreach (var foodPlace in foodPlaces)
+        foreach (var foodPlace in GetFoodPlaces())
         {
             foodPlace.Delete();
         }
-        while (waterPlaces.Count > 0)
+        while (GetWaterPlaces().Count > 0)
         {
-            waterPlaces[0].Remove();
+            GetWaterPlaces()[0].Remove();
         }
         Destroy(gameObject);
     }
+
+    public override Placeable GetById(string id){
+        return ExhibitManager.instance.exhibitList.Where((element) => element._id == id).FirstOrDefault();
+    }
+
     ////GENERATED
 
     public List<string> animalsIds = new List<string>();
@@ -406,5 +416,135 @@ public class Exhibit : Placeable, Visitable
     {
         foliagesIds.Remove(nature._id);
         foliages.Remove(nature);
+    }
+
+    public List<string> staffsIds = new List<string>();
+    public List<Staff> GetStaffs()
+    {
+        if(staffs == null)
+        {
+             staffs = new List<Staff>();
+             foreach(var element in staffs){
+                staffs.Add(StaffManager.instance.staffList.Where((e) => e._id == element._id).FirstOrDefault());
+             }
+        }
+        return staffs;
+    }
+    public void AddStaffs(Staff staff)
+    {
+        staffsIds.Add(staff._id);
+        if(staffs == null){
+             staffs = new List<Staff>();
+        }
+        staffs.Add(staff);
+    }
+    public void RemoveStaffs(Staff staff)
+    {
+        staffsIds.Remove(staff._id);
+        staffs.Remove(staff);
+    }
+
+    public List<string> staffsAtGateIds = new List<string>();
+    public List<Staff> GetStaffsAtGate()
+    {
+        if(staffsAtGate == null)
+        {
+             staffsAtGate = new List<Staff>();
+             foreach(var element in staffsAtGate){
+                staffsAtGate.Add(StaffManager.instance.staffList.Where((e) => e._id == element._id).FirstOrDefault());
+             }
+        }
+        return staffsAtGate;
+    }
+    public void AddStaffsAtGate(Staff staff)
+    {
+        staffsAtGateIds.Add(staff._id);
+        if(staffsAtGate == null){
+             staffsAtGate = new List<Staff>();
+        }
+        staffsAtGate.Add(staff);
+    }
+    public void RemoveStaffsAtGate(Staff staff)
+    {
+        staffsAtGateIds.Remove(staff._id);
+        staffsAtGate.Remove(staff);
+    }
+
+    public List<string> foodPlacesIds = new List<string>();
+    public List<AnimalFood> GetFoodPlaces()
+    {
+        if(foodPlaces == null)
+        {
+             foodPlaces = new List<AnimalFood>();
+             foreach(var element in foodPlaces){
+                foodPlaces.Add(AnimalFoodManager.instance.animalfoodList.Where((e) => e._id == element._id).FirstOrDefault());
+             }
+        }
+        return foodPlaces;
+    }
+    public void AddFoodPlaces(AnimalFood animalfood)
+    {
+        foodPlacesIds.Add(animalfood._id);
+        if(foodPlaces == null){
+             foodPlaces = new List<AnimalFood>();
+        }
+        foodPlaces.Add(animalfood);
+    }
+    public void RemoveFoodPlaces(AnimalFood animalfood)
+    {
+        foodPlacesIds.Remove(animalfood._id);
+        foodPlaces.Remove(animalfood);
+    }
+
+    public List<string> waterPlacesIds = new List<string>();
+    public List<WaterTrough> GetWaterPlaces()
+    {
+        if(waterPlaces == null)
+        {
+             waterPlaces = new List<WaterTrough>();
+             foreach(var element in waterPlaces){
+                waterPlaces.Add(WaterTroughManager.instance.watertroughList.Where((e) => e._id == element._id).FirstOrDefault());
+             }
+        }
+        return waterPlaces;
+    }
+    public void AddWaterPlaces(WaterTrough watertrough)
+    {
+        waterPlacesIds.Add(watertrough._id);
+        if(waterPlaces == null){
+             waterPlaces = new List<WaterTrough>();
+        }
+        waterPlaces.Add(watertrough);
+    }
+    public void RemoveWaterPlaces(WaterTrough watertrough)
+    {
+        waterPlacesIds.Remove(watertrough._id);
+        waterPlaces.Remove(watertrough);
+    }
+
+    public List<string> visitorsIds = new List<string>();
+    public List<Visitor> GetVisitors()
+    {
+        if(visitors == null)
+        {
+             visitors = new List<Visitor>();
+             foreach(var element in visitors){
+                visitors.Add(VisitorManager.instance.visitorList.Where((e) => e._id == element._id).FirstOrDefault());
+             }
+        }
+        return visitors;
+    }
+    public void AddVisitors(Visitor visitor)
+    {
+        visitorsIds.Add(visitor._id);
+        if(visitors == null){
+             visitors = new List<Visitor>();
+        }
+        visitors.Add(visitor);
+    }
+    public void RemoveVisitors(Visitor visitor)
+    {
+        visitorsIds.Remove(visitor._id);
+        visitors.Remove(visitor);
     }
 }

@@ -15,7 +15,8 @@ public class Animal : Placeable
     public List<NavMeshBuildSource> buildSource;
     public NavMeshAgent agent;
     public Animator animator;
-    public Exhibit exhibit;
+    /////GENERATE
+    private Exhibit exhibit;
     public bool atDestination = true;
     bool placed = false;
     bool collided = false;
@@ -29,7 +30,8 @@ public class Animal : Placeable
     public bool destinationReached = false;
     Vector3 destination;
     public string action = "";
-    public AnimalVisitable destinationVisitable;
+    /////GENERATE
+    private AnimalVisitable destinationVisitable;
     bool isEating = false;
 
     public float hunger = 100;
@@ -62,14 +64,16 @@ public class Animal : Placeable
     public int averageNumberOfBabies = 1;
     int dayOfConception = 0;
     public int fertility = 100;
-    Animal matingPartner;
+    /////GENERATE
+    private Animal matingPartner;
 
     public bool isAgressive = false;
     public int dangerLevel = 0;
     int fleeDistance = 5;
-    Animal target;
+    /////GENERATE
+    private Animal target;
     Vector3 dangerPos;
-    float attackCooldown = 1;
+    float attackCooldown = 2;
 
     public override void Place(Vector3 mouseHit)
     {
@@ -89,7 +93,7 @@ public class Animal : Placeable
         foreach (RaycastHit hit in hits)
         {
             if (hit.collider.CompareTag("Terrain") && playerControl.canBePlaced &&
-                (gridManager.GetGrid(hit.point).GetExhibit() == null || (gridManager.GetGrid(hit.point).GetExhibit().animals.Count > 0 && gridManager.GetGrid(hit.point).GetExhibit().animals[0].placeableName != placeableName)))
+                (gridManager.GetGrid(hit.point).GetExhibit() == null || (gridManager.GetGrid(hit.point).GetExhibit().GetAnimals().Count > 0 && gridManager.GetGrid(hit.point).GetExhibit().GetAnimals()[0].placeableName != placeableName)))
             {
                 playerControl.canBePlaced = false;
                 ChangeMaterial(2);
@@ -122,8 +126,8 @@ public class Animal : Placeable
             transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
         else
             transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        exhibit = gridManager.GetGrid(transform.position).GetExhibit();
-        exhibit.AddAnimal(this);
+        GetExhibit(gridManager.GetGrid(transform.position).GetExhibit()._id);
+        GetExhibit().AddAnimal(this);
         agent.Warp(transform.position);
         placed = true;
         birthDate = CalendarManager.instance.currentDate;
@@ -134,14 +138,14 @@ public class Animal : Placeable
 
     public override void Remove()
     {
-        AnimalManager.instance.animals.Remove(this);
+        AnimalManager.instance.animalList.Remove(this);
         base.Remove();
 
         ZooManager.instance.ChangeMoney(-placeablePrice * 0.2f);
         ZooManager.instance.ChangeMoney(Mathf.Floor(placeablePrice * 0.5f * health / 100 * (1 - age / lifeExpectancy)));
 
-        if (exhibit != null)
-            exhibit.RemoveAnimal(this);
+        if (GetExhibit() != null)
+            GetExhibit().RemoveAnimal(this);
         else
             gridManager.freeAnimals.Remove(this);
 
@@ -196,22 +200,22 @@ public class Animal : Placeable
                 attackCooldown += Time.deltaTime;
             }
 
-            if (exhibit != null && exhibit.isMixed)
+            if (GetExhibit() != null && GetExhibit().isMixed)
             {
-                exhibit.isMixed = false;
-                foreach (var animal in exhibit.animals)
+                GetExhibit().isMixed = false;
+                foreach (var animal in GetExhibit().GetAnimals())
                 {
                     if (animal.placeableName != placeableName)
-                        exhibit.isMixed = true;
+                        GetExhibit().isMixed = true;
                 }
             }
 
-            if (exhibit != null && exhibit.isMixed)
+            if (GetExhibit() != null && GetExhibit().isMixed)
             {
-                FleeAndAttack(exhibit.animals);
+                FleeAndAttack(GetExhibit().GetAnimals());
             }
 
-            if (exhibit == null)
+            if (GetExhibit() == null)
             {
                 FleeAndAttack(GridManager.instance.freeAnimals);
             }
@@ -222,7 +226,7 @@ public class Animal : Placeable
                 FindMatingPartner();
             }
 
-            if (exhibit == null && GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
+            if (GetExhibit() == null && GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
             {
                 CheckIfInsideExhibit();
             }
@@ -242,10 +246,10 @@ public class Animal : Placeable
             restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
 
             float foliageBonus = 1;
-            if (exhibit != null)
-                foliageBonus = Mathf.Sqrt(exhibit.foliages.Count + 1);
+            if (GetExhibit() != null)
+                foliageBonus = Mathf.Sqrt(GetExhibit().GetFoliages().Count + 1);
 
-            if (exhibit != null && (exhibit.gridList.Count < requiredExhibitSpace || exhibit.gridList.Count < exhibit.occupiedSpace))
+            if (GetExhibit() != null && (GetExhibit().gridList.Count < requiredExhibitSpace || GetExhibit().gridList.Count < GetExhibit().occupiedSpace))
                 happiness = happiness > happinessDetriment / foliageBonus ? happiness - happinessDetriment / foliageBonus : 0;
             if (hunger < 33)
                 happiness = happiness > happinessDetriment / foliageBonus ? happiness - happinessDetriment / foliageBonus : 0;
@@ -260,7 +264,7 @@ public class Animal : Placeable
                 health = health > healthDetriment ? health - healthDetriment : 0;
             if (happiness < 20)
                 health = health > healthDetriment ? health - healthDetriment : 0;
-            if (exhibit != null && exhibit.animalDroppings.Count > exhibit.gridList.Count)
+            if (GetExhibit() != null && GetExhibit().animalDroppings.Count > GetExhibit().gridList.Count)
                 health = health > healthDetriment ? health - healthDetriment : 0;
             if (isSick)
                 health = health > healthDetriment * 5 ? health - healthDetriment * 5 : 0;
@@ -271,7 +275,7 @@ public class Animal : Placeable
             if (health <= 0)
                 Die();
 
-            if (exhibit != null && restroomNeeds <= 0)
+            if (GetExhibit() != null && restroomNeeds <= 0)
                 Poop();
 
             yield return new WaitForSeconds(1);
@@ -289,14 +293,15 @@ public class Animal : Placeable
 
     public void Damage()
     {
+        Debug.Log(attackCooldown);
         if (attackCooldown >= 2)
         {
-            target.health = target.health - 20 * dangerLevel / target.dangerLevel;
+            GetTarget().health = GetTarget().health - 20 * dangerLevel / GetTarget().dangerLevel;
             Debug.Log(placeableName + " damaged");
-            if (target.health <= 0)
+            if (GetTarget().health <= 0)
             {
-                target.Die();
-                target = null;
+                GetTarget().Die();
+                GetTarget("");
             }
             attackCooldown = 0;
         }
@@ -305,7 +310,8 @@ public class Animal : Placeable
     void Poop()
     {
         var animalDropping = Instantiate(playerControl.animalDroppingPrefab, transform.position, transform.rotation);
-        exhibit.animalDroppings.Add(animalDropping);
+        animalDropping.tag = "Placed";
+        GetExhibit().animalDroppings.Add(animalDropping);
         restroomNeeds = UnityEngine.Random.Range(75f, 100f);
     }
 
@@ -362,9 +368,9 @@ public class Animal : Placeable
                 dangerPos = animal.transform.position;
             }
         }
-        if (exhibit == null)
+        if (GetExhibit() == null)
         {
-            foreach (Visitor visitor in VisitorManager.instance.visitors)
+            foreach (Visitor visitor in VisitorManager.instance.visitorList)
             {
                 if (dangerLevel < visitor.dangerLevel && minDistance > Vector3.Distance(transform.position, visitor.transform.position))
                 {
@@ -377,15 +383,15 @@ public class Animal : Placeable
         {
             action = "fleeing";
             agent.speed = defaultSpeed * 4;
-            Debug.Log(placeableName + " Fleeing");
+            //Debug.Log(placeableName + " Fleeing");
             ChooseDestination();
         }
         else if (isAgressive)
         {
             minDistance = 100;
-            if (exhibit == null)
+            if (GetExhibit() == null)
             {
-                foreach (Visitor visitor in VisitorManager.instance.visitors)
+                foreach (Visitor visitor in VisitorManager.instance.visitorList)
                 {
                     if (dangerLevel > visitor.dangerLevel && minDistance > Vector3.Distance(transform.position, visitor.transform.position))
                     {
@@ -400,22 +406,21 @@ public class Animal : Placeable
                 {
                     minDistance = Vector3.Distance(transform.position, animal.transform.position);
                     dangerPos = animal.transform.position;
-                    target = animal;
+                    GetTarget(animal._id);
                 }
             }
             if (minDistance < fleeDistance)
             {
                 action = "attacking";
                 agent.speed = defaultSpeed * 4;
-                Debug.Log(placeableName + " Attacking");
-                attackCooldown = 1;
+                //Debug.Log(placeableName + " Attacking");
                 ChooseDestination();
             }
         }
         if (action != "fleeing" && action != "attacking")
         {
             agent.speed = defaultSpeed;
-            target = null;
+            GetTarget("");
         }
     }
 
@@ -445,20 +450,20 @@ public class Animal : Placeable
 
     void FindMatingPartner()
     {
-        if (exhibit != null && !isMale && !isPregnant && action != "mating" && action != "fleeing" && action != "attacking" && age * 12 >= reproductionAgeMonth && happiness >= 80)
+        if (GetExhibit() != null && !isMale && !isPregnant && action != "mating" && action != "fleeing" && action != "attacking" && age * 12 >= reproductionAgeMonth && happiness >= 80)
         {
-            var potentialMates = exhibit.animals.Where(animal => animal.placeableName == placeableName && animal.isMale && animal.age * 12 >= animal.reproductionAgeMonth && animal.happiness >= 80);
+            var potentialMates = GetExhibit().GetAnimals().Where(animal => animal.placeableName == placeableName && animal.isMale && animal.age * 12 >= animal.reproductionAgeMonth && animal.happiness >= 80);
             if (potentialMates.Any())
             {
-                var matingPartnerId = potentialMates.ElementAt(UnityEngine.Random.Range(0, potentialMates.Count()));
-                matingPartner = matingPartnerId;
-                matingPartner.matingPartner = this;
-                if (UnityEngine.Random.Range(0, fertility + matingPartner.fertility) == 1)
+                var newMatingPartnerId = potentialMates.ElementAt(UnityEngine.Random.Range(0, potentialMates.Count()))._id;
+                GetMatingPartner(newMatingPartnerId);
+                GetMatingPartner().GetMatingPartner(_id);
+                if (UnityEngine.Random.Range(0, fertility + GetMatingPartner().fertility) == 1)
                 {
                     action = "mating";
-                    matingPartner.action = "mating";
+                    GetMatingPartner().action = "mating";
                     ChooseDestination();
-                    matingPartner.ChooseDestination();
+                    GetMatingPartner().ChooseDestination();
                 }
             }
         }
@@ -466,17 +471,17 @@ public class Animal : Placeable
 
     void CheckIfInsideExhibit()
     {
-        exhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
-        exhibit.AddAnimal(this);
+        GetExhibit(GridManager.instance.GetGrid(transform.position).GetExhibit()._id);
+        GetExhibit().AddAnimal(this);
         gridManager.freeAnimals.Remove(this);
         agent.speed = defaultSpeed;
-        target = null;
+        GetTarget("");
         action = "";
 
-        foreach (var animal in exhibit.animals)
+        foreach (var animal in GetExhibit().GetAnimals())
         {
             if (animal.placeableName != placeableName)
-                exhibit.isMixed = true;
+                GetExhibit().isMixed = true;
         }
 
         ChooseDestination();
@@ -495,7 +500,7 @@ public class Animal : Placeable
         {
             destinationReached = true;
         }
-        if (action == "attacking" && target != null && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.5)
+        if (action == "attacking" && GetTarget() != null && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.5)
         {
             Damage();
         }
@@ -518,9 +523,9 @@ public class Animal : Placeable
             }
             if (action == "mating")
             {
-                if (matingPartner.destinationReached)
+                if (GetMatingPartner().destinationReached)
                 {
-                    if (!(isPregnant || matingPartner.isPregnant))
+                    if (!(isPregnant || GetMatingPartner().isPregnant))
                     {
                         timeGoal = time + 5;
                         Mate();
@@ -533,15 +538,15 @@ public class Animal : Placeable
 
             if (time > timeGoal)
             {
-                if (destinationVisitable != null)
-                    destinationVisitable.Arrived(this);
+                if (GetDestinationVisitable() != null)
+                    GetDestinationVisitable().Arrived(this);
                 atDestination = true;
-                if (matingPartner != null && (isPregnant || matingPartner.isPregnant))
+                if (GetMatingPartner() != null && (isPregnant || GetMatingPartner().isPregnant))
                 {
                     action = "";
-                    matingPartner.action = "";
-                    matingPartner.matingPartner = null;
-                    matingPartner = null;
+                    GetMatingPartner().action = "";
+                    GetMatingPartner().GetMatingPartner("");
+                    GetMatingPartner("");
                 }
             }
         }
@@ -576,36 +581,36 @@ public class Animal : Placeable
         int random;
         float offsetX = UnityEngine.Random.Range(0, 1.0f);
         float offsetZ = UnityEngine.Random.Range(0, 1.0f);
-        destinationVisitable = null;
+        GetDestinationVisitable("");
 
         switch (action)
         {
             case "food":
-                if (exhibit.foodPlaces.Count > 0)
+                if (GetExhibit().GetFoodPlaces().Count > 0)
                 {
-                    random = UnityEngine.Random.Range(0, exhibit.foodPlaces.Count);
-                    destination = exhibit.foodPlaces[random].transform.position;
-                    destinationVisitable = exhibit.foodPlaces[random];
+                    random = UnityEngine.Random.Range(0, GetExhibit().GetFoodPlaces().Count);
+                    destination = GetExhibit().GetFoodPlaces()[random].transform.position;
+                    GetDestinationVisitable(GetExhibit().GetFoodPlaces()[random]._id);
                 }
                 break;
             case "drink":
-                if (exhibit.waterPlaces.Count > 0)
+                if (GetExhibit().GetWaterPlaces().Count > 0)
                 {
-                    random = UnityEngine.Random.Range(0, exhibit.waterPlaces.Count);
-                    destination = exhibit.waterPlaces[random].transform.position;
-                    destinationVisitable = exhibit.waterPlaces[random];
+                    random = UnityEngine.Random.Range(0, GetExhibit().GetWaterPlaces().Count);
+                    destination = GetExhibit().GetWaterPlaces()[random].transform.position;
+                    GetDestinationVisitable(GetExhibit().GetWaterPlaces()[random]._id);
                 }
                 break;
             case "wander":
-                if (exhibit != null)
-                    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                if (GetExhibit() != null)
+                    destinationGrid = GetExhibit().gridList[UnityEngine.Random.Range(0, GetExhibit().gridList.Count)];
                 else
                     destinationGrid = GridManager.instance.grids[UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth), UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth)];
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
                 break;
             case "mating":
                 if (isMale)
-                    destination = matingPartner.transform.position;
+                    destination = GetMatingPartner().transform.position;
                 else
                     destination = transform.position;
                 break;
@@ -616,8 +621,8 @@ public class Animal : Placeable
                 destination = dangerPos;
                 break;
             default:
-                if (exhibit != null)
-                    destinationGrid = exhibit.gridList[UnityEngine.Random.Range(0, exhibit.gridList.Count)];
+                if (GetExhibit() != null)
+                    destinationGrid = GetExhibit().gridList[UnityEngine.Random.Range(0, GetExhibit().gridList.Count)];
                 else
                     destinationGrid = GridManager.instance.grids[UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth), UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth)];
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
@@ -645,12 +650,12 @@ public class Animal : Placeable
         var probabilities = new List<(string action, float probability)>();
         float sum = 0;
 
-        if (exhibit != null && exhibit.food > 0)
+        if (GetExhibit() != null && GetExhibit().food > 0)
         {
             sum += (100 - hunger);
             probabilities.Add(("food", sum));
         }
-        if (exhibit != null && exhibit.water > 0)
+        if (GetExhibit() != null && GetExhibit().water > 0)
         {
             sum += (100 - thirst);
             probabilities.Add(("drink", sum));
@@ -669,5 +674,63 @@ public class Animal : Placeable
         var newInfopopup = new GameObject().AddComponent<AnimalInfoPopup>();
         newInfopopup.SetClickable(this);
         playerControl.SetInfopopup(newInfopopup);
+    }
+
+    public override Placeable GetById(string id){
+        return AnimalManager.instance.animalList.Where((element) => element._id == destinationVisitableId).FirstOrDefault();
+    }
+
+////GENERATED
+
+    public string exhibitId;
+    public Exhibit GetExhibit(string id = null)
+    {
+        id ??=exhibitId;
+
+        if(id != exhibitId || exhibit == null)
+        {
+            exhibitId = id;
+            exhibit = ExhibitManager.instance.exhibitList.Where((element) => element._id == exhibitId).FirstOrDefault();
+        }
+        return exhibit;
+    }
+
+    public string destinationVisitableId;
+    public AnimalVisitable GetDestinationVisitable(string id = null)
+    {
+        id ??=destinationVisitableId;
+
+        if(id != destinationVisitableId || destinationVisitable == null)
+        {
+            destinationVisitableId = id;
+            destinationVisitable = AnimalVisitableManager.instance.animalvisitableList.Where((element) => element._id == destinationVisitableId).FirstOrDefault();
+        }
+        return destinationVisitable;
+    }
+
+    public string matingPartnerId;
+    public Animal GetMatingPartner(string id = null)
+    {
+        id ??=matingPartnerId;
+
+        if(id != matingPartnerId || matingPartner == null)
+        {
+            matingPartnerId = id;
+            matingPartner = AnimalManager.instance.animalList.Where((element) => element._id == matingPartnerId).FirstOrDefault();
+        }
+        return matingPartner;
+    }
+
+    public string targetId;
+    public Animal GetTarget(string id = null)
+    {
+        id ??=targetId;
+
+        if(id != targetId || target == null)
+        {
+            targetId = id;
+            target = AnimalManager.instance.animalList.Where((element) => element._id == targetId).FirstOrDefault();
+        }
+        return target;
     }
 }

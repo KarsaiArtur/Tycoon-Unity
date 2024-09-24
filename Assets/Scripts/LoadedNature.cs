@@ -38,7 +38,7 @@ public class LoadedNature : Nature
         renderers2.ForEach(r => renderers.Add(r));
 
         navMeshObstacle = GetComponent<NavMeshObstacle>();
-        NatureManager.instance.natures.Add(this);
+        NatureManager.instance.natureList.Add(this);
         transform.SetParent(NatureManager.instance.transform);
         navMeshObstacle.enabled = true;
     }

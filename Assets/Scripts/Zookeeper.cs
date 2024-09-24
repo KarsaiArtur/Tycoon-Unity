@@ -26,13 +26,13 @@ public class Zookeeper : Staff
             {
                 if (!exhibit.unreachableForStaff)
                 {
-                    if (!exhibit.isGettingFood && !float.IsNaN(exhibit.food / (exhibit.animals.Count * 50)))
+                    if (!exhibit.isGettingFood && !float.IsNaN(exhibit.food / (exhibit.GetAnimals().Count * 50)))
                     {
-                        animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.animals.Count * 50)));
+                        animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.GetAnimals().Count * 50)));
                         if (insideExhibit != null && insideExhibit == exhibit)
                         {
                             animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
-                            animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.animals.Count * 50) - 0.1f));
+                            animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.GetAnimals().Count * 50) - 0.1f));
                         }
                     }
                     if (!exhibit.isGettingWater && !float.IsNaN(exhibit.water / exhibit.waterCapacity))
@@ -112,9 +112,9 @@ public class Zookeeper : Staff
     {
         if (jobAtExhibit == "Placing food")
         {
-            if (exhibitToWorkAt.animals.Count > 0)
+            if (exhibitToWorkAt.GetAnimals().Count > 0)
             {
-                var foodPrefab = exhibitToWorkAt.animals[0].foodPrefab;
+                var foodPrefab = exhibitToWorkAt.GetAnimals()[0].foodPrefab;
                 var animalFood = Instantiate(foodPrefab, new Vector3(transform.position.x, transform.position.y + foodPrefab.transform.position.y, transform.position.z), foodPrefab.transform.rotation);
                 animalFood.FinalPlace();
             }
@@ -124,7 +124,7 @@ public class Zookeeper : Staff
         }
         else if (jobAtExhibit == "Filling up water")
         {
-            exhibitToWorkAt.waterPlaces[waterTroughIndex].FillWithWater();
+            exhibitToWorkAt.GetWaterPlaces()[waterTroughIndex].FillWithWater();
             exhibitToWorkAt.isGettingWater = false;
             jobAtExhibit = "";
             return true;
@@ -155,15 +155,15 @@ public class Zookeeper : Staff
         else if (jobAtExhibit == "Filling up water")
         {
             float minWater = 500;
-            for (int i = 0; i < exhibitToWorkAt.waterPlaces.Count; i++)
+            for (int i = 0; i < exhibitToWorkAt.GetWaterPlaces().Count; i++)
             {
-                if (exhibitToWorkAt.waterPlaces[i].water < minWater)
+                if (exhibitToWorkAt.GetWaterPlaces()[i].water < minWater)
                 {
-                    minWater = exhibitToWorkAt.waterPlaces[i].water;
+                    minWater = exhibitToWorkAt.GetWaterPlaces()[i].water;
                     waterTroughIndex = i;
                 }
             }
-            agent.SetDestination(exhibitToWorkAt.waterPlaces[waterTroughIndex].transform.position);
+            agent.SetDestination(exhibitToWorkAt.GetWaterPlaces()[waterTroughIndex].transform.position);
         }
         else if (jobAtExhibit == "Placing food")
         {

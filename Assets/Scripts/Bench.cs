@@ -158,6 +158,6 @@ public class Bench : BuildingAncestor
     public override void Remove()
     {
         base.Remove();
-        BenchManager.instance.benches.Remove(this);
+        BenchManager.instance.benchList.Remove(this);
     }
 }

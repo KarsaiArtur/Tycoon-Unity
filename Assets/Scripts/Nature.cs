@@ -61,7 +61,7 @@ public class Nature : Placeable, Saveable
         GridManager.instance.GetGrid(transform.position).natures.Add(this);
         if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
         {
-            GridManager.instance.GetGrid(transform.position).GetExhibit().foliages.Add(this);
+            GridManager.instance.GetGrid(transform.position).GetExhibit().GetFoliages().Add(this);
         }
     }
 
@@ -99,7 +99,7 @@ public class Nature : Placeable, Saveable
     {
         base.Remove();
 
-        NatureManager.instance.natures.Remove(this);
+        NatureManager.instance.natureList.Remove(this);
         ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
         GridManager.instance.GetGrid(transform.position).natures.Remove(this);
         var tempGrid = GridManager.instance.GetGrid(transform.position);

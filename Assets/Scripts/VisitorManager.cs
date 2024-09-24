@@ -4,7 +4,7 @@ using UnityEngine;
 public class VisitorManager : MonoBehaviour
 {
     public static VisitorManager instance;
-    public List<Visitor> visitors;
+    public List<Visitor> visitorList;
     public List<Visitor> visitorPrefabs;
     private float timeTillSpawn  = 0;
     public float SpawnTime = 15;
@@ -12,7 +12,12 @@ public class VisitorManager : MonoBehaviour
     float animalBonus = 1;
     List<(string animal, float bonus)> animalBonuses = new List<(string animal, float bonus)>();
 
-    private void Start()
+    public void AddList(Visitor visitor){
+        visitorList.Add(visitor);
+        visitor.transform.SetParent(VisitorManager.instance.transform);
+    }
+
+    private void Awake()
     {
         instance = this;
         numberOfVisitors = new List<int> { 1, 1, 1, 1, 2, 2, 2, 3, 3, 4 };
@@ -47,7 +52,7 @@ public class VisitorManager : MonoBehaviour
         var position = new Vector3(entranceCoords.x, entranceCoords.y, entranceCoords.z + randomZ);
         var newVisitor = Instantiate(visitorPrefabs[randomI], position, transform.rotation);
         newVisitor.transform.parent = transform;
-        visitors.Add(newVisitor);
+        AddList(newVisitor);
         ZooManager.instance.allTimeVisitorCount++;
         ZooManager.instance.PayEntranceFee();
     }

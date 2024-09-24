@@ -59,14 +59,14 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
             if (playerControl.currentInfopopup.DidVisitorLeft(visitor))
                 playerControl.DestroyCurrentInfopopup();
         }
-        VisitorManager.instance.visitors.Remove(visitor);
+        VisitorManager.instance.visitorList.Remove(visitor);
 
         Destroy(visitor.gameObject);
     }
 
     public void PayExpenses()
     {
-        foreach (var staff in StaffManager.instance.staffs)
+        foreach (var staff in StaffManager.instance.staffList)
         {
             ChangeMoney(-staff.salary);
         }
@@ -79,7 +79,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public int GetExpenses()
     {
         float sum = 0;
-        foreach (var staff in StaffManager.instance.staffs)
+        foreach (var staff in StaffManager.instance.staffList)
         {
             sum += staff.salary;
         }
