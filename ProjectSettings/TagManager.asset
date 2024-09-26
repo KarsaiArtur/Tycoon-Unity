@@ -21,6 +21,7 @@ TagManager:
   - QuestManager
   - Canvas
   - NotUI
+  - ZooFence
   layers:
   - Default
   - TransparentFX

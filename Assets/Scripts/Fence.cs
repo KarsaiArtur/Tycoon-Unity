@@ -5,12 +5,15 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 
-public class Fence : Placeable
+/////Saveable Attributes, DONT DELETE
+//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;int placeablePrice;string tag;int timesRotated//////////
+//////SERIALIZABLE:YES/
+
+public class Fence : Placeable, Saveable
 {
     float curOffsetX = -0.2f;
     float curOffsetZ = 0.5f;
-    public int index = 0;
-    private int timesRotated = 0;
+    public int timesRotated = 0;
     public Grid grid1;
     public Grid grid2;
     bool collided = false;
@@ -88,11 +91,12 @@ public class Fence : Placeable
         grid1.neighbours[(timesRotated + 2) % 4] = null;
         grid2.neighbours[timesRotated] = null;
 
-        if (BFS(grid1, grid2) != null)
+        if (GridManager.instance.ExhibitFinderBFS(grid1, grid2) != null)
         {
-            HashSet<Grid> tempGrids = BFS(grid1, gridManager.startingGrid);
+            HashSet<Grid> tempGrids = GridManager.instance.ExhibitFinderBFS(grid1, gridManager.startingGrid);
             GameObject gateInstance = Instantiate(playerControl.gates[playerControl.fenceIndex], playerControl.m_Selected.transform.position, transform.rotation);
             Exhibit exhibit = gateInstance.GetComponent<Exhibit>();
+            exhibit.selectedPrefabId = playerControl.gates[playerControl.fenceIndex].GetInstanceID();
             exhibit.timesRotated = timesRotated;
             CreateExhibitWindow(exhibit);
             //UnityEditorInternal.ComponentUtility.MoveComponentUp(exhibit);
@@ -100,14 +104,14 @@ public class Fence : Placeable
 
             if (tempGrids != null)
             {
-                exhibit.SetExhibit(tempGrids, grid1, grid1.trueNeighbours[(timesRotated + 2) % 4]);
+                exhibit.SetExhibit(tempGrids, grid1, grid2, false);
             }
             else
             {
-                tempGrids = BFS(grid2, gridManager.startingGrid);
+                tempGrids = GridManager.instance.ExhibitFinderBFS(grid2, gridManager.startingGrid);
                 if (tempGrids != null)
                 {
-                    exhibit.SetExhibit(tempGrids, grid2, grid2.trueNeighbours[timesRotated % 4]);
+                    exhibit.SetExhibit(tempGrids, grid2, grid1, true);
                 }
             }
 
@@ -131,36 +135,6 @@ public class Fence : Placeable
     public override void SetTag(string newTag)
     {
         tag = "Placed Fence";
-    }
-
-    public HashSet<Grid> BFS(Grid start, Grid end)
-    {
-        HashSet<Grid> visited = new HashSet<Grid>();
-        Queue<Grid> queue = new Queue<Grid>();
-        queue.Enqueue(start);
-        visited.Add(start);
-
-        while (queue.Count > 0)
-        {
-            Grid current = queue.Dequeue();
-
-            if (current != end)
-            {
-                for (int i = 0; i < 4; i++)
-                {
-                    Grid neighbour = current.neighbours[i];
-                    if (neighbour != null && visited.Add(neighbour))
-                    {
-                        queue.Enqueue(neighbour);
-                    }
-                }
-            }
-            else
-            {
-                return null;
-            }
-        }
-        return visited;
     }
 
     public override void RotateY(float angle)
@@ -271,6 +245,7 @@ public class Fence : Placeable
     private void RemoveHelper(Vector3 pos, int rotated)
     {
         playerControl.m_Selected = Instantiate(playerControl.fences[0], pos, new Quaternion(0, 0, 0, 0));
+        playerControl.m_Selected.selectedPrefabId = playerControl.fences[0].selectedPrefabId;
         playerControl.objectTimesRotated = rotated;
         playerControl.deletePosition = pos;
         for (int i = 0; i < rotated; i++)
@@ -282,5 +257,93 @@ public class Fence : Placeable
         playerControl.m_Selected.FinalPlace();
         playerControl.objectTimesRotated = 0;
         playerControl.m_Selected = null;
+    }
+
+    public void LoadHelper()
+    {
+        gameObject.GetComponent<NavMeshObstacle>().enabled = true;
+
+        grid1 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
+
+        if (timesRotated == 0)
+            grid2 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z + 0.5f) - gridManager.elementWidth];
+        else if (timesRotated == 1)
+            grid2 = gridManager.grids[(int)(transform.position.x + 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
+        else if (timesRotated == 2)
+            grid2 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 1.5f) - gridManager.elementWidth];
+        else if (timesRotated == 3)
+            grid2 = gridManager.grids[(int)(transform.position.x - 1.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
+
+        grid1.neighbours[(timesRotated + 2) % 4] = null;
+        grid2.neighbours[timesRotated] = null;
+    }
+
+///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    [Serializable]
+    public class FenceData
+    {
+        public string _id;
+        public Vector3 position;
+        public int selectedPrefabId;
+        public Quaternion rotation;
+        public int placeablePrice;
+        public string tag;
+        public int timesRotated;
+
+        public FenceData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, int placeablePriceParam, string tagParam, int timesRotatedParam)
+        {
+           _id = _idParam;
+           position = positionParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           rotation = rotationParam;
+           placeablePrice = placeablePriceParam;
+           tag = tagParam;
+           timesRotated = timesRotatedParam;
+        }
+    }
+
+    FenceData data; 
+    
+    public string DataToJson(){
+        FenceData data = new FenceData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, timesRotated);
+        return JsonUtility.ToJson(data);
+    }
+    
+    public void FromJson(string json){
+        data = JsonUtility.FromJson<FenceData>(json);
+        SetData(data._id, data.position, data.selectedPrefabId, data.rotation, data.placeablePrice, data.tag, data.timesRotated);
+    }
+    
+    public string GetFileName(){
+        return "Fence.json";
+    }
+    
+    void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, int placeablePriceParam, string tagParam, int timesRotatedParam){ 
+        
+           _id = _idParam;
+           transform.position = positionParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           transform.rotation = rotationParam;
+           placeablePrice = placeablePriceParam;
+           tag = tagParam;
+           timesRotated = timesRotatedParam;
+    }
+    
+    public FenceData ToData(){
+         return new FenceData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, timesRotated);
+    }
+    
+    public void FromData(FenceData data){
+        
+           _id = data._id;
+           transform.position = data.position;
+           selectedPrefabId = data.selectedPrefabId;
+           transform.rotation = data.rotation;
+           placeablePrice = data.placeablePrice;
+           tag = data.tag;
+           timesRotated = data.timesRotated;
     }
 }

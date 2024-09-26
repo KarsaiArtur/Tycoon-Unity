@@ -4,7 +4,7 @@ using TMPro;
 using System.IO;
 
 /////Saveable Attributes, DONT DELETE
-//////DateTime currentDate/////
+//////DateTime currentDate///////////////
 
 public class CalendarManager : MonoBehaviour, Saveable
 {
@@ -17,7 +17,7 @@ public class CalendarManager : MonoBehaviour, Saveable
     public DateTime startingDate = new DateTime(2024, 1, 1, 0, 0, 0);
     int timer = 0;
 
-    private void Start()
+    private void Awake()
     {
         instance = this;
         if(LoadMenu.loadedGame != null)
@@ -87,9 +87,9 @@ public class CalendarManager : MonoBehaviour, Saveable
     {
         public long currentDate;
 
-        public CalendarManagerData(DateTime currentDate)
+        public CalendarManagerData(DateTime currentDateParam)
         {
-           this.currentDate = currentDate.Ticks;
+           currentDate = currentDateParam.Ticks;
         }
     }
 
@@ -109,8 +109,8 @@ public class CalendarManager : MonoBehaviour, Saveable
         return "CalendarManager.json";
     }
     
-    void SetData(DateTime currentDate){ 
+    void SetData(DateTime currentDateParam){ 
         
-           this.currentDate = currentDate;
+           currentDate = currentDateParam;
     }
 }

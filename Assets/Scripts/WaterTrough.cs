@@ -1,8 +1,13 @@
+using System;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class WaterTrough : Placeable, AnimalVisitable
+/////Saveable Attributes, DONT DELETE
+//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;int placeablePrice;string tag;float water;string exhibitId//////////
+//////SERIALIZABLE:YES/
+
+public class WaterTrough : Placeable, AnimalVisitable, Saveable
 {
     float height;
     NavMeshObstacle navMeshObstacle;
@@ -64,13 +69,13 @@ public class WaterTrough : Placeable, AnimalVisitable
 
     public void Arrived(Animal animal)
     {
-        float waterDrunk = Random.Range(40, 60);
+        float waterDrunk = UnityEngine.Random.Range(40, 60);
         waterDrunk = water > waterDrunk ? waterDrunk : water;
         waterDrunk = animal.thirst + waterDrunk > 100 ? 100 - animal.thirst : waterDrunk;
         animal.thirst += waterDrunk;
         GetExhibit().water -= waterDrunk;
         water -= waterDrunk;
-        animal.restroomNeedsDetriment = Random.Range(0.2f, 0.3f);
+        animal.thirstDetriment = UnityEngine.Random.Range(0.45f, 0.55f);
     }
 
     public void FillWithWater()
@@ -99,8 +104,77 @@ public class WaterTrough : Placeable, AnimalVisitable
         if(id != exhibitId || exhibit == null)
         {
             exhibitId = id;
-            exhibit = ExhibitManager.instance.exhibitList.Where((element) => element._id == exhibitId).FirstOrDefault();
+            exhibit = ExhibitManager.instance.exhibitList.Where((element) => element.GetId() == exhibitId).FirstOrDefault();
         }
         return exhibit;
+    }
+///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    [Serializable]
+    public class WaterTroughData : AnimalVisitableData
+    {
+        public string _id;
+        public int placeablePrice;
+        public string tag;
+        public float water;
+        public string exhibitId;
+
+        public WaterTroughData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, int placeablePriceParam, string tagParam, float waterParam, string exhibitIdParam)
+        {
+           _id = _idParam;
+           position = positionParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           rotation = rotationParam;
+           placeablePrice = placeablePriceParam;
+           tag = tagParam;
+           water = waterParam;
+           exhibitId = exhibitIdParam;
+        }
+    }
+
+    WaterTroughData data; 
+    
+    public string DataToJson(){
+        WaterTroughData data = new WaterTroughData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, water, exhibitId);
+        return JsonUtility.ToJson(data);
+    }
+    
+    public void FromJson(string json){
+        data = JsonUtility.FromJson<WaterTroughData>(json);
+        SetData(data._id, data.position, data.selectedPrefabId, data.rotation, data.placeablePrice, data.tag, data.water, data.exhibitId);
+    }
+    
+    public string GetFileName(){
+        return "WaterTrough.json";
+    }
+    
+    void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, int placeablePriceParam, string tagParam, float waterParam, string exhibitIdParam){ 
+        
+           _id = _idParam;
+           transform.position = positionParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           transform.rotation = rotationParam;
+           placeablePrice = placeablePriceParam;
+           tag = tagParam;
+           water = waterParam;
+           exhibitId = exhibitIdParam;
+    }
+    
+    public AnimalVisitableData ToData(){
+         return new WaterTroughData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, water, exhibitId);
+    }
+    
+    public void FromData(AnimalVisitableData data){
+        var castedData = (WaterTroughData)data;
+           _id = castedData._id;
+           transform.position = castedData.position;
+           selectedPrefabId = castedData.selectedPrefabId;
+           transform.rotation = castedData.rotation;
+           placeablePrice = castedData.placeablePrice;
+           tag = castedData.tag;
+           water = castedData.water;
+           exhibitId = castedData.exhibitId;
     }
 }

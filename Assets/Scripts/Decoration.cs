@@ -2,6 +2,10 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
+/////Attributes, DONT DELETE
+//////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice//////////
+//////SERIALIZABLE:YES/
+
 public class Decoration : Placeable
 {
     float height;
@@ -66,5 +70,10 @@ public class Decoration : Placeable
         base.Remove();
 
         Destroy(gameObject);
+    }
+
+    public void LoadHelper()
+    {
+        gameObject.GetComponent<NavMeshObstacle>().enabled = true;
     }
 }

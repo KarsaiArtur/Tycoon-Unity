@@ -3,15 +3,28 @@ using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/////Attributes, DONT DELETE
+//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;int placeablePrice;string tag//////////
+//////SERIALIZABLE:YES/
+
 public class Zookeeper : Staff
 {
+    public enum ZookeperJobs
+    {
+        PlacingFood,
+        FillingWater,
+        CleaningExhibit,
+        nothing
+    }
+
     Exhibit exhibitToWorkAt;
-    public string jobAtExhibit;
+    public ZookeperJobs jobAtExhibit = ZookeperJobs.nothing;
     int waterTroughIndex = 0;
 
     public override void Start()
     {
         base.Start();
+        jobAtExhibit = ZookeperJobs.nothing;
         salary = 300;
     }
 
@@ -19,38 +32,38 @@ public class Zookeeper : Staff
     {
         isAvailable = false;
 
-        var animalNeeds = new List<(Exhibit exhibit, string need, float percent)>();
-        if (GridManager.instance.exhibits.Count > 0)
+        var animalNeeds = new List<(Exhibit exhibit, ZookeperJobs job, float percent)>();
+        if (ExhibitManager.instance.exhibitList.Count > 0)
         {
-            foreach (Exhibit exhibit in GridManager.instance.exhibits)
+            foreach (Exhibit exhibit in ExhibitManager.instance.exhibitList)
             {
                 if (!exhibit.unreachableForStaff)
                 {
                     if (!exhibit.isGettingFood && !float.IsNaN(exhibit.food / (exhibit.GetAnimals().Count * 50)))
                     {
-                        animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.GetAnimals().Count * 50)));
+                        animalNeeds.Add((exhibit, ZookeperJobs.PlacingFood, exhibit.food / (exhibit.GetAnimals().Count * 50)));
                         if (insideExhibit != null && insideExhibit == exhibit)
                         {
                             animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
-                            animalNeeds.Add((exhibit, "Placing food", exhibit.food / (exhibit.GetAnimals().Count * 50) - 0.1f));
+                            animalNeeds.Add((exhibit, ZookeperJobs.PlacingFood, exhibit.food / (exhibit.GetAnimals().Count * 50) - 0.1f));
                         }
                     }
                     if (!exhibit.isGettingWater && !float.IsNaN(exhibit.water / exhibit.waterCapacity))
                     {
-                        animalNeeds.Add((exhibit, "Filling up water", exhibit.water / exhibit.waterCapacity));
+                        animalNeeds.Add((exhibit, ZookeperJobs.FillingWater, exhibit.water / exhibit.waterCapacity));
                         if (insideExhibit != null && insideExhibit == exhibit)
                         {
                             animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
-                            animalNeeds.Add((exhibit, "Filling up water", exhibit.water / exhibit.waterCapacity - 0.1f));
+                            animalNeeds.Add((exhibit, ZookeperJobs.FillingWater, exhibit.water / exhibit.waterCapacity - 0.1f));
                         }
                     }
                     if (!exhibit.isGettingCleaned && !float.IsNaN(1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)))
                     {
-                        animalNeeds.Add((exhibit, "Cleaning exhibit", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)));
+                        animalNeeds.Add((exhibit, ZookeperJobs.CleaningExhibit, 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)));
                         if (insideExhibit != null && insideExhibit == exhibit)
                         {
                             animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
-                            animalNeeds.Add((exhibit, "Cleaning exhibit", 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count) - 0.1f));
+                            animalNeeds.Add((exhibit, ZookeperJobs.CleaningExhibit, 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count) - 0.1f));
                         }
                     }
                 }
@@ -61,27 +74,27 @@ public class Zookeeper : Staff
             FindExhibitToWorkOn(animalNeeds);
     }
 
-    public void FindExhibitToWorkOn(List<(Exhibit exhibit, string need, float percent)> animalNeeds)
+    public void FindExhibitToWorkOn(List<(Exhibit exhibit, ZookeperJobs job, float percent)> animalNeeds)
     {
         animalNeeds = animalNeeds.OrderBy(x => x.percent).ToList();
         exhibitToWorkAt = animalNeeds[0].exhibit;
 
         if (animalNeeds[0].percent < 0.75)
         {
-            if (animalNeeds[0].need == "Placing food")
+            if (animalNeeds[0].job == ZookeperJobs.PlacingFood)
             {
                 exhibitToWorkAt.isGettingFood = true;
-                jobAtExhibit = "Placing food";
+                jobAtExhibit = ZookeperJobs.PlacingFood;
             }
-            if (animalNeeds[0].need == "Filling up water")
+            if (animalNeeds[0].job == ZookeperJobs.FillingWater)
             {
                 exhibitToWorkAt.isGettingWater = true;
-                jobAtExhibit = "Filling up water";
+                jobAtExhibit = ZookeperJobs.FillingWater;
             }
-            if (animalNeeds[0].need == "Cleaning exhibit")
+            if (animalNeeds[0].job == ZookeperJobs.CleaningExhibit)
             {
                 exhibitToWorkAt.isGettingCleaned = true;
-                jobAtExhibit = "Cleaning exhibit";
+                jobAtExhibit = ZookeperJobs.CleaningExhibit;
             }
 
             destinationExhibit = exhibitToWorkAt;
@@ -110,26 +123,27 @@ public class Zookeeper : Staff
 
     public override bool DoJob()
     {
-        if (jobAtExhibit == "Placing food")
+        if (jobAtExhibit == ZookeperJobs.PlacingFood)
         {
             if (exhibitToWorkAt.GetAnimals().Count > 0)
             {
                 var foodPrefab = exhibitToWorkAt.GetAnimals()[0].foodPrefab;
                 var animalFood = Instantiate(foodPrefab, new Vector3(transform.position.x, transform.position.y + foodPrefab.transform.position.y, transform.position.z), foodPrefab.transform.rotation);
+                animalFood.selectedPrefabId = foodPrefab.GetInstanceID();
                 animalFood.FinalPlace();
             }
             exhibitToWorkAt.isGettingFood = false;
-            jobAtExhibit = "";
+            jobAtExhibit = ZookeperJobs.nothing;
             return true;
         }
-        else if (jobAtExhibit == "Filling up water")
+        else if (jobAtExhibit == ZookeperJobs.FillingWater)
         {
             exhibitToWorkAt.GetWaterPlaces()[waterTroughIndex].FillWithWater();
             exhibitToWorkAt.isGettingWater = false;
-            jobAtExhibit = "";
+            jobAtExhibit = ZookeperJobs.nothing;
             return true;
         }
-        else if (jobAtExhibit == "Cleaning exhibit")
+        else if (jobAtExhibit == ZookeperJobs.CleaningExhibit)
         {
             var temp = exhibitToWorkAt.animalDroppings[0];
             exhibitToWorkAt.animalDroppings.RemoveAt(0);
@@ -137,7 +151,7 @@ public class Zookeeper : Staff
             if (exhibitToWorkAt.animalDroppings.Count == 0)
             {
                 exhibitToWorkAt.isGettingCleaned = false;
-                jobAtExhibit = "";
+                jobAtExhibit = ZookeperJobs.nothing;
                 return true;
             }
             return false;
@@ -147,12 +161,12 @@ public class Zookeeper : Staff
 
     public override void FindInsideDestination()
     {
-        if (jobAtExhibit == "Cleaning exhibit")
+        if (jobAtExhibit == ZookeperJobs.CleaningExhibit)
         {
             time = 8;
             agent.SetDestination(exhibitToWorkAt.animalDroppings[0].transform.position);
         }
-        else if (jobAtExhibit == "Filling up water")
+        else if (jobAtExhibit == ZookeperJobs.FillingWater)
         {
             float minWater = 500;
             for (int i = 0; i < exhibitToWorkAt.GetWaterPlaces().Count; i++)
@@ -165,7 +179,7 @@ public class Zookeeper : Staff
             }
             agent.SetDestination(exhibitToWorkAt.GetWaterPlaces()[waterTroughIndex].transform.position);
         }
-        else if (jobAtExhibit == "Placing food")
+        else if (jobAtExhibit == ZookeperJobs.PlacingFood)
         {
             Grid destinationGrid = exhibitToWorkAt.gridList[Random.Range(0, exhibitToWorkAt.gridList.Count)];
             agent.SetDestination(new Vector3(destinationGrid.coords[0].x + Random.Range(0, 1.0f), destinationGrid.coords[0].y, destinationGrid.coords[0].z + Random.Range(0, 1.0f)));
@@ -174,13 +188,14 @@ public class Zookeeper : Staff
 
     public override string GetCurrentAction()
     {
-        return jobAtExhibit;
+        return jobAtExhibit.ToString();
     }
 
     public override void SetToDefault()
     {
         base.SetToDefault();
         exhibitToWorkAt = null;
+        jobAtExhibit = ZookeperJobs.nothing;
     }
 
     public override void Remove()
@@ -189,15 +204,15 @@ public class Zookeeper : Staff
 
         if (exhibitToWorkAt != null)
         {
-            if (jobAtExhibit == "Placing food")
+            if (jobAtExhibit == ZookeperJobs.PlacingFood)
             {
                 exhibitToWorkAt.isGettingFood = false;
             }
-            else if (jobAtExhibit == "Filling up water")
+            else if (jobAtExhibit == ZookeperJobs.FillingWater)
             {
                 exhibitToWorkAt.isGettingWater = false;
             }
-            else if (jobAtExhibit == "Cleaning exhibit")
+            else if (jobAtExhibit == ZookeperJobs.CleaningExhibit)
             {
                 exhibitToWorkAt.isGettingCleaned = false;
             }

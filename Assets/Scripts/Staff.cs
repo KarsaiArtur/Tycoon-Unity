@@ -162,12 +162,7 @@ public abstract class Staff : Placeable
                     if (path.status != NavMeshPathStatus.PathComplete)
                     {
                         exhibit.SetUnreachableForStaff();
-                        destinationReached = false;
-                        destinationExhibit = null;
-                        insideExhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
-                        workingState = WorkingState.Resting;
-                        isAvailable = true;
-                        time = 0;
+                        SetToDefault();
                     }
                 }
             }
@@ -199,6 +194,8 @@ public abstract class Staff : Placeable
 
     public virtual void SetToDefault()
     {
+        time = 0;
+        destinationReached = false;
         destinationExhibit = null;
         if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
             insideExhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
@@ -272,4 +269,11 @@ public abstract class Staff : Placeable
     }
 
     public abstract string GetCurrentAction();
+
+    public void LoadHelper()
+    {
+        agent.Warp(transform.position);
+        placed = true;
+        SetToDefault();
+    }
 }

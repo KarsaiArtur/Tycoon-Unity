@@ -3,12 +3,15 @@ using System;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.AI;
+using static Grid;
+
+//,List<PurchasableItems> purchasableItemInstances
 
 /////Saveable Attributes, DONT DELETE
-//////List<Grid> paths,List<PurchasableItems> purchasableItemInstances,int capacity,List<Visitor> visitors,int itemsBought/////
+//////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice;bool reachable;int capacity;List<string> visitorsIds;int itemsBought//////////
 //////SERIALIZABLE:YES/
 
-public class Building : BuildingAncestor
+public class Building : BuildingAncestor, Saveable
 {
     public int x;
     public int z;
@@ -31,7 +34,6 @@ public class Building : BuildingAncestor
     public override void Awake()
     {
         base.Awake();
-        capacity = defaultCapacity;
         foreach (PurchasableItems p in purchasableItemPrefabs)
         {
             p.currentPrice = p.defaultPrice;
@@ -143,7 +145,6 @@ public class Building : BuildingAncestor
     {
         BuildingManager.instance.AddList(this);
         transform.position = new Vector3(transform.position.x, transform.position.y - offsetYDefault, transform.position.z);
-        gridManager.buildings.Add(this);
 
         gridList = new List<Grid>();
 
@@ -162,6 +163,8 @@ public class Building : BuildingAncestor
 
         gameObject.GetComponent<BoxCollider>().isTrigger = false;
 
+        capacity = defaultCapacity;
+        
         base.FinalPlace();
     }
 
@@ -386,23 +389,21 @@ public class Building : BuildingAncestor
     {
         reachable = true;
         if (HasFood())
-            gridManager.reachableFoodBuildings.Add(this);
+            VisitableManager.instance.AddReachableFoodBuildings(this);
         if (HasDrink())
-            gridManager.reachableDrinkBuildings.Add(this);
+            VisitableManager.instance.AddReachableDrinkBuildings(this);
         if (HasEnergy())
-            gridManager.reachableEnergyBuildings.Add(this);
+            VisitableManager.instance.AddReachableEnergyBuildings(this);
         if (hasRestroom)
-            gridManager.reachableRestroomBuildings.Add(this);
+            VisitableManager.instance.AddReachableRestroomBuildings(this);
         if (HasHappiness())
         {
-            gridManager.reachableHappinessBuildings.Add(this);
+            VisitableManager.instance.AddReachableHappinessBuildings(this);
         }
     }
 
     public override void RemoveFromLists()
     {
-        gridManager.buildings.Remove(this);
-        gridManager.visitables.Remove(this);
         RemoveFromReachableLists();
     }
 
@@ -410,16 +411,118 @@ public class Building : BuildingAncestor
     {
         reachable = false;
         if (HasFood())
-            gridManager.reachableFoodBuildings.Remove(this);
+            VisitableManager.instance.RemoveReachableFoodBuildings(this);
         if (HasDrink())
-            gridManager.reachableDrinkBuildings.Remove(this);
+            VisitableManager.instance.RemoveReachableDrinkBuildings(this);
         if (HasEnergy())
-            gridManager.reachableEnergyBuildings.Remove(this);
+            VisitableManager.instance.RemoveReachableEnergyBuildings(this);
         if (hasRestroom)
-            gridManager.reachableRestroomBuildings.Remove(this);
+            VisitableManager.instance.RemoveReachableRestroomBuildings(this);
         if (HasHappiness())
         {
-            gridManager.reachableHappinessBuildings.Remove(this);
+            VisitableManager.instance.RemoveReachableHappinessBuildings(this);
         }
+    }
+
+    public override void LoadHelper()
+    {
+        gameObject.GetComponent<BoxCollider>().isTrigger = false;
+
+        gridList = new List<Grid>();
+
+        for (int i = 0; i < Math.Abs(x) + 1; i++)
+        {
+            for (int j = 0; j < Math.Abs(z) + 1; j++)
+            {
+                gridList.Add(gridManager.grids[(int)startingGridIndex.x + i * Math.Sign(x), (int)startingGridIndex.z + j * Math.Sign(z)]);
+            }
+        }
+
+        for (int i = 0; i < gridList.Count; i++)
+        {
+            gridList[i].GetBuilding(_id);
+        }
+
+        base.LoadHelper();
+    }
+///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    [Serializable]
+    public class BuildingData
+    {
+        public string _id;
+        public Vector3 position;
+        public Quaternion rotation;
+        public int selectedPrefabId;
+        public string tag;
+        public int placeablePrice;
+        public bool reachable;
+        public int capacity;
+        public List<string> visitorsIds;
+        public int itemsBought;
+
+        public BuildingData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam)
+        {
+           _id = _idParam;
+           position = positionParam;
+           rotation = rotationParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           tag = tagParam;
+           placeablePrice = placeablePriceParam;
+           reachable = reachableParam;
+           capacity = capacityParam;
+           visitorsIds = visitorsIdsParam;
+           itemsBought = itemsBoughtParam;
+        }
+    }
+
+    BuildingData data; 
+    
+    public string DataToJson(){
+        BuildingData data = new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought);
+        return JsonUtility.ToJson(data);
+    }
+    
+    public void FromJson(string json){
+        data = JsonUtility.FromJson<BuildingData>(json);
+        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.visitorsIds, data.itemsBought);
+    }
+    
+    public string GetFileName(){
+        return "Building.json";
+    }
+    
+    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam){ 
+        
+           _id = _idParam;
+           transform.position = positionParam;
+           transform.rotation = rotationParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           tag = tagParam;
+           placeablePrice = placeablePriceParam;
+           reachable = reachableParam;
+           capacity = capacityParam;
+           visitorsIds = visitorsIdsParam;
+           itemsBought = itemsBoughtParam;
+    }
+    
+    public BuildingData ToData(){
+         return new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought);
+    }
+    
+    public void FromData(BuildingData data){
+        
+           _id = data._id;
+           transform.position = data.position;
+           transform.rotation = data.rotation;
+           selectedPrefabId = data.selectedPrefabId;
+           tag = data.tag;
+           placeablePrice = data.placeablePrice;
+           reachable = data.reachable;
+           capacity = data.capacity;
+           visitorsIds = data.visitorsIds;
+           itemsBought = data.itemsBought;
     }
 }

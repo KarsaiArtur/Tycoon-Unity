@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/////Attributes, DONT DELETE
+//////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice;bool reachable;int capacity;List<string> visitorsIds//////////
+//////SERIALIZABLE:YES/
+
 public class Bench : BuildingAncestor
 {
     float height;
@@ -20,7 +24,6 @@ public class Bench : BuildingAncestor
 
         grid = GridManager.instance.GetGrid(transform.position);
         grid.GetBench(_id);
-        //GridManager.instance.benches.Add(this);
         
         base.FinalPlace();
     }
@@ -139,19 +142,18 @@ public class Bench : BuildingAncestor
     {
         //GridManager.instance.reachableBenches.Add(this);
         reachable = true;
-        GridManager.instance.reachableEnergyBuildings.Add(this);
+        VisitableManager.instance.AddReachableEnergyBuildings(this);
     }
 
     public override void RemoveFromReachableLists()
     {
         //GridManager.instance.reachableBenches.Remove(this);
         reachable = false;
-        GridManager.instance.reachableEnergyBuildings.Remove(this);
+        VisitableManager.instance.RemoveReachableEnergyBuildings(this);
     }
 
     public override void RemoveFromLists()
     {
-        GridManager.instance.visitables.Remove(this);
         RemoveFromReachableLists();
     }
 
@@ -159,5 +161,12 @@ public class Bench : BuildingAncestor
     {
         base.Remove();
         BenchManager.instance.benchList.Remove(this);
+    }
+
+    public override void LoadHelper()
+    {
+        grid = GridManager.instance.GetGrid(transform.position);
+        grid.GetBench(_id);
+        base.LoadHelper();
     }
 }

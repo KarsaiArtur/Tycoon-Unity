@@ -9,6 +9,8 @@ using System.Runtime.InteropServices;
 
 public class MyProgram{
 
+    static public string[] animalVisitables = {"WaterTrough", "AnimalFood"};
+
     class Attribute{
         public string type;
         public string name;
@@ -92,10 +94,15 @@ public class MyProgram{
             }
             end = fileContent.Substring(fileContent.LastIndexOf("}"));
         } else{
-            beforeCode = fileContent.Substring(0, fileContent.LastIndexOf("///******************************"));;
+            if(fileContent.Contains("////GENERATED")){
+                beforeCode = fileContent.Substring(0, fileContent.LastIndexOf("////GENERATED"));
+            } else{
+                beforeCode = fileContent.Substring(0, fileContent.LastIndexOf("///******************************"));;
+            }
             end = fileContent.Substring(fileContent.IndexOf("///******************************"));
         }
 
+       
         string newContent = beforeCode + generatedCode + end;
         File.WriteAllText(path, newContent);
         
@@ -105,6 +112,9 @@ public class MyProgram{
     static string writeGetFunction(Attribute attribute){
         var name = attribute.name[0].ToString().ToUpper() + attribute.name[1..];
         var managerList = attribute.type.ToLower() + "List";
+        var getString = animalVisitables.Contains(attribute.type) ? $"({attribute.type})AnimalVisitableManager.instance.animalvisitableList.Where((e) => e.GetId() == {attribute.name}Id).FirstOrDefault()"
+        : $"{attribute.type}Manager.instance.{managerList}.Where((e) => e.GetId() == {attribute.name}Id).FirstOrDefault()";
+
 return $"    public {attribute.type} Get{name}(string id = null)"+@"
     {
 "+$"        id ??={attribute.name}Id;"+@"
@@ -112,7 +122,7 @@ return $"    public {attribute.type} Get{name}(string id = null)"+@"
 "+$"        if(id != {attribute.name}Id || {attribute.name} == null)"+@"
         {
 "+$"            {attribute.name}Id = id;"+@"
-"+$"            {attribute.name} = {attribute.type}Manager.instance.{managerList}.Where((element) => element._id == {attribute.name}Id).FirstOrDefault();"+@"
+"+$"            {attribute.name} = {attribute.type}Manager.instance.{managerList}.Where((element) => element.GetId() == {attribute.name}Id).FirstOrDefault();"+@"
         }
 "+$"        return {attribute.name};" +@"
     }
@@ -126,13 +136,15 @@ return $"    public {attribute.type} Get{name}(string id = null)"+@"
     static string writeGetListFunction(Attribute attribute){
         var name = attribute.name[0].ToString().ToUpper() + attribute.name[1..];
         var managerList = attribute.type.ToLower() + "List";
+        var addString = animalVisitables.Contains(attribute.type) ? $"({attribute.type})AnimalVisitableManager.instance.animalvisitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault()"
+        : $"{attribute.type}Manager.instance.{managerList}.Where((e) => e.GetId() == element.GetId()).FirstOrDefault()";
 return $"    public List<{attribute.type}> Get{name}()"+@"
     {
 "+$"        if({attribute.name} == null)"+@"
         {
 "+$"             {attribute.name} = new List<{attribute.type}>();"+@"
 "+$"             foreach(var element in {attribute.name}){{"+@"
-"+$"                {attribute.name}.Add({attribute.type}Manager.instance.{managerList}.Where((e) => e._id == element._id).FirstOrDefault());"+@"
+"+$"                {attribute.name}.Add("+addString+@");
 "+$"             }}"+@"
         }
 "+$"        return {attribute.name};" +@"
@@ -145,10 +157,8 @@ return $"    public List<{attribute.type}> Get{name}()"+@"
         var type = attribute.type.ToLower();
 return $"    public void Add{name}({attribute.type} {type})"+@"
     {
-"+$"        {attribute.name}Ids.Add({type}._id);"+@"
-"+$"        if({attribute.name} == null){{"+@"
-"+$"             {attribute.name} = new List<{attribute.type}>();"+@"
-"+$"        }}"+@"
+"+$"        {attribute.name}Ids.Add({type}.GetId());"+@"
+"+$"        Get{name}();"+@"
 "+$"        {attribute.name}.Add({type});" +@"
     }
 ";
@@ -159,7 +169,8 @@ return $"    public void Add{name}({attribute.type} {type})"+@"
         var type = attribute.type.ToLower();
 return $"    public void Remove{name}({attribute.type} {type})"+@"
     {
-"+$"        {attribute.name}Ids.Remove({type}._id);"+@"
+"+$"        {attribute.name}Ids.Remove({type}.GetId());"+@"
+"+$"        Get{name}();"+@"
 "+$"        {attribute.name}.Remove({type});" +@"
     }
 ";

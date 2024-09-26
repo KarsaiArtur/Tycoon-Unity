@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/////Attributes, DONT DELETE
+//////List<Decoration> decorations//////////
+
 public class DecorationManager : MonoBehaviour
 {
     static public DecorationManager instance;

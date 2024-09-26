@@ -18,4 +18,8 @@ public class PrefabManager : MonoBehaviour
         return naturePrefabs.Where(element => element.GetInstanceID() == id).FirstOrDefault();
     }
 
+    public GameObject GetPrefabByName(string name){
+        return naturePrefabs.Where(element => element.name == name).FirstOrDefault();
+    }
+
 }

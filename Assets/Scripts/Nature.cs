@@ -5,25 +5,25 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /////Saveable Attributes, DONT DELETE
-//////string _id,Vector3 position,int selectedPrefabId,Quaternion rotation,int placeablePrice,string tag/////
+//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;int placeablePrice;string tag//////////
 //////SERIALIZABLE:YES/
 
 public class Nature : Placeable, Saveable
 {
     float height;
     public NavMeshObstacle navMeshObstacle;
-    public int selectedPrefabId;
+    GameObject chosenPrefab;
 
     public override void Awake()
     {
         List<GameObject> foligeVariants2 = PrefabManager.instance.naturePrefabs.Where(prefab => prefab.name.Contains(name.Replace("(Clone)", ""))).ToList();
-        var chosenPrefab = foligeVariants2[UnityEngine.Random.Range(0, foligeVariants2.Count)];
-        selectedPrefabId = chosenPrefab.GetInstanceID();
+        chosenPrefab = foligeVariants2[UnityEngine.Random.Range(0, foligeVariants2.Count)];
         //var trunkPos = chosenPrefab.transform.Find("trunk").transform.position;
         var selectedVariantInstance = Instantiate(chosenPrefab, transform.position, transform.rotation);
         selectedVariantInstance.transform.SetParent(transform);
         height = selectedVariantInstance.GetComponent<BoxCollider>().size.y;
         base.Awake();
+        Debug.Log(selectedPrefabId);
 
         navMeshObstacle = selectedVariantInstance.GetComponent<NavMeshObstacle>();
 
@@ -55,10 +55,11 @@ public class Nature : Placeable, Saveable
 
     public override void FinalPlace()
     {
+        selectedPrefabId = chosenPrefab.GetInstanceID();
         NatureManager.instance.AddList(this);
         ChangeMaterial(0);
         navMeshObstacle.enabled = true;
-        GridManager.instance.GetGrid(transform.position).natures.Add(this);
+        GridManager.instance.GetGrid(transform.position).AddNatures(this);
         if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
         {
             GridManager.instance.GetGrid(transform.position).GetExhibit().GetFoliages().Add(this);
@@ -100,8 +101,7 @@ public class Nature : Placeable, Saveable
         base.Remove();
 
         NatureManager.instance.natureList.Remove(this);
-        ZooManager.instance.ChangeMoney(placeablePrice * 0.1f);
-        GridManager.instance.GetGrid(transform.position).natures.Remove(this);
+        GridManager.instance.GetGrid(transform.position).RemoveNatures(this);
         var tempGrid = GridManager.instance.GetGrid(transform.position);
         if (tempGrid.GetExhibit() != null)
         {
@@ -123,14 +123,14 @@ public class Nature : Placeable, Saveable
         public int placeablePrice;
         public string tag;
 
-        public NatureData(string _id, Vector3 position, int selectedPrefabId, Quaternion rotation, int placeablePrice, string tag)
+        public NatureData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, int placeablePriceParam, string tagParam)
         {
-           this._id = _id;
-           this.position = position;
-           this.selectedPrefabId = selectedPrefabId;
-           this.rotation = rotation;
-           this.placeablePrice = placeablePrice;
-           this.tag = tag;
+           _id = _idParam;
+           position = positionParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           rotation = rotationParam;
+           placeablePrice = placeablePriceParam;
+           tag = tagParam;
         }
     }
 
@@ -150,14 +150,14 @@ public class Nature : Placeable, Saveable
         return "Nature.json";
     }
     
-    void SetData(string _id, Vector3 position, int selectedPrefabId, Quaternion rotation, int placeablePrice, string tag){ 
+    void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, int placeablePriceParam, string tagParam){ 
         
-           this._id = _id;
-           this.transform.position = position;
-           this.selectedPrefabId = selectedPrefabId;
-           this.transform.rotation = rotation;
-           this.placeablePrice = placeablePrice;
-           this.tag = tag;
+           _id = _idParam;
+           transform.position = positionParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           transform.rotation = rotationParam;
+           placeablePrice = placeablePriceParam;
+           tag = tagParam;
     }
     
     public NatureData ToData(){
@@ -166,11 +166,11 @@ public class Nature : Placeable, Saveable
     
     public void FromData(NatureData data){
         
-           this._id = data._id;
-           this.transform.position = data.position;
-           this.selectedPrefabId = data.selectedPrefabId;
-           this.transform.rotation = data.rotation;
-           this.placeablePrice = data.placeablePrice;
-           this.tag = data.tag;
+           _id = data._id;
+           transform.position = data.position;
+           selectedPrefabId = data.selectedPrefabId;
+           transform.rotation = data.rotation;
+           placeablePrice = data.placeablePrice;
+           tag = data.tag;
     }
 }

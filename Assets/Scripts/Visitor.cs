@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,7 +6,11 @@ using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Visitor : MonoBehaviour, Clickable
+/////Saveable Attributes, DONT DELETE
+//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;bool atDestination;bool arrived;Vector3 destination;string destinationVisitableId;List<string> unvisitedExhibitsIds;string visitorName;float time;float timeGoal;string currentExhibitId;float hunger;float thirst;float energy;float restroomNeeds;float happiness;string action;bool isFleeing//////////
+//////SERIALIZABLE:YES/
+
+public class Visitor : MonoBehaviour, Clickable, Saveable
 {
     public string _id;
     public Animator animator;
@@ -15,12 +20,13 @@ public class Visitor : MonoBehaviour, Clickable
     bool arrived = false;
     bool placed = false;
     Vector3 destination;
-    Visitable destinationVisitable;
+    /////GENERATE
+    private Visitable destinationVisitable;
     PlayerControl playerControl;
-    List<Visitable> unvisitedExhibits = new();
+    /////GENERATE
+    private List<Visitable> unvisitedExhibits;
     string visitorName;
     MeshRenderer photoCamera;
-
     float time = 0;
     float timeGoal = 0;
     /////GENERATE
@@ -42,35 +48,35 @@ public class Visitor : MonoBehaviour, Clickable
     public string action = "";
     bool isFleeing = false;
     public int dangerLevel = 3;
+    public int selectedPrefabId;
 
     public void Start()
     {
-        _id = System.Guid.NewGuid().ToString();
+        _id = Placeable.encodeID(this);
         visitorName = GenerateName();
         surface = GameObject.Find("NavMesh").GetComponent<NavMeshSurface>();
         agent.Warp(transform.position);
         placed = true;
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
 
-        hungerDetriment = Random.Range(0.2f, 0.3f);
-        thirstDetriment = Random.Range(0.45f, 0.55f);
-        energyDetriment = Random.Range(0.2f, 0.3f);
-        restroomNeedsDetriment = Random.Range(0.05f, 0.15f);
-        happinessDetriment = Random.Range(0.2f, 0.3f);
+        hungerDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
+        thirstDetriment = UnityEngine.Random.Range(0.45f, 0.55f);
+        energyDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
+        restroomNeedsDetriment = UnityEngine.Random.Range(0.05f, 0.15f);
+        happinessDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
 
-        hunger = Random.Range(50, 75);
-        thirst = Random.Range(50, 75);
-        energy = Random.Range(50, 75);
-        restroomNeeds = Random.Range(50, 75);
-        happiness = Random.Range(50, 75);
+        hunger = UnityEngine.Random.Range(50, 75);
+        thirst = UnityEngine.Random.Range(50, 75);
+        energy = UnityEngine.Random.Range(50, 75);
+        restroomNeeds = UnityEngine.Random.Range(50, 75);
+        happiness = UnityEngine.Random.Range(50, 75);
 
-        foreach (Visitable exhibit in GridManager.instance.reachableExhibits)
+        foreach (Visitable exhibit in VisitableManager.instance.GetReachableExhibits())
         {
-            unvisitedExhibits.Add(exhibit);
+            AddUnvisitedExhibits(exhibit);
         }
 
         StartCoroutine(DecreaseNeeds());
-
 
         foreach (var renderer in new List<MeshRenderer>(GetComponentsInChildren<MeshRenderer>()))
         {
@@ -126,7 +132,7 @@ public class Visitor : MonoBehaviour, Clickable
                 if (!arrived)
                 {
                     arrived = true;
-                    destinationVisitable.Arrived(this);
+                    GetDestinationVisitable().Arrived(this);
                 }
                 if(lookAtAnimals && lookedAnimal != null)
                 {
@@ -150,9 +156,9 @@ public class Visitor : MonoBehaviour, Clickable
 
     void Flee()
     {
-        if (GridManager.instance.freeAnimals.Count > 0 && !isFleeing)
+        if (AnimalManager.instance.freeAnimals.Count > 0 && !isFleeing)
         {
-            foreach (Animal animal in GridManager.instance.freeAnimals)
+            foreach (Animal animal in AnimalManager.instance.freeAnimals)
             {
                 if (((dangerLevel - 2 < animal.dangerLevel && animal.isAgressive) || dangerLevel < animal.dangerLevel) && Vector3.Distance(transform.position, animal.transform.position) < 10)
                 {
@@ -164,7 +170,7 @@ public class Visitor : MonoBehaviour, Clickable
             if (isFleeing)
             {
                 agent.speed *= 3;
-                destinationVisitable = ZooManager.instance;
+                GetDestinationVisitable(ZooManager.instance.GetId());
             }
         }
     }
@@ -182,9 +188,9 @@ public class Visitor : MonoBehaviour, Clickable
 
     public void LowerRestroomNeeds()
     {
-        var random = Random.Range(40, 60);
+        var random = UnityEngine.Random.Range(40, 60);
         restroomNeeds = restroomNeeds + random > 100 ? 100 : restroomNeeds + random;
-        restroomNeedsDetriment = Random.Range(0.05f, 0.15f);
+        restroomNeedsDetriment = UnityEngine.Random.Range(0.05f, 0.15f);
     }
 
     public void ChooseDestination()
@@ -192,55 +198,55 @@ public class Visitor : MonoBehaviour, Clickable
         photoCamera.enabled = false;
         arrived = false;
         SetIsVisible(true);
-        destinationVisitable?.SetCapacity(destinationVisitable.GetCapacity() + 1);
-        destinationVisitable?.RemoveVisitor(this);
+        GetDestinationVisitable()?.SetCapacity(GetDestinationVisitable().GetCapacity() + 1);
+        GetDestinationVisitable()?.RemoveVisitor(this);
 
         ChooseDestinationType();
 
         switch (action)
         {
             case "food":
-                destinationVisitable = ChooseCloseDestination(GridManager.instance.reachableFoodBuildings);
+                GetDestinationVisitable(ChooseCloseDestination(VisitableManager.instance.GetReachableFoodBuildings()).GetId());
                 break;
             case "drink":
-                destinationVisitable = ChooseCloseDestination(GridManager.instance.reachableDrinkBuildings);
+                GetDestinationVisitable(ChooseCloseDestination(VisitableManager.instance.GetReachableDrinkBuildings()).GetId());
                 break;
             case "energy":
-                destinationVisitable = ChooseCloseDestination(GridManager.instance.reachableEnergyBuildings);
+                GetDestinationVisitable(ChooseCloseDestination(VisitableManager.instance.GetReachableEnergyBuildings()).GetId());
                 break;
             case "restroom":
-                destinationVisitable = ChooseCloseDestination(GridManager.instance.reachableRestroomBuildings);
+                GetDestinationVisitable(ChooseCloseDestination(VisitableManager.instance.GetReachableRestroomBuildings()).GetId());
                 break;
             case "happiness":
                 List<Visitable> tempVisitables = new();
-                tempVisitables.AddRange(unvisitedExhibits);
-                tempVisitables.AddRange(GridManager.instance.reachableHappinessBuildings);
+                tempVisitables.AddRange(GetUnvisitedExhibits());
+                tempVisitables.AddRange(VisitableManager.instance.GetReachableHappinessBuildings());
 
-                destinationVisitable = ChooseCloseDestination(tempVisitables);
-                var destinationExhibit = destinationVisitable as Exhibit; //castol�s exhibitt�
+                GetDestinationVisitable(ChooseCloseDestination(tempVisitables).GetId());
+                var destinationExhibit = GetDestinationVisitable() as Exhibit; //castol�s exhibitt�
                 if (destinationExhibit != null) // ha exhibit
-                    unvisitedExhibits.Remove((Exhibit)destinationVisitable);
+                    RemoveUnvisitedExhibits((Exhibit)GetDestinationVisitable());
                 break;
             case "leave":
-                if (GridManager.instance.reachableExhibits.Count - unvisitedExhibits.Count == 0)
+                if (VisitableManager.instance.GetReachableExhibits().Count - GetUnvisitedExhibits().Count == 0)
                     happiness = happiness - 25 > 0 ? happiness - 25 : 0;
-                destinationVisitable = ZooManager.instance;
+                GetDestinationVisitable(ZooManager.instance.GetId());
                 break;
             default:
-                destinationVisitable = ZooManager.instance;
+                GetDestinationVisitable(ZooManager.instance.GetId());
                 break;
         }
 
-        destinationVisitable.AddVisitor(this);
-        destinationVisitable.SetCapacity(destinationVisitable.GetCapacity() - 1);
-
-        int randomGridIndex = Random.Range(0, destinationVisitable.GetPaths().Count);
-        Grid randomGrid = destinationVisitable.GetPaths()[randomGridIndex];
-        destination = destinationVisitable.ChoosePosition(randomGrid);
+        GetDestinationVisitable().AddVisitor(this);
+        GetDestinationVisitable().SetCapacity(GetDestinationVisitable().GetCapacity() - 1);
+        
+        int randomGridIndex = UnityEngine.Random.Range(0, GetDestinationVisitable().GetPaths().Count);
+        Grid randomGrid = GetDestinationVisitable().GetPaths()[randomGridIndex];
+        destination = GetDestinationVisitable().ChoosePosition(randomGrid);
         agent.SetDestination(destination);
         atDestination = false;
         time = 0;
-        timeGoal = Random.Range(11, 14);
+        timeGoal = UnityEngine.Random.Range(11, 14);
         agent.isStopped = false;
     }
 
@@ -249,37 +255,37 @@ public class Visitor : MonoBehaviour, Clickable
         var probabilities = new List<(string action, float probability)>();
         float sum = 0;
 
-        if (GridManager.instance.reachableFoodBuildings.Count > 0)
+        if (VisitableManager.instance.GetReachableFoodBuildings().Count > 0)
         {
             sum += (110 - hunger);
             probabilities.Add(("food", sum));
         }
-        if (GridManager.instance.reachableDrinkBuildings.Count > 0)
+        if (VisitableManager.instance.GetReachableDrinkBuildings().Count > 0)
         {
             sum += (110 - thirst);
             probabilities.Add(("drink", sum));
         }
-        if (GridManager.instance.reachableEnergyBuildings.Count > 0)
+        if (VisitableManager.instance.GetReachableEnergyBuildings().Count > 0)
         {
             sum += (110 - energy);
             probabilities.Add(("energy", sum));
         }
-        if (GridManager.instance.reachableRestroomBuildings.Count > 0)
+        if (VisitableManager.instance.GetReachableRestroomBuildings().Count > 0)
         {
             sum += (110 - restroomNeeds);
             probabilities.Add(("restroom", sum));
         }
-        if (unvisitedExhibits.Count > 0 || GridManager.instance.reachableHappinessBuildings.Count > 0)
+        if (GetUnvisitedExhibits().Count > 0 || VisitableManager.instance.GetReachableHappinessBuildings().Count > 0)
         {
             sum += (200 - happiness);
             probabilities.Add(("happiness", sum));
         }
-        sum += (100 + 50 * ((GridManager.instance.reachableExhibits.Count + 1 - unvisitedExhibits.Count) / (GridManager.instance.reachableExhibits.Count + 1)) - happiness);
-        if (unvisitedExhibits.Count == 0)
+        sum += (100 + 50 * ((VisitableManager.instance.GetReachableExhibits().Count + 1 - GetUnvisitedExhibits().Count) / (VisitableManager.instance.GetReachableExhibits().Count + 1)) - happiness);
+        if (GetUnvisitedExhibits().Count == 0)
             sum += 100;
         probabilities.Add(("leave", sum));
 
-        var random = Random.Range(0, sum);
+        var random = UnityEngine.Random.Range(0, sum);
         action = probabilities.SkipWhile(i => i.probability < random).FirstOrDefault().action;
         if (action == null)
             action = "leave";
@@ -306,7 +312,7 @@ public class Visitor : MonoBehaviour, Clickable
             }
         }
 
-        var random = Random.Range(0.0f, sum);
+        var random = UnityEngine.Random.Range(0.0f, sum);
         if (VisitableDistances.Count == 0)
             return ZooManager.instance;
         return VisitableDistances.SkipWhile(i => i.distance < random).First().visitable;
@@ -351,7 +357,7 @@ public class Visitor : MonoBehaviour, Clickable
 
     IEnumerator CheckPictures()
     {
-        var lookedAnimalId = GetCurrentExhibit().GetAnimals()[Random.Range(0, GetCurrentExhibit().GetAnimals().Count)];
+        var lookedAnimalId = GetCurrentExhibit().GetAnimals()[UnityEngine.Random.Range(0, GetCurrentExhibit().GetAnimals().Count)];
         lookedAnimal = lookedAnimalId;
         randomRange = 10;
         while (arrived)
@@ -359,13 +365,13 @@ public class Visitor : MonoBehaviour, Clickable
             if (this.animator.GetCurrentAnimatorStateInfo(0).IsName("Taking Pictures"))
             {
                 lookAtAnimals = true;
-                var random = Random.Range(0, randomRange);
+                var random = UnityEngine.Random.Range(0, randomRange);
                 if(random == 0) {
                     GetComponentInChildren<Animator>().Play("Checking Pictures");
                     randomRange = 10;
                     lookAtAnimals = false;
                     if(GetCurrentExhibit().GetAnimals().Count !=  0)
-                        lookedAnimalId = GetCurrentExhibit().GetAnimals()[Random.Range(0, GetCurrentExhibit().GetAnimals().Count)];
+                        lookedAnimalId = GetCurrentExhibit().GetAnimals()[UnityEngine.Random.Range(0, GetCurrentExhibit().GetAnimals().Count)];
                         lookedAnimal = lookedAnimalId;
                 }
                 else
@@ -416,10 +422,57 @@ public class Visitor : MonoBehaviour, Clickable
             "Bennet", "Gray", "Mendoza", "Ruiz", "Hughes", "Price", "Alvarez", "Castillo", "Sanders", "Patel", "Myers", "Long", "Ross", "Foster", "Jimenez" };
 
 
-        return firstName[Random.Range(0, firstName.Count)] + " " + lastName[Random.Range(0, lastName.Count)];
+        return firstName[UnityEngine.Random.Range(0, firstName.Count)] + " " + lastName[UnityEngine.Random.Range(0, lastName.Count)];
+    }
+
+    public string GetId(){
+        return _id;
+    }
+
+    public void LoadHelper()
+    {
+        
     }
 
 ////GENERATED
+
+    public string destinationVisitableId;
+    public Visitable GetDestinationVisitable(string id = null)
+    {
+        id ??=destinationVisitableId;
+
+        if(id != destinationVisitableId || destinationVisitable == null)
+        {
+            destinationVisitableId = id;
+            destinationVisitable = VisitableManager.instance.visitableList.Where((element) => element.GetId() == destinationVisitableId).FirstOrDefault();
+        }
+        return destinationVisitable;
+    }
+
+    public List<string> unvisitedExhibitsIds = new List<string>();
+    public List<Visitable> GetUnvisitedExhibits()
+    {
+        if(unvisitedExhibits == null)
+        {
+             unvisitedExhibits = new List<Visitable>();
+             foreach(var element in unvisitedExhibits){
+                unvisitedExhibits.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             }
+        }
+        return unvisitedExhibits;
+    }
+    public void AddUnvisitedExhibits(Visitable visitable)
+    {
+        unvisitedExhibitsIds.Add(visitable.GetId());
+        GetUnvisitedExhibits();
+        unvisitedExhibits.Add(visitable);
+    }
+    public void RemoveUnvisitedExhibits(Visitable visitable)
+    {
+        unvisitedExhibitsIds.Remove(visitable.GetId());
+        GetUnvisitedExhibits();
+        unvisitedExhibits.Remove(visitable);
+    }
 
     public string currentExhibitId;
     public Exhibit GetCurrentExhibit(string id = null)
@@ -429,8 +482,128 @@ public class Visitor : MonoBehaviour, Clickable
         if(id != currentExhibitId || currentExhibit == null)
         {
             currentExhibitId = id;
-            currentExhibit = ExhibitManager.instance.exhibitList.Where((element) => element._id == currentExhibitId).FirstOrDefault();
+            currentExhibit = ExhibitManager.instance.exhibitList.Where((element) => element.GetId() == currentExhibitId).FirstOrDefault();
         }
         return currentExhibit;
+    }
+///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    [Serializable]
+    public class VisitorData
+    {
+        public string _id;
+        public Vector3 position;
+        public int selectedPrefabId;
+        public Quaternion rotation;
+        public bool atDestination;
+        public bool arrived;
+        public Vector3 destination;
+        public string destinationVisitableId;
+        public List<string> unvisitedExhibitsIds;
+        public string visitorName;
+        public float time;
+        public float timeGoal;
+        public string currentExhibitId;
+        public float hunger;
+        public float thirst;
+        public float energy;
+        public float restroomNeeds;
+        public float happiness;
+        public string action;
+        public bool isFleeing;
+
+        public VisitorData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, bool atDestinationParam, bool arrivedParam, Vector3 destinationParam, string destinationVisitableIdParam, List<string> unvisitedExhibitsIdsParam, string visitorNameParam, float timeParam, float timeGoalParam, string currentExhibitIdParam, float hungerParam, float thirstParam, float energyParam, float restroomNeedsParam, float happinessParam, string actionParam, bool isFleeingParam)
+        {
+           _id = _idParam;
+           position = positionParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           rotation = rotationParam;
+           atDestination = atDestinationParam;
+           arrived = arrivedParam;
+           destination = destinationParam;
+           destinationVisitableId = destinationVisitableIdParam;
+           unvisitedExhibitsIds = unvisitedExhibitsIdsParam;
+           visitorName = visitorNameParam;
+           time = timeParam;
+           timeGoal = timeGoalParam;
+           currentExhibitId = currentExhibitIdParam;
+           hunger = hungerParam;
+           thirst = thirstParam;
+           energy = energyParam;
+           restroomNeeds = restroomNeedsParam;
+           happiness = happinessParam;
+           action = actionParam;
+           isFleeing = isFleeingParam;
+        }
+    }
+
+    VisitorData data; 
+    
+    public string DataToJson(){
+        VisitorData data = new VisitorData(_id, transform.position, selectedPrefabId, transform.rotation, atDestination, arrived, destination, destinationVisitableId, unvisitedExhibitsIds, visitorName, time, timeGoal, currentExhibitId, hunger, thirst, energy, restroomNeeds, happiness, action, isFleeing);
+        return JsonUtility.ToJson(data);
+    }
+    
+    public void FromJson(string json){
+        data = JsonUtility.FromJson<VisitorData>(json);
+        SetData(data._id, data.position, data.selectedPrefabId, data.rotation, data.atDestination, data.arrived, data.destination, data.destinationVisitableId, data.unvisitedExhibitsIds, data.visitorName, data.time, data.timeGoal, data.currentExhibitId, data.hunger, data.thirst, data.energy, data.restroomNeeds, data.happiness, data.action, data.isFleeing);
+    }
+    
+    public string GetFileName(){
+        return "Visitor.json";
+    }
+    
+    void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, bool atDestinationParam, bool arrivedParam, Vector3 destinationParam, string destinationVisitableIdParam, List<string> unvisitedExhibitsIdsParam, string visitorNameParam, float timeParam, float timeGoalParam, string currentExhibitIdParam, float hungerParam, float thirstParam, float energyParam, float restroomNeedsParam, float happinessParam, string actionParam, bool isFleeingParam){ 
+        
+           _id = _idParam;
+           transform.position = positionParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           transform.rotation = rotationParam;
+           atDestination = atDestinationParam;
+           arrived = arrivedParam;
+           destination = destinationParam;
+           destinationVisitableId = destinationVisitableIdParam;
+           unvisitedExhibitsIds = unvisitedExhibitsIdsParam;
+           visitorName = visitorNameParam;
+           time = timeParam;
+           timeGoal = timeGoalParam;
+           currentExhibitId = currentExhibitIdParam;
+           hunger = hungerParam;
+           thirst = thirstParam;
+           energy = energyParam;
+           restroomNeeds = restroomNeedsParam;
+           happiness = happinessParam;
+           action = actionParam;
+           isFleeing = isFleeingParam;
+    }
+    
+    public VisitorData ToData(){
+         return new VisitorData(_id, transform.position, selectedPrefabId, transform.rotation, atDestination, arrived, destination, destinationVisitableId, unvisitedExhibitsIds, visitorName, time, timeGoal, currentExhibitId, hunger, thirst, energy, restroomNeeds, happiness, action, isFleeing);
+    }
+    
+    public void FromData(VisitorData data){
+        
+           _id = data._id;
+           transform.position = data.position;
+           selectedPrefabId = data.selectedPrefabId;
+           transform.rotation = data.rotation;
+           atDestination = data.atDestination;
+           arrived = data.arrived;
+           destination = data.destination;
+           destinationVisitableId = data.destinationVisitableId;
+           unvisitedExhibitsIds = data.unvisitedExhibitsIds;
+           visitorName = data.visitorName;
+           time = data.time;
+           timeGoal = data.timeGoal;
+           currentExhibitId = data.currentExhibitId;
+           hunger = data.hunger;
+           thirst = data.thirst;
+           energy = data.energy;
+           restroomNeeds = data.restroomNeeds;
+           happiness = data.happiness;
+           action = data.action;
+           isFleeing = data.isFleeing;
     }
 }

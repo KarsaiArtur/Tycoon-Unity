@@ -26,6 +26,7 @@ public class PathBuilder : Placeable
             if (paths.Count == 0)
             {
                 Path newPath = Instantiate(pathPrefab, transform.position, transform.rotation);
+                newPath.selectedPrefabId = pathPrefab.gameObject.GetInstanceID();
                 paths.Add(newPath);
                 paths.ForEach(path => placeablePrice += path.placeablePrice);
             }
@@ -73,6 +74,7 @@ public class PathBuilder : Placeable
             {
                 Vector3 pos = new Vector3(startingPoint.x + (i * Math.Sign(xDifference)), startingPoint.y, startingPoint.z + (i * Math.Sign(zDifference)));
                 Path newPath = Instantiate(pathPrefab, pos, transform.rotation);
+                newPath.selectedPrefabId = pathPrefab.gameObject.GetInstanceID();
                 paths.Add(newPath);
                 newPath.CheckTerrain(newPath.transform.position);
                 pathIndex++;
@@ -85,6 +87,7 @@ public class PathBuilder : Placeable
             {
                 Vector3 pos = new Vector3(cornerX + startedInZDir * (startingPoint.x + (j * Math.Sign(xDifference))), startingPoint.y, cornerZ + startedInXDir * (startingPoint.z + (j * Math.Sign(zDifference))));
                 Path newPath = Instantiate(pathPrefab, pos, transform.rotation);
+                newPath.selectedPrefabId = pathPrefab.gameObject.GetInstanceID();
                 paths.Add(newPath);
                 newPath.CheckTerrain(newPath.transform.position);
                 pathIndex++;
@@ -217,7 +220,7 @@ public class PathBuilder : Placeable
         //    }
         //}
 
-        foreach (var visitable in gridManager.visitables)
+        foreach (var visitable in VisitableManager.instance.visitableList)
         {
             if (!visitable.GetReachable() && visitable.GetPaths().Count > 0)
             {

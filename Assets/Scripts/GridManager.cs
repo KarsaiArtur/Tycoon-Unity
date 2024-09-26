@@ -2,9 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static Grid;
+
+//,Grid[,] grids
 
 /////Saveable Attributes, DONT DELETE
-//////Vector3[] coords/////
+//////Vector3[] coords;Grid[,] grids//////////
 
 public class GridManager : MonoBehaviour, Saveable
 {
@@ -29,31 +32,14 @@ public class GridManager : MonoBehaviour, Saveable
     public Grid[,] grids;
     public Grid startingGrid;
 
-    public List<Animal> freeAnimals = new List<Animal>();
-
-    //public List<Bench> benches = new List<Bench>();
-    public List<Visitable> visitables = new List<Visitable>(); // lehet majd helyettes�thet� ha majd lesz m�r bench, building �s exhibit manager
-    public List<Exhibit> exhibits = new List<Exhibit>(); // nem kell majd ha m�r el lesz t�rolva a manager�ben
-    public List<Building> buildings = new List<Building>(); // nem kell majd ha m�r el lesz t�rolva a manager�ben
-    //public List<Visitable> reachableBenches = new List<Visitable>();
-    public List<Visitable> reachableExhibits = new List<Visitable>();
-    public List<Visitable> reachableFoodBuildings = new List<Visitable>();
-    public List<Visitable> reachableDrinkBuildings = new List<Visitable>();
-    public List<Visitable> reachableEnergyBuildings = new List<Visitable>();
-    public List<Visitable> reachableRestroomBuildings = new List<Visitable>();
-    public List<Visitable> reachableHappinessBuildings = new List<Visitable>();
-
     void Awake()
     {
         instance = this;
         pControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
-    }
-
-    void Start()
-    {
         terrainWidth += elementWidth * 2;
 
-        if(LoadMenu.loadedGame != null){
+        if(LoadMenu.loadedGame != null)
+        {
             LoadMenu.instance.LoadData(this);
         }
         else
@@ -61,7 +47,6 @@ public class GridManager : MonoBehaviour, Saveable
             CreateCoords();
         }
 
-        
         CreateTerrainElements();
 
         initializing = true;
@@ -82,6 +67,11 @@ public class GridManager : MonoBehaviour, Saveable
         startingGrid = GetGrid(new Vector3(35, 0, 50));
         initializing = false;
         edgeChanged = false;
+    }
+
+    void Start()
+    {
+        
     }
 
     public void InitializeGrids()
@@ -438,6 +428,36 @@ public class GridManager : MonoBehaviour, Saveable
         }
     }
 
+    public HashSet<Grid> ExhibitFinderBFS(Grid start, Grid end)
+    {
+        HashSet<Grid> visited = new HashSet<Grid>();
+        Queue<Grid> queue = new Queue<Grid>();
+        queue.Enqueue(start);
+        visited.Add(start);
+
+        while (queue.Count > 0)
+        {
+            Grid current = queue.Dequeue();
+
+            if (current != end)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    Grid neighbour = current.neighbours[i];
+                    if (neighbour != null && visited.Add(neighbour))
+                    {
+                        queue.Enqueue(neighbour);
+                    }
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+        return visited;
+    }
+
     public bool ReachableAttractionBFS(Grid start, Grid end)
     {
         HashSet<Grid> visited = new HashSet<Grid>();
@@ -468,11 +488,45 @@ public class GridManager : MonoBehaviour, Saveable
         return false;
     }
 
-    public bool CanOpen()
+    public void LoadHelper()
     {
-        if (reachableExhibits.Count > 0 || reachableFoodBuildings.Count > 0 || reachableDrinkBuildings.Count > 0 || reachableEnergyBuildings.Count > 0 || reachableRestroomBuildings.Count > 0 || reachableHappinessBuildings.Count > 0)
-            return true;
-        return false;
+        for (int i = 0; i < terrainWidth - 2 * elementWidth; i++)
+        {
+            for (int j = 0; j < terrainWidth - 2 * elementWidth; j++)
+            {
+                if (i == 0)
+                {
+                    grids[j, i].neighbours[0] = null;
+                    grids[j, i].trueNeighbours[0] = null;
+                }
+                else
+                {
+                    grids[j, i].SetNeighbour0(grids[j, i - 1]);
+                }
+
+                if (i == terrainWidth - 2 * elementWidth - 1)
+                {
+                    grids[j, i].neighbours[2] = null;
+                    grids[j, i].trueNeighbours[2] = null;
+                }
+
+                if (j == 0)
+                {
+                    grids[j, i].neighbours[1] = null;
+                    grids[j, i].trueNeighbours[1] = null;
+                }
+                else
+                {
+                    grids[j, i].SetNeighbour1(grids[j - 1, i]);
+                }
+
+                if (j == terrainWidth - 2 * elementWidth - 1)
+                {
+                    grids[j, i].neighbours[3] = null;
+                    grids[j, i].trueNeighbours[3] = null;
+                }
+            }
+        }
     }
 
     ///******************************
@@ -482,31 +536,34 @@ public class GridManager : MonoBehaviour, Saveable
     public class GridManagerData
     {
         public Vector3[] coords;
+        public Grid[,] grids;
 
-        public GridManagerData(Vector3[] coords)
+        public GridManagerData(Vector3[] coordsParam, Grid[,] gridsParam)
         {
-           this.coords = coords;
+           coords = coordsParam;
+           grids = gridsParam;
         }
     }
 
     GridManagerData data; 
     
     public string DataToJson(){
-        GridManagerData data = new GridManagerData(coords);
+        GridManagerData data = new GridManagerData(coords, grids);
         return JsonUtility.ToJson(data);
     }
     
     public void FromJson(string json){
         data = JsonUtility.FromJson<GridManagerData>(json);
-        SetData(data.coords);
+        SetData(data.coords, data.grids);
     }
     
     public string GetFileName(){
         return "GridManager.json";
     }
     
-    void SetData(Vector3[] coords){ 
+    void SetData(Vector3[] coordsParam, Grid[,] gridsParam){ 
         
-           this.coords = coords;
+           coords = coordsParam;
+           grids = gridsParam;
     }
 }

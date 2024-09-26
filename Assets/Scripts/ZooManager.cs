@@ -6,7 +6,7 @@ using TMPro;
 using UnityEngine;
 
 /////Saveable Attributes, DONT DELETE
-//////float money,float currentEntranceFee,int allTimeVisitorCount,float allTimeMoneyEarned,List<float> latestVisitorHappinesses,float reputation/////
+//////float money;float currentEntranceFee;int allTimeVisitorCount;float allTimeMoneyEarned;List<float> latestVisitorHappinesses;float reputation//////////
 
 public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
 {
@@ -70,7 +70,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         {
             ChangeMoney(-staff.salary);
         }
-        foreach (var building in GridManager.instance.buildings)
+        foreach (var building in BuildingManager.instance.buildingList)
         {
             ChangeMoney(-building.expense);
         }
@@ -83,7 +83,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         {
             sum += staff.salary;
         }
-        foreach (var building in GridManager.instance.buildings)
+        foreach (var building in BuildingManager.instance.buildingList)
         {
             sum += building.expense;
         }
@@ -156,6 +156,16 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     }
 
     public void SetReachable(bool newReachable) { }
+
+    public void RemovePath(Path path)
+    {
+
+    }
+
+    public string GetId()
+    {
+        return "ZooManager";
+    }
     
     ///******************************
     ///GENERATED CODE, DONT MODIFY
@@ -170,14 +180,14 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         public List<float> latestVisitorHappinesses;
         public float reputation;
 
-        public ZooManagerData(float money, float currentEntranceFee, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation)
+        public ZooManagerData(float moneyParam, float currentEntranceFeeParam, int allTimeVisitorCountParam, float allTimeMoneyEarnedParam, List<float> latestVisitorHappinessesParam, float reputationParam)
         {
-           this.money = money;
-           this.currentEntranceFee = currentEntranceFee;
-           this.allTimeVisitorCount = allTimeVisitorCount;
-           this.allTimeMoneyEarned = allTimeMoneyEarned;
-           this.latestVisitorHappinesses = latestVisitorHappinesses;
-           this.reputation = reputation;
+           money = moneyParam;
+           currentEntranceFee = currentEntranceFeeParam;
+           allTimeVisitorCount = allTimeVisitorCountParam;
+           allTimeMoneyEarned = allTimeMoneyEarnedParam;
+           latestVisitorHappinesses = latestVisitorHappinessesParam;
+           reputation = reputationParam;
         }
     }
 
@@ -197,18 +207,13 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         return "ZooManager.json";
     }
     
-    void SetData(float money, float currentEntranceFee, int allTimeVisitorCount, float allTimeMoneyEarned, List<float> latestVisitorHappinesses, float reputation){ 
+    void SetData(float moneyParam, float currentEntranceFeeParam, int allTimeVisitorCountParam, float allTimeMoneyEarnedParam, List<float> latestVisitorHappinessesParam, float reputationParam){ 
         
-           this.money = money;
-           this.currentEntranceFee = currentEntranceFee;
-           this.allTimeVisitorCount = allTimeVisitorCount;
-           this.allTimeMoneyEarned = allTimeMoneyEarned;
-           this.latestVisitorHappinesses = latestVisitorHappinesses;
-           this.reputation = reputation;
-    }
-
-    public void RemovePath(Path path)
-    {
-
+           money = moneyParam;
+           currentEntranceFee = currentEntranceFeeParam;
+           allTimeVisitorCount = allTimeVisitorCountParam;
+           allTimeMoneyEarned = allTimeMoneyEarnedParam;
+           latestVisitorHappinesses = latestVisitorHappinessesParam;
+           reputation = reputationParam;
     }
 }

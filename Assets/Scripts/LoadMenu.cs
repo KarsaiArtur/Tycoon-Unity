@@ -29,7 +29,6 @@ public class LoadMenu : MonoBehaviour
     }
 
     void LoadSavesList(){
-        System.Console.WriteLine("OK");
         var folders = AssetDatabase.GetSubFolders("Assets"+System.IO.Path.AltDirectorySeparatorChar+"Saves");
         foreach(var folder in folders){
             var folder2 = folder.Remove(0, ("Assets"+System.IO.Path.AltDirectorySeparatorChar+"Saves"+System.IO.Path.AltDirectorySeparatorChar).Length);

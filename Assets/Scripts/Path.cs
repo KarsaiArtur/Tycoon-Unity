@@ -1,13 +1,15 @@
 using System;
 using UnityEngine;
 
-public class Path : Placeable
+/////Saveable Attributes, DONT DELETE
+//////string _id;Vector3 position;int selectedPrefabId;int placeablePrice;string tag;Quaternion rotation//////////
+//////SERIALIZABLE:YES/
+
+public class Path : Placeable, Saveable
 {
     float curOffsetX = 0.5f;
     float curOffsetZ = 0.25f;
-    public int index = 0;
     public static float offsetDefault = 0.05f;
-
     public Path otherVariant;
 
     public void CheckTerrain(Vector3 pos)
@@ -51,8 +53,6 @@ public class Path : Placeable
             }
         }
 
-
-
         float yDifference = position1.y - position2.y;
         yDifference = RoundToDecimal(yDifference, 2);
         if (gameObject.CompareTag("Incline") && yDifference == 0 && position1.y % 0.5 == 0)
@@ -89,10 +89,8 @@ public class Path : Placeable
 
     public override void FinalPlace()
     {
-        Debug.Log("OKK");
         PathManager.instance.AddList(this);
     }
-
 
     float RoundToDecimal(float number, int dec)
     {
@@ -132,12 +130,81 @@ public class Path : Placeable
             //    bench.RemovePath(this);
             //    bench.DecideIfReachable();
             //}
-            foreach (var visitable in GridManager.instance.visitables)
+            foreach (var visitable in VisitableManager.instance.visitableList)
             {
                 visitable.RemovePath(this);
                 visitable.DecideIfReachable();
             }
             Destroy(gameObject);
         }
+    }
+
+    public void LoadHelper()
+    {
+        playerControl.ReloadGuestNavMesh();
+    }
+///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    [Serializable]
+    public class PathData
+    {
+        public string _id;
+        public Vector3 position;
+        public int selectedPrefabId;
+        public int placeablePrice;
+        public string tag;
+        public Quaternion rotation;
+
+        public PathData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, int placeablePriceParam, string tagParam, Quaternion rotationParam)
+        {
+           _id = _idParam;
+           position = positionParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           placeablePrice = placeablePriceParam;
+           tag = tagParam;
+           rotation = rotationParam;
+        }
+    }
+
+    PathData data; 
+    
+    public string DataToJson(){
+        PathData data = new PathData(_id, transform.position, selectedPrefabId, placeablePrice, tag, transform.rotation);
+        return JsonUtility.ToJson(data);
+    }
+    
+    public void FromJson(string json){
+        data = JsonUtility.FromJson<PathData>(json);
+        SetData(data._id, data.position, data.selectedPrefabId, data.placeablePrice, data.tag, data.rotation);
+    }
+    
+    public string GetFileName(){
+        return "Path.json";
+    }
+    
+    void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, int placeablePriceParam, string tagParam, Quaternion rotationParam){ 
+        
+           _id = _idParam;
+           transform.position = positionParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           placeablePrice = placeablePriceParam;
+           tag = tagParam;
+           transform.rotation = rotationParam;
+    }
+    
+    public PathData ToData(){
+         return new PathData(_id, transform.position, selectedPrefabId, placeablePrice, tag, transform.rotation);
+    }
+    
+    public void FromData(PathData data){
+        
+           _id = data._id;
+           transform.position = data.position;
+           selectedPrefabId = data.selectedPrefabId;
+           placeablePrice = data.placeablePrice;
+           tag = data.tag;
+           transform.rotation = data.rotation;
     }
 }

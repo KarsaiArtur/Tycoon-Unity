@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "d:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\SaveableCodeGenerator\\SaveableCodeGenerator.csproj": {}
+    "D:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\SaveableCodeGenerator\\SaveableCodeGenerator.csproj": {}
   },
   "projects": {
-    "d:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\SaveableCodeGenerator\\SaveableCodeGenerator.csproj": {
+    "D:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\SaveableCodeGenerator\\SaveableCodeGenerator.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "d:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\SaveableCodeGenerator\\SaveableCodeGenerator.csproj",
+        "projectUniqueName": "D:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\SaveableCodeGenerator\\SaveableCodeGenerator.csproj",
         "projectName": "SaveableCodeGenerator",
-        "projectPath": "d:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\SaveableCodeGenerator\\SaveableCodeGenerator.csproj",
+        "projectPath": "D:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\SaveableCodeGenerator\\SaveableCodeGenerator.csproj",
         "packagesPath": "C:\\Users\\artur\\.nuget\\packages\\",
-        "outputPath": "d:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\SaveableCodeGenerator\\obj\\",
+        "outputPath": "D:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\SaveableCodeGenerator\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

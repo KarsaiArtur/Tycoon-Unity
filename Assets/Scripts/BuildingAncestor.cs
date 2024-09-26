@@ -15,7 +15,6 @@ public abstract class BuildingAncestor : Placeable, Visitable
 
     public override void FinalPlace()
     {
-        gridManager.visitables.Add(this);
         paths = new List<Grid>();
 
         FindPaths();
@@ -46,8 +45,10 @@ public abstract class BuildingAncestor : Placeable, Visitable
         base.Remove();
 
         RemoveFromLists();
-        foreach (var visitor in GetVisitors())
-            visitor.ChooseDestination();
+        while (GetVisitors().Count > 0)
+        {
+            GetVisitors()[0].ChooseDestination();
+        }
 
         Destroy(gameObject);
     }
@@ -76,7 +77,7 @@ public abstract class BuildingAncestor : Placeable, Visitable
             paths.Remove(GridManager.instance.GetGrid(path.transform.position));
     }
 
-    void OnCollisionExit(Collision collision)
+    public void OnCollisionExit(Collision collision)
     {
         collided = false;
     }
@@ -134,6 +135,33 @@ public abstract class BuildingAncestor : Placeable, Visitable
     public abstract void RemoveFromReachableLists();
 
     public abstract void RemoveFromLists();
+
+    public virtual void LoadHelper()
+    {
+        gameObject.GetComponent<NavMeshObstacle>().enabled = true;
+
+        foreach (var child in GetComponentsInChildren<BoxCollider>())
+        {
+            if (child.tag.Equals("Frame"))
+            {
+                foreach (var renderer in child.GetComponentsInChildren<Renderer>())
+                {
+                    if (renderer != null)
+                    {
+                        renderers.RemoveAll(element => element.name.Equals(renderer.name));
+                        defaultMaterials.RemoveAll(element => element.rendererHashCode == renderer.GetHashCode());
+                    }
+                }
+
+                Destroy(child.gameObject);
+                break;
+            }
+        }
+
+        paths = new List<Grid>();
+        FindPaths();
+    }
+
 ////GENERATED
 
     public List<string> visitorsIds = new List<string>();
@@ -143,22 +171,21 @@ public abstract class BuildingAncestor : Placeable, Visitable
         {
              visitors = new List<Visitor>();
              foreach(var element in visitors){
-                visitors.Add(VisitorManager.instance.visitorList.Where((e) => e._id == element._id).FirstOrDefault());
+                visitors.Add(VisitorManager.instance.visitorList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
              }
         }
         return visitors;
     }
     public void AddVisitors(Visitor visitor)
     {
-        visitorsIds.Add(visitor._id);
-        if(visitors == null){
-             visitors = new List<Visitor>();
-        }
+        visitorsIds.Add(visitor.GetId());
+        GetVisitors();
         visitors.Add(visitor);
     }
     public void RemoveVisitors(Visitor visitor)
     {
-        visitorsIds.Remove(visitor._id);
+        visitorsIds.Remove(visitor.GetId());
+        GetVisitors();
         visitors.Remove(visitor);
     }
 }

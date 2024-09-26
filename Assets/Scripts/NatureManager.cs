@@ -5,7 +5,7 @@ using UnityEngine;
 using static Nature;
 
 /////Saveable Attributes, DONT DELETE
-//////List<Nature> natures/////
+//////List<Nature> natureList//////////
 
 public class NatureManager : MonoBehaviour, Saveable
 {
@@ -28,11 +28,11 @@ public class NatureManager : MonoBehaviour, Saveable
 
     public class NatureManagerData
     {
-        public List<NatureData> natures;
+        public List<NatureData> natureList;
 
-        public NatureManagerData(List<NatureData> natures)
+        public NatureManagerData(List<NatureData> natureListParam)
         {
-           this.natures = natures;
+           natureList = natureListParam;
         }
     }
 
@@ -40,29 +40,31 @@ public class NatureManager : MonoBehaviour, Saveable
     
     public string DataToJson(){
 
-        List<NatureData> natures = new List<NatureData>();
+        List<NatureData> natureList = new List<NatureData>();
         foreach(var element in this.natureList){
-            natures.Add(element.ToData());
+            natureList.Add(element.ToData());
         }
-        NatureManagerData data = new NatureManagerData(natures);
+        NatureManagerData data = new NatureManagerData(natureList);
         return JsonUtility.ToJson(data);
     }
     
     public void FromJson(string json){
         data = JsonUtility.FromJson<NatureManagerData>(json);
-        SetData(data.natures);
+        SetData(data.natureList);
     }
     
     public string GetFileName(){
         return "NatureManager.json";
     }
     
-    void SetData(List<NatureData> natures){ 
+    void SetData(List<NatureData> natureListParam){ 
         
-        foreach(var element in natures){
+        foreach(var element in natureListParam){
             var spawned = Instantiate(PrefabManager.instance.GetPrefab(element.selectedPrefabId), element.position, element.rotation);
             var script = spawned.AddComponent<LoadedNature>();
             script.FromData(element);
+            //script.LoadHelper();
+            AddList(script);
         }
 
     }

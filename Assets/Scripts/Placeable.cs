@@ -2,7 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Placeable : MonoBehaviour, Clickable
@@ -19,10 +21,12 @@ public class Placeable : MonoBehaviour, Clickable
     public List<Renderer> renderers;
     public List<(int rendererHashCode, Material material)> defaultMaterials;
     int previousMaterialIndex  = -1;
+    public int selectedPrefabId;
 
     public virtual void Awake()
     {
-        _id = Guid.NewGuid().ToString();
+        selectedPrefabId = gameObject.GetInstanceID();
+        _id = encodeID(this);
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
         gridManager = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
         currentPlacingPrice = GameObject.Find("Placing Price").GetComponent<TextMeshProUGUI>();
@@ -204,8 +208,19 @@ public class Placeable : MonoBehaviour, Clickable
         }
         return newMaterial;
     }
-    public virtual Placeable GetById(string id)
-    {
-        return null;
+
+    public string GetId(){
+        return _id;
     }
+
+    public static string encodeID(System.Object obj){
+        return obj.GetType().Name+ ":" + Guid.NewGuid().ToString();
+    }
+
+    public static string decodeID(string id){
+        return id.Substring(0, id.IndexOf(":"));
+    }
+
+
+    
 }

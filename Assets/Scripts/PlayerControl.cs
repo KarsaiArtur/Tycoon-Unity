@@ -6,6 +6,10 @@ using UnityEngine.AI;
 using Unity.AI.Navigation;
 using Cinemachine;
 
+/////Attributes, DONT DELETE
+//////Vector3 position;Quaternion rotation//////////
+//////SERIALIZABLE:YES/
+
 public class PlayerControl : MonoBehaviour
 {
     const float degToRad = (float)Math.PI / 180.0f;
@@ -36,6 +40,7 @@ public class PlayerControl : MonoBehaviour
     public GameObject animalDroppingPrefab;
     public List<string> placedTags;
 
+    public List<string> environmentTags;
     public float maxTerrainHeight = 7;
     public float minTerrainHeight = -3;
     private GridManager gridM;
@@ -100,7 +105,8 @@ public class PlayerControl : MonoBehaviour
 
     void Start()
     {
-        placedTags = new List<string>() { "Placed", "Placed Fence", "Placed Path"};
+        placedTags = new List<string>() { "Placed", "Placed Fence", "Placed Path", "ZooFence"};
+        environmentTags = new List<string>() {"ZooFence"};
         angle = 90 - transform.eulerAngles.y;
         VirtualCamera.transform.rotation = GameCamera.transform.rotation;
         gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
@@ -360,6 +366,7 @@ public class PlayerControl : MonoBehaviour
         {
             curPlaceable = placeable;
             var newSelected = Instantiate(placeable, new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
+            newSelected.selectedPrefabId = placeable.gameObject.GetInstanceID();
             m_Selected = newSelected;
             canBePlaced = true;
             if (m_Selected.gameObject.CompareTag("Fence") && fenceIndex != 0)
@@ -377,6 +384,9 @@ public class PlayerControl : MonoBehaviour
             m_Selected = Instantiate(fences[fenceIndex], new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
         else
             m_Selected = Instantiate(fences[fenceIndex], deletePosition, new Quaternion(0, 0, 0, 0));
+
+        
+        m_Selected.selectedPrefabId = fences[fenceIndex].gameObject.GetInstanceID();
     }
 
     public void ChangeFence(int index)
@@ -402,6 +412,7 @@ public class PlayerControl : MonoBehaviour
     public Path SpawnPath(Path path)
     {
         Path newPath = Instantiate(path, new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
+        newPath.selectedPrefabId = path.gameObject.GetInstanceID();
         m_Selected.Change(newPath);
         return newPath;
     }
@@ -802,7 +813,7 @@ public class PlayerControl : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit))
         {
-            if (placedTags.Contains(hit.collider.tag))
+            if (placedTags.Contains(hit.collider.tag) && !environmentTags.Contains(hit.collider.tag))
             {
                 chosenForDelete = hit.collider.GetComponentInParent<Placeable>();
                 if(prevChosenForDelete != null && prevChosenForDelete != chosenForDelete)

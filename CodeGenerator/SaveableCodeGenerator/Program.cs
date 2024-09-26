@@ -8,7 +8,18 @@ using System.Runtime.InteropServices;
 
 
 public class MyProgram{
-    static List<string> primitives = ["bool", "string", "int", "float", "long", "Vector3", "Vector3[]", "Quaternion", "DateTime"];
+    static List<string> primitives = ["bool", "string", "int", "float", "long", "Vector3", "Vector2", "Vector3[]", "Quaternion", "DateTime", "Grid", "Grid[,]"];
+    static List<string> nonBehaviour = ["Grid", "Grid[,]"];
+    static List<string> transforms = ["position","rotation","localScale"];
+
+    static List<(string interfaceName, string[] classNames, string[] baseAttributes)> interfaces = new List<(string interfaceName, string[] className, string[] baseAttributes)>()
+    { 
+        (
+            "AnimalVisitable", 
+            ["WaterTrough", "AnimalFood"],
+            ["position", "selectedPrefabId", "rotation"]
+        ),
+    };
 
     class Attribute{
         public string type;
@@ -71,18 +82,20 @@ public class MyProgram{
         string end = fileContent.Substring(fileContent.LastIndexOf("}"));
 
         string attributesString = fileContent.Substring(fileContent.IndexOf("//////"));
-        attributesString = attributesString.Substring(0, attributesString.LastIndexOf("/////")).Replace("/", "").Replace(System.Environment.NewLine, "");
+        attributesString = attributesString.Substring(0, attributesString.LastIndexOf("//////////")).Replace("/", "").Replace(System.Environment.NewLine, "");
         
-        foreach(var st in attributesString.Split(",")){
+        foreach(var st in attributesString.Split(";")){
             string[] attribute = st.Split(" ");
             bool isList = false;
+            
             if(attribute[0].Contains("List")){
                 attribute[0] = attribute[0].Substring(attribute[0].IndexOf("<")+1);
-                attribute[0] = attribute[0].Substring(0, attribute[0].IndexOf(">"));
+                attribute[0] = attribute[0].Substring(0, attribute[0].LastIndexOf(">"));
                 isList = true;
             }
+            attribute[0] = attribute[0].Replace("_", " ");
             
-            bool isPrimitive = primitives.Contains(attribute[0]) ? true : false;
+            bool isPrimitive = primitives.Where(element => attribute[0].Contains(element)).FirstOrDefault() != null ? true : false;
             attributes.Add(new Attribute(attribute[0], attribute[1], isList, isPrimitive));
         }
 
@@ -126,11 +139,11 @@ public class MyProgram{
     static string attributesWithType(){
         var finalAttribute = attributes[0].isPrimitive ? attributes[0].type : attributes[0].type + "Data";
         finalAttribute = attributes[0].isList ? $"List<{finalAttribute}>" : finalAttribute;
-        string _string = $"{finalAttribute} {attributes[0].name}";
+        string _string = $"{finalAttribute} {attributes[0].name}Param";
         foreach(var attribute in attributes.Skip(1)){
             finalAttribute = attribute.isPrimitive ? attribute.type : attribute.type + "Data";
             finalAttribute = attribute.isList ? $"List<{finalAttribute}>" : finalAttribute;
-            _string += $", {finalAttribute} {attribute.name}";
+            _string += $", {finalAttribute} {attribute.name}Param";
         }
         return _string;
     }
@@ -160,10 +173,10 @@ public class MyProgram{
             return _string;
         }
 
-        string attributeName = (attributes[0].name.Equals("position") || attributes[0].name.Equals("rotation")) && !isSet ? $"transform.{attributes[0].name}" : attributes[0].name;
+        string attributeName = transforms.Contains(attributes[0].name) && !isSet ? $"transform.{attributes[0].name}" : attributes[0].name;
         _string = $"{beforeAttribute}{attributeName}";
         foreach(var attribute in attributes.Skip(1)){
-            attributeName = (attribute.name.Equals("position") || attribute.name.Equals("rotation")) && !isSet ? $"transform.{attribute.name}"  : attribute.name;
+            attributeName = transforms.Contains(attribute.name) && !isSet ? $"transform.{attribute.name}"  : attribute.name;
             _string += $", {beforeAttribute}{attributeName}";
         }
         return _string;
@@ -172,31 +185,42 @@ public class MyProgram{
     static string attributesInLines(bool withAfterAttribute = false){
         string _string = "";
         foreach(var attribute in attributes){
-            string attriButeName = (attribute.name.Equals("position") || attribute.name.Equals("rotation")) && !withAfterAttribute ? $"transform.{attribute.name}" : attribute.name;
+            string attriButeName = transforms.Contains(attribute.name) && !withAfterAttribute ? $"transform.{attribute.name}" : attribute.name;
             string finalAttribute = "";
             if(withAfterAttribute){
                 finalAttribute = attribute.type switch
                 {
-                    "DateTime" => ".Ticks",
-                    _ => "",
+                    "DateTime" => "Param.Ticks",
+                    _ => "Param",
                 };
             }
             
             string attributeString =
-$"           this.{attriButeName} = {attribute.name}{finalAttribute};";
+$"           {attriButeName} = {attribute.name}{finalAttribute};";
             _string += System.Environment.NewLine + attributeString;
         }
         return _string;
     }
 
     static string writeDataClass(string className){
+        (string interfaceName, string[] classNames, string[] baseAttributes) derive = ("", [], []);
+        foreach(var key in interfaces){
+            if(key.classNames.Contains(className)){
+                derive = key;
+                derive.interfaceName = " : " + key.interfaceName + "Data";
+            }
+        }
+
         string classString = 
 (isSerializable ? @"    [Serializable]
 " : "")
-+ $"    public class {className}Data"+@"
++ $"    public class {className}Data{derive.interfaceName}"+@"
     {";
         foreach(var attribute in attributes){
-            string finalAttribute = "";
+            if(derive.interfaceName != "" && derive.baseAttributes.Contains(attribute.name)){
+
+            } else{
+                string finalAttribute = "";
             finalAttribute = attribute.type switch
             {
                 "DateTime" => "long",
@@ -207,6 +231,7 @@ $"           this.{attriButeName} = {attribute.name}{finalAttribute};";
             string attributeString =
 $"        public {finalAttribute} {attribute.name};";
             classString += System.Environment.NewLine + attributeString;
+            }
         }
         classString += System.Environment.NewLine  + System.Environment.NewLine +
 $"        public {className}Data(";
@@ -283,16 +308,22 @@ $"        public {className}Data(";
         return _string;
      }
 
-     static string fromDataList(string beforeAttribute = ""){
+     static string fromDataList(string beforeAttribute = "", bool isFrom = false){
         string _string = "";
+        string paramString = isFrom ? "" : "Param";
+
+
         foreach(var attribute in attributes){
             if(!attribute.isPrimitive){
+
                 if(attribute.isList){
                     _string += System.Environment.NewLine
-+ $"        foreach(var element in {attribute.name}){{" + System.Environment.NewLine
++ $"        foreach(var element in {attribute.name}{paramString}){{" + System.Environment.NewLine
 + $"            var spawned = Instantiate(PrefabManager.instance.GetPrefab(element.selectedPrefabId), element.position, element.rotation);" + @"
 "+ $"            var script = "+ (attribute.type.Equals("Nature") ? "spawned.AddComponent<LoadedNature>();" : $"spawned.GetComponent<{attribute.type}>();")  + @"
 "+ @"            script.FromData(element);
+            script.LoadHelper();
+            AddList(script);
         }
 ";              
                 }
@@ -303,11 +334,13 @@ $"        public {className}Data(";
                 }
             }
             else{
+                string isNew = attribute.type.Equals("DateTime") && isFrom ? "new DateTime(" : "";
+                string isNewAfter = attribute.type.Equals("DateTime") && isFrom ? ")" : "";
                 {
-                string attriButeName = attribute.name.Equals("position") || attribute.name.Equals("rotation") ? $"transform.{attribute.name}" : attribute.name;
+                string attriButeName = transforms.Contains(attribute.name) ? $"transform.{attribute.name}" : attribute.name;
             
                 string attributeString =
-    $"           this.{attriButeName} = {beforeAttribute}{attribute.name};";
+    $"           {attriButeName} = {isNew}{beforeAttribute}{attribute.name}{isNewAfter}{paramString};";
                 _string += System.Environment.NewLine + attributeString;
             }
             }
@@ -316,19 +349,35 @@ $"        public {className}Data(";
      }
 
      static string writeToDataClass(string className){
+        string derive = className;
+        foreach(var key in interfaces){
+            if(key.classNames.Contains(className)){
+                derive = key.interfaceName;
+            }
+        }
+
         return 
 @"    
-"+$"    public {className}Data ToData(){{"+@"
+"+$"    public {derive}Data ToData(){{"+@"
 "+$"         return new {className}Data("+ attributesWithoutType() +@");
     }
 ";
      }
 
      static string writeFromDataClass(string className){
+        string derive = className;
+        foreach(var key in interfaces){
+            if(key.classNames.Contains(className)){
+                derive = key.interfaceName;
+            }
+        }
+        string dataAttribute = !derive.Equals(className) ? "castedData" : "data";
+
         return 
 @"    
-"+$"    public void FromData({className}Data data){{"+@"
-        "+fromDataList("data.")+@"
+"+$"    public void FromData({derive}Data data){{"+@"
+        "+ (!derive.Equals(className) ? $"var castedData = ({className}Data)data;": "")
+        +fromDataList(dataAttribute + ".", true)+@"
     }
 ";
      }

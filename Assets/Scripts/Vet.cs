@@ -2,6 +2,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/////Attributes, DONT DELETE
+//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;int placeablePrice;string tag//////////
+//////SERIALIZABLE:YES/
+
 public class Vet : Staff
 {
     Animal animalToHeal;
@@ -28,7 +32,7 @@ public class Vet : Staff
         isAvailable = false;
 
         var animalSickness = new List<(Exhibit exhibit, Animal animal, float health)>();
-        foreach (Exhibit exhibit in GridManager.instance.exhibits)
+        foreach (Exhibit exhibit in ExhibitManager.instance.exhibitList)
         {
             if (exhibit.GetAnimals().Count > 0 && !exhibit.unreachableForStaff)
             {

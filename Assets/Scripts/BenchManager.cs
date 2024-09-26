@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/////Attributes, DONT DELETE
+//////List<Bench> benchList///////////////
+
 public class BenchManager : MonoBehaviour
 {
     static public BenchManager instance;

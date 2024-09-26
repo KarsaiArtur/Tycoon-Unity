@@ -6,7 +6,11 @@ using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class Animal : Placeable
+/////Saveable Attributes, DONT DELETE
+//////string _id;Vector3 position;Quaternion rotation;Vector3 localScale;int selectedPrefabId;string tag;int placeablePrice;string placeableName;string exhibitId;float hunger;float thirst;float restroomNeeds;float happiness;float health;DateTime prevDay;bool isSick;float age;DateTime birthDate;bool isMale;bool isPregnant;int dayOfConception;int fertility//////////
+//////SERIALIZABLE:YES/
+
+public class Animal : Placeable, Saveable
 {
     public Material[] materials;
     Vector3 defaultScale;
@@ -126,11 +130,24 @@ public class Animal : Placeable
             transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
         else
             transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+        
         GetExhibit(gridManager.GetGrid(transform.position).GetExhibit()._id);
         GetExhibit().AddAnimal(this);
         agent.Warp(transform.position);
         placed = true;
         birthDate = CalendarManager.instance.currentDate;
+
+        hunger = UnityEngine.Random.Range(50, 100);
+        thirst = UnityEngine.Random.Range(50, 100);
+        restroomNeeds = UnityEngine.Random.Range(50, 100);
+        happiness = UnityEngine.Random.Range(50, 100);
+        health = UnityEngine.Random.Range(75, 100);
+
+        fertility = UnityEngine.Random.Range(50, 100);
+        
+        age = UnityEngine.Random.Range((int)Math.Ceiling((double)lifeExpectancy / 10), (int)Mathf.Floor((float)lifeExpectancy / 5));
+
+        SetSize();
 
         VisitorManager.instance.CalculateAnimalBonus(this);
         StartCoroutine(DecreaseNeeds());
@@ -147,7 +164,7 @@ public class Animal : Placeable
         if (GetExhibit() != null)
             GetExhibit().RemoveAnimal(this);
         else
-            gridManager.freeAnimals.Remove(this);
+            AnimalManager.instance.freeAnimals.Remove(this);
 
         VisitorManager.instance.DecreaseAnimalBonus(this);
         if (currentPlacingPriceInstance != null)
@@ -157,34 +174,20 @@ public class Animal : Placeable
         Destroy(gameObject);
     }
 
-    public void Start()
+    public override void Awake()
     {
+        base.Awake();
         hungerDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
         thirstDetriment = UnityEngine.Random.Range(0.45f, 0.55f);
         restroomNeedsDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
         happinessDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
         healthDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
 
-        hunger = UnityEngine.Random.Range(50, 100);
-        thirst = UnityEngine.Random.Range(50, 100);
-        restroomNeeds = UnityEngine.Random.Range(50, 100);
-        happiness = UnityEngine.Random.Range(50, 100);
-        health = UnityEngine.Random.Range(75, 100);
-
-        fertility = UnityEngine.Random.Range(50, 100);
-
-        age = UnityEngine.Random.Range((int)Math.Ceiling((double)lifeExpectancy / 10), (int)Mathf.Floor((float)lifeExpectancy / 5));
         defaultScale = transform.localScale;
         defaultSpeed = agent.speed;
 
         for (int i = 0; i < 6; i++)
             sizeAges.Add((float)i * fullGrownAgeMonth / 5);
-
-        for (int i = 0; i < 6; i++)
-        {
-            if (age * 12 >= sizeAges[i])
-                transform.localScale = defaultScale * (0.5f + i * 0.1f);
-        }
 
         prevDay = CalendarManager.instance.currentDate;
     }
@@ -206,18 +209,16 @@ public class Animal : Placeable
                 foreach (var animal in GetExhibit().GetAnimals())
                 {
                     if (animal.placeableName != placeableName)
+                    {
                         GetExhibit().isMixed = true;
+                        FleeAndAttack(GetExhibit().GetAnimals());
+                    }
                 }
-            }
-
-            if (GetExhibit() != null && GetExhibit().isMixed)
-            {
-                FleeAndAttack(GetExhibit().GetAnimals());
             }
 
             if (GetExhibit() == null)
             {
-                FleeAndAttack(GridManager.instance.freeAnimals);
+                FleeAndAttack(AnimalManager.instance.freeAnimals);
             }
 
             if (CalendarManager.instance.currentDate != prevDay)
@@ -282,6 +283,15 @@ public class Animal : Placeable
         }
     }
 
+    public void SetSize()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (age * 12 >= sizeAges[i])
+                transform.localScale = defaultScale * (0.5f + i * 0.1f);
+        }
+    }
+
     public void Die()
     {
         health = 0;
@@ -302,6 +312,7 @@ public class Animal : Placeable
             {
                 GetTarget().Die();
                 GetTarget("");
+                atDestination = true;
             }
             attackCooldown = 0;
         }
@@ -313,6 +324,7 @@ public class Animal : Placeable
         animalDropping.tag = "Placed";
         GetExhibit().animalDroppings.Add(animalDropping);
         restroomNeeds = UnityEngine.Random.Range(75f, 100f);
+        restroomNeedsDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
     }
 
     void Mate()
@@ -343,11 +355,7 @@ public class Animal : Placeable
                 age += 1f / 12f;
                 Debug.Log("Age: " + age);
 
-                for (int i = 0; i < 6; i++)
-                {
-                    if (age * 12 >= sizeAges[i])
-                        transform.localScale = defaultScale * (0.5f + i * 0.1f);
-                }
+                SetSize();
 
                 if (UnityEngine.Random.Range(lifeExpectancy - lifeExpectancy / 10, lifeExpectancy + lifeExpectancy / 5) < age)
                     Die();
@@ -383,7 +391,6 @@ public class Animal : Placeable
         {
             action = "fleeing";
             agent.speed = defaultSpeed * 4;
-            //Debug.Log(placeableName + " Fleeing");
             ChooseDestination();
         }
         else if (isAgressive)
@@ -413,7 +420,6 @@ public class Animal : Placeable
             {
                 action = "attacking";
                 agent.speed = defaultSpeed * 4;
-                //Debug.Log(placeableName + " Attacking");
                 ChooseDestination();
             }
         }
@@ -473,7 +479,7 @@ public class Animal : Placeable
     {
         GetExhibit(GridManager.instance.GetGrid(transform.position).GetExhibit()._id);
         GetExhibit().AddAnimal(this);
-        gridManager.freeAnimals.Remove(this);
+        AnimalManager.instance.freeAnimals.Remove(this);
         agent.speed = defaultSpeed;
         GetTarget("");
         action = "";
@@ -567,7 +573,7 @@ public class Animal : Placeable
             }
         }
         stuckTime += Time.deltaTime;
-        if (stuckTime > 60)
+        if (stuckTime > 30)
         {
             atDestination = true;
         }
@@ -605,7 +611,13 @@ public class Animal : Placeable
                 if (GetExhibit() != null)
                     destinationGrid = GetExhibit().gridList[UnityEngine.Random.Range(0, GetExhibit().gridList.Count)];
                 else
-                    destinationGrid = GridManager.instance.grids[UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth), UnityEngine.Random.Range(0, GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth)];
+                {
+                    int minX = (int)(Mathf.Floor(transform.position.x) - 10 > 0 ? Mathf.Floor(transform.position.x) - 10 : 0);
+                    int maxX = (int)(Mathf.Floor(transform.position.x) + 10 < GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth ? Mathf.Floor(transform.position.x) + 10 : GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth);
+                    int minZ = (int)(Mathf.Floor(transform.position.z) - 10 > 0 ? Mathf.Floor(transform.position.z) - 10 : 0);
+                    int maxZ = (int)(Mathf.Floor(transform.position.z) + 10 < GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth ? Mathf.Floor(transform.position.z) + 10 : GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth);
+                    destinationGrid = GridManager.instance.grids[UnityEngine.Random.Range(minX, maxX), UnityEngine.Random.Range(minZ, maxZ)];
+                }
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
                 break;
             case "mating":
@@ -676,8 +688,12 @@ public class Animal : Placeable
         playerControl.SetInfopopup(newInfopopup);
     }
 
-    public override Placeable GetById(string id){
-        return AnimalManager.instance.animalList.Where((element) => element._id == destinationVisitableId).FirstOrDefault();
+    public void LoadHelper()
+    {
+        agent.Warp(transform.position);
+        placed = true;
+        StartCoroutine(DecreaseNeeds());
+        SetSize();
     }
 
 ////GENERATED
@@ -690,7 +706,7 @@ public class Animal : Placeable
         if(id != exhibitId || exhibit == null)
         {
             exhibitId = id;
-            exhibit = ExhibitManager.instance.exhibitList.Where((element) => element._id == exhibitId).FirstOrDefault();
+            exhibit = ExhibitManager.instance.exhibitList.Where((element) => element.GetId() == exhibitId).FirstOrDefault();
         }
         return exhibit;
     }
@@ -703,7 +719,7 @@ public class Animal : Placeable
         if(id != destinationVisitableId || destinationVisitable == null)
         {
             destinationVisitableId = id;
-            destinationVisitable = AnimalVisitableManager.instance.animalvisitableList.Where((element) => element._id == destinationVisitableId).FirstOrDefault();
+            destinationVisitable = AnimalVisitableManager.instance.animalvisitableList.Where((element) => element.GetId() == destinationVisitableId).FirstOrDefault();
         }
         return destinationVisitable;
     }
@@ -716,7 +732,7 @@ public class Animal : Placeable
         if(id != matingPartnerId || matingPartner == null)
         {
             matingPartnerId = id;
-            matingPartner = AnimalManager.instance.animalList.Where((element) => element._id == matingPartnerId).FirstOrDefault();
+            matingPartner = AnimalManager.instance.animalList.Where((element) => element.GetId() == matingPartnerId).FirstOrDefault();
         }
         return matingPartner;
     }
@@ -729,8 +745,136 @@ public class Animal : Placeable
         if(id != targetId || target == null)
         {
             targetId = id;
-            target = AnimalManager.instance.animalList.Where((element) => element._id == targetId).FirstOrDefault();
+            target = AnimalManager.instance.animalList.Where((element) => element.GetId() == targetId).FirstOrDefault();
         }
         return target;
+    }
+///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    [Serializable]
+    public class AnimalData
+    {
+        public string _id;
+        public Vector3 position;
+        public Quaternion rotation;
+        public Vector3 localScale;
+        public int selectedPrefabId;
+        public string tag;
+        public int placeablePrice;
+        public string placeableName;
+        public string exhibitId;
+        public float hunger;
+        public float thirst;
+        public float restroomNeeds;
+        public float happiness;
+        public float health;
+        public long prevDay;
+        public bool isSick;
+        public float age;
+        public long birthDate;
+        public bool isMale;
+        public bool isPregnant;
+        public int dayOfConception;
+        public int fertility;
+
+        public AnimalData(string _idParam, Vector3 positionParam, Quaternion rotationParam, Vector3 localScaleParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, string placeableNameParam, string exhibitIdParam, float hungerParam, float thirstParam, float restroomNeedsParam, float happinessParam, float healthParam, DateTime prevDayParam, bool isSickParam, float ageParam, DateTime birthDateParam, bool isMaleParam, bool isPregnantParam, int dayOfConceptionParam, int fertilityParam)
+        {
+           _id = _idParam;
+           position = positionParam;
+           rotation = rotationParam;
+           localScale = localScaleParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           tag = tagParam;
+           placeablePrice = placeablePriceParam;
+           placeableName = placeableNameParam;
+           exhibitId = exhibitIdParam;
+           hunger = hungerParam;
+           thirst = thirstParam;
+           restroomNeeds = restroomNeedsParam;
+           happiness = happinessParam;
+           health = healthParam;
+           prevDay = prevDayParam.Ticks;
+           isSick = isSickParam;
+           age = ageParam;
+           birthDate = birthDateParam.Ticks;
+           isMale = isMaleParam;
+           isPregnant = isPregnantParam;
+           dayOfConception = dayOfConceptionParam;
+           fertility = fertilityParam;
+        }
+    }
+
+    AnimalData data; 
+    
+    public string DataToJson(){
+        AnimalData data = new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility);
+        return JsonUtility.ToJson(data);
+    }
+    
+    public void FromJson(string json){
+        data = JsonUtility.FromJson<AnimalData>(json);
+        SetData(data._id, data.position, data.rotation, data.localScale, data.selectedPrefabId, data.tag, data.placeablePrice, data.placeableName, data.exhibitId, data.hunger, data.thirst, data.restroomNeeds, data.happiness, data.health, new DateTime(data.prevDay), data.isSick, data.age, new DateTime(data.birthDate), data.isMale, data.isPregnant, data.dayOfConception, data.fertility);
+    }
+    
+    public string GetFileName(){
+        return "Animal.json";
+    }
+    
+    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, Vector3 localScaleParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, string placeableNameParam, string exhibitIdParam, float hungerParam, float thirstParam, float restroomNeedsParam, float happinessParam, float healthParam, DateTime prevDayParam, bool isSickParam, float ageParam, DateTime birthDateParam, bool isMaleParam, bool isPregnantParam, int dayOfConceptionParam, int fertilityParam){ 
+        
+           _id = _idParam;
+           transform.position = positionParam;
+           transform.rotation = rotationParam;
+           transform.localScale = localScaleParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           tag = tagParam;
+           placeablePrice = placeablePriceParam;
+           placeableName = placeableNameParam;
+           exhibitId = exhibitIdParam;
+           hunger = hungerParam;
+           thirst = thirstParam;
+           restroomNeeds = restroomNeedsParam;
+           happiness = happinessParam;
+           health = healthParam;
+           prevDay = prevDayParam;
+           isSick = isSickParam;
+           age = ageParam;
+           birthDate = birthDateParam;
+           isMale = isMaleParam;
+           isPregnant = isPregnantParam;
+           dayOfConception = dayOfConceptionParam;
+           fertility = fertilityParam;
+    }
+    
+    public AnimalData ToData(){
+         return new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility);
+    }
+    
+    public void FromData(AnimalData data){
+        
+           _id = data._id;
+           transform.position = data.position;
+           transform.rotation = data.rotation;
+           transform.localScale = data.localScale;
+           selectedPrefabId = data.selectedPrefabId;
+           tag = data.tag;
+           placeablePrice = data.placeablePrice;
+           placeableName = data.placeableName;
+           exhibitId = data.exhibitId;
+           hunger = data.hunger;
+           thirst = data.thirst;
+           restroomNeeds = data.restroomNeeds;
+           happiness = data.happiness;
+           health = data.health;
+           prevDay = new DateTime(data.prevDay);
+           isSick = data.isSick;
+           age = data.age;
+           birthDate = new DateTime(data.birthDate);
+           isMale = data.isMale;
+           isPregnant = data.isPregnant;
+           dayOfConception = data.dayOfConception;
+           fertility = data.fertility;
     }
 }
