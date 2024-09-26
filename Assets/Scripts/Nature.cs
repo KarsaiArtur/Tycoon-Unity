@@ -109,6 +109,11 @@ public class Nature : Placeable, Saveable
         }
         Destroy(gameObject);
     }
+
+    public void LoadHelper()
+    {
+        GridManager.instance.GetGrid(transform.position).AddNatures(this);
+    }
 ///******************************
     ///GENERATED CODE, DONT MODIFY
     ///******************************

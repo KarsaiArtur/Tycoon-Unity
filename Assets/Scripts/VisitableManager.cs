@@ -58,8 +58,8 @@ public class VisitableManager : MonoBehaviour, Saveable
         if(reachableExhibits == null)
         {
              reachableExhibits = new List<Visitable>();
-             foreach(var element in reachableExhibits){
-                reachableExhibits.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in reachableExhibitsIds){
+                reachableExhibits.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return reachableExhibits;
@@ -83,8 +83,8 @@ public class VisitableManager : MonoBehaviour, Saveable
         if(reachableFoodBuildings == null)
         {
              reachableFoodBuildings = new List<Visitable>();
-             foreach(var element in reachableFoodBuildings){
-                reachableFoodBuildings.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in reachableFoodBuildingsIds){
+                reachableFoodBuildings.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return reachableFoodBuildings;
@@ -108,8 +108,8 @@ public class VisitableManager : MonoBehaviour, Saveable
         if(reachableDrinkBuildings == null)
         {
              reachableDrinkBuildings = new List<Visitable>();
-             foreach(var element in reachableDrinkBuildings){
-                reachableDrinkBuildings.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in reachableDrinkBuildingsIds){
+                reachableDrinkBuildings.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return reachableDrinkBuildings;
@@ -133,8 +133,8 @@ public class VisitableManager : MonoBehaviour, Saveable
         if(reachableEnergyBuildings == null)
         {
              reachableEnergyBuildings = new List<Visitable>();
-             foreach(var element in reachableEnergyBuildings){
-                reachableEnergyBuildings.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in reachableEnergyBuildingsIds){
+                reachableEnergyBuildings.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return reachableEnergyBuildings;
@@ -158,8 +158,8 @@ public class VisitableManager : MonoBehaviour, Saveable
         if(reachableRestroomBuildings == null)
         {
              reachableRestroomBuildings = new List<Visitable>();
-             foreach(var element in reachableRestroomBuildings){
-                reachableRestroomBuildings.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in reachableRestroomBuildingsIds){
+                reachableRestroomBuildings.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return reachableRestroomBuildings;
@@ -183,8 +183,8 @@ public class VisitableManager : MonoBehaviour, Saveable
         if(reachableHappinessBuildings == null)
         {
              reachableHappinessBuildings = new List<Visitable>();
-             foreach(var element in reachableHappinessBuildings){
-                reachableHappinessBuildings.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in reachableHappinessBuildingsIds){
+                reachableHappinessBuildings.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return reachableHappinessBuildings;

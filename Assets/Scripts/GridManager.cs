@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using static Grid;
 
-//,Grid[,] grids
-
 /////Saveable Attributes, DONT DELETE
-//////Vector3[] coords;Grid[,] grids//////////
+//////Vector3[] coords//////////
 
 public class GridManager : MonoBehaviour, Saveable
 {
@@ -490,43 +488,7 @@ public class GridManager : MonoBehaviour, Saveable
 
     public void LoadHelper()
     {
-        for (int i = 0; i < terrainWidth - 2 * elementWidth; i++)
-        {
-            for (int j = 0; j < terrainWidth - 2 * elementWidth; j++)
-            {
-                if (i == 0)
-                {
-                    grids[j, i].neighbours[0] = null;
-                    grids[j, i].trueNeighbours[0] = null;
-                }
-                else
-                {
-                    grids[j, i].SetNeighbour0(grids[j, i - 1]);
-                }
-
-                if (i == terrainWidth - 2 * elementWidth - 1)
-                {
-                    grids[j, i].neighbours[2] = null;
-                    grids[j, i].trueNeighbours[2] = null;
-                }
-
-                if (j == 0)
-                {
-                    grids[j, i].neighbours[1] = null;
-                    grids[j, i].trueNeighbours[1] = null;
-                }
-                else
-                {
-                    grids[j, i].SetNeighbour1(grids[j - 1, i]);
-                }
-
-                if (j == terrainWidth - 2 * elementWidth - 1)
-                {
-                    grids[j, i].neighbours[3] = null;
-                    grids[j, i].trueNeighbours[3] = null;
-                }
-            }
-        }
+        InitializeGrids();
     }
 
     ///******************************

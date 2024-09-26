@@ -170,8 +170,8 @@ public abstract class BuildingAncestor : Placeable, Visitable
         if(visitors == null)
         {
              visitors = new List<Visitor>();
-             foreach(var element in visitors){
-                visitors.Add(VisitorManager.instance.visitorList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in visitorsIds){
+                visitors.Add(VisitorManager.instance.visitorList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return visitors;

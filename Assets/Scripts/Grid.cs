@@ -84,8 +84,8 @@ public class Grid : Saveable
         if(natures == null)
         {
              natures = new List<Nature>();
-             foreach(var element in natures){
-                natures.Add(NatureManager.instance.natureList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in naturesIds){
+                natures.Add(NatureManager.instance.natureList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return natures;

@@ -141,6 +141,7 @@ public class Path : Placeable, Saveable
 
     public void LoadHelper()
     {
+        GridManager.instance.GetGrid(transform.position).isPath = true;
         playerControl.ReloadGuestNavMesh();
     }
 ///******************************

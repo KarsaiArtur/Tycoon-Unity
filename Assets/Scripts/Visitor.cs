@@ -455,8 +455,8 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         if(unvisitedExhibits == null)
         {
              unvisitedExhibits = new List<Visitable>();
-             foreach(var element in unvisitedExhibits){
-                unvisitedExhibits.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in unvisitedExhibitsIds){
+                unvisitedExhibits.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return unvisitedExhibits;

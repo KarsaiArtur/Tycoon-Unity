@@ -136,14 +136,14 @@ return $"    public {attribute.type} Get{name}(string id = null)"+@"
     static string writeGetListFunction(Attribute attribute){
         var name = attribute.name[0].ToString().ToUpper() + attribute.name[1..];
         var managerList = attribute.type.ToLower() + "List";
-        var addString = animalVisitables.Contains(attribute.type) ? $"({attribute.type})AnimalVisitableManager.instance.animalvisitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault()"
-        : $"{attribute.type}Manager.instance.{managerList}.Where((e) => e.GetId() == element.GetId()).FirstOrDefault()";
+        var addString = animalVisitables.Contains(attribute.type) ? $"({attribute.type})AnimalVisitableManager.instance.animalvisitableList.Where((e) => e.GetId() == element).FirstOrDefault()"
+        : $"{attribute.type}Manager.instance.{managerList}.Where((e) => e.GetId() == element).FirstOrDefault()";
 return $"    public List<{attribute.type}> Get{name}()"+@"
     {
 "+$"        if({attribute.name} == null)"+@"
         {
 "+$"             {attribute.name} = new List<{attribute.type}>();"+@"
-"+$"             foreach(var element in {attribute.name}){{"+@"
+"+$"             foreach(var element in {attribute.name}Ids){{"+@"
 "+$"                {attribute.name}.Add("+addString+@");
 "+$"             }}"+@"
         }

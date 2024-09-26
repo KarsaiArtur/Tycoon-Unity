@@ -437,8 +437,8 @@ public class Exhibit : Placeable, Visitable, Saveable
         if(animals == null)
         {
              animals = new List<Animal>();
-             foreach(var element in animals){
-                animals.Add(AnimalManager.instance.animalList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in animalsIds){
+                animals.Add(AnimalManager.instance.animalList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return animals;
@@ -462,8 +462,8 @@ public class Exhibit : Placeable, Visitable, Saveable
         if(foliages == null)
         {
              foliages = new List<Nature>();
-             foreach(var element in foliages){
-                foliages.Add(NatureManager.instance.natureList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in foliagesIds){
+                foliages.Add(NatureManager.instance.natureList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return foliages;
@@ -487,8 +487,8 @@ public class Exhibit : Placeable, Visitable, Saveable
         if(staffs == null)
         {
              staffs = new List<Staff>();
-             foreach(var element in staffs){
-                staffs.Add(StaffManager.instance.staffList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in staffsIds){
+                staffs.Add(StaffManager.instance.staffList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return staffs;
@@ -512,8 +512,8 @@ public class Exhibit : Placeable, Visitable, Saveable
         if(staffsAtGate == null)
         {
              staffsAtGate = new List<Staff>();
-             foreach(var element in staffsAtGate){
-                staffsAtGate.Add(StaffManager.instance.staffList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in staffsAtGateIds){
+                staffsAtGate.Add(StaffManager.instance.staffList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return staffsAtGate;
@@ -537,8 +537,8 @@ public class Exhibit : Placeable, Visitable, Saveable
         if(foodPlaces == null)
         {
              foodPlaces = new List<AnimalFood>();
-             foreach(var element in foodPlaces){
-                foodPlaces.Add((AnimalFood)AnimalVisitableManager.instance.animalvisitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in foodPlacesIds){
+                foodPlaces.Add((AnimalFood)AnimalVisitableManager.instance.animalvisitableList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return foodPlaces;
@@ -562,8 +562,8 @@ public class Exhibit : Placeable, Visitable, Saveable
         if(waterPlaces == null)
         {
              waterPlaces = new List<WaterTrough>();
-             foreach(var element in waterPlaces){
-                waterPlaces.Add((WaterTrough)AnimalVisitableManager.instance.animalvisitableList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in waterPlacesIds){
+                waterPlaces.Add((WaterTrough)AnimalVisitableManager.instance.animalvisitableList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return waterPlaces;
@@ -587,8 +587,8 @@ public class Exhibit : Placeable, Visitable, Saveable
         if(visitors == null)
         {
              visitors = new List<Visitor>();
-             foreach(var element in visitors){
-                visitors.Add(VisitorManager.instance.visitorList.Where((e) => e.GetId() == element.GetId()).FirstOrDefault());
+             foreach(var element in visitorsIds){
+                visitors.Add(VisitorManager.instance.visitorList.Where((e) => e.GetId() == element).FirstOrDefault());
              }
         }
         return visitors;

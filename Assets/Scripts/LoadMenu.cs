@@ -16,6 +16,8 @@ public class LoadMenu : MonoBehaviour
     
     public static LoadMenu instance;
 
+    //public List<GameObject> managerPrefabs;
+
     void Start(){
     
         canvas = GameObject.FindGameObjectWithTag("Canvas").GetComponent<Canvas>();
