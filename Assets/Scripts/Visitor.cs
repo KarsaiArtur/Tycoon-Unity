@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /////Saveable Attributes, DONT DELETE
-//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;bool atDestination;bool arrived;Vector3 destination;string destinationVisitableId;List<string> unvisitedExhibitsIds;string visitorName;float time;float timeGoal;string currentExhibitId;float hunger;float thirst;float energy;float restroomNeeds;float happiness;string action;bool isFleeing//////////
+//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;bool atDestination;bool arrived;Vector3 destination;string destinationVisitableId;List<string> unvisitedExhibitsIds;string visitorName;float time;float timeGoal;string currentExhibitId;float hunger;float thirst;float energy;float restroomNeeds;float happiness;Action action;bool isFleeing//////////
 //////SERIALIZABLE:YES/
 
 public class Visitor : MonoBehaviour, Clickable, Saveable
@@ -46,12 +46,22 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     float restroomNeedsDetriment = 0.25f;
     float happinessDetriment = 0.25f;
 
-    public string action = "";
+    public Action action;
     bool isFleeing = false;
     public int dangerLevel = 3;
     public int selectedPrefabId;
 
-    public void Start()
+    public enum Action
+    {
+        Food,
+        Drink,
+        Energy,
+        Restroom,
+        Happiness,
+        Leave
+    }
+
+    public void Awake()
     {
         _id = Placeable.encodeID(this);
         visitorName = GenerateName();
@@ -206,19 +216,19 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
 
         switch (action)
         {
-            case "food":
+            case Action.Food:
                 GetDestinationVisitable(ChooseCloseDestination(VisitableManager.instance.GetReachableFoodBuildings()).GetId());
                 break;
-            case "drink":
+            case Action.Drink:
                 GetDestinationVisitable(ChooseCloseDestination(VisitableManager.instance.GetReachableDrinkBuildings()).GetId());
                 break;
-            case "energy":
+            case Action.Energy:
                 GetDestinationVisitable(ChooseCloseDestination(VisitableManager.instance.GetReachableEnergyBuildings()).GetId());
                 break;
-            case "restroom":
+            case Action.Restroom:
                 GetDestinationVisitable(ChooseCloseDestination(VisitableManager.instance.GetReachableRestroomBuildings()).GetId());
                 break;
-            case "happiness":
+            case Action.Happiness:
                 List<Visitable> tempVisitables = new();
                 tempVisitables.AddRange(GetUnvisitedExhibits());
                 tempVisitables.AddRange(VisitableManager.instance.GetReachableHappinessBuildings());
@@ -228,7 +238,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
                 if (destinationExhibit != null) // ha exhibit
                     RemoveUnvisitedExhibits((Exhibit)GetDestinationVisitable());
                 break;
-            case "leave":
+            case Action.Leave:
                 if (VisitableManager.instance.GetReachableExhibits().Count - GetUnvisitedExhibits().Count == 0)
                     happiness = happiness - 25 > 0 ? happiness - 25 : 0;
                 GetDestinationVisitable(ZooManager.instance.GetId());
@@ -253,43 +263,43 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
 
     void ChooseDestinationType()
     {
-        var probabilities = new List<(string action, float probability)>();
+        var probabilities = new List<(Action action, float probability)>();
         float sum = 0;
 
         if (VisitableManager.instance.GetReachableFoodBuildings().Count > 0)
         {
             sum += (110 - hunger);
-            probabilities.Add(("food", sum));
+            probabilities.Add((Action.Food, sum));
         }
         if (VisitableManager.instance.GetReachableDrinkBuildings().Count > 0)
         {
             sum += (110 - thirst);
-            probabilities.Add(("drink", sum));
+            probabilities.Add((Action.Drink, sum));
         }
         if (VisitableManager.instance.GetReachableEnergyBuildings().Count > 0)
         {
             sum += (110 - energy);
-            probabilities.Add(("energy", sum));
+            probabilities.Add((Action.Energy, sum));
         }
         if (VisitableManager.instance.GetReachableRestroomBuildings().Count > 0)
         {
             sum += (110 - restroomNeeds);
-            probabilities.Add(("restroom", sum));
+            probabilities.Add((Action.Restroom, sum));
         }
         if (GetUnvisitedExhibits().Count > 0 || VisitableManager.instance.GetReachableHappinessBuildings().Count > 0)
         {
             sum += (200 - happiness);
-            probabilities.Add(("happiness", sum));
+            probabilities.Add((Action.Happiness, sum));
         }
         sum += (100 + 50 * ((VisitableManager.instance.GetReachableExhibits().Count + 1 - GetUnvisitedExhibits().Count) / (VisitableManager.instance.GetReachableExhibits().Count + 1)) - happiness);
         if (GetUnvisitedExhibits().Count == 0)
             sum += 100;
-        probabilities.Add(("leave", sum));
+        probabilities.Add((Action.Leave, sum));
 
         var random = UnityEngine.Random.Range(0, sum);
         action = probabilities.SkipWhile(i => i.probability < random).FirstOrDefault().action;
         if (action == null)
-            action = "leave";
+            action = Action.Leave;
     }
 
     Visitable ChooseCloseDestination(List<Visitable> visitables)
@@ -432,6 +442,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
 
     public void LoadHelper()
     {
+        agent.SetDestination(destination);
         LoadMenu.objectLoadedEvent.Invoke();
     }
 
@@ -515,10 +526,10 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         public float energy;
         public float restroomNeeds;
         public float happiness;
-        public string action;
+        public Action action;
         public bool isFleeing;
 
-        public VisitorData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, bool atDestinationParam, bool arrivedParam, Vector3 destinationParam, string destinationVisitableIdParam, List<string> unvisitedExhibitsIdsParam, string visitorNameParam, float timeParam, float timeGoalParam, string currentExhibitIdParam, float hungerParam, float thirstParam, float energyParam, float restroomNeedsParam, float happinessParam, string actionParam, bool isFleeingParam)
+        public VisitorData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, bool atDestinationParam, bool arrivedParam, Vector3 destinationParam, string destinationVisitableIdParam, List<string> unvisitedExhibitsIdsParam, string visitorNameParam, float timeParam, float timeGoalParam, string currentExhibitIdParam, float hungerParam, float thirstParam, float energyParam, float restroomNeedsParam, float happinessParam, Action actionParam, bool isFleeingParam)
         {
            _id = _idParam;
            position = positionParam;
@@ -565,7 +576,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         return "Visitor.json";
     }
     
-    void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, bool atDestinationParam, bool arrivedParam, Vector3 destinationParam, string destinationVisitableIdParam, List<string> unvisitedExhibitsIdsParam, string visitorNameParam, float timeParam, float timeGoalParam, string currentExhibitIdParam, float hungerParam, float thirstParam, float energyParam, float restroomNeedsParam, float happinessParam, string actionParam, bool isFleeingParam){ 
+    void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, bool atDestinationParam, bool arrivedParam, Vector3 destinationParam, string destinationVisitableIdParam, List<string> unvisitedExhibitsIdsParam, string visitorNameParam, float timeParam, float timeGoalParam, string currentExhibitIdParam, float hungerParam, float thirstParam, float energyParam, float restroomNeedsParam, float happinessParam, Action actionParam, bool isFleeingParam){ 
         
            _id = _idParam;
            transform.position = positionParam;

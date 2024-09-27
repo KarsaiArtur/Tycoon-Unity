@@ -1,10 +1,12 @@
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
+using static AnimalBonus;
 using static Visitor;
 
 /////Saveable Attributes, DONT DELETE
-//////List<Visitor> visitorList;float timeTillSpawn;float animalBonus;List<(string_animal,_float_bonus)> animalBonuses//////////
+//////List<Visitor> visitorList;float timeTillSpawn;float animalBonus;List<AnimalBonus> animalBonuses//////////
 
 public class VisitorManager : MonoBehaviour, Saveable, Manager
 {
@@ -15,7 +17,7 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
     public float SpawnTime = 15;
     List<int> numberOfVisitors;
     float animalBonus = 1;
-    List<(string animal, float bonus)> animalBonuses = new List<(string animal, float bonus)>();
+    List<AnimalBonus> animalBonuses = new List<AnimalBonus>();
 
     public void AddList(Visitor visitor)
     {
@@ -28,7 +30,7 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
         instance = this;
         if(LoadMenu.loadedGame != null){
             LoadMenu.currentManager = this;
-            //LoadMenu.instance.LoadData(this);
+            LoadMenu.instance.LoadData(this);
             LoadMenu.objectLoadedEvent.Invoke();
         }
         numberOfVisitors = new List<int> { 1, 1, 1, 1, 2, 2, 2, 3, 3, 4 };
@@ -38,7 +40,7 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
     {
         if (timeTillSpawn <= 0 && VisitableManager.instance.CanOpen())
         {
-            timeTillSpawn = Random.Range(SpawnTime - 3 < 1 ? 1 : SpawnTime - 3, SpawnTime + 3);
+            timeTillSpawn = UnityEngine.Random.Range(SpawnTime - 3 < 1 ? 1 : SpawnTime - 3, SpawnTime + 3);
             SpawnTime = 15;
             if (VisitableManager.instance.GetReachableExhibits().Count > 0)
                 SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(Mathf.Sqrt(VisitableManager.instance.GetReachableExhibits().Count)));
@@ -49,7 +51,7 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
                 SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(animalBonuses.Count));
             //timeTillSpawn = 0.1f;
 
-            for (int i = 0; i <= numberOfVisitors[Random.Range(0, numberOfVisitors.Count)]; i++)
+            for (int i = 0; i <= numberOfVisitors[UnityEngine.Random.Range(0, numberOfVisitors.Count)]; i++)
                 SpawnVisitor();
         }
         timeTillSpawn -= Time.deltaTime;
@@ -57,12 +59,12 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
 
     void SpawnVisitor()
     {
-        int randomI = Random.Range(0, visitorPrefabs.Count);
-        float randomZ = Random.Range(0f, 1f);
+        int randomI = UnityEngine.Random.Range(0, visitorPrefabs.Count);
+        float randomZ = UnityEngine.Random.Range(0f, 1f);
         var entranceCoords = ZooManager.instance.entranceGrid.coords[0];
         var position = new Vector3(entranceCoords.x, entranceCoords.y, entranceCoords.z + randomZ);
         var newVisitor = Instantiate(visitorPrefabs[randomI], position, transform.rotation);
-        newVisitor.selectedPrefabId = visitorPrefabs[randomI].GetInstanceID();
+        newVisitor.selectedPrefabId = visitorPrefabs[randomI].gameObject.GetInstanceID();
         newVisitor.transform.parent = transform;
         AddList(newVisitor);
         ZooManager.instance.allTimeVisitorCount++;
@@ -76,13 +78,13 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
             if (animalBonuses[i].animal == animal.GetName())
             {
                 animalBonus += animalBonuses[i].bonus;
-                animalBonuses.Add((animal.GetName(), animalBonuses[i].bonus / 5));
+                animalBonuses.Add(new AnimalBonus(animal.GetName(), animalBonuses[i].bonus / 5));
                 animalBonuses.RemoveAt(i);
                 return;
             }
         }
         animalBonus += animal.reputationBonus;
-        animalBonuses.Add((animal.GetName(), animal.reputationBonus));
+        animalBonuses.Add(new AnimalBonus(animal.GetName(), animal.reputationBonus));
     }
 
     public void DecreaseAnimalBonus(Animal animal)
@@ -92,7 +94,7 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
             if (animalBonuses[i].animal == animal.GetName())
             {
                 animalBonus -= animalBonuses[i].bonus * 5;
-                animalBonuses.Add((animal.GetName(), animalBonuses[i].bonus * 5));
+                animalBonuses.Add(new AnimalBonus(animal.GetName(), animalBonuses[i].bonus * 5));
                 animalBonuses.RemoveAt(i);
                 return;
             }
@@ -112,9 +114,9 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
         public List<VisitorData> visitorList;
         public float timeTillSpawn;
         public float animalBonus;
-        public List<(string animal, float bonus)> animalBonuses;
+        public List<AnimalBonus> animalBonuses;
 
-        public VisitorManagerData(List<VisitorData> visitorListParam, float timeTillSpawnParam, float animalBonusParam, List<(string animal, float bonus)> animalBonusesParam)
+        public VisitorManagerData(List<VisitorData> visitorListParam, float timeTillSpawnParam, float animalBonusParam, List<AnimalBonus> animalBonusesParam)
         {
            visitorList = visitorListParam;
            timeTillSpawn = timeTillSpawnParam;
@@ -150,7 +152,7 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
         return "VisitorManager.json";
     }
     
-    void SetData(List<VisitorData> visitorListParam, float timeTillSpawnParam, float animalBonusParam, List<(string animal, float bonus)> animalBonusesParam){ 
+    void SetData(List<VisitorData> visitorListParam, float timeTillSpawnParam, float animalBonusParam, List<AnimalBonus> animalBonusesParam){ 
         
         foreach(var element in visitorListParam){
             var spawned = Instantiate(PrefabManager.instance.GetPrefab(element.selectedPrefabId), element.position, element.rotation);

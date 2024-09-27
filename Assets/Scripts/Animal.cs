@@ -313,7 +313,9 @@ public class Animal : Placeable, Saveable
             {
                 GetTarget().Die();
                 GetTarget("");
+                agent.speed = defaultSpeed;
                 atDestination = true;
+                action = "";
             }
             attackCooldown = 0;
         }

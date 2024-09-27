@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 public class MyProgram{
     static List<string> convertableTypes = ["Vector3", "Quaternion", "Vector3[]"];
-    static List<string> primitives = ["bool", "string", "int", "float", "long", "Vector3", "Vector2", "Vector3[]", "Quaternion", "DateTime", "Grid", "Grid[,]"];
+    static List<string> primitives = ["bool", "string", "int", "float", "long", "Vector3", "Vector2", "Vector3[]", "Quaternion", "DateTime", "Grid", "AnimalBonus", "Action"];
     static List<string> nonBehaviour = ["Grid", "Grid[,]"];
     static List<string> transforms = ["position","rotation","localScale"];
 
@@ -240,8 +240,8 @@ $"           {attriButeName} = {attribute.name}{finalAttribute};";
             string attributeString =
 $"        public {finalAttribute} {attribute.name};";
 
-
             var converterName = attribute.type.Last().Equals(']') ? $"{attribute.type.Substring(0, attribute.type.Length-2)}Array" : attribute.type;
+
             var convertString = convertableTypes.Contains(attribute.type) ? System.Environment.NewLine  + $"        [JsonConverter(typeof({converterName}Converter))]" : "";
 
             classString += convertString + System.Environment.NewLine + attributeString;

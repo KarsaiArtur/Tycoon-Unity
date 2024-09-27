@@ -84,8 +84,28 @@ public abstract class BuildingAncestor : Placeable, Visitable
 
     public Vector3 ChoosePosition(Grid grid)
     {
-        float offsetX = UnityEngine.Random.Range(0, 1.0f);
-        float offsetZ = UnityEngine.Random.Range(0, 1.0f);
+        float offsetX = 0;
+        float offsetZ = 0;
+        if ((grid.trueNeighbours[0].GetBench() != null && grid.trueNeighbours[0].GetBench() == this) || (grid.trueNeighbours[0].GetBuilding() != null && grid.trueNeighbours[0].GetBuilding() == this))
+        {
+            offsetX = UnityEngine.Random.Range(0, 1.0f);
+            offsetZ = 0.1f;
+        }
+        if ((grid.trueNeighbours[1].GetBench() != null && grid.trueNeighbours[1].GetBench() == this) || (grid.trueNeighbours[1].GetBuilding() != null && grid.trueNeighbours[1].GetBuilding() == this))
+        {
+            offsetX = 0.1f;
+            offsetZ = UnityEngine.Random.Range(0, 1.0f);
+        }
+        if ((grid.trueNeighbours[2].GetBench() != null && grid.trueNeighbours[2].GetBench() == this) || (grid.trueNeighbours[2].GetBuilding() != null && grid.trueNeighbours[2].GetBuilding() == this))
+        {
+            offsetX = UnityEngine.Random.Range(0, 1.0f);
+            offsetZ = 0.9f;
+        }
+        if ((grid.trueNeighbours[3].GetBench() != null && grid.trueNeighbours[3].GetBench() == this) || (grid.trueNeighbours[3].GetBuilding() != null && grid.trueNeighbours[3].GetBuilding() == this))
+        {
+            offsetX = 0.9f;
+            offsetZ = UnityEngine.Random.Range(0, 1.0f);
+        }
         return new Vector3(grid.coords[0].x + offsetX, grid.coords[0].y, grid.coords[0].z + offsetZ);
     }
 

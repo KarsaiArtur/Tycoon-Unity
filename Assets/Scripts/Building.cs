@@ -214,19 +214,19 @@ public class Building : BuildingAncestor, Saveable
 
         switch (visitor.action)
         {
-            case "food":
+            case Visitor.Action.Food:
                 index = ChooseFood(visitor);
                 break;
-            case "drink":
+            case Visitor.Action.Drink:
                 index = ChooseDrink(visitor);
                 break;
-            case "energy":
+            case Visitor.Action.Energy:
                 index = ChooseEnergy(visitor);
                 break;
-            case "restroom":
+            case Visitor.Action.Restroom:
                 visitor.LowerRestroomNeeds();
                 return;
-            case "happiness":
+            case Visitor.Action.Happiness:
                 index = ChooseHappiness(visitor);
                 break;
             default:
