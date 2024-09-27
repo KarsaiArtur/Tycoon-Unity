@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
@@ -276,6 +277,7 @@ public class Fence : Placeable, Saveable
 
         grid1.neighbours[(timesRotated + 2) % 4] = null;
         grid2.neighbours[timesRotated] = null;
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 
 ///******************************
@@ -286,8 +288,10 @@ public class Fence : Placeable, Saveable
     public class FenceData
     {
         public string _id;
+        [JsonConverter(typeof(Vector3Converter))]
         public Vector3 position;
         public int selectedPrefabId;
+        [JsonConverter(typeof(QuaternionConverter))]
         public Quaternion rotation;
         public int placeablePrice;
         public string tag;
@@ -309,11 +313,17 @@ public class Fence : Placeable, Saveable
     
     public string DataToJson(){
         FenceData data = new FenceData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, timesRotated);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<FenceData>(json);
+        data = JsonConvert.DeserializeObject<FenceData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data._id, data.position, data.selectedPrefabId, data.rotation, data.placeablePrice, data.tag, data.timesRotated);
     }
     

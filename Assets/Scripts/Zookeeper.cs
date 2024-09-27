@@ -14,17 +14,17 @@ public class Zookeeper : Staff
         PlacingFood,
         FillingWater,
         CleaningExhibit,
-        nothing
+        Nothing
     }
 
     Exhibit exhibitToWorkAt;
-    public ZookeperJobs jobAtExhibit = ZookeperJobs.nothing;
+    public ZookeperJobs jobAtExhibit = ZookeperJobs.Nothing;
     int waterTroughIndex = 0;
 
     public override void Start()
     {
         base.Start();
-        jobAtExhibit = ZookeperJobs.nothing;
+        jobAtExhibit = ZookeperJobs.Nothing;
         salary = 300;
     }
 
@@ -133,14 +133,14 @@ public class Zookeeper : Staff
                 animalFood.FinalPlace();
             }
             exhibitToWorkAt.isGettingFood = false;
-            jobAtExhibit = ZookeperJobs.nothing;
+            jobAtExhibit = ZookeperJobs.Nothing;
             return true;
         }
         else if (jobAtExhibit == ZookeperJobs.FillingWater)
         {
             exhibitToWorkAt.GetWaterPlaces()[waterTroughIndex].FillWithWater();
             exhibitToWorkAt.isGettingWater = false;
-            jobAtExhibit = ZookeperJobs.nothing;
+            jobAtExhibit = ZookeperJobs.Nothing;
             return true;
         }
         else if (jobAtExhibit == ZookeperJobs.CleaningExhibit)
@@ -151,7 +151,7 @@ public class Zookeeper : Staff
             if (exhibitToWorkAt.animalDroppings.Count == 0)
             {
                 exhibitToWorkAt.isGettingCleaned = false;
-                jobAtExhibit = ZookeperJobs.nothing;
+                jobAtExhibit = ZookeperJobs.Nothing;
                 return true;
             }
             return false;
@@ -195,7 +195,7 @@ public class Zookeeper : Staff
     {
         base.SetToDefault();
         exhibitToWorkAt = null;
-        jobAtExhibit = ZookeperJobs.nothing;
+        jobAtExhibit = ZookeperJobs.Nothing;
     }
 
     public override void Remove()

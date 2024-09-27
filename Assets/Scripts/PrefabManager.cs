@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PrefabManager : MonoBehaviour
+public class PrefabManager : MonoBehaviour, Manager
 {
 
     static public PrefabManager instance;
@@ -12,6 +12,9 @@ public class PrefabManager : MonoBehaviour
 
     void Awake(){
         instance = this;
+        if(LoadMenu.loadedGame != null){
+            LoadMenu.objectLoadedEvent.Invoke();
+        }
     }
 
     public GameObject GetPrefab(int id){
@@ -20,6 +23,11 @@ public class PrefabManager : MonoBehaviour
 
     public GameObject GetPrefabByName(string name){
         return naturePrefabs.Where(element => element.name == name).FirstOrDefault();
+    }
+
+    public bool GetIsLoaded()
+    {
+        return true;
     }
 
 }

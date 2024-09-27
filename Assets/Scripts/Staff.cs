@@ -275,5 +275,6 @@ public abstract class Staff : Placeable
         agent.Warp(transform.position);
         placed = true;
         SetToDefault();
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 }

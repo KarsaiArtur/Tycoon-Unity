@@ -1,11 +1,12 @@
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 using static Visitor;
 
 /////Saveable Attributes, DONT DELETE
 //////List<Visitor> visitorList;float timeTillSpawn;float animalBonus;List<(string_animal,_float_bonus)> animalBonuses//////////
 
-public class VisitorManager : MonoBehaviour, Saveable
+public class VisitorManager : MonoBehaviour, Saveable, Manager
 {
     public static VisitorManager instance;
     public List<Visitor> visitorList;
@@ -26,7 +27,9 @@ public class VisitorManager : MonoBehaviour, Saveable
     {
         instance = this;
         if(LoadMenu.loadedGame != null){
-            LoadMenu.instance.LoadData(this);
+            LoadMenu.currentManager = this;
+            //LoadMenu.instance.LoadData(this);
+            LoadMenu.objectLoadedEvent.Invoke();
         }
         numberOfVisitors = new List<int> { 1, 1, 1, 1, 2, 2, 2, 3, 3, 4 };
     }
@@ -95,6 +98,11 @@ public class VisitorManager : MonoBehaviour, Saveable
             }
         }
     }
+
+    public bool GetIsLoaded()
+    {
+        return true;
+    }
 ///******************************
     ///GENERATED CODE, DONT MODIFY
     ///******************************
@@ -124,11 +132,17 @@ public class VisitorManager : MonoBehaviour, Saveable
             visitorList.Add(element.ToData());
         }
         VisitorManagerData data = new VisitorManagerData(visitorList, timeTillSpawn, animalBonus, animalBonuses);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<VisitorManagerData>(json);
+        data = JsonConvert.DeserializeObject<VisitorManagerData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data.visitorList, data.timeTillSpawn, data.animalBonus, data.animalBonuses);
     }
     

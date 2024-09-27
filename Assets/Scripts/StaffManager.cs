@@ -4,7 +4,7 @@ using UnityEngine;
 /////Attributes, DONT DELETE
 //////List<Staff> staffList//////////
 
-public class StaffManager : MonoBehaviour
+public class StaffManager : MonoBehaviour, Manager
 {
     public static StaffManager instance;
     public List<Staff> staffList;
@@ -12,6 +12,11 @@ public class StaffManager : MonoBehaviour
     void Awake()
     {
         instance = this;
+        if(LoadMenu.loadedGame != null){
+            LoadMenu.currentManager = this;
+            //LoadMenu.instance.LoadData(this);
+            LoadMenu.objectLoadedEvent.Invoke();
+        }
     }
 
     public void AddList(Staff staff){
@@ -29,5 +34,10 @@ public class StaffManager : MonoBehaviour
                     staff.FindJob();
             }
         }
+    }
+
+    public bool GetIsLoaded()
+    {
+        return staffList.Count + 1 == LoadMenu.loadedObjects;
     }
 }

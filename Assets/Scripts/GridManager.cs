@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 using static Grid;
 
 /////Saveable Attributes, DONT DELETE
 //////Vector3[] coords//////////
 
-public class GridManager : MonoBehaviour, Saveable
+public class GridManager : MonoBehaviour, Saveable, Manager
 {
     public static GridManager instance;
     public int terrainWidth, elementWidth;
@@ -38,7 +39,10 @@ public class GridManager : MonoBehaviour, Saveable
 
         if(LoadMenu.loadedGame != null)
         {
+            LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
+            Debug.Log("GRID");
+            LoadMenu.objectLoadedEvent.Invoke();
         }
         else
         {
@@ -67,9 +71,9 @@ public class GridManager : MonoBehaviour, Saveable
         edgeChanged = false;
     }
 
-    void Start()
+    public bool GetIsLoaded()
     {
-        
+        return true;
     }
 
     public void InitializeGrids()
@@ -486,46 +490,45 @@ public class GridManager : MonoBehaviour, Saveable
         return false;
     }
 
-    public void LoadHelper()
-    {
-        InitializeGrids();
-    }
-
     ///******************************
     ///GENERATED CODE, DONT MODIFY
     ///******************************
 
     public class GridManagerData
     {
+        [JsonConverter(typeof(Vector3ArrayConverter))]
         public Vector3[] coords;
-        public Grid[,] grids;
 
-        public GridManagerData(Vector3[] coordsParam, Grid[,] gridsParam)
+        public GridManagerData(Vector3[] coordsParam)
         {
            coords = coordsParam;
-           grids = gridsParam;
         }
     }
 
     GridManagerData data; 
     
     public string DataToJson(){
-        GridManagerData data = new GridManagerData(coords, grids);
-        return JsonUtility.ToJson(data);
+        GridManagerData data = new GridManagerData(coords);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<GridManagerData>(json);
-        SetData(data.coords, data.grids);
+        data = JsonConvert.DeserializeObject<GridManagerData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
+        SetData(data.coords);
     }
     
     public string GetFileName(){
         return "GridManager.json";
     }
     
-    void SetData(Vector3[] coordsParam, Grid[,] gridsParam){ 
+    void SetData(Vector3[] coordsParam){ 
         
            coords = coordsParam;
-           grids = gridsParam;
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 
 /////Saveable Attributes, DONT DELETE
@@ -14,7 +15,8 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable, Saveable
     /////GENERATE
     private Exhibit exhibit;
 
-    public void Awake(){
+    public void Awake()
+    {
         _id = Placeable.encodeID(this);
     }
 
@@ -56,6 +58,12 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable, Saveable
 
     public string GetId(){
         return _id;
+    }
+
+    public void LoadHelper()
+    {
+        
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 
 ////GENERATED
@@ -100,11 +108,17 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable, Saveable
     
     public string DataToJson(){
         AnimalFoodData data = new AnimalFoodData(_id, transform.position, transform.rotation, selectedPrefabId, tag, food, exhibitId);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<AnimalFoodData>(json);
+        data = JsonConvert.DeserializeObject<AnimalFoodData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.food, data.exhibitId);
     }
     

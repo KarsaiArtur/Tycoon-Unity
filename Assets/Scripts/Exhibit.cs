@@ -2,17 +2,18 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.AI;
 
 /////Saveable Attributes, DONT DELETE
-//////List<Vector3> gridListPositions;string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;string exhibitName;List<string> animalsIds;List<string> foliagesIds;bool isExitGridInverted;int timesRotated;int exhibitCount;bool reachable;List<string> staffsIds;float food;float water;float waterCapacity;List<string> foodPlacesIds;List<string> waterPlacesIds;float occupiedSpace;bool isMixed;List<string> visitorsIds//////////
+//////Vector3[] gridListPositions;string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;string exhibitName;List<string> animalsIds;List<string> foliagesIds;bool isExitGridInverted;int timesRotated;int exhibitCount;bool reachable;List<string> staffsIds;float food;float water;float waterCapacity;List<string> foodPlacesIds;List<string> waterPlacesIds;float occupiedSpace;bool isMixed;List<string> visitorsIds//////////
 //////SERIALIZABLE:YES/
 
 public class Exhibit : Placeable, Visitable, Saveable
 {
     public List<Grid> gridList;
-    public List<Vector3> gridListPositions = new List<Vector3>();
+    public Vector3[] gridListPositions;
     public List<Grid> paths;
     public string exhibitName;
     /////GENERATE
@@ -78,11 +79,12 @@ public class Exhibit : Placeable, Visitable, Saveable
         paths = new List<Grid>();
         gridList.Sort((x, y) => x.coords[0].z.CompareTo(y.coords[0].z) == 0 ? x.coords[0].x.CompareTo(y.coords[0].x) : x.coords[0].z.CompareTo(y.coords[0].z));
 
+        gridListPositions = new Vector3[gridList.Count];
         for (int i = 0; i < gridList.Count; i++)
         {
             gridList[i].GetExhibit(_id);
             gridList[i].GetNatures().ForEach((element) => AddFoliages(element));
-            gridListPositions.Add(gridList[i].coords[0]);
+            gridListPositions[i] = gridList[i].coords[0];
         }
 
         FindPaths();
@@ -141,13 +143,13 @@ public class Exhibit : Placeable, Visitable, Saveable
             {
                 if (gridList[i].neighbours[j] == null && gridList[i].trueNeighbours[j] != null)
                 {
-                    if (gridList[i].trueNeighbours[j].isPath)
+                    if (gridList[i].trueNeighbours[j].isPath && !paths.Contains(gridList[i].trueNeighbours[j]))
                         paths.Add(gridList[i].trueNeighbours[j]);
-                    if (gridList[i].trueNeighbours[j].trueNeighbours[j] != null && gridList[i].trueNeighbours[j].trueNeighbours[j].isPath)
+                    if (gridList[i].trueNeighbours[j].trueNeighbours[j] != null && gridList[i].trueNeighbours[j].trueNeighbours[j].isPath && !paths.Contains(gridList[i].trueNeighbours[j].trueNeighbours[j]))
                         paths.Add(gridList[i].trueNeighbours[j].trueNeighbours[j]);
                 }
                 if (gridList[i].neighbours[j] == null && gridList[i].trueNeighbours[j] != null && gridList[i].neighbours[(j + 1) % 4] == null && 
-                    gridList[i].trueNeighbours[(j + 1) % 4] != null && gridList[i].trueNeighbours[j].trueNeighbours[(j + 1) % 4].isPath)
+                    gridList[i].trueNeighbours[(j + 1) % 4] != null && gridList[i].trueNeighbours[j].trueNeighbours[(j + 1) % 4].isPath && !paths.Contains(gridList[i].trueNeighbours[j].trueNeighbours[(j + 1) % 4]))
                     paths.Add(gridList[i].trueNeighbours[j].trueNeighbours[(j + 1) % 4]);
             }
         }
@@ -426,7 +428,9 @@ public class Exhibit : Placeable, Visitable, Saveable
             gridList[i].GetNatures().ForEach((element) => AddFoliages(element));
         }
 
+        paths = new List<Grid>();
         FindPaths();
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 
     ////GENERATED
@@ -612,9 +616,12 @@ public class Exhibit : Placeable, Visitable, Saveable
     [Serializable]
     public class ExhibitData
     {
-        public List<Vector3> gridListPositions;
+        [JsonConverter(typeof(Vector3ArrayConverter))]
+        public Vector3[] gridListPositions;
         public string _id;
+        [JsonConverter(typeof(Vector3Converter))]
         public Vector3 position;
+        [JsonConverter(typeof(QuaternionConverter))]
         public Quaternion rotation;
         public int selectedPrefabId;
         public string tag;
@@ -635,7 +642,7 @@ public class Exhibit : Placeable, Visitable, Saveable
         public bool isMixed;
         public List<string> visitorsIds;
 
-        public ExhibitData(List<Vector3> gridListPositionsParam, string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, string exhibitNameParam, List<string> animalsIdsParam, List<string> foliagesIdsParam, bool isExitGridInvertedParam, int timesRotatedParam, int exhibitCountParam, bool reachableParam, List<string> staffsIdsParam, float foodParam, float waterParam, float waterCapacityParam, List<string> foodPlacesIdsParam, List<string> waterPlacesIdsParam, float occupiedSpaceParam, bool isMixedParam, List<string> visitorsIdsParam)
+        public ExhibitData(Vector3[] gridListPositionsParam, string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, string exhibitNameParam, List<string> animalsIdsParam, List<string> foliagesIdsParam, bool isExitGridInvertedParam, int timesRotatedParam, int exhibitCountParam, bool reachableParam, List<string> staffsIdsParam, float foodParam, float waterParam, float waterCapacityParam, List<string> foodPlacesIdsParam, List<string> waterPlacesIdsParam, float occupiedSpaceParam, bool isMixedParam, List<string> visitorsIdsParam)
         {
            gridListPositions = gridListPositionsParam;
            _id = _idParam;
@@ -666,11 +673,17 @@ public class Exhibit : Placeable, Visitable, Saveable
     
     public string DataToJson(){
         ExhibitData data = new ExhibitData(gridListPositions, _id, transform.position, transform.rotation, selectedPrefabId, tag, exhibitName, animalsIds, foliagesIds, isExitGridInverted, timesRotated, exhibitCount, reachable, staffsIds, food, water, waterCapacity, foodPlacesIds, waterPlacesIds, occupiedSpace, isMixed, visitorsIds);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<ExhibitData>(json);
+        data = JsonConvert.DeserializeObject<ExhibitData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data.gridListPositions, data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.exhibitName, data.animalsIds, data.foliagesIds, data.isExitGridInverted, data.timesRotated, data.exhibitCount, data.reachable, data.staffsIds, data.food, data.water, data.waterCapacity, data.foodPlacesIds, data.waterPlacesIds, data.occupiedSpace, data.isMixed, data.visitorsIds);
     }
     
@@ -678,7 +691,7 @@ public class Exhibit : Placeable, Visitable, Saveable
         return "Exhibit.json";
     }
     
-    void SetData(List<Vector3> gridListPositionsParam, string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, string exhibitNameParam, List<string> animalsIdsParam, List<string> foliagesIdsParam, bool isExitGridInvertedParam, int timesRotatedParam, int exhibitCountParam, bool reachableParam, List<string> staffsIdsParam, float foodParam, float waterParam, float waterCapacityParam, List<string> foodPlacesIdsParam, List<string> waterPlacesIdsParam, float occupiedSpaceParam, bool isMixedParam, List<string> visitorsIdsParam){ 
+    void SetData(Vector3[] gridListPositionsParam, string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, string exhibitNameParam, List<string> animalsIdsParam, List<string> foliagesIdsParam, bool isExitGridInvertedParam, int timesRotatedParam, int exhibitCountParam, bool reachableParam, List<string> staffsIdsParam, float foodParam, float waterParam, float waterCapacityParam, List<string> foodPlacesIdsParam, List<string> waterPlacesIdsParam, float occupiedSpaceParam, bool isMixedParam, List<string> visitorsIdsParam){ 
         
            gridListPositions = gridListPositionsParam;
            _id = _idParam;

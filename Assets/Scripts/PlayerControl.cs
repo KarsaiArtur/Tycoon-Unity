@@ -103,6 +103,21 @@ public class PlayerControl : MonoBehaviour
         return false;
     }
 
+    void Awake()
+    {
+        if(LoadMenu.loadedGame != null)
+        {
+            Instantiate(LoadMenu.managerPrefabs[LoadMenu.currentManagerIndex++]).GetComponent<Manager>();
+        }
+        else
+        {
+            foreach(var prefab in LoadMenu.managerPrefabs)
+            {
+                Instantiate(LoadMenu.managerPrefabs[LoadMenu.currentManagerIndex++]).GetComponent<Manager>();
+            }
+        }
+    }
+
     void Start()
     {
         placedTags = new List<string>() { "Placed", "Placed Fence", "Placed Path", "ZooFence"};

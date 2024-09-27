@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Threading;
+using UnityEngine.Events;
 
 public class LoadMenu : MonoBehaviour
 {
@@ -16,7 +17,12 @@ public class LoadMenu : MonoBehaviour
     
     public static LoadMenu instance;
 
-    //public List<GameObject> managerPrefabs;
+    static public UnityEvent objectLoadedEvent = new UnityEvent();
+    public List<GameObject> managerPrefabs1;
+    static public List<GameObject> managerPrefabs = new List<GameObject>();
+    static public Manager currentManager;
+    static public int currentManagerIndex = 0;
+    static public int loadedObjects = 0;
 
     void Start(){
     
@@ -24,6 +30,20 @@ public class LoadMenu : MonoBehaviour
         transform.SetParent(canvas.transform);
         LoadSavesList();
         instance = this;
+        objectLoadedEvent.AddListener(ObjectLoaded);
+        foreach(var prefab in managerPrefabs1){
+            managerPrefabs.Add(prefab);
+        }
+    }
+
+    static void ObjectLoaded(){
+        loadedObjects++;
+        Debug.Log(loadedObjects);
+        if(currentManager.GetIsLoaded() && currentManagerIndex != managerPrefabs.Count){
+            Debug.Log("LOADED MANAGER" + ((MonoBehaviour)currentManager).gameObject.name);
+            loadedObjects = 0;
+            LoadMenu.currentManager = Instantiate(LoadMenu.managerPrefabs[LoadMenu.currentManagerIndex++]).GetComponent<Manager>();
+        }
     }
 
     public void DestroyWindow(){

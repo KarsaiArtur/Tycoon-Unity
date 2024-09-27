@@ -41,5 +41,6 @@ public class LoadedNature : Nature
         NatureManager.instance.natureList.Add(this);
         transform.SetParent(NatureManager.instance.transform);
         navMeshObstacle.enabled = true;
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 }

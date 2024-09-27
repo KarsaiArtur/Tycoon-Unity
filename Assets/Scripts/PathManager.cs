@@ -1,20 +1,24 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
+using Unity.VisualScripting;
 using UnityEngine;
 using static Path;
 
 /////Saveable Attributes, DONT DELETE
 //////List<Path> pathList//////////
 
-public class PathManager : MonoBehaviour, Saveable
+public class PathManager : MonoBehaviour, Saveable, Manager
 {
     static public PathManager instance;
     public List<Path> pathList;
     void Start(){
         instance = this;
         if(LoadMenu.loadedGame != null){
+            LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
+            LoadMenu.objectLoadedEvent.Invoke();
         }
     }
 
@@ -22,6 +26,12 @@ public class PathManager : MonoBehaviour, Saveable
         pathList.Add(path);
         path.transform.SetParent(PathManager.instance.transform);
     }
+
+    public bool GetIsLoaded()
+    {
+        return data.pathList.Count + 1 == LoadMenu.loadedObjects;
+    }
+
 ///******************************
     ///GENERATED CODE, DONT MODIFY
     ///******************************
@@ -45,11 +55,17 @@ public class PathManager : MonoBehaviour, Saveable
             pathList.Add(element.ToData());
         }
         PathManagerData data = new PathManagerData(pathList);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<PathManagerData>(json);
+        data = JsonConvert.DeserializeObject<PathManagerData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data.pathList);
     }
     

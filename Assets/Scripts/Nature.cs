@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -113,6 +114,7 @@ public class Nature : Placeable, Saveable
     public void LoadHelper()
     {
         GridManager.instance.GetGrid(transform.position).AddNatures(this);
+        Debug.Log("Nature LoadHelper");
     }
 ///******************************
     ///GENERATED CODE, DONT MODIFY
@@ -122,8 +124,10 @@ public class Nature : Placeable, Saveable
     public class NatureData
     {
         public string _id;
+        [JsonConverter(typeof(Vector3Converter))]
         public Vector3 position;
         public int selectedPrefabId;
+        [JsonConverter(typeof(QuaternionConverter))]
         public Quaternion rotation;
         public int placeablePrice;
         public string tag;
@@ -143,11 +147,17 @@ public class Nature : Placeable, Saveable
     
     public string DataToJson(){
         NatureData data = new NatureData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<NatureData>(json);
+        data = JsonConvert.DeserializeObject<NatureData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data._id, data.position, data.selectedPrefabId, data.rotation, data.placeablePrice, data.tag);
     }
     

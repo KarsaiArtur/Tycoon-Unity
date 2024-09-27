@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Unity.VisualScripting;
 using Unity.VisualScripting.ReorderableList.Element_Adder_Menu;
 using UnityEngine;
@@ -8,7 +9,7 @@ using UnityEngine;
 /////Saveable Attributes, DONT DELETE
 //////int currentQuestId;int numberOfDoneQuests;List<int> questPoolIds;bool questsCompleted//////////
 
-public class QuestManager : MonoBehaviour, Saveable
+public class QuestManager : MonoBehaviour, Saveable, Manager
 {
     public int currentQuestId;
     public int numberOfDoneQuests = 0;
@@ -21,7 +22,7 @@ public class QuestManager : MonoBehaviour, Saveable
     public bool questWindowOpened = false;
     static public QuestManager instance;
 
-    void Start()
+    void Awake()
     {
         instance = this;
         easyQuests.Add(new Quest("Start Your Dream Team", "Have 2 staff members of any kind", 1000, "Easy", () => { return StaffManager.instance.staffList.Count >= 2; }, () => { return StaffManager.instance.staffList.Count; }, 2));
@@ -60,7 +61,9 @@ public class QuestManager : MonoBehaviour, Saveable
 
         if(LoadMenu.loadedGame != null)
         {
+            LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
+            LoadMenu.objectLoadedEvent.Invoke();
         }
         else
         {
@@ -129,6 +132,11 @@ public class QuestManager : MonoBehaviour, Saveable
                 UIMenu.Instance.NewNotification("Quest completed: " + previousQuest.questName + System.Environment.NewLine + "Current quest: " + findCurrentQuest().questName + System.Environment.NewLine + findCurrentQuest().description);
         }
     }
+
+    public bool GetIsLoaded()
+    {
+        return true;
+    }
 ///******************************
     ///GENERATED CODE, DONT MODIFY
     ///******************************
@@ -153,11 +161,17 @@ public class QuestManager : MonoBehaviour, Saveable
     
     public string DataToJson(){
         QuestManagerData data = new QuestManagerData(currentQuestId, numberOfDoneQuests, questPoolIds, questsCompleted);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<QuestManagerData>(json);
+        data = JsonConvert.DeserializeObject<QuestManagerData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data.currentQuestId, data.numberOfDoneQuests, data.questPoolIds, data.questsCompleted);
     }
     

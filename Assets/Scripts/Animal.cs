@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -694,6 +695,7 @@ public class Animal : Placeable, Saveable
         placed = true;
         StartCoroutine(DecreaseNeeds());
         SetSize();
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 
 ////GENERATED
@@ -757,8 +759,11 @@ public class Animal : Placeable, Saveable
     public class AnimalData
     {
         public string _id;
+        [JsonConverter(typeof(Vector3Converter))]
         public Vector3 position;
+        [JsonConverter(typeof(QuaternionConverter))]
         public Quaternion rotation;
+        [JsonConverter(typeof(Vector3Converter))]
         public Vector3 localScale;
         public int selectedPrefabId;
         public string tag;
@@ -810,11 +815,17 @@ public class Animal : Placeable, Saveable
     
     public string DataToJson(){
         AnimalData data = new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<AnimalData>(json);
+        data = JsonConvert.DeserializeObject<AnimalData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data._id, data.position, data.rotation, data.localScale, data.selectedPrefabId, data.tag, data.placeablePrice, data.placeableName, data.exhibitId, data.hunger, data.thirst, data.restroomNeeds, data.happiness, data.health, new DateTime(data.prevDay), data.isSick, data.age, new DateTime(data.birthDate), data.isMale, data.isPregnant, data.dayOfConception, data.fertility);
     }
     

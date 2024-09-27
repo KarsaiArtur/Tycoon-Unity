@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -94,6 +95,12 @@ public class WaterTrough : Placeable, AnimalVisitable, Saveable
             
         Destroy(gameObject);
     }
+
+    public void LoadHelper()
+    {
+        navMeshObstacle.enabled = true;
+        LoadMenu.objectLoadedEvent.Invoke();
+    }
 ////GENERATED
 
     public string exhibitId;
@@ -138,11 +145,17 @@ public class WaterTrough : Placeable, AnimalVisitable, Saveable
     
     public string DataToJson(){
         WaterTroughData data = new WaterTroughData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, water, exhibitId);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<WaterTroughData>(json);
+        data = JsonConvert.DeserializeObject<WaterTroughData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data._id, data.position, data.selectedPrefabId, data.rotation, data.placeablePrice, data.tag, data.water, data.exhibitId);
     }
     

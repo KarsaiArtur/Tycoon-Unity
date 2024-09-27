@@ -1,25 +1,33 @@
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 using static Fence;
 
 /////Saveable Attributes, DONT DELETE
 //////List<Fence> fences//////////
 
-public class FenceManager : MonoBehaviour, Saveable
+public class FenceManager : MonoBehaviour, Saveable, Manager
 {
     static public FenceManager instance;
     public List<Fence> fences;
     void Start(){
         instance = this;
         if(LoadMenu.loadedGame != null){
+            LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
+            LoadMenu.objectLoadedEvent.Invoke();
         }
     }
 
     public void AddList(Fence fence){
         fences.Add(fence);
         fence.transform.SetParent(FenceManager.instance.transform);
+    }
+
+    public bool GetIsLoaded()
+    {
+        return data.fences.Count + 1 == LoadMenu.loadedObjects;
     }
 ///******************************
     ///GENERATED CODE, DONT MODIFY
@@ -44,11 +52,17 @@ public class FenceManager : MonoBehaviour, Saveable
             fences.Add(element.ToData());
         }
         FenceManagerData data = new FenceManagerData(fences);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<FenceManagerData>(json);
+        data = JsonConvert.DeserializeObject<FenceManagerData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data.fences);
     }
     

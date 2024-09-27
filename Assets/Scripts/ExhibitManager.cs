@@ -1,19 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using Newtonsoft.Json;
 using UnityEngine;
 using static Exhibit;
 
 /////Saveable Attributes, DONT DELETE
 //////List<Exhibit> exhibitList//////////
 
-public class ExhibitManager : MonoBehaviour, Saveable
+public class ExhibitManager : MonoBehaviour, Saveable, Manager
 {
     static public ExhibitManager instance;
     public List<Exhibit> exhibitList;
     void Start(){
         instance = this;
         if(LoadMenu.loadedGame != null){
+            LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
+            LoadMenu.objectLoadedEvent.Invoke();
         }
     }
 
@@ -21,6 +24,12 @@ public class ExhibitManager : MonoBehaviour, Saveable
         exhibitList.Add(exhibit);
         exhibit.transform.SetParent(ExhibitManager.instance.transform);
     }
+
+    public bool GetIsLoaded()
+    {
+        return data.exhibitList.Count + 1 == LoadMenu.loadedObjects;
+    }
+
 ///******************************
     ///GENERATED CODE, DONT MODIFY
     ///******************************
@@ -44,11 +53,17 @@ public class ExhibitManager : MonoBehaviour, Saveable
             exhibitList.Add(element.ToData());
         }
         ExhibitManagerData data = new ExhibitManagerData(exhibitList);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<ExhibitManagerData>(json);
+        data = JsonConvert.DeserializeObject<ExhibitManagerData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data.exhibitList);
     }
     

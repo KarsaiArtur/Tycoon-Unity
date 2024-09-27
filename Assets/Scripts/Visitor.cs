@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
@@ -431,7 +432,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
 
     public void LoadHelper()
     {
-        
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 
 ////GENERATED
@@ -494,11 +495,14 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     public class VisitorData
     {
         public string _id;
+        [JsonConverter(typeof(Vector3Converter))]
         public Vector3 position;
         public int selectedPrefabId;
+        [JsonConverter(typeof(QuaternionConverter))]
         public Quaternion rotation;
         public bool atDestination;
         public bool arrived;
+        [JsonConverter(typeof(Vector3Converter))]
         public Vector3 destination;
         public string destinationVisitableId;
         public List<string> unvisitedExhibitsIds;
@@ -543,11 +547,17 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     
     public string DataToJson(){
         VisitorData data = new VisitorData(_id, transform.position, selectedPrefabId, transform.rotation, atDestination, arrived, destination, destinationVisitableId, unvisitedExhibitsIds, visitorName, time, timeGoal, currentExhibitId, hunger, thirst, energy, restroomNeeds, happiness, action, isFleeing);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<VisitorData>(json);
+        data = JsonConvert.DeserializeObject<VisitorData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data._id, data.position, data.selectedPrefabId, data.rotation, data.atDestination, data.arrived, data.destination, data.destinationVisitableId, data.unvisitedExhibitsIds, data.visitorName, data.time, data.timeGoal, data.currentExhibitId, data.hunger, data.thirst, data.energy, data.restroomNeeds, data.happiness, data.action, data.isFleeing);
     }
     

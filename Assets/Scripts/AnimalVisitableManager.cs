@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 /////Saveable Attributes, DONT DELETE
 //////List<AnimalVisitable> animalvisitableList//////////
 
-public class AnimalVisitableManager : MonoBehaviour, Saveable
+public class AnimalVisitableManager : MonoBehaviour, Saveable, Manager
 {
     static public AnimalVisitableManager instance;
     public List<AnimalVisitable> animalvisitableList;
@@ -16,13 +16,20 @@ public class AnimalVisitableManager : MonoBehaviour, Saveable
         instance = this;
         animalvisitableList = new List<AnimalVisitable>();
         if(LoadMenu.loadedGame != null){
+            LoadMenu.currentManager = this;
             //LoadMenu.instance.LoadData(this);
+            LoadMenu.objectLoadedEvent.Invoke();
         }
     }
 
-    public void AddList(AnimalVisitable animaVisitable){
-        animalvisitableList.Add(animaVisitable);
-        ((MonoBehaviour)animaVisitable).transform.SetParent(AnimalVisitableManager.instance.transform);
+    public void AddList(AnimalVisitable animalVisitable){
+        animalvisitableList.Add(animalVisitable);
+        ((MonoBehaviour)animalVisitable).transform.SetParent(AnimalVisitableManager.instance.transform);
+    }
+
+    public bool GetIsLoaded()
+    {
+        return true;//data.animalvisitableList.Count + 1 == LoadMenu.loadedObjects;
     }
 /*string json = JsonConvert.SerializeObject(animalvisitableList, new JsonSerializerSettings
 {
@@ -56,11 +63,17 @@ var obj = JsonConvert.DeserializeObject<List<AnimalVisitableData>>(json, new Jso
             animalvisitableList.Add(element.ToData());
         }
         AnimalVisitableManagerData data = new AnimalVisitableManagerData(animalvisitableList);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<AnimalVisitableManagerData>(json);
+        data = JsonConvert.DeserializeObject<AnimalVisitableManagerData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data.animalvisitableList);
     }
     
@@ -74,7 +87,7 @@ var obj = JsonConvert.DeserializeObject<List<AnimalVisitableData>>(json, new Jso
             var spawned = Instantiate(PrefabManager.instance.GetPrefab(element.selectedPrefabId), element.position, element.rotation);
             var script = spawned.GetComponent<AnimalVisitable>();
             script.FromData(element);
-            //script.LoadHelper();
+            script.LoadHelper();
             AddList(script);
         }
 

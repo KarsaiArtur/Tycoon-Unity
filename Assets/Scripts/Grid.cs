@@ -1,11 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
-
-/////Saveable Attributes, DONT DELETE
-//////Vector3[] coords;bool isPath;string exhibitId;string buildingId;string benchId;List<string> naturesIds//////////
-//////SERIALIZABLE:YES/
 
 public class Grid : Saveable
 {
@@ -109,6 +106,7 @@ public class Grid : Saveable
     [Serializable]
     public class GridData
     {
+        [JsonConverter(typeof(Vector3ArrayConverter))]
         public Vector3[] coords;
         public bool isPath;
         public string exhibitId;
@@ -131,11 +129,17 @@ public class Grid : Saveable
     
     public string DataToJson(){
         GridData data = new GridData(coords, isPath, exhibitId, buildingId, benchId, naturesIds);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<GridData>(json);
+        data = JsonConvert.DeserializeObject<GridData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data.coords, data.isPath, data.exhibitId, data.buildingId, data.benchId, data.naturesIds);
     }
     

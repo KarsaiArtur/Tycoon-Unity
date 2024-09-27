@@ -1301,6 +1301,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   saveItemPrefab: {fileID: 8863834352901766871, guid: ee24261cba2bf734088c1c2168d194a2, type: 3}
   listPanel: {fileID: 7323372432928001994}
+  managerPrefabs1:
+  - {fileID: 1763599220342190362, guid: c6ea2e780f2fa2f49b55ef707d8638b6, type: 3}
+  - {fileID: 7439264374916694208, guid: 7e3cfb68f8c697846a76c3ebf4f97563, type: 3}
+  - {fileID: 797312810262880539, guid: 5d8eda35b3486354c89011fb604387ab, type: 3}
 --- !u!1 &7323372432928001994
 GameObject:
   m_ObjectHideFlags: 0

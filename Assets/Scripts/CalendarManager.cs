@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 using TMPro;
 using System.IO;
+using Newtonsoft.Json;
 
 /////Saveable Attributes, DONT DELETE
 //////DateTime currentDate///////////////
@@ -97,11 +98,17 @@ public class CalendarManager : MonoBehaviour, Saveable
     
     public string DataToJson(){
         CalendarManagerData data = new CalendarManagerData(currentDate);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<CalendarManagerData>(json);
+        data = JsonConvert.DeserializeObject<CalendarManagerData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(new DateTime(data.currentDate));
     }
     

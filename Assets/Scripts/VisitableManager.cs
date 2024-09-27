@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 
 /////Saveable Attributes, DONT DELETE
 //////List<string> reachableExhibitsIds;List<string> reachableFoodBuildingsIds;List<string> reachableDrinkBuildingsIds;List<string> reachableEnergyBuildingsIds;List<string> reachableRestroomBuildingsIds;List<string> reachableHappinessBuildingsIds//////////
 
-public class VisitableManager : MonoBehaviour, Saveable
+public class VisitableManager : MonoBehaviour, Saveable, Manager
 {
     static public VisitableManager instance;
     /////GENERATE
@@ -39,7 +40,9 @@ public class VisitableManager : MonoBehaviour, Saveable
         instance = this;
         if(LoadMenu.loadedGame != null)
         {
+            LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
+            LoadMenu.objectLoadedEvent.Invoke();
         }
     }
 
@@ -49,7 +52,11 @@ public class VisitableManager : MonoBehaviour, Saveable
             return true;
         return false;
     }
-    
+
+    public bool GetIsLoaded()
+    {
+        return true;
+    }
 ////GENERATED
 
     public List<string> reachableExhibitsIds = new List<string>();
@@ -229,11 +236,17 @@ public class VisitableManager : MonoBehaviour, Saveable
     
     public string DataToJson(){
         VisitableManagerData data = new VisitableManagerData(reachableExhibitsIds, reachableFoodBuildingsIds, reachableDrinkBuildingsIds, reachableEnergyBuildingsIds, reachableRestroomBuildingsIds, reachableHappinessBuildingsIds);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<VisitableManagerData>(json);
+        data = JsonConvert.DeserializeObject<VisitableManagerData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data.reachableExhibitsIds, data.reachableFoodBuildingsIds, data.reachableDrinkBuildingsIds, data.reachableEnergyBuildingsIds, data.reachableRestroomBuildingsIds, data.reachableHappinessBuildingsIds);
     }
     

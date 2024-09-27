@@ -129,7 +129,7 @@ public class Bench : BuildingAncestor
     public override void FindPaths()
     {
         for (int j = 0; j < 4; j++)
-            if (grid.neighbours[j] != null && grid.trueNeighbours[j].isPath)
+            if (grid.neighbours[j] != null && grid.trueNeighbours[j].isPath && !paths.Contains(grid.trueNeighbours[j]))
                  paths.Add(grid.trueNeighbours[j]);
     }
 
@@ -168,5 +168,6 @@ public class Bench : BuildingAncestor
         grid = GridManager.instance.GetGrid(transform.position);
         grid.GetBench(_id);
         base.LoadHelper();
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 }

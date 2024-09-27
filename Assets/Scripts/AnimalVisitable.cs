@@ -10,6 +10,7 @@ public interface AnimalVisitable
     public abstract string GetId();
     public abstract AnimalVisitableData ToData();
     public abstract void FromData(AnimalVisitableData data);
+    public abstract void LoadHelper();
 }
 
 [Serializable]

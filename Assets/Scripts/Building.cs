@@ -4,11 +4,12 @@ using UnityEngine;
 using System.Linq;
 using UnityEngine.AI;
 using static Grid;
+using Newtonsoft.Json;
 
 //,List<PurchasableItems> purchasableItemInstances
 
 /////Saveable Attributes, DONT DELETE
-//////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice;bool reachable;int capacity;List<string> visitorsIds;int itemsBought//////////
+//////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice;bool reachable;int capacity;List<string> visitorsIds;int itemsBought;int x;int z;Vector3 startingGridIndex//////////
 //////SERIALIZABLE:YES/
 
 public class Building : BuildingAncestor, Saveable
@@ -180,7 +181,7 @@ public class Building : BuildingAncestor, Saveable
         {
             for (int j = 0; j < 4; j++)
             {
-                if (gridList[i].neighbours[j] != null && gridList[i].trueNeighbours[j].isPath)
+                if (gridList[i].neighbours[j] != null && gridList[i].trueNeighbours[j].isPath && !paths.Contains(gridList[i].trueNeighbours[j]))
                 {
                     paths.Add(gridList[i].trueNeighbours[j]);
                 }
@@ -444,6 +445,7 @@ public class Building : BuildingAncestor, Saveable
         }
 
         base.LoadHelper();
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 ///******************************
     ///GENERATED CODE, DONT MODIFY
@@ -453,7 +455,9 @@ public class Building : BuildingAncestor, Saveable
     public class BuildingData
     {
         public string _id;
+        [JsonConverter(typeof(Vector3Converter))]
         public Vector3 position;
+        [JsonConverter(typeof(QuaternionConverter))]
         public Quaternion rotation;
         public int selectedPrefabId;
         public string tag;
@@ -462,8 +466,12 @@ public class Building : BuildingAncestor, Saveable
         public int capacity;
         public List<string> visitorsIds;
         public int itemsBought;
+        public int x;
+        public int z;
+        [JsonConverter(typeof(Vector3Converter))]
+        public Vector3 startingGridIndex;
 
-        public BuildingData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam)
+        public BuildingData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam, int xParam, int zParam, Vector3 startingGridIndexParam)
         {
            _id = _idParam;
            position = positionParam;
@@ -475,26 +483,35 @@ public class Building : BuildingAncestor, Saveable
            capacity = capacityParam;
            visitorsIds = visitorsIdsParam;
            itemsBought = itemsBoughtParam;
+           x = xParam;
+           z = zParam;
+           startingGridIndex = startingGridIndexParam;
         }
     }
 
     BuildingData data; 
     
     public string DataToJson(){
-        BuildingData data = new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought);
-        return JsonUtility.ToJson(data);
+        BuildingData data = new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought, x, z, startingGridIndex);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<BuildingData>(json);
-        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.visitorsIds, data.itemsBought);
+        data = JsonConvert.DeserializeObject<BuildingData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
+        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.visitorsIds, data.itemsBought, data.x, data.z, data.startingGridIndex);
     }
     
     public string GetFileName(){
         return "Building.json";
     }
     
-    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam){ 
+    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam, int xParam, int zParam, Vector3 startingGridIndexParam){ 
         
            _id = _idParam;
            transform.position = positionParam;
@@ -506,10 +523,13 @@ public class Building : BuildingAncestor, Saveable
            capacity = capacityParam;
            visitorsIds = visitorsIdsParam;
            itemsBought = itemsBoughtParam;
+           x = xParam;
+           z = zParam;
+           startingGridIndex = startingGridIndexParam;
     }
     
     public BuildingData ToData(){
-         return new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought);
+         return new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought, x, z, startingGridIndex);
     }
     
     public void FromData(BuildingData data){
@@ -524,5 +544,8 @@ public class Building : BuildingAncestor, Saveable
            capacity = data.capacity;
            visitorsIds = data.visitorsIds;
            itemsBought = data.itemsBought;
+           x = data.x;
+           z = data.z;
+           startingGridIndex = data.startingGridIndex;
     }
 }

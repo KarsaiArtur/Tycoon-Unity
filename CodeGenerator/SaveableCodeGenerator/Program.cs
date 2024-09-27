@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 
 
 public class MyProgram{
+    static List<string> convertableTypes = ["Vector3", "Quaternion", "Vector3[]"];
     static List<string> primitives = ["bool", "string", "int", "float", "long", "Vector3", "Vector2", "Vector3[]", "Quaternion", "DateTime", "Grid", "Grid[,]"];
     static List<string> nonBehaviour = ["Grid", "Grid[,]"];
     static List<string> transforms = ["position","rotation","localScale"];
@@ -230,7 +231,12 @@ $"           {attriButeName} = {attribute.name}{finalAttribute};";
             finalAttribute = attribute.isList ? $"List<{finalAttribute}>" : finalAttribute;
             string attributeString =
 $"        public {finalAttribute} {attribute.name};";
-            classString += System.Environment.NewLine + attributeString;
+
+
+            var converterName = attribute.type.Last().Equals(']') ? $"{attribute.type.Substring(0, attribute.type.Length-2)}Array" : attribute.type;
+            var convertString = convertableTypes.Contains(attribute.type) ? System.Environment.NewLine  + $"        [JsonConverter(typeof({converterName}Converter))]" : "";
+
+            classString += convertString + System.Environment.NewLine + attributeString;
             }
         }
         classString += System.Environment.NewLine  + System.Environment.NewLine +
@@ -253,7 +259,10 @@ $"        public {className}Data(";
 @"    
     public string DataToJson(){
 "+toDataList()+$"        {className}Data data = new {className}Data("+ attributesWithoutType() +@");
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
 ";
     }
@@ -262,7 +271,10 @@ $"        public {className}Data(";
         return 
 @"    
     public void FromJson(string json){
-"+$"        data = JsonUtility.FromJson<{className}Data>(json);"+@"
+"+$"        data = JsonConvert.DeserializeObject<{className}Data>(json, new JsonSerializerSettings"+@"
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData("+ attributesWithoutType("data.", true) +@");
     }
 ";

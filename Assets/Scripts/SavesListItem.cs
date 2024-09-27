@@ -18,6 +18,7 @@ public class SavesListItem : MonoBehaviour
             () => {
                 LoadMenu.loadedGame = loadName;
                 MainMenu.instance.loadGameScene();
+                Debug.Log(LoadMenu.loadedGame);
             });
     }
 }

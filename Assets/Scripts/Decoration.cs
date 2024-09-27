@@ -75,5 +75,6 @@ public class Decoration : Placeable
     public void LoadHelper()
     {
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 }

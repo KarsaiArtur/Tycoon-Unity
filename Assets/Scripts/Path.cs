@@ -1,4 +1,5 @@
 using System;
+using Newtonsoft.Json;
 using UnityEngine;
 
 /////Saveable Attributes, DONT DELETE
@@ -143,6 +144,7 @@ public class Path : Placeable, Saveable
     {
         GridManager.instance.GetGrid(transform.position).isPath = true;
         playerControl.ReloadGuestNavMesh();
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 ///******************************
     ///GENERATED CODE, DONT MODIFY
@@ -152,10 +154,12 @@ public class Path : Placeable, Saveable
     public class PathData
     {
         public string _id;
+        [JsonConverter(typeof(Vector3Converter))]
         public Vector3 position;
         public int selectedPrefabId;
         public int placeablePrice;
         public string tag;
+        [JsonConverter(typeof(QuaternionConverter))]
         public Quaternion rotation;
 
         public PathData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, int placeablePriceParam, string tagParam, Quaternion rotationParam)
@@ -173,11 +177,17 @@ public class Path : Placeable, Saveable
     
     public string DataToJson(){
         PathData data = new PathData(_id, transform.position, selectedPrefabId, placeablePrice, tag, transform.rotation);
-        return JsonUtility.ToJson(data);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
     }
     
     public void FromJson(string json){
-        data = JsonUtility.FromJson<PathData>(json);
+        data = JsonConvert.DeserializeObject<PathData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         SetData(data._id, data.position, data.selectedPrefabId, data.placeablePrice, data.tag, data.rotation);
     }
     
