@@ -1,12 +1,14 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 
-/////Attributes, DONT DELETE
+/////Saveable Attributes, DONT DELETE
 //////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice;bool reachable;int capacity;List<string> visitorsIds//////////
 //////SERIALIZABLE:YES/
 
-public class Bench : BuildingAncestor
+public class Bench : BuildingAncestor, Saveable
 {
     float height;
     Grid grid;
@@ -122,7 +124,7 @@ public class Bench : BuildingAncestor
     {
         //visitor.SetIsVisible(false);
 
-        float tempEnergy = Random.Range(40, 60);
+        float tempEnergy = UnityEngine.Random.Range(40, 60);
         visitor.energy = visitor.energy + tempEnergy > 100 ? 100 : visitor.energy + tempEnergy;
     }
 
@@ -169,5 +171,89 @@ public class Bench : BuildingAncestor
         grid.GetBench(_id);
         base.LoadHelper();
         LoadMenu.objectLoadedEvent.Invoke();
+    }
+///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    [Serializable]
+    public class BenchData
+    {
+        public string _id;
+        [JsonConverter(typeof(Vector3Converter))]
+        public Vector3 position;
+        [JsonConverter(typeof(QuaternionConverter))]
+        public Quaternion rotation;
+        public int selectedPrefabId;
+        public string tag;
+        public int placeablePrice;
+        public bool reachable;
+        public int capacity;
+        public List<string> visitorsIds;
+
+        public BenchData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam)
+        {
+           _id = _idParam;
+           position = positionParam;
+           rotation = rotationParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           tag = tagParam;
+           placeablePrice = placeablePriceParam;
+           reachable = reachableParam;
+           capacity = capacityParam;
+           visitorsIds = visitorsIdsParam;
+        }
+    }
+
+    BenchData data; 
+    
+    public string DataToJson(){
+        BenchData data = new BenchData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
+    }
+    
+    public void FromJson(string json){
+        data = JsonConvert.DeserializeObject<BenchData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
+        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.visitorsIds);
+    }
+    
+    public string GetFileName(){
+        return "Bench.json";
+    }
+    
+    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam){ 
+        
+           _id = _idParam;
+           transform.position = positionParam;
+           transform.rotation = rotationParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           tag = tagParam;
+           placeablePrice = placeablePriceParam;
+           reachable = reachableParam;
+           capacity = capacityParam;
+           visitorsIds = visitorsIdsParam;
+    }
+    
+    public BenchData ToData(){
+         return new BenchData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds);
+    }
+    
+    public void FromData(BenchData data){
+        
+           _id = data._id;
+           transform.position = data.position;
+           transform.rotation = data.rotation;
+           selectedPrefabId = data.selectedPrefabId;
+           tag = data.tag;
+           placeablePrice = data.placeablePrice;
+           reachable = data.reachable;
+           capacity = data.capacity;
+           visitorsIds = data.visitorsIds;
     }
 }

@@ -1,1 +1,1 @@
-{"buildingList":[]}
+{"buildingList":[{"_id":"Building:e7ddd515-2c8b-4b11-9d8e-f7fcf32a3967","position":{"x":42.5,"y":3.5,"z":54.5},"rotation":{"x":0.0,"y":0.7071068,"z":0.0,"w":0.7071068},"selectedPrefabId":28576,"tag":"Placed","placeablePrice":1500,"reachable":true,"capacity":8,"visitorsIds":["Visitor:c6eb1b7b-2f17-4e7d-ab75-071ef159c4e7","Visitor:e8cb55e0-ae22-4a4f-9589-64def657140d"],"itemsBought":0,"x":1,"z":-2,"startingGridIndex":{"x":10.0,"y":0.0,"z":22.0}}]}

@@ -613,10 +613,10 @@ public class Animal : Placeable, Saveable
                     destinationGrid = GetExhibit().gridList[UnityEngine.Random.Range(0, GetExhibit().gridList.Count)];
                 else
                 {
-                    int minX = (int)(Mathf.Floor(transform.position.x) - 10 > 0 ? Mathf.Floor(transform.position.x) - 10 : 0);
-                    int maxX = (int)(Mathf.Floor(transform.position.x) + 10 < GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth ? Mathf.Floor(transform.position.x) + 10 : GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth);
-                    int minZ = (int)(Mathf.Floor(transform.position.z) - 10 > 0 ? Mathf.Floor(transform.position.z) - 10 : 0);
-                    int maxZ = (int)(Mathf.Floor(transform.position.z) + 10 < GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth ? Mathf.Floor(transform.position.z) + 10 : GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth);
+                    int minX = (int)(Mathf.Floor(transform.position.x) - GridManager.instance.elementWidth - 10 > 0 ? Mathf.Floor(transform.position.x) - GridManager.instance.elementWidth - 10 : 0);
+                    int maxX = (int)(Mathf.Floor(transform.position.x) - GridManager.instance.elementWidth + 10 < GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth ? Mathf.Floor(transform.position.x) - GridManager.instance.elementWidth + 10 : GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth);
+                    int minZ = (int)(Mathf.Floor(transform.position.z) - GridManager.instance.elementWidth - 10 > 0 ? Mathf.Floor(transform.position.z) - GridManager.instance.elementWidth - 10 : 0);
+                    int maxZ = (int)(Mathf.Floor(transform.position.z) - GridManager.instance.elementWidth + 10 < GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth ? Mathf.Floor(transform.position.z) - GridManager.instance.elementWidth + 10 : GridManager.instance.terrainWidth - 2 * GridManager.instance.elementWidth);
                     destinationGrid = GridManager.instance.grids[UnityEngine.Random.Range(minX, maxX), UnityEngine.Random.Range(minZ, maxZ)];
                 }
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);

@@ -73,14 +73,14 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
     }
     public void AddReachableExhibits(Visitable visitable)
     {
-        reachableExhibitsIds.Add(visitable.GetId());
         GetReachableExhibits();
+        reachableExhibitsIds.Add(visitable.GetId());
         reachableExhibits.Add(visitable);
     }
     public void RemoveReachableExhibits(Visitable visitable)
     {
-        reachableExhibitsIds.Remove(visitable.GetId());
         GetReachableExhibits();
+        reachableExhibitsIds.Remove(visitable.GetId());
         reachableExhibits.Remove(visitable);
     }
 
@@ -98,14 +98,14 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
     }
     public void AddReachableFoodBuildings(Visitable visitable)
     {
-        reachableFoodBuildingsIds.Add(visitable.GetId());
         GetReachableFoodBuildings();
+        reachableFoodBuildingsIds.Add(visitable.GetId());
         reachableFoodBuildings.Add(visitable);
     }
     public void RemoveReachableFoodBuildings(Visitable visitable)
     {
-        reachableFoodBuildingsIds.Remove(visitable.GetId());
         GetReachableFoodBuildings();
+        reachableFoodBuildingsIds.Remove(visitable.GetId());
         reachableFoodBuildings.Remove(visitable);
     }
 
@@ -123,14 +123,14 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
     }
     public void AddReachableDrinkBuildings(Visitable visitable)
     {
-        reachableDrinkBuildingsIds.Add(visitable.GetId());
         GetReachableDrinkBuildings();
+        reachableDrinkBuildingsIds.Add(visitable.GetId());
         reachableDrinkBuildings.Add(visitable);
     }
     public void RemoveReachableDrinkBuildings(Visitable visitable)
     {
-        reachableDrinkBuildingsIds.Remove(visitable.GetId());
         GetReachableDrinkBuildings();
+        reachableDrinkBuildingsIds.Remove(visitable.GetId());
         reachableDrinkBuildings.Remove(visitable);
     }
 
@@ -148,14 +148,14 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
     }
     public void AddReachableEnergyBuildings(Visitable visitable)
     {
-        reachableEnergyBuildingsIds.Add(visitable.GetId());
         GetReachableEnergyBuildings();
+        reachableEnergyBuildingsIds.Add(visitable.GetId());
         reachableEnergyBuildings.Add(visitable);
     }
     public void RemoveReachableEnergyBuildings(Visitable visitable)
     {
-        reachableEnergyBuildingsIds.Remove(visitable.GetId());
         GetReachableEnergyBuildings();
+        reachableEnergyBuildingsIds.Remove(visitable.GetId());
         reachableEnergyBuildings.Remove(visitable);
     }
 
@@ -173,14 +173,14 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
     }
     public void AddReachableRestroomBuildings(Visitable visitable)
     {
-        reachableRestroomBuildingsIds.Add(visitable.GetId());
         GetReachableRestroomBuildings();
+        reachableRestroomBuildingsIds.Add(visitable.GetId());
         reachableRestroomBuildings.Add(visitable);
     }
     public void RemoveReachableRestroomBuildings(Visitable visitable)
     {
-        reachableRestroomBuildingsIds.Remove(visitable.GetId());
         GetReachableRestroomBuildings();
+        reachableRestroomBuildingsIds.Remove(visitable.GetId());
         reachableRestroomBuildings.Remove(visitable);
     }
 
@@ -198,14 +198,14 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
     }
     public void AddReachableHappinessBuildings(Visitable visitable)
     {
-        reachableHappinessBuildingsIds.Add(visitable.GetId());
         GetReachableHappinessBuildings();
+        reachableHappinessBuildingsIds.Add(visitable.GetId());
         reachableHappinessBuildings.Add(visitable);
     }
     public void RemoveReachableHappinessBuildings(Visitable visitable)
     {
-        reachableHappinessBuildingsIds.Remove(visitable.GetId());
         GetReachableHappinessBuildings();
+        reachableHappinessBuildingsIds.Remove(visitable.GetId());
         reachableHappinessBuildings.Remove(visitable);
     }
 ///******************************

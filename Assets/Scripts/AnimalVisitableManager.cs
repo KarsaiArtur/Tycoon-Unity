@@ -17,7 +17,7 @@ public class AnimalVisitableManager : MonoBehaviour, Saveable, Manager
         animalvisitableList = new List<AnimalVisitable>();
         if(LoadMenu.loadedGame != null){
             LoadMenu.currentManager = this;
-            //LoadMenu.instance.LoadData(this);
+            LoadMenu.instance.LoadData(this);
             LoadMenu.objectLoadedEvent.Invoke();
         }
     }
@@ -29,7 +29,7 @@ public class AnimalVisitableManager : MonoBehaviour, Saveable, Manager
 
     public bool GetIsLoaded()
     {
-        return true;//data.animalvisitableList.Count + 1 == LoadMenu.loadedObjects;
+        return data.animalvisitableList.Count + 1 == LoadMenu.loadedObjects;
     }
 /*string json = JsonConvert.SerializeObject(animalvisitableList, new JsonSerializerSettings
 {

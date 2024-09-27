@@ -15,6 +15,10 @@ public class PrefabManager : MonoBehaviour, Manager
         if(LoadMenu.loadedGame != null){
             LoadMenu.objectLoadedEvent.Invoke();
         }
+        foreach(var prefab in naturePrefabs){
+            Debug.Log(prefab.name);
+            Debug.Log(prefab.GetInstanceID());
+        }
     }
 
     public GameObject GetPrefab(int id){

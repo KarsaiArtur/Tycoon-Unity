@@ -464,14 +464,14 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     }
     public void AddUnvisitedExhibits(Visitable visitable)
     {
-        unvisitedExhibitsIds.Add(visitable.GetId());
         GetUnvisitedExhibits();
+        unvisitedExhibitsIds.Add(visitable.GetId());
         unvisitedExhibits.Add(visitable);
     }
     public void RemoveUnvisitedExhibits(Visitable visitable)
     {
-        unvisitedExhibitsIds.Remove(visitable.GetId());
         GetUnvisitedExhibits();
+        unvisitedExhibitsIds.Remove(visitable.GetId());
         unvisitedExhibits.Remove(visitable);
     }
 

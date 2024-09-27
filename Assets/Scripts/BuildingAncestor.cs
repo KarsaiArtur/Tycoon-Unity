@@ -178,14 +178,14 @@ public abstract class BuildingAncestor : Placeable, Visitable
     }
     public void AddVisitors(Visitor visitor)
     {
-        visitorsIds.Add(visitor.GetId());
         GetVisitors();
+        visitorsIds.Add(visitor.GetId());
         visitors.Add(visitor);
     }
     public void RemoveVisitors(Visitor visitor)
     {
-        visitorsIds.Remove(visitor.GetId());
         GetVisitors();
+        visitorsIds.Remove(visitor.GetId());
         visitors.Remove(visitor);
     }
 }

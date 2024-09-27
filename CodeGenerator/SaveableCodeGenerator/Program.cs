@@ -13,11 +13,18 @@ public class MyProgram{
     static List<string> nonBehaviour = ["Grid", "Grid[,]"];
     static List<string> transforms = ["position","rotation","localScale"];
 
-    static List<(string interfaceName, string[] classNames, string[] baseAttributes)> interfaces = new List<(string interfaceName, string[] className, string[] baseAttributes)>()
+    static List<(string interfaceName, bool isAbstractClass, string[] classNames, string[] baseAttributes)> interfaces = new List<(string interfaceName, bool isAbstractClass, string[] className, string[] baseAttributes)>()
     { 
         (
             "AnimalVisitable", 
+            false,
             ["WaterTrough", "AnimalFood"],
+            ["position", "selectedPrefabId", "rotation"]
+        ),
+        (
+            "Staff", 
+            true,
+            ["Vet", "Zookeeper"],
             ["position", "selectedPrefabId", "rotation"]
         ),
     };
@@ -82,6 +89,7 @@ public class MyProgram{
 
         string end = fileContent.Substring(fileContent.LastIndexOf("}"));
 
+        System.Console.WriteLine(path);
         string attributesString = fileContent.Substring(fileContent.IndexOf("//////"));
         attributesString = attributesString.Substring(0, attributesString.LastIndexOf("//////////")).Replace("/", "").Replace(System.Environment.NewLine, "");
         
@@ -204,7 +212,7 @@ $"           {attriButeName} = {attribute.name}{finalAttribute};";
     }
 
     static string writeDataClass(string className){
-        (string interfaceName, string[] classNames, string[] baseAttributes) derive = ("", [], []);
+        (string interfaceName, bool isAbstractClass, string[] classNames, string[] baseAttributes) derive = ("", false, [], []);
         foreach(var key in interfaces){
             if(key.classNames.Contains(className)){
                 derive = key;
@@ -361,34 +369,38 @@ $"        public {className}Data(";
      }
 
      static string writeToDataClass(string className){
-        string derive = className;
+        (string interfaceName, bool isAbstractClass, string[] classNames, string[] baseAttributes) derive = (className, false, [], []);
         foreach(var key in interfaces){
             if(key.classNames.Contains(className)){
-                derive = key.interfaceName;
+                derive = key;
+                derive.interfaceName = key.interfaceName;
             }
         }
+        string overrideString = !derive.interfaceName.Equals(className) && derive.isAbstractClass ? "override " : "";
 
         return 
 @"    
-"+$"    public {derive}Data ToData(){{"+@"
+"+$"    public {overrideString}{derive.interfaceName}Data ToData(){{"+@"
 "+$"         return new {className}Data("+ attributesWithoutType() +@");
     }
 ";
      }
 
      static string writeFromDataClass(string className){
-        string derive = className;
+        (string interfaceName, bool isAbstractClass, string[] classNames, string[] baseAttributes) derive = (className, false, [], []);
         foreach(var key in interfaces){
             if(key.classNames.Contains(className)){
-                derive = key.interfaceName;
+                derive = key;
+                derive.interfaceName = key.interfaceName;
             }
         }
-        string dataAttribute = !derive.Equals(className) ? "castedData" : "data";
+        string dataAttribute = !derive.interfaceName.Equals(className) ? "castedData" : "data";
+        string overrideString = !derive.interfaceName.Equals(className) && derive.isAbstractClass ? "override " : "";
 
         return 
 @"    
-"+$"    public void FromData({derive}Data data){{"+@"
-        "+ (!derive.Equals(className) ? $"var castedData = ({className}Data)data;": "")
+"+$"    public {overrideString}void FromData({derive.interfaceName}Data data){{"+@"
+        "+ (!derive.interfaceName.Equals(className) ? $"var castedData = ({className}Data)data;": "")
         +fromDataList(dataAttribute + ".", true)+@"
     }
 ";

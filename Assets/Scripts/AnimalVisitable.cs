@@ -8,8 +8,8 @@ public interface AnimalVisitable
 {
     public abstract void Arrived(Animal animal);
     public abstract string GetId();
-    public abstract AnimalVisitableData ToData();
-    public abstract void FromData(AnimalVisitableData data);
+    public AnimalVisitableData ToData();
+    public void FromData(AnimalVisitableData data);
     public abstract void LoadHelper();
 }
 

@@ -4,7 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
-public class Grid : Saveable
+public class Grid
 {
     public Vector3[] coords;
     public Grid[] neighbours;
@@ -89,85 +89,14 @@ public class Grid : Saveable
     }
     public void AddNatures(Nature nature)
     {
-        naturesIds.Add(nature.GetId());
         GetNatures();
+        naturesIds.Add(nature.GetId());
         natures.Add(nature);
     }
     public void RemoveNatures(Nature nature)
     {
-        naturesIds.Remove(nature.GetId());
         GetNatures();
+        naturesIds.Remove(nature.GetId());
         natures.Remove(nature);
-    }
-///******************************
-    ///GENERATED CODE, DONT MODIFY
-    ///******************************
-
-    [Serializable]
-    public class GridData
-    {
-        [JsonConverter(typeof(Vector3ArrayConverter))]
-        public Vector3[] coords;
-        public bool isPath;
-        public string exhibitId;
-        public string buildingId;
-        public string benchId;
-        public List<string> naturesIds;
-
-        public GridData(Vector3[] coordsParam, bool isPathParam, string exhibitIdParam, string buildingIdParam, string benchIdParam, List<string> naturesIdsParam)
-        {
-           coords = coordsParam;
-           isPath = isPathParam;
-           exhibitId = exhibitIdParam;
-           buildingId = buildingIdParam;
-           benchId = benchIdParam;
-           naturesIds = naturesIdsParam;
-        }
-    }
-
-    GridData data; 
-    
-    public string DataToJson(){
-        GridData data = new GridData(coords, isPath, exhibitId, buildingId, benchId, naturesIds);
-        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.Auto
-        });;
-    }
-    
-    public void FromJson(string json){
-        data = JsonConvert.DeserializeObject<GridData>(json, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.Auto
-        });
-        SetData(data.coords, data.isPath, data.exhibitId, data.buildingId, data.benchId, data.naturesIds);
-    }
-    
-    public string GetFileName(){
-        return "Grid.json";
-    }
-    
-    void SetData(Vector3[] coordsParam, bool isPathParam, string exhibitIdParam, string buildingIdParam, string benchIdParam, List<string> naturesIdsParam){ 
-        
-           coords = coordsParam;
-           isPath = isPathParam;
-           exhibitId = exhibitIdParam;
-           buildingId = buildingIdParam;
-           benchId = benchIdParam;
-           naturesIds = naturesIdsParam;
-    }
-    
-    public GridData ToData(){
-         return new GridData(coords, isPath, exhibitId, buildingId, benchId, naturesIds);
-    }
-    
-    public void FromData(GridData data){
-        
-           coords = data.coords;
-           isPath = data.isPath;
-           exhibitId = data.exhibitId;
-           buildingId = data.buildingId;
-           benchId = data.benchId;
-           naturesIds = data.naturesIds;
     }
 }

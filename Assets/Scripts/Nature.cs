@@ -114,7 +114,7 @@ public class Nature : Placeable, Saveable
     public void LoadHelper()
     {
         GridManager.instance.GetGrid(transform.position).AddNatures(this);
-        Debug.Log("Nature LoadHelper");
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 ///******************************
     ///GENERATED CODE, DONT MODIFY

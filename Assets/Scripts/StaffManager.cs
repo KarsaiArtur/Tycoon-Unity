@@ -1,10 +1,12 @@
 using System.Collections.Generic;
+using System.Data.Common;
+using Newtonsoft.Json;
 using UnityEngine;
 
-/////Attributes, DONT DELETE
+/////Saveable Attributes, DONT DELETE
 //////List<Staff> staffList//////////
 
-public class StaffManager : MonoBehaviour, Manager
+public class StaffManager : MonoBehaviour, Manager, Saveable
 {
     public static StaffManager instance;
     public List<Staff> staffList;
@@ -14,7 +16,7 @@ public class StaffManager : MonoBehaviour, Manager
         instance = this;
         if(LoadMenu.loadedGame != null){
             LoadMenu.currentManager = this;
-            //LoadMenu.instance.LoadData(this);
+            LoadMenu.instance.LoadData(this);
             LoadMenu.objectLoadedEvent.Invoke();
         }
     }
@@ -38,6 +40,58 @@ public class StaffManager : MonoBehaviour, Manager
 
     public bool GetIsLoaded()
     {
-        return staffList.Count + 1 == LoadMenu.loadedObjects;
+        return data.staffList.Count + 1 == LoadMenu.loadedObjects;
+    }
+///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    public class StaffManagerData
+    {
+        public List<StaffData> staffList;
+
+        public StaffManagerData(List<StaffData> staffListParam)
+        {
+           staffList = staffListParam;
+        }
+    }
+
+    StaffManagerData data; 
+    
+    public string DataToJson(){
+
+        List<StaffData> staffList = new List<StaffData>();
+        foreach(var element in this.staffList){
+            staffList.Add(element.ToData());
+        }
+        StaffManagerData data = new StaffManagerData(staffList);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
+    }
+    
+    public void FromJson(string json){
+        data = JsonConvert.DeserializeObject<StaffManagerData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
+        SetData(data.staffList);
+    }
+    
+    public string GetFileName(){
+        return "StaffManager.json";
+    }
+    
+    void SetData(List<StaffData> staffListParam){ 
+        
+        foreach(var element in staffListParam){
+            var spawned = Instantiate(PrefabManager.instance.GetPrefab(element.selectedPrefabId), element.position, element.rotation);
+            var script = spawned.GetComponent<Staff>();
+            script.FromData(element);
+            script.LoadHelper();
+            AddList(script);
+        }
+
     }
 }

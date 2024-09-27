@@ -1,12 +1,14 @@
+using System;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.AI;
 
-/////Attributes, DONT DELETE
+/////Saveable Attributes, DONT DELETE
 //////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice//////////
 //////SERIALIZABLE:YES/
 
-public class Decoration : Placeable
+public class Decoration : Placeable, Saveable
 {
     float height;
     NavMeshObstacle navMeshObstacle;
@@ -76,5 +78,77 @@ public class Decoration : Placeable
     {
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
         LoadMenu.objectLoadedEvent.Invoke();
+    }
+///******************************
+    ///GENERATED CODE, DONT MODIFY
+    ///******************************
+
+    [Serializable]
+    public class DecorationData
+    {
+        public string _id;
+        [JsonConverter(typeof(Vector3Converter))]
+        public Vector3 position;
+        [JsonConverter(typeof(QuaternionConverter))]
+        public Quaternion rotation;
+        public int selectedPrefabId;
+        public string tag;
+        public int placeablePrice;
+
+        public DecorationData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam)
+        {
+           _id = _idParam;
+           position = positionParam;
+           rotation = rotationParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           tag = tagParam;
+           placeablePrice = placeablePriceParam;
+        }
+    }
+
+    DecorationData data; 
+    
+    public string DataToJson(){
+        DecorationData data = new DecorationData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice);
+        return JsonConvert.SerializeObject(data, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });;
+    }
+    
+    public void FromJson(string json){
+        data = JsonConvert.DeserializeObject<DecorationData>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
+        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice);
+    }
+    
+    public string GetFileName(){
+        return "Decoration.json";
+    }
+    
+    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam){ 
+        
+           _id = _idParam;
+           transform.position = positionParam;
+           transform.rotation = rotationParam;
+           selectedPrefabId = selectedPrefabIdParam;
+           tag = tagParam;
+           placeablePrice = placeablePriceParam;
+    }
+    
+    public DecorationData ToData(){
+         return new DecorationData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice);
+    }
+    
+    public void FromData(DecorationData data){
+        
+           _id = data._id;
+           transform.position = data.position;
+           transform.rotation = data.rotation;
+           selectedPrefabId = data.selectedPrefabId;
+           tag = data.tag;
+           placeablePrice = data.placeablePrice;
     }
 }

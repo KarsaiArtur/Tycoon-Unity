@@ -449,14 +449,14 @@ public class Exhibit : Placeable, Visitable, Saveable
     }
     public void AddAnimals(Animal animal)
     {
-        animalsIds.Add(animal.GetId());
         GetAnimals();
+        animalsIds.Add(animal.GetId());
         animals.Add(animal);
     }
     public void RemoveAnimals(Animal animal)
     {
-        animalsIds.Remove(animal.GetId());
         GetAnimals();
+        animalsIds.Remove(animal.GetId());
         animals.Remove(animal);
     }
 
@@ -474,14 +474,14 @@ public class Exhibit : Placeable, Visitable, Saveable
     }
     public void AddFoliages(Nature nature)
     {
-        foliagesIds.Add(nature.GetId());
         GetFoliages();
+        foliagesIds.Add(nature.GetId());
         foliages.Add(nature);
     }
     public void RemoveFoliages(Nature nature)
     {
-        foliagesIds.Remove(nature.GetId());
         GetFoliages();
+        foliagesIds.Remove(nature.GetId());
         foliages.Remove(nature);
     }
 
@@ -499,14 +499,14 @@ public class Exhibit : Placeable, Visitable, Saveable
     }
     public void AddStaffs(Staff staff)
     {
-        staffsIds.Add(staff.GetId());
         GetStaffs();
+        staffsIds.Add(staff.GetId());
         staffs.Add(staff);
     }
     public void RemoveStaffs(Staff staff)
     {
-        staffsIds.Remove(staff.GetId());
         GetStaffs();
+        staffsIds.Remove(staff.GetId());
         staffs.Remove(staff);
     }
 
@@ -524,14 +524,14 @@ public class Exhibit : Placeable, Visitable, Saveable
     }
     public void AddStaffsAtGate(Staff staff)
     {
-        staffsAtGateIds.Add(staff.GetId());
         GetStaffsAtGate();
+        staffsAtGateIds.Add(staff.GetId());
         staffsAtGate.Add(staff);
     }
     public void RemoveStaffsAtGate(Staff staff)
     {
-        staffsAtGateIds.Remove(staff.GetId());
         GetStaffsAtGate();
+        staffsAtGateIds.Remove(staff.GetId());
         staffsAtGate.Remove(staff);
     }
 
@@ -549,14 +549,14 @@ public class Exhibit : Placeable, Visitable, Saveable
     }
     public void AddFoodPlaces(AnimalFood animalfood)
     {
-        foodPlacesIds.Add(animalfood.GetId());
         GetFoodPlaces();
+        foodPlacesIds.Add(animalfood.GetId());
         foodPlaces.Add(animalfood);
     }
     public void RemoveFoodPlaces(AnimalFood animalfood)
     {
-        foodPlacesIds.Remove(animalfood.GetId());
         GetFoodPlaces();
+        foodPlacesIds.Remove(animalfood.GetId());
         foodPlaces.Remove(animalfood);
     }
 
@@ -574,14 +574,14 @@ public class Exhibit : Placeable, Visitable, Saveable
     }
     public void AddWaterPlaces(WaterTrough watertrough)
     {
-        waterPlacesIds.Add(watertrough.GetId());
         GetWaterPlaces();
+        waterPlacesIds.Add(watertrough.GetId());
         waterPlaces.Add(watertrough);
     }
     public void RemoveWaterPlaces(WaterTrough watertrough)
     {
-        waterPlacesIds.Remove(watertrough.GetId());
         GetWaterPlaces();
+        waterPlacesIds.Remove(watertrough.GetId());
         waterPlaces.Remove(watertrough);
     }
 
@@ -599,14 +599,14 @@ public class Exhibit : Placeable, Visitable, Saveable
     }
     public void AddVisitors(Visitor visitor)
     {
-        visitorsIds.Add(visitor.GetId());
         GetVisitors();
+        visitorsIds.Add(visitor.GetId());
         visitors.Add(visitor);
     }
     public void RemoveVisitors(Visitor visitor)
     {
-        visitorsIds.Remove(visitor.GetId());
         GetVisitors();
+        visitorsIds.Remove(visitor.GetId());
         visitors.Remove(visitor);
     }
 ///******************************

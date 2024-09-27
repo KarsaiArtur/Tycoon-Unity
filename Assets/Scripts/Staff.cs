@@ -1,4 +1,6 @@
+using System;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -149,12 +151,12 @@ public abstract class Staff : Placeable
     public void FindDestination(Exhibit exhibit)
     {
         time = 0;
-        timeGoal = Random.Range(9, 11);
+        timeGoal = UnityEngine.Random.Range(9, 11);
         if (exhibit != null)
         {
             if (workingState == WorkingState.GoingToExhibitEntranceToEnter || workingState == WorkingState.GoingToExhibitEntranceToLeave)
             {
-                agent.SetDestination(new Vector3(exhibit.entranceGrid.coords[0].x + Random.Range(0.1f, 0.9f), exhibit.entranceGrid.coords[0].y, exhibit.entranceGrid.coords[0].z + Random.Range(0.1f, 0.9f)));
+                agent.SetDestination(new Vector3(exhibit.entranceGrid.coords[0].x + UnityEngine.Random.Range(0.1f, 0.9f), exhibit.entranceGrid.coords[0].y, exhibit.entranceGrid.coords[0].z + UnityEngine.Random.Range(0.1f, 0.9f)));
                 if (workingState == WorkingState.GoingToExhibitEntranceToEnter)
                 {
                     var path = new NavMeshPath();
@@ -167,7 +169,7 @@ public abstract class Staff : Placeable
                 }
             }
             else if (workingState == WorkingState.GoingToExhibitExitToEnter || workingState == WorkingState.GoingToExhibitExitToLeave)
-                agent.SetDestination(new Vector3(exhibit.exitGrid.coords[0].x + Random.Range(0.1f, 0.9f), exhibit.exitGrid.coords[0].y, exhibit.exitGrid.coords[0].z + Random.Range(0.1f, 0.9f)));
+                agent.SetDestination(new Vector3(exhibit.exitGrid.coords[0].x + UnityEngine.Random.Range(0.1f, 0.9f), exhibit.exitGrid.coords[0].y, exhibit.exitGrid.coords[0].z + UnityEngine.Random.Range(0.1f, 0.9f)));
             else if (workingState == WorkingState.Working)
                 FindInsideDestination();
             else if (workingState == WorkingState.Resting && exhibit.entranceGrid.neighbours.Length > 0)
@@ -176,7 +178,7 @@ public abstract class Staff : Placeable
                 {
                     if (grid != null)
                     {
-                        agent.SetDestination(new Vector3(grid.coords[0].x + Random.Range(0, 1.0f), grid.coords[0].y, grid.coords[0].z + Random.Range(0, 1.0f)));
+                        agent.SetDestination(new Vector3(grid.coords[0].x + UnityEngine.Random.Range(0, 1.0f), grid.coords[0].y, grid.coords[0].z + UnityEngine.Random.Range(0, 1.0f)));
                         break;
                     }
                 }
@@ -277,4 +279,17 @@ public abstract class Staff : Placeable
         SetToDefault();
         LoadMenu.objectLoadedEvent.Invoke();
     }
+    
+    public abstract StaffData ToData();
+    public abstract void FromData(StaffData data);
+}
+
+[Serializable]
+public class StaffData
+{
+    [JsonConverter(typeof(Vector3Converter))]
+    public Vector3 position;
+    public int selectedPrefabId;
+    [JsonConverter(typeof(QuaternionConverter))]
+    public Quaternion rotation;
 }

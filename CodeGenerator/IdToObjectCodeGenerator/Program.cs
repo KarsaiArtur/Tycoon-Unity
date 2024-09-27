@@ -157,8 +157,8 @@ return $"    public List<{attribute.type}> Get{name}()"+@"
         var type = attribute.type.ToLower();
 return $"    public void Add{name}({attribute.type} {type})"+@"
     {
-"+$"        {attribute.name}Ids.Add({type}.GetId());"+@"
 "+$"        Get{name}();"+@"
+"+$"        {attribute.name}Ids.Add({type}.GetId());"+@"
 "+$"        {attribute.name}.Add({type});" +@"
     }
 ";
@@ -169,8 +169,8 @@ return $"    public void Add{name}({attribute.type} {type})"+@"
         var type = attribute.type.ToLower();
 return $"    public void Remove{name}({attribute.type} {type})"+@"
     {
-"+$"        {attribute.name}Ids.Remove({type}.GetId());"+@"
 "+$"        Get{name}();"+@"
+"+$"        {attribute.name}Ids.Remove({type}.GetId());"+@"
 "+$"        {attribute.name}.Remove({type});" +@"
     }
 ";

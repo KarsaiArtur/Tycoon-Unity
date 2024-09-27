@@ -22,7 +22,7 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
     public bool questWindowOpened = false;
     static public QuestManager instance;
 
-    void Awake()
+    void Start()
     {
         instance = this;
         easyQuests.Add(new Quest("Start Your Dream Team", "Have 2 staff members of any kind", 1000, "Easy", () => { return StaffManager.instance.staffList.Count >= 2; }, () => { return StaffManager.instance.staffList.Count; }, 2));

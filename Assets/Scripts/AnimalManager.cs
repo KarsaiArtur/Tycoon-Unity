@@ -75,7 +75,6 @@ public class AnimalManager : MonoBehaviour, Saveable, Manager
     }
     
     void SetData(List<AnimalData> animalListParam){ 
-        LoadMenu.objectLoadedEvent.Invoke();
         
         foreach(var element in animalListParam){
             var spawned = Instantiate(PrefabManager.instance.GetPrefab(element.selectedPrefabId), element.position, element.rotation);
