@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
+using static Chunk;
 
 public class Grid
 {
@@ -18,6 +19,31 @@ public class Grid
     private Bench bench;
     /////GENERATE
     private List<Nature> natures;
+    public Chunk.TerrainType terrainType;
+
+    public void CheckTerrainType()
+    {
+        for (int i = 1; i < coords.Length; i++)
+        {
+            if (GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[0])] != GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[i])])
+            {
+                terrainType = Chunk.TerrainType.Mixed;
+                return;
+            }
+        }
+
+        terrainType = GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[0])];
+    }
+
+    public List<Chunk.TerrainType> GetTerrainTypes()
+    {
+        List<Chunk.TerrainType> terrainTypes = new();
+        for (int i = 1; i < coords.Length; i++)
+        {
+            terrainTypes.Add(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[i])]);
+        }
+        return terrainTypes;
+    }
 
     public void SetNeighbour0(Grid neighbour)
     {

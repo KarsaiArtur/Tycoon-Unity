@@ -8,11 +8,22 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /////Saveable Attributes, DONT DELETE
-//////string _id;Vector3 position;Quaternion rotation;Vector3 localScale;int selectedPrefabId;string tag;int placeablePrice;string placeableName;string exhibitId;float hunger;float thirst;float restroomNeeds;float happiness;float health;DateTime prevDay;bool isSick;float age;DateTime birthDate;bool isMale;bool isPregnant;int dayOfConception;int fertility//////////
+//////string _id;Vector3 position;Quaternion rotation;Vector3 localScale;int selectedPrefabId;string tag;int placeablePrice;string placeableName;string exhibitId;float hunger;float thirst;float restroomNeeds;float happiness;float health;DateTime prevDay;bool isSick;float age;DateTime birthDate;bool isMale;bool isPregnant;int dayOfConception;int fertility;float terrainBonusMultiplier;float natureBonus//////////
 //////SERIALIZABLE:YES/
 
 public class Animal : Placeable, Saveable
 {
+    public enum Action
+    {
+        Food,
+        Drink,
+        Wander,
+        Mating,
+        Fleeing,
+        Attacking,
+        Nothing
+    }
+
     public Material[] materials;
     Vector3 defaultScale;
     float defaultSpeed;
@@ -34,7 +45,7 @@ public class Animal : Placeable, Saveable
     float stuckTime = 0;
     public bool destinationReached = false;
     Vector3 destination;
-    public string action = "";
+    public Action action;
     /////GENERATE
     private AnimalVisitable destinationVisitable;
     bool isEating = false;
@@ -55,6 +66,9 @@ public class Animal : Placeable, Saveable
     public bool isSick = false;
     public bool isGettingHealed = false;
     public float requiredExhibitSpace = 1;
+    public List<Chunk.TerrainType> terrainsPreferred = new();
+    public float terrainBonusMultiplier = 0;
+    public float natureBonus = 1;
     public float age = 0;
     public int lifeExpectancy = 10;
     public int fullGrownAgeMonth = 12;
@@ -160,7 +174,7 @@ public class Animal : Placeable, Saveable
         base.Remove();
 
         ZooManager.instance.ChangeMoney(-placeablePrice * 0.2f);
-        ZooManager.instance.ChangeMoney(Mathf.Floor(placeablePrice * 0.5f * health / 100 * (1 - age / lifeExpectancy)));
+        ZooManager.instance.ChangeMoney(Mathf.Floor(placeablePrice * 0.5f * health / 100 * (((1 - age / lifeExpectancy)) > 0 ? (1 - age / lifeExpectancy) : 0)));
 
         if (GetExhibit() != null)
             GetExhibit().RemoveAnimal(this);
@@ -173,6 +187,11 @@ public class Animal : Placeable, Saveable
             Destroy(currentPlacingPriceInstance.gameObject);
         }
         Destroy(gameObject);
+    }
+
+    public override float GetSellPrice()
+    {
+        return Mathf.Floor(placeablePrice * 0.5f * health / 100 * (((1 - age / lifeExpectancy)) > 0 ? (1 - age / lifeExpectancy) : 0));
     }
 
     public override void Awake()
@@ -197,9 +216,7 @@ public class Animal : Placeable, Saveable
     {
         if (placed)
         {
-            NewDay();
-
-            if (action == "attacking")
+            if (action ==  Action.Attacking)
             {
                 attackCooldown += Time.deltaTime;
             }
@@ -226,6 +243,7 @@ public class Animal : Placeable, Saveable
             {
                 CheckPregnancy();
                 FindMatingPartner();
+                NewDay();
             }
 
             if (GetExhibit() == null && GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
@@ -247,18 +265,19 @@ public class Animal : Placeable, Saveable
             thirst = thirst > thirstDetriment ? thirst - thirstDetriment : 0;
             restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
 
-            float foliageBonus = 1;
-            if (GetExhibit() != null)
-                foliageBonus = Mathf.Sqrt(GetExhibit().GetFoliages().Count + 1);
+            if (GetExhibit() != null && terrainBonusMultiplier < 0)
+                happiness = happiness > happinessDetriment * terrainBonusMultiplier ? happiness + happinessDetriment * terrainBonusMultiplier : 0;
+            if (GetExhibit() != null && terrainBonusMultiplier > 0)
+                happiness = happiness + happinessDetriment * terrainBonusMultiplier < 100 ? happiness + happinessDetriment * terrainBonusMultiplier : 100;
 
             if (GetExhibit() != null && (GetExhibit().gridList.Count < requiredExhibitSpace || GetExhibit().gridList.Count < GetExhibit().occupiedSpace))
-                happiness = happiness > happinessDetriment / foliageBonus ? happiness - happinessDetriment / foliageBonus : 0;
+                happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
             if (hunger < 33)
-                happiness = happiness > happinessDetriment / foliageBonus ? happiness - happinessDetriment / foliageBonus : 0;
+                happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
             if (thirst < 33)
-                happiness = happiness > happinessDetriment / foliageBonus ? happiness - happinessDetriment / foliageBonus : 0;
+                happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
             if (health < 33)
-                happiness = happiness > happinessDetriment / foliageBonus ? happiness - happinessDetriment / foliageBonus : 0;
+                happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
 
             if (hunger < 20)
                 health = health > healthDetriment ? health - healthDetriment : 0;
@@ -272,7 +291,7 @@ public class Animal : Placeable, Saveable
                 health = health > healthDetriment * 5 ? health - healthDetriment * 5 : 0;
 
             if (hunger > 75 && thirst > 75 && health > 75)
-                happiness = happiness + happinessDetriment * foliageBonus > 100 ? 100 : happiness + happinessDetriment * foliageBonus;
+                happiness = happiness + happinessDetriment * natureBonus > 100 ? 100 : happiness + happinessDetriment * natureBonus;
 
             if (health <= 0)
                 Die();
@@ -281,6 +300,30 @@ public class Animal : Placeable, Saveable
                 Poop();
 
             yield return new WaitForSeconds(1);
+        }
+    }
+
+    public void CalculateTerrainBonus()
+    {
+        if (GetExhibit() != null)
+        {
+            float likedTerrainPercent = 0;
+            foreach (var terrainType in terrainsPreferred)
+            {
+                likedTerrainPercent += GetExhibit().CalculateTerrainPercent(terrainType) < 1 / terrainsPreferred.Count + 10 ? GetExhibit().CalculateTerrainPercent(terrainType): 1 / terrainsPreferred.Count + 10;
+            }
+            likedTerrainPercent = likedTerrainPercent < 1 ? likedTerrainPercent : 1;
+            terrainBonusMultiplier = likedTerrainPercent * 3 - 2;
+        }
+    }
+
+    public void CalculateNatureBonus()
+    {
+        if (GetExhibit() != null)
+        {
+            var tempList = GetExhibit().GetFoliages().Where(f => terrainsPreferred.Contains(f.terrainPreferred));
+            tempList = tempList.Where(f => GridManager.instance.GetGrid(f.transform.position).terrainType == f.terrainPreferred);
+            natureBonus = Mathf.Sqrt(tempList.Count() + 1);
         }
     }
 
@@ -315,7 +358,7 @@ public class Animal : Placeable, Saveable
                 GetTarget("");
                 agent.speed = defaultSpeed;
                 atDestination = true;
-                action = "";
+                action = Action.Nothing;
             }
             attackCooldown = 0;
         }
@@ -325,7 +368,7 @@ public class Animal : Placeable, Saveable
     {
         var animalDropping = Instantiate(playerControl.animalDroppingPrefab, transform.position, transform.rotation);
         animalDropping.tag = "Placed";
-        GetExhibit().animalDroppings.Add(animalDropping);
+        GetExhibit().AddDropping(animalDropping);
         restroomNeeds = UnityEngine.Random.Range(75f, 100f);
         restroomNeedsDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
     }
@@ -353,22 +396,22 @@ public class Animal : Placeable, Saveable
                 healthDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
             }
 
+            if (UnityEngine.Random.Range(lifeExpectancy - lifeExpectancy / 10, lifeExpectancy + lifeExpectancy / 5) < age)
+                Die();
+
+            age += 1 / DateTime.DaysInMonth(CalendarManager.instance.currentDate.Year, CalendarManager.instance.currentDate.Month);
+
             if (birthDate.Day == CalendarManager.instance.currentDate.Day)
-            {
-                age += 1f / 12f;
-                Debug.Log("Age: " + age);
+                age = ((CalendarManager.instance.currentDate.Year - birthDate.Year) * 12) + CalendarManager.instance.currentDate.Month - birthDate.Month;
+            Debug.Log("Age: " + age);
 
-                SetSize();
-
-                if (UnityEngine.Random.Range(lifeExpectancy - lifeExpectancy / 10, lifeExpectancy + lifeExpectancy / 5) < age)
-                    Die();
-            }
+            SetSize();
         }
     }
 
     void FleeAndAttack(List<Animal> animals)
     {
-        action = "";
+        action = Action.Nothing;
         float minDistance = 100;
         foreach (Animal animal in animals)
         {
@@ -392,7 +435,7 @@ public class Animal : Placeable, Saveable
         }
         if (minDistance < fleeDistance)
         {
-            action = "fleeing";
+            action = Action.Fleeing;
             agent.speed = defaultSpeed * 4;
             ChooseDestination();
         }
@@ -421,12 +464,12 @@ public class Animal : Placeable, Saveable
             }
             if (minDistance < fleeDistance)
             {
-                action = "attacking";
+                action = Action.Attacking;
                 agent.speed = defaultSpeed * 4;
                 ChooseDestination();
             }
         }
-        if (action != "fleeing" && action != "attacking")
+        if (action != Action.Fleeing && action != Action.Attacking)
         {
             agent.speed = defaultSpeed;
             GetTarget("");
@@ -459,7 +502,7 @@ public class Animal : Placeable, Saveable
 
     void FindMatingPartner()
     {
-        if (GetExhibit() != null && !isMale && !isPregnant && action != "mating" && action != "fleeing" && action != "attacking" && age * 12 >= reproductionAgeMonth && happiness >= 80)
+        if (GetExhibit() != null && !isMale && !isPregnant && action != Action.Mating && action != Action.Fleeing && action != Action.Attacking && age * 12 >= reproductionAgeMonth && happiness >= 80)
         {
             var potentialMates = GetExhibit().GetAnimals().Where(animal => animal.placeableName == placeableName && animal.isMale && animal.age * 12 >= animal.reproductionAgeMonth && animal.happiness >= 80);
             if (potentialMates.Any())
@@ -469,8 +512,8 @@ public class Animal : Placeable, Saveable
                 GetMatingPartner().GetMatingPartner(_id);
                 if (UnityEngine.Random.Range(0, fertility + GetMatingPartner().fertility) == 1)
                 {
-                    action = "mating";
-                    GetMatingPartner().action = "mating";
+                    action = Action.Mating;
+                    GetMatingPartner().action = Action.Mating;
                     ChooseDestination();
                     GetMatingPartner().ChooseDestination();
                 }
@@ -485,7 +528,7 @@ public class Animal : Placeable, Saveable
         AnimalManager.instance.freeAnimals.Remove(this);
         agent.speed = defaultSpeed;
         GetTarget("");
-        action = "";
+        action = Action.Nothing;
 
         foreach (var animal in GetExhibit().GetAnimals())
         {
@@ -505,11 +548,11 @@ public class Animal : Placeable, Saveable
             ChooseDestination();
         }
         if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1
-            || (action == "mating" && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.5))
+            || (action == Action.Mating && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.5))
         {
             destinationReached = true;
         }
-        if (action == "attacking" && GetTarget() != null && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.5)
+        if (action == Action.Attacking && GetTarget() != null && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.5)
         {
             Damage();
         }
@@ -520,17 +563,17 @@ public class Animal : Placeable, Saveable
             agent.velocity = Vector3.zero;
 
             animator.SetFloat("vertical", 0);
-            if (action == "food" && !isEating)
+            if (action == Action.Food && !isEating)
             {
                 isEating = true;
                 GetComponentInChildren<Animator>().Play("Start Eating");
                 transform.LookAt(destination);
             }
-            if (action == "drink")
+            if (action == Action.Drink)
             {
                 transform.LookAt(destination);
             }
-            if (action == "mating")
+            if (action == Action.Mating)
             {
                 if (GetMatingPartner().destinationReached)
                 {
@@ -552,8 +595,8 @@ public class Animal : Placeable, Saveable
                 atDestination = true;
                 if (GetMatingPartner() != null && (isPregnant || GetMatingPartner().isPregnant))
                 {
-                    action = "";
-                    GetMatingPartner().action = "";
+                    action = Action.Nothing;
+                    GetMatingPartner().action = Action.Nothing;
                     GetMatingPartner().GetMatingPartner("");
                     GetMatingPartner("");
                 }
@@ -584,7 +627,7 @@ public class Animal : Placeable, Saveable
 
     void ChooseDestination()
     {
-        if (action != "mating" && action != "fleeing" && action != "attacking")
+        if (action != Action.Mating && action != Action.Fleeing && action != Action.Attacking)
             ChooseDestinationType();
         Grid destinationGrid;
         int random;
@@ -594,7 +637,7 @@ public class Animal : Placeable, Saveable
 
         switch (action)
         {
-            case "food":
+            case Action.Food:
                 if (GetExhibit().GetFoodPlaces().Count > 0)
                 {
                     random = UnityEngine.Random.Range(0, GetExhibit().GetFoodPlaces().Count);
@@ -602,7 +645,7 @@ public class Animal : Placeable, Saveable
                     GetDestinationVisitable(GetExhibit().GetFoodPlaces()[random]._id);
                 }
                 break;
-            case "drink":
+            case Action.Drink:
                 if (GetExhibit().GetWaterPlaces().Count > 0)
                 {
                     random = UnityEngine.Random.Range(0, GetExhibit().GetWaterPlaces().Count);
@@ -610,7 +653,7 @@ public class Animal : Placeable, Saveable
                     GetDestinationVisitable(GetExhibit().GetWaterPlaces()[random]._id);
                 }
                 break;
-            case "wander":
+            case Action.Wander:
                 if (GetExhibit() != null)
                     destinationGrid = GetExhibit().gridList[UnityEngine.Random.Range(0, GetExhibit().gridList.Count)];
                 else
@@ -623,16 +666,16 @@ public class Animal : Placeable, Saveable
                 }
                 destination = new Vector3(destinationGrid.coords[0].x + offsetX, destinationGrid.coords[0].y, destinationGrid.coords[0].z + offsetZ);
                 break;
-            case "mating":
+            case Action.Mating:
                 if (isMale)
                     destination = GetMatingPartner().transform.position;
                 else
                     destination = transform.position;
                 break;
-            case "fleeing":
+            case Action.Fleeing:
                 destination = transform.position + (transform.position - dangerPos).normalized * 10;
                 break;
-            case "attacking":
+            case Action.Attacking:
                 destination = dangerPos;
                 break;
             default:
@@ -662,21 +705,21 @@ public class Animal : Placeable, Saveable
 
     void ChooseDestinationType()
     {
-        var probabilities = new List<(string action, float probability)>();
+        var probabilities = new List<(Action action, float probability)>();
         float sum = 0;
 
         if (GetExhibit() != null && GetExhibit().food > 0)
         {
             sum += (100 - hunger);
-            probabilities.Add(("food", sum));
+            probabilities.Add((Action.Food, sum));
         }
         if (GetExhibit() != null && GetExhibit().water > 0)
         {
             sum += (100 - thirst);
-            probabilities.Add(("drink", sum));
+            probabilities.Add((Action.Drink, sum));
         }
         sum += 50;
-        probabilities.Add(("wander", sum));
+        probabilities.Add((Action.Wander, sum));
 
         var random = UnityEngine.Random.Range(0, sum);
         action = probabilities.SkipWhile(i => i.probability < random).First().action;
@@ -862,7 +905,7 @@ public class Animal : Placeable, Saveable
     }
     
     public AnimalData ToData(){
-         return new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility);
+        return new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility);
     }
     
     public void FromData(AnimalData data){

@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.AI;
 using Unity.AI.Navigation;
 using Cinemachine;
+using System.Linq;
 
 /////Attributes, DONT DELETE
 //////Vector3 position;Quaternion rotation//////////
@@ -77,7 +78,8 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public void ChangeDelete(){
+    public void ChangeDelete()
+    {
         deleting = !deleting;
         if(chosenForDelete != null)
         {
@@ -95,7 +97,7 @@ public class PlayerControl : MonoBehaviour
         EventSystem.current.RaycastAll(eventData, raycastResults);
         foreach (RaycastResult result in raycastResults)
         {
-            if (!result.gameObject.tag.Equals("Price") && !result.gameObject.tag.Equals("InfoPopup") && !result.gameObject.tag.Equals("NotUI"))
+            if (!result.gameObject.tag.Equals("Price") && !result.gameObject.tag.Equals("NotUI"))
             {
                 return true;
             }
@@ -114,6 +116,44 @@ public class PlayerControl : MonoBehaviour
             foreach(var prefab in LoadMenu.managerPrefabs)
             {
                 Instantiate(LoadMenu.managerPrefabs[LoadMenu.currentManagerIndex++]).GetComponent<Manager>();
+            }
+        }
+    }
+
+    int typeIndex = 0;
+
+    public void ChangeGrid(RaycastHit hit)
+    {
+        List<Chunk.TerrainType> types = new List<Chunk.TerrainType>() { Chunk.TerrainType.Sand, Chunk.TerrainType.Stone, Chunk.TerrainType.Grass, Chunk.TerrainType.Snow, Chunk.TerrainType.Forest};
+        var ind = typeIndex % types.Count;
+
+        var grid = GridManager.instance.GetGrid(hit.point);
+        foreach(var coord in grid.coords)
+        {
+            GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] = types[ind];
+        }
+        /*var element = hit.collider.gameObject.GetComponent<Chunk>();
+        string[] xz = element.name.Split("_");
+        element.ReRender(int.Parse(xz[0]), int.Parse(xz[1]));*/
+        foreach (Chunk tempChunk in gridM.terrainElements)
+        {
+            if (tempChunk.gameObject.CompareTag("Terrain"))
+                tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
+        }
+
+        if (grid.GetExhibit() != null)
+        {
+            grid.GetExhibit().CalculateAnimalsTerrainBonus();
+        }
+        for (int i = 0; i < 4; i++)
+        {
+            if (grid.neighbours[i] == null && grid.trueNeighbours[i].GetExhibit() != null)
+            {
+                grid.trueNeighbours[i].GetExhibit().CalculateAnimalsTerrainBonus();
+            }
+            if (grid.trueNeighbours[i].neighbours[(i + 1) % 4] == null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit() != null)
+            {
+                grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit().CalculateAnimalsTerrainBonus();
             }
         }
     }
@@ -165,35 +205,18 @@ public class PlayerControl : MonoBehaviour
 
     public void PlaceObject()
     {
-        //if (Input.GetMouseButtonDown(1))
-        //{
-        //    var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
-        //    RaycastHit[] hits = Physics.RaycastAll(ray);
-        //    foreach (RaycastHit hit in hits)
-        //    {
-        //        if (hit.collider.CompareTag("Terrain"))
-        //        {
-        //            Debug.Log("self " + GridManager.instance.GetGrid(hit.point).coords[0]);
-        //            if (GridManager.instance.GetGrid(hit.point).neighbours[0] == null)
-        //                Debug.Log("0 null");
-        //            else
-        //                Debug.Log("0 " + GridManager.instance.GetGrid(hit.point).neighbours[0].coords[0] + " " + GridManager.instance.GetGrid(hit.point).trueNeighbours[0].coords[0]);
-        //            if (GridManager.instance.GetGrid(hit.point).neighbours[1] == null)
-        //                Debug.Log("1 null");
-        //            else
-        //                Debug.Log("1 " + GridManager.instance.GetGrid(hit.point).neighbours[1].coords[0] + " " + GridManager.instance.GetGrid(hit.point).trueNeighbours[1].coords[0]);
-        //            if (GridManager.instance.GetGrid(hit.point).neighbours[2] == null)
-        //                Debug.Log("2 null");
-        //            else
-        //                Debug.Log("2 " + GridManager.instance.GetGrid(hit.point).neighbours[2].coords[0] + " " + GridManager.instance.GetGrid(hit.point).trueNeighbours[2].coords[0]);
-        //            if (GridManager.instance.GetGrid(hit.point).neighbours[3] == null)
-        //                Debug.Log("3 null");
-        //            else
-        //                Debug.Log("3 " + GridManager.instance.GetGrid(hit.point).neighbours[3].coords[0] + " " + GridManager.instance.GetGrid(hit.point).trueNeighbours[3].coords[0]);
-        //            Debug.Log(GridManager.instance.GetGrid(hit.point).isExhibit);
-        //        }
-        //    }
-        //}
+        if (Input.GetMouseButtonDown(1))
+        {
+            var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit[] hits = Physics.RaycastAll(ray);
+            foreach (RaycastHit hit in hits)
+            {
+                if (hit.collider.CompareTag("Terrain"))
+                {
+                    typeIndex++;
+                }
+            }
+        }
         if (Input.GetMouseButtonDown(0))
         {
             isMouseDown = true;
@@ -231,6 +254,10 @@ public class PlayerControl : MonoBehaviour
                     {
                         var clickedOnObject = hit.collider.gameObject.GetComponent<Clickable>();
                         clickedOnObject.ClickedOn();
+                        break;
+                    }
+                    if(hit.collider.CompareTag("Terrain")){
+                        ChangeGrid(hit);
                         break;
                     }
                 }
@@ -831,6 +858,10 @@ public class PlayerControl : MonoBehaviour
             if (placedTags.Contains(hit.collider.tag) && !environmentTags.Contains(hit.collider.tag))
             {
                 chosenForDelete = hit.collider.GetComponentInParent<Placeable>();
+                if(prevChosenForDelete != null)
+                {
+                    prevChosenForDelete.ShowSellPrice(hit.point);
+                }
                 if(prevChosenForDelete != null && prevChosenForDelete != chosenForDelete)
                 {
                     prevChosenForDelete.ChangeMaterial(0);

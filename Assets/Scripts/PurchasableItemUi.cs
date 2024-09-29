@@ -29,6 +29,16 @@ public class PurchasableItemUi : MonoBehaviour
         raiseButton = transform.Find("Raise").Find("Button").GetComponent<Button>();
         lowerButton.onClick.AddListener(LowerPrice);
         raiseButton.onClick.AddListener(RaisePrice);
+
+        
+        if (Mathf.Abs(purchasableItem.currentPrice - purchasableItem.defaultPrice * (1f + PurchasableItems.minAndMaxPriceLimit)) < 0.001f)
+        {
+            raiseButton.enabled = false;
+        }
+        if (Mathf.Abs(purchasableItem.currentPrice - purchasableItem.defaultPrice * (1f - PurchasableItems.minAndMaxPriceLimit)) < 0.001f)
+        {
+            lowerButton.enabled = false;
+        }
     }
 
     void RaisePrice()

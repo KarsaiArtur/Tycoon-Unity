@@ -139,7 +139,7 @@ public class Decoration : Placeable, Saveable
     }
     
     public DecorationData ToData(){
-         return new DecorationData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice);
+        return new DecorationData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice);
     }
     
     public void FromData(DecorationData data){

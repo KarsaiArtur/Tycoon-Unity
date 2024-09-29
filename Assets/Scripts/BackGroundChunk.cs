@@ -14,10 +14,10 @@ public class BackGroundChunk : Chunk
     public GameObject testGridPrefab;
 
 
-    public override void Initialize(int index_x, int index_z, Vector3[] coords)
+    public override void Initialize(int index_x, int index_z, Vector3[] coords, TerrainType[] coordTypes)
     {
         rotationAngle = GridManager.instance.rotationAngle;
-        base.Initialize(index_x, index_z, coords);
+        base.Initialize(index_x, index_z, coords, coordTypes);
         if (first)
         {
             GenerateBuildings();

@@ -206,7 +206,7 @@ public class Path : Placeable, Saveable
     }
     
     public PathData ToData(){
-         return new PathData(_id, transform.position, selectedPrefabId, placeablePrice, tag, transform.rotation);
+        return new PathData(_id, transform.position, selectedPrefabId, placeablePrice, tag, transform.rotation);
     }
     
     public void FromData(PathData data){

@@ -183,7 +183,7 @@ public class Vet : Staff, Saveable
     }
     
     public override StaffData ToData(){
-         return new VetData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag);
+        return new VetData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag);
     }
     
     public override void FromData(StaffData data){

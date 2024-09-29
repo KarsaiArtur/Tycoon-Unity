@@ -33,6 +33,9 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable, Saveable
 
     public void Arrived(Animal animal)
     {
+        if (food <= 0)
+            return;
+
         float foodEaten = UnityEngine.Random.Range(40, 60);
         foodEaten = food > foodEaten ? foodEaten : food;
         foodEaten = animal.hunger + foodEaten > 100 ? 100 - animal.hunger : foodEaten;
@@ -46,23 +49,24 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable, Saveable
             GetExhibit().RemoveFoodPlaces(this);
             animal.GetDestinationVisitable("");
             if (gameObject != null)
-                Destroy(gameObject);
+                Delete();
         }
     }
 
     public void Delete()
     {
         AnimalVisitableManager.instance.animalvisitableList.Remove(this);
-        Destroy(gameObject);
+        if (gameObject != null)
+            Destroy(gameObject);
     }
 
-    public string GetId(){
+    public string GetId()
+    {
         return _id;
     }
 
     public void LoadHelper()
     {
-        
         LoadMenu.objectLoadedEvent.Invoke();
     }
 
@@ -138,7 +142,7 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable, Saveable
     }
     
     public AnimalVisitableData ToData(){
-         return new AnimalFoodData(_id, transform.position, transform.rotation, selectedPrefabId, tag, food, exhibitId);
+        return new AnimalFoodData(_id, transform.position, transform.rotation, selectedPrefabId, tag, food, exhibitId);
     }
     
     public void FromData(AnimalVisitableData data){

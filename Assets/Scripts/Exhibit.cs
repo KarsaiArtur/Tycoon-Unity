@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /////Saveable Attributes, DONT DELETE
-//////Vector3[] gridListPositions;string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;string exhibitName;List<string> animalsIds;List<string> foliagesIds;bool isExitGridInverted;int timesRotated;int exhibitCount;bool reachable;List<string> staffsIds;float food;float water;float waterCapacity;List<string> foodPlacesIds;List<string> waterPlacesIds;float occupiedSpace;bool isMixed;List<string> visitorsIds//////////
+//////Vector3[] animalDroppingCoords;Vector3[] gridListPositions;string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;string exhibitName;List<string> animalsIds;List<string> foliagesIds;bool isExitGridInverted;int timesRotated;int exhibitCount;bool reachable;List<string> staffsIds;float food;float water;float waterCapacity;List<string> foodPlacesIds;List<string> waterPlacesIds;float occupiedSpace;bool isMixed;List<string> visitorsIds//////////
 //////SERIALIZABLE:YES/
 
 public class Exhibit : Placeable, Visitable, Saveable
@@ -21,6 +21,8 @@ public class Exhibit : Placeable, Visitable, Saveable
     /////GENERATE
     private List<Nature> foliages;
     public List<GameObject> animalDroppings = new();
+    public Vector3[] animalDroppingCoords = new Vector3[0];
+    public Vector3[] animalDroppingPositions;
     public Grid exitGrid;
     public Grid entranceGrid;
     bool isExitGridInverted = false;
@@ -72,26 +74,21 @@ public class Exhibit : Placeable, Visitable, Saveable
 
     public void SetExhibit(HashSet<Grid> grids, Grid exitG, Grid entranceG, bool inverted)
     {
-        ExhibitManager.instance.AddList(this);
-        isExitGridInverted = inverted;
-        gateObstacleCenter = gameObject.GetComponent<NavMeshObstacle>().center;
-        gridList = new List<Grid>(grids);
-        paths = new List<Grid>();
-        gridList.Sort((x, y) => x.coords[0].z.CompareTo(y.coords[0].z) == 0 ? x.coords[0].x.CompareTo(y.coords[0].x) : x.coords[0].z.CompareTo(y.coords[0].z));
-
-        gridListPositions = new Vector3[gridList.Count];
-        for (int i = 0; i < gridList.Count; i++)
+        for (int i = ExhibitManager.instance.exhibitList.Count - 1; i >= 0; i--)
         {
-            gridList[i].GetExhibit(_id);
-            gridList[i].GetNatures().ForEach((element) => AddFoliages(element));
-            gridListPositions[i] = gridList[i].coords[0];
+            if (GridManager.instance.ExhibitFinderBFS(ExhibitManager.instance.exhibitList[i].entranceGrid, gridManager.startingGrid) != null)
+            {
+                ExhibitManager.instance.exhibitList[i].Remove();
+            }
         }
 
-        FindPaths();
-        DecideIfReachable();
-
+        ExhibitManager.instance.AddList(this);
         exitGrid = exitG;
         entranceGrid = entranceG;
+        isExitGridInverted = inverted;
+        gateObstacleCenter = gameObject.GetComponent<NavMeshObstacle>().center;
+
+        ExploreGrids();
     }
 
     public void DecideIfReachable()
@@ -112,6 +109,24 @@ public class Exhibit : Placeable, Visitable, Saveable
         {
             reachable = false;
             RemoveFromReachableLists();
+        }
+    }
+
+    public float CalculateTerrainPercent(Chunk.TerrainType terrainType)
+    {
+        List<Chunk.TerrainType> terrainTypes = new();
+        foreach (var grid in gridList)
+        {
+            terrainTypes.AddRange(grid.GetTerrainTypes());
+        }
+        return terrainTypes.Where(t => t == terrainType).Count() / terrainTypes.Count;
+    }
+
+    public void CalculateAnimalsTerrainBonus()
+    {
+        foreach (var animal in GetAnimals())
+        {
+            animal.CalculateTerrainBonus();
         }
     }
 
@@ -172,6 +187,11 @@ public class Exhibit : Placeable, Visitable, Saveable
             foreach (var animal in GetAnimals())
                 visitor.happiness = visitor.happiness + animal.happiness / 25 > 100 ? 100 : visitor.happiness + animal.happiness / 25;
         visitor.GetCurrentExhibit(_id);
+        visitor.TakePictures();
+    }
+
+    public void LoadedArrived(Visitor visitor)
+    {
         visitor.TakePictures();
     }
 
@@ -276,6 +296,32 @@ public class Exhibit : Placeable, Visitable, Saveable
         isGettingCleaned = false;
     }
 
+    public void AddDropping(GameObject dropping)
+    {
+        animalDroppings.Add(dropping);
+        var temp = new Vector3[animalDroppingCoords.Length + 1];
+        for (int i = 0; i < animalDroppingCoords.Length; i++)
+        {
+            temp[i] = animalDroppingCoords[i];
+        }
+        temp[temp.Length - 1] = dropping.transform.position;
+        animalDroppingCoords = temp;
+    }
+
+    public void RemoveDropping(int index)
+    {
+        animalDroppings.RemoveAt(index);
+        var temp = new Vector3[animalDroppingCoords.Length - 1];
+        for (int i = 0; i < animalDroppingCoords.Length; i++)
+        {
+            if (i < index)
+                temp[i] = animalDroppingCoords[i];
+            else if (i > index)
+                temp[i - 1] = animalDroppingCoords[i];
+        }
+        animalDroppingCoords = temp;
+    }
+
     public void AddWaterPlace(WaterTrough waterPlace)
     {
         AddWaterPlaces(waterPlace);
@@ -319,10 +365,8 @@ public class Exhibit : Placeable, Visitable, Saveable
         reachable = newReachable;
     }
 
-    public override void Remove()
+    public void ConnectGrids()
     {
-        ExhibitManager.instance.exhibitList.Remove(this);
-
         for (int i = 0; i < exitGrid.trueNeighbours.Length; i++)
         {
             if (exitGrid.trueNeighbours[i] == entranceGrid)
@@ -331,6 +375,66 @@ public class Exhibit : Placeable, Visitable, Saveable
                 entranceGrid.neighbours[(i + 2) % 4] = exitGrid;
             }
         }
+    }
+
+    public void DisconnectGrids()
+    {
+        for (int i = 0; i < exitGrid.trueNeighbours.Length; i++)
+        {
+            if (exitGrid.trueNeighbours[i] == entranceGrid)
+            {
+                exitGrid.neighbours[i] = null;
+                entranceGrid.neighbours[(i + 2) % 4] = null;
+            }
+        }
+    }
+
+    public void ExploreGrids()
+    {
+        var tempgrids = GridManager.instance.ExhibitFinderBFS(exitGrid, entranceGrid);
+        if (tempgrids != null)
+        {
+            var prevGridList = gridList;
+            gridList = new List<Grid>(tempgrids);
+            paths = new List<Grid>();
+            gridList.Sort((x, y) => x.coords[0].z.CompareTo(y.coords[0].z) == 0 ? x.coords[0].x.CompareTo(y.coords[0].x) : x.coords[0].z.CompareTo(y.coords[0].z));
+
+            gridListPositions = new Vector3[gridList.Count];
+            for (int i = 0; i < gridList.Count; i++)
+            {
+                gridList[i].GetExhibit(_id);
+                gridList[i].GetNatures().ForEach((element) => AddFoliages(element));
+                gridListPositions[i] = gridList[i].coords[0];
+            }
+
+            FindPaths();
+            DecideIfReachable();
+
+            if (prevGridList != null && prevGridList != gridList)
+            {
+                foreach (var grid in prevGridList)
+                {
+                    if (!gridList.Contains(grid))
+                    {
+                        grid.GetExhibit("");
+                        grid.GetNatures().ForEach((element) => RemoveFoliages(element));
+                    }
+                }
+            }
+
+            foreach (var animal in GetAnimals())
+            {
+                animal.CalculateTerrainBonus();
+                animal.CalculateNatureBonus();
+            }
+        }
+    }
+
+    public override void Remove()
+    {
+        ExhibitManager.instance.exhibitList.Remove(this);
+
+        ConnectGrids();
 
         RemoveFromReachableLists();
 
@@ -363,15 +467,13 @@ public class Exhibit : Placeable, Visitable, Saveable
             Destroy(animalDroppings[0]);
         }
 
-        while (GetFoodPlaces().Count > 0)
-        {
-            GetFoodPlaces()[0].Delete();
-        }
-
-        while (GetWaterPlaces().Count > 0)
-        {
-            GetWaterPlaces()[0].Remove();
-        }
+        size = GetFoodPlaces().Count;
+        for (int i = 0; i < size; i++)
+            GetFoodPlaces()[i].Delete();
+        
+        size = GetWaterPlaces().Count;
+        for (int i = 0; i < size; i++)
+            GetWaterPlaces()[i].Remove();
             
         Destroy(gameObject);
     }
@@ -426,6 +528,13 @@ public class Exhibit : Placeable, Visitable, Saveable
         {
             gridList[i].GetExhibit(_id);
             gridList[i].GetNatures().ForEach((element) => AddFoliages(element));
+        }
+
+        foreach (var dropping in animalDroppingCoords)
+        {
+            var animalDropping = Instantiate(playerControl.animalDroppingPrefab, dropping, Quaternion.identity);
+            animalDropping.tag = "Placed";
+            animalDroppings.Add(animalDropping);
         }
 
         paths = new List<Grid>();
@@ -617,6 +726,8 @@ public class Exhibit : Placeable, Visitable, Saveable
     public class ExhibitData
     {
         [JsonConverter(typeof(Vector3ArrayConverter))]
+        public Vector3[] animalDroppingCoords;
+        [JsonConverter(typeof(Vector3ArrayConverter))]
         public Vector3[] gridListPositions;
         public string _id;
         [JsonConverter(typeof(Vector3Converter))]
@@ -642,8 +753,9 @@ public class Exhibit : Placeable, Visitable, Saveable
         public bool isMixed;
         public List<string> visitorsIds;
 
-        public ExhibitData(Vector3[] gridListPositionsParam, string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, string exhibitNameParam, List<string> animalsIdsParam, List<string> foliagesIdsParam, bool isExitGridInvertedParam, int timesRotatedParam, int exhibitCountParam, bool reachableParam, List<string> staffsIdsParam, float foodParam, float waterParam, float waterCapacityParam, List<string> foodPlacesIdsParam, List<string> waterPlacesIdsParam, float occupiedSpaceParam, bool isMixedParam, List<string> visitorsIdsParam)
+        public ExhibitData(Vector3[] animalDroppingCoordsParam, Vector3[] gridListPositionsParam, string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, string exhibitNameParam, List<string> animalsIdsParam, List<string> foliagesIdsParam, bool isExitGridInvertedParam, int timesRotatedParam, int exhibitCountParam, bool reachableParam, List<string> staffsIdsParam, float foodParam, float waterParam, float waterCapacityParam, List<string> foodPlacesIdsParam, List<string> waterPlacesIdsParam, float occupiedSpaceParam, bool isMixedParam, List<string> visitorsIdsParam)
         {
+           animalDroppingCoords = animalDroppingCoordsParam;
            gridListPositions = gridListPositionsParam;
            _id = _idParam;
            position = positionParam;
@@ -672,7 +784,7 @@ public class Exhibit : Placeable, Visitable, Saveable
     ExhibitData data; 
     
     public string DataToJson(){
-        ExhibitData data = new ExhibitData(gridListPositions, _id, transform.position, transform.rotation, selectedPrefabId, tag, exhibitName, animalsIds, foliagesIds, isExitGridInverted, timesRotated, exhibitCount, reachable, staffsIds, food, water, waterCapacity, foodPlacesIds, waterPlacesIds, occupiedSpace, isMixed, visitorsIds);
+        ExhibitData data = new ExhibitData(animalDroppingCoords, gridListPositions, _id, transform.position, transform.rotation, selectedPrefabId, tag, exhibitName, animalsIds, foliagesIds, isExitGridInverted, timesRotated, exhibitCount, reachable, staffsIds, food, water, waterCapacity, foodPlacesIds, waterPlacesIds, occupiedSpace, isMixed, visitorsIds);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -684,15 +796,16 @@ public class Exhibit : Placeable, Visitable, Saveable
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data.gridListPositions, data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.exhibitName, data.animalsIds, data.foliagesIds, data.isExitGridInverted, data.timesRotated, data.exhibitCount, data.reachable, data.staffsIds, data.food, data.water, data.waterCapacity, data.foodPlacesIds, data.waterPlacesIds, data.occupiedSpace, data.isMixed, data.visitorsIds);
+        SetData(data.animalDroppingCoords, data.gridListPositions, data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.exhibitName, data.animalsIds, data.foliagesIds, data.isExitGridInverted, data.timesRotated, data.exhibitCount, data.reachable, data.staffsIds, data.food, data.water, data.waterCapacity, data.foodPlacesIds, data.waterPlacesIds, data.occupiedSpace, data.isMixed, data.visitorsIds);
     }
     
     public string GetFileName(){
         return "Exhibit.json";
     }
     
-    void SetData(Vector3[] gridListPositionsParam, string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, string exhibitNameParam, List<string> animalsIdsParam, List<string> foliagesIdsParam, bool isExitGridInvertedParam, int timesRotatedParam, int exhibitCountParam, bool reachableParam, List<string> staffsIdsParam, float foodParam, float waterParam, float waterCapacityParam, List<string> foodPlacesIdsParam, List<string> waterPlacesIdsParam, float occupiedSpaceParam, bool isMixedParam, List<string> visitorsIdsParam){ 
+    void SetData(Vector3[] animalDroppingCoordsParam, Vector3[] gridListPositionsParam, string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, string exhibitNameParam, List<string> animalsIdsParam, List<string> foliagesIdsParam, bool isExitGridInvertedParam, int timesRotatedParam, int exhibitCountParam, bool reachableParam, List<string> staffsIdsParam, float foodParam, float waterParam, float waterCapacityParam, List<string> foodPlacesIdsParam, List<string> waterPlacesIdsParam, float occupiedSpaceParam, bool isMixedParam, List<string> visitorsIdsParam){ 
         
+           animalDroppingCoords = animalDroppingCoordsParam;
            gridListPositions = gridListPositionsParam;
            _id = _idParam;
            transform.position = positionParam;
@@ -718,11 +831,12 @@ public class Exhibit : Placeable, Visitable, Saveable
     }
     
     public ExhibitData ToData(){
-         return new ExhibitData(gridListPositions, _id, transform.position, transform.rotation, selectedPrefabId, tag, exhibitName, animalsIds, foliagesIds, isExitGridInverted, timesRotated, exhibitCount, reachable, staffsIds, food, water, waterCapacity, foodPlacesIds, waterPlacesIds, occupiedSpace, isMixed, visitorsIds);
+        return new ExhibitData(animalDroppingCoords, gridListPositions, _id, transform.position, transform.rotation, selectedPrefabId, tag, exhibitName, animalsIds, foliagesIds, isExitGridInverted, timesRotated, exhibitCount, reachable, staffsIds, food, water, waterCapacity, foodPlacesIds, waterPlacesIds, occupiedSpace, isMixed, visitorsIds);
     }
     
     public void FromData(ExhibitData data){
         
+           animalDroppingCoords = data.animalDroppingCoords;
            gridListPositions = data.gridListPositions;
            _id = data._id;
            transform.position = data.position;

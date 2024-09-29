@@ -9,8 +9,10 @@ using System.Runtime.InteropServices;
 
 public class MyProgram{
     static List<string> convertableTypes = ["Vector3", "Quaternion", "Vector3[]"];
-    static List<string> primitives = ["bool", "string", "int", "float", "long", "Vector3", "Vector2", "Vector3[]", "Quaternion", "DateTime", "Grid", "AnimalBonus", "Action"];
+    static List<string> primitives = ["bool", "string", "int", "float", "long", "Vector3", "Vector2", "Vector3[]", "Quaternion", "DateTime", "Grid", "AnimalBonus", "Action", "PurchasableItemsData"];
     static List<string> nonBehaviour = ["Grid", "Grid[,]"];
+    
+    static List<string> saveHelperClasses = ["Building"];
     static List<string> transforms = ["position","rotation","localScale"];
 
     static List<(string interfaceName, bool isAbstractClass, string[] classNames, string[] baseAttributes)> interfaces = new List<(string interfaceName, bool isAbstractClass, string[] className, string[] baseAttributes)>()
@@ -259,10 +261,12 @@ $"        public {className}Data(";
 
 "+$"    {className}Data data; "+@"
 ";
+
         return classString;
     }
     
     static string writeDataToJson(string className){
+
         return
 @"    
     public string DataToJson(){
@@ -377,11 +381,13 @@ $"        public {className}Data(";
             }
         }
         string overrideString = !derive.interfaceName.Equals(className) && derive.isAbstractClass ? "override " : "";
+        string saveHelperString = saveHelperClasses.Contains(className) ? $"        SaveHelper();" + System.Environment.NewLine : "";
 
         return 
 @"    
 "+$"    public {overrideString}{derive.interfaceName}Data ToData(){{"+@"
-"+$"         return new {className}Data("+ attributesWithoutType() +@");
+"+saveHelperString
++$"        return new {className}Data("+ attributesWithoutType() +@");
     }
 ";
      }

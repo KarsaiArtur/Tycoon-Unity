@@ -125,24 +125,18 @@ public abstract class Staff : Placeable
                         break;
                     case WorkingState.Resting:
                         agent.isStopped = true;
-                        time = 0;
                         destinationReached = false;
                         break;
                     default:
                         break;
                 }
             }
-            else if (agent.velocity == Vector3.zero)
+            if (agent.velocity == Vector3.zero)
             {
                 time += Time.deltaTime;
-                if (time > 15)
+                if (time > 30)
                 {
-                    destinationReached = false;
-                    destinationExhibit = null;
-                    insideExhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
-                    workingState = WorkingState.Resting;
-                    isAvailable = true;
-                    time = 0;
+                    SetToDefault();
                 }
             }
         }

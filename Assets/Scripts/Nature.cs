@@ -14,6 +14,7 @@ public class Nature : Placeable, Saveable
     float height;
     public NavMeshObstacle navMeshObstacle;
     GameObject chosenPrefab;
+    public Chunk.TerrainType terrainPreferred;
 
     public override void Awake()
     {
@@ -64,6 +65,10 @@ public class Nature : Placeable, Saveable
         if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
         {
             GridManager.instance.GetGrid(transform.position).GetExhibit().GetFoliages().Add(this);
+            foreach (var animal in GridManager.instance.GetGrid(transform.position).GetExhibit().GetAnimals())
+            {
+                animal.CalculateNatureBonus();
+            }
         }
     }
 
@@ -176,7 +181,7 @@ public class Nature : Placeable, Saveable
     }
     
     public NatureData ToData(){
-         return new NatureData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag);
+        return new NatureData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag);
     }
     
     public void FromData(NatureData data){

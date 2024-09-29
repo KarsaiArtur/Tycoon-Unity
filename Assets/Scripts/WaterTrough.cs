@@ -15,12 +15,26 @@ public class WaterTrough : Placeable, AnimalVisitable, Saveable
     public float water = 500;
     /////GENERATE
     private Exhibit exhibit;
+    bool waiting = false;
+    float time = 0;
 
     public override void Awake()
     {
         height = gameObject.GetComponent<BoxCollider>().size.y;
         base.Awake();
         navMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
+    }
+
+    public void Update()
+    {
+        if (waiting)
+        {
+            time += Time.deltaTime;
+            if (time > 0.5f)
+            {
+                Remove();
+            }
+        }
     }
     
     public override void FinalPlace()
@@ -87,6 +101,19 @@ public class WaterTrough : Placeable, AnimalVisitable, Saveable
 
     public override void Remove()
     {
+        if (!waiting)
+        {
+            waiting = true;
+            return;
+        }
+        if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
+        {
+            GridManager.instance.GetGrid(transform.position).GetExhibit().AddWaterPlace(this);
+            GetExhibit(GridManager.instance.GetGrid(transform.position).GetExhibit()._id);
+            waiting = false;
+            time = 0;
+            return;
+        }
         AnimalVisitableManager.instance.animalvisitableList.Remove(this);
         base.Remove();
 
@@ -176,7 +203,7 @@ public class WaterTrough : Placeable, AnimalVisitable, Saveable
     }
     
     public AnimalVisitableData ToData(){
-         return new WaterTroughData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, water, exhibitId);
+        return new WaterTroughData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, water, exhibitId);
     }
     
     public void FromData(AnimalVisitableData data){

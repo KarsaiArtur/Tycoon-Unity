@@ -63,7 +63,7 @@ public class AnimalBonus : Saveable
     }
     
     public AnimalBonusData ToData(){
-         return new AnimalBonusData(animal, bonus);
+        return new AnimalBonusData(animal, bonus);
     }
     
     public void FromData(AnimalBonusData data){

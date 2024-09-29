@@ -172,6 +172,11 @@ public class Bench : BuildingAncestor, Saveable
         base.LoadHelper();
         LoadMenu.objectLoadedEvent.Invoke();
     }
+
+    public override void LoadedArrived(Visitor visitor)
+    {
+    }
+    
 ///******************************
     ///GENERATED CODE, DONT MODIFY
     ///******************************
@@ -241,7 +246,7 @@ public class Bench : BuildingAncestor, Saveable
     }
     
     public BenchData ToData(){
-         return new BenchData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds);
+        return new BenchData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds);
     }
     
     public void FromData(BenchData data){

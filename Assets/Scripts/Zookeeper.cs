@@ -148,7 +148,7 @@ public class Zookeeper : Staff, Saveable
         else if (jobAtExhibit == ZookeperJobs.CleaningExhibit)
         {
             var temp = exhibitToWorkAt.animalDroppings[0];
-            exhibitToWorkAt.animalDroppings.RemoveAt(0);
+            exhibitToWorkAt.RemoveDropping(0);
             Destroy(temp);
             if (exhibitToWorkAt.animalDroppings.Count == 0)
             {
@@ -276,7 +276,7 @@ public class Zookeeper : Staff, Saveable
     }
     
     public override StaffData ToData(){
-         return new ZookeeperData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag);
+        return new ZookeeperData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag);
     }
     
     public override void FromData(StaffData data){

@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
+using static Chunk;
 using static Grid;
 
 /////Saveable Attributes, DONT DELETE
@@ -18,6 +20,7 @@ public class GridManager : MonoBehaviour, Saveable, Manager
     public EntranceChunk entranceTerrainPrefab;
     [HideInInspector]
     public Vector3[] coords;
+    public TerrainType[] coordTypes;
     [HideInInspector]
     public Chunk[] terrainElements;
     public int rotationAngle = 0;
@@ -26,7 +29,7 @@ public class GridManager : MonoBehaviour, Saveable, Manager
     public int changeRate = 20;
     public float edgeHeight;
     private PlayerControl pControl;
-    bool initializing = true;
+    public bool initializing = true;
     public bool edgeChanged = false;
     public Grid[,] grids;
     public Grid startingGrid;
@@ -41,19 +44,20 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         {
             LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
-            Debug.Log("GRID");
             LoadMenu.objectLoadedEvent.Invoke();
+            coordTypes = new TerrainType[(terrainWidth + 1) * (terrainWidth + 1)];
+            coordTypes = Enumerable.Repeat(TerrainType.Grass, (terrainWidth + 1) * (terrainWidth + 1)).ToArray();
         }
         else
         {
             CreateCoords();
         }
 
-        CreateTerrainElements();
-
         initializing = true;
 
         InitializeGrids();
+
+        CreateTerrainElements();
 
         SetEdgeHeight();
         SetSpawnHeight();
@@ -69,6 +73,27 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         startingGrid = GetGrid(new Vector3(35, 0, 50));
         initializing = false;
         edgeChanged = false;
+
+        //StartCoroutine(Coloring());
+    }
+
+    IEnumerator Coloring(){
+        foreach(var element in terrainElements.Skip(7)){
+            for(int i = 0; i < element.colors.Length; i++){
+                element.colors[i] = element.VertexColor(Chunk.TerrainType.Stone);
+                string[] xz = element.name.Split("_");
+                Debug.Log(int.Parse(xz[0]) +    "         "+int.Parse(xz[1]) +  "         "+i +"/"+element.colors.Length);
+                element.meshFilter = this.GetComponent<MeshFilter>();
+                element.mesh = new Mesh();
+                element.meshFilter.mesh = element.mesh;
+                element.mesh.vertices = element.verts;
+                element.mesh.colors = element.colors;
+                element.mesh.uv = element.uvs;
+                element.mesh.triangles = element.tris;
+                element.mesh.RecalculateNormals();
+                yield return new WaitForSeconds(0.005f);
+            }
+        }
     }
 
     public bool GetIsLoaded()
@@ -158,8 +183,8 @@ public class GridManager : MonoBehaviour, Saveable, Manager
 
     private void CreateCoords()
     {
-
         coords = new Vector3[(terrainWidth + 1) * (terrainWidth + 1)];
+        coordTypes = new TerrainType[(terrainWidth + 1) * (terrainWidth + 1)];
 
         float y;
 
@@ -175,9 +200,10 @@ public class GridManager : MonoBehaviour, Saveable, Manager
                 {
                     y = Mathf.PerlinNoise((float)x / changeRate, (float)z / changeRate) * height;
                     y = Mathf.Floor(y) / 2;
-                    coords[i] = new Vector3(x, y, z);
+                    //coords[i] = new Vector3(x, y, z);
                 }
                 coords[i] = new Vector3(x, y, z);
+                coordTypes[i] = TerrainType.Grass;
             }
         }
     }
@@ -240,7 +266,7 @@ public class GridManager : MonoBehaviour, Saveable, Manager
                 }
                 else
                     elementInstance = Instantiate(terrainPrefab, this.transform);
-                elementInstance.Initialize(x, z, coords);
+                elementInstance.Initialize(x, z, coords, coordTypes);
                 terrainElements[i] = elementInstance;
             }
         }
@@ -248,7 +274,12 @@ public class GridManager : MonoBehaviour, Saveable, Manager
 
     public Grid GetGrid(Vector3 position)
     {
-        return grids[(int)Mathf.Floor(position.x) - elementWidth, (int)Mathf.Floor(position.z) - elementWidth];
+        /*Debug.Log((int)Mathf.Floor(position.x) - elementWidth + "       " + ((int)Mathf.Floor(position.z) - elementWidth));
+        if (position.x >= grids[0,0].coords[0].x && position.z >= grids[0,0].coords[0].z && position.x <= grids[(int)Math.Sqrt(grids.Length) - 2,(int)Math.Sqrt(grids.Length) - 2].coords[3].x && position.z <= grids[(int)Math.Sqrt(grids.Length) - 2,(int)Math.Sqrt(grids.Length) - 2].coords[3].z)
+        {*/
+            return grids[(int)Mathf.Floor(position.x) - elementWidth, (int)Mathf.Floor(position.z) - elementWidth];
+        /*}
+        return null;*/
     }
 
     //void OnDrawGizmosSelected()

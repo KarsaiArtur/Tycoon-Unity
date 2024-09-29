@@ -12,6 +12,7 @@ public interface Visitable
     public abstract List<Grid> GetPaths();
 
     public abstract void Arrived(Visitor visitor);
+    public abstract void LoadedArrived(Visitor visitor);
 
     public Vector3 ChoosePosition(Grid grid);
 

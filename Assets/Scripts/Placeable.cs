@@ -81,6 +81,23 @@ public class Placeable : MonoBehaviour, Clickable
         //transform.position = new Vector3(playerControl.Round(mouseHit.x), mouseHit.y + 0.5f, playerControl.Round(mouseHit.z));
     }
 
+    public virtual void ShowSellPrice(Vector3 mouseHit)
+    {
+        currentPlacingPriceInstance = currentPlacingPriceInstance == null ? Instantiate(currentPlacingPrice) : currentPlacingPriceInstance;
+        currentPlacingPriceInstance.transform.SetParent(playerControl.canvas.transform);
+        currentPlacingPriceInstance.text = "+" + GetSellPrice() + "$";
+        currentPlacingPriceInstance.color = Color.green;
+        var zoomIn = playerControl.transform.position.y / 6.0f; ;
+        var posi = new Vector3(Input.mousePosition.x + (500.0f / zoomIn), Input.mousePosition.y - (150.0f / zoomIn), 0);
+        currentPlacingPriceInstance.transform.position = posi;
+        //transform.position = new Vector3(playerControl.Round(mouseHit.x), mouseHit.y + 0.5f, playerControl.Round(mouseHit.z));
+    }
+
+    public virtual float GetSellPrice()
+    {
+        return placeablePrice * 0.2f;
+    }
+
     public virtual void FinalPlace()
     {
 

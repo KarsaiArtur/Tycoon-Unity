@@ -13,6 +13,16 @@ using UnityEngine.AI;
 
 public class Visitor : MonoBehaviour, Clickable, Saveable
 {
+    public enum Action
+    {
+        Food,
+        Drink,
+        Energy,
+        Restroom,
+        Happiness,
+        Leave
+    }
+
     public string _id;
     public Animator animator;
     public NavMeshSurface surface;
@@ -50,16 +60,6 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     bool isFleeing = false;
     public int dangerLevel = 3;
     public int selectedPrefabId;
-
-    public enum Action
-    {
-        Food,
-        Drink,
-        Energy,
-        Restroom,
-        Happiness,
-        Leave
-    }
 
     public void Awake()
     {
@@ -368,29 +368,32 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
 
     IEnumerator CheckPictures()
     {
-        var lookedAnimalId = GetCurrentExhibit().GetAnimals()[UnityEngine.Random.Range(0, GetCurrentExhibit().GetAnimals().Count)];
-        lookedAnimal = lookedAnimalId;
-        randomRange = 10;
-        while (arrived)
+        if (GetCurrentExhibit().GetAnimals().Count > 0)
         {
-            if (this.animator.GetCurrentAnimatorStateInfo(0).IsName("Taking Pictures"))
+            var lookedAnimalId = GetCurrentExhibit().GetAnimals()[UnityEngine.Random.Range(0, GetCurrentExhibit().GetAnimals().Count)];
+            lookedAnimal = lookedAnimalId;
+            randomRange = 10;
+            while (arrived)
             {
-                lookAtAnimals = true;
-                var random = UnityEngine.Random.Range(0, randomRange);
-                if(random == 0) {
-                    GetComponentInChildren<Animator>().Play("Checking Pictures");
-                    randomRange = 10;
-                    lookAtAnimals = false;
-                    if(GetCurrentExhibit().GetAnimals().Count !=  0)
-                        lookedAnimalId = GetCurrentExhibit().GetAnimals()[UnityEngine.Random.Range(0, GetCurrentExhibit().GetAnimals().Count)];
-                        lookedAnimal = lookedAnimalId;
-                }
-                else
+                if (this.animator.GetCurrentAnimatorStateInfo(0).IsName("Taking Pictures"))
                 {
-                    randomRange--;
+                    lookAtAnimals = true;
+                    var random = UnityEngine.Random.Range(0, randomRange);
+                    if(random == 0) {
+                        GetComponentInChildren<Animator>().Play("Checking Pictures");
+                        randomRange = 10;
+                        lookAtAnimals = false;
+                        if(GetCurrentExhibit().GetAnimals().Count !=  0)
+                            lookedAnimalId = GetCurrentExhibit().GetAnimals()[UnityEngine.Random.Range(0, GetCurrentExhibit().GetAnimals().Count)];
+                            lookedAnimal = lookedAnimalId;
+                    }
+                    else
+                    {
+                        randomRange--;
+                    }
                 }
+                yield return new WaitForSeconds(1);
             }
-            yield return new WaitForSeconds(1);
         }
         lookAtAnimals = false;
     }
@@ -443,6 +446,11 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     public void LoadHelper()
     {
         agent.SetDestination(destination);
+        unvisitedExhibits = null;
+        GetUnvisitedExhibits();
+        if(arrived){
+            GetDestinationVisitable().LoadedArrived(this);
+        }
         LoadMenu.objectLoadedEvent.Invoke();
     }
 
@@ -601,7 +609,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     }
     
     public VisitorData ToData(){
-         return new VisitorData(_id, transform.position, selectedPrefabId, transform.rotation, atDestination, arrived, destination, destinationVisitableId, unvisitedExhibitsIds, visitorName, time, timeGoal, currentExhibitId, hunger, thirst, energy, restroomNeeds, happiness, action, isFleeing);
+        return new VisitorData(_id, transform.position, selectedPrefabId, transform.rotation, atDestination, arrived, destination, destinationVisitableId, unvisitedExhibitsIds, visitorName, time, timeGoal, currentExhibitId, hunger, thirst, energy, restroomNeeds, happiness, action, isFleeing);
     }
     
     public void FromData(VisitorData data){

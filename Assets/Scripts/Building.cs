@@ -5,11 +5,12 @@ using System.Linq;
 using UnityEngine.AI;
 using static Grid;
 using Newtonsoft.Json;
+using static PurchasableItems;
 
 //,List<PurchasableItems> purchasableItemInstances
 
 /////Saveable Attributes, DONT DELETE
-//////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice;bool reachable;int capacity;List<string> visitorsIds;int itemsBought;int x;int z;Vector3 startingGridIndex//////////
+//////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice;bool reachable;int capacity;List<string> visitorsIds;int itemsBought;int x;int z;Vector3 startingGridIndex;List<PurchasableItemsData> purchasableItemInstancesData//////////
 //////SERIALIZABLE:YES/
 
 public class Building : BuildingAncestor, Saveable
@@ -23,9 +24,9 @@ public class Building : BuildingAncestor, Saveable
 
     public Material[] materials;
     public List<Grid> gridList;
-
     public List<PurchasableItems> purchasableItemPrefabs;
     public List<PurchasableItems> purchasableItemInstances;
+    public List<PurchasableItemsData> purchasableItemInstancesData;
     public int defaultCapacity = 10;
 
     public bool hasRestroom = false;
@@ -35,13 +36,13 @@ public class Building : BuildingAncestor, Saveable
     public override void Awake()
     {
         base.Awake();
-        foreach (PurchasableItems p in purchasableItemPrefabs)
-        {
-            p.currentPrice = p.defaultPrice;
-            var newItem = Instantiate(p);
-            purchasableItemInstances.Add(newItem);
-            newItem.transform.SetParent(transform);
-        }
+        
+    } 
+
+
+    void AddList(PurchasableItems purchasableItems){
+        purchasableItemInstances.Add(purchasableItems);
+        purchasableItems.transform.SetParent(transform);
     }
 
     public override void RotateY(float angle)
@@ -144,6 +145,13 @@ public class Building : BuildingAncestor, Saveable
 
     public override void FinalPlace()
     {
+        foreach (PurchasableItems p in purchasableItemPrefabs)
+        {
+            p.currentPrice = p.defaultPrice;
+            var newItem = Instantiate(p);
+            AddList(newItem);
+        }
+
         BuildingManager.instance.AddList(this);
         transform.position = new Vector3(transform.position.x, transform.position.y - offsetYDefault, transform.position.z);
 
@@ -427,6 +435,13 @@ public class Building : BuildingAncestor, Saveable
 
     public override void LoadHelper()
     {
+        for (int i = 0; i < purchasableItemPrefabs.Count; i++)
+        {
+            var newItem = Instantiate(purchasableItemPrefabs[i]);
+            newItem.currentPrice = purchasableItemInstancesData[i].currentPrice;
+            AddList(newItem);
+        }
+
         gameObject.GetComponent<BoxCollider>().isTrigger = false;
 
         gridList = new List<Grid>();
@@ -445,7 +460,17 @@ public class Building : BuildingAncestor, Saveable
         }
 
         base.LoadHelper();
+        
         LoadMenu.objectLoadedEvent.Invoke();
+    }
+
+    public void SaveHelper()
+    {
+        purchasableItemInstancesData = new List<PurchasableItemsData>();
+        foreach(var item in purchasableItemInstances)
+        {
+            purchasableItemInstancesData.Add(item.ToData());
+        }
     }
 ///******************************
     ///GENERATED CODE, DONT MODIFY
@@ -470,8 +495,9 @@ public class Building : BuildingAncestor, Saveable
         public int z;
         [JsonConverter(typeof(Vector3Converter))]
         public Vector3 startingGridIndex;
+        public List<PurchasableItemsData> purchasableItemInstancesData;
 
-        public BuildingData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam, int xParam, int zParam, Vector3 startingGridIndexParam)
+        public BuildingData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam, int xParam, int zParam, Vector3 startingGridIndexParam, List<PurchasableItemsData> purchasableItemInstancesDataParam)
         {
            _id = _idParam;
            position = positionParam;
@@ -486,13 +512,14 @@ public class Building : BuildingAncestor, Saveable
            x = xParam;
            z = zParam;
            startingGridIndex = startingGridIndexParam;
+           purchasableItemInstancesData = purchasableItemInstancesDataParam;
         }
     }
 
     BuildingData data; 
     
     public string DataToJson(){
-        BuildingData data = new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought, x, z, startingGridIndex);
+        BuildingData data = new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought, x, z, startingGridIndex, purchasableItemInstancesData);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -504,14 +531,14 @@ public class Building : BuildingAncestor, Saveable
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.visitorsIds, data.itemsBought, data.x, data.z, data.startingGridIndex);
+        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.visitorsIds, data.itemsBought, data.x, data.z, data.startingGridIndex, data.purchasableItemInstancesData);
     }
     
     public string GetFileName(){
         return "Building.json";
     }
     
-    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam, int xParam, int zParam, Vector3 startingGridIndexParam){ 
+    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam, int xParam, int zParam, Vector3 startingGridIndexParam, List<PurchasableItemsData> purchasableItemInstancesDataParam){ 
         
            _id = _idParam;
            transform.position = positionParam;
@@ -526,10 +553,12 @@ public class Building : BuildingAncestor, Saveable
            x = xParam;
            z = zParam;
            startingGridIndex = startingGridIndexParam;
+           purchasableItemInstancesData = purchasableItemInstancesDataParam;
     }
     
     public BuildingData ToData(){
-         return new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought, x, z, startingGridIndex);
+        SaveHelper();
+        return new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought, x, z, startingGridIndex, purchasableItemInstancesData);
     }
     
     public void FromData(BuildingData data){
@@ -547,5 +576,6 @@ public class Building : BuildingAncestor, Saveable
            x = data.x;
            z = data.z;
            startingGridIndex = data.startingGridIndex;
+           purchasableItemInstancesData = data.purchasableItemInstancesData;
     }
 }

@@ -16,8 +16,8 @@ public class PrefabManager : MonoBehaviour, Manager
             LoadMenu.objectLoadedEvent.Invoke();
         }
         foreach(var prefab in naturePrefabs){
-            Debug.Log(prefab.name);
-            Debug.Log(prefab.GetInstanceID());
+            //Debug.Log(prefab.name);
+            //Debug.Log(prefab.GetInstanceID());
         }
     }
 

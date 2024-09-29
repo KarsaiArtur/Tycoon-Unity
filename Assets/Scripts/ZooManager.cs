@@ -65,6 +65,12 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         Destroy(visitor.gameObject);
     }
 
+    public void LoadedArrived(Visitor visitor)
+    {
+        
+    }
+    
+
     public void PayExpenses()
     {
         foreach (var staff in StaffManager.instance.staffList)
@@ -94,7 +100,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public void ChangeMoney(float amount)
     {
         money += amount;
-        moneyText.text = money.ToString();
+        moneyText.text = money.ToString() + "$";
         if (amount > 0)
             allTimeMoneyEarned += amount;
     }

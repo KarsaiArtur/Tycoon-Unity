@@ -92,7 +92,7 @@ public class Fence : Placeable, Saveable
         grid1.neighbours[(timesRotated + 2) % 4] = null;
         grid2.neighbours[timesRotated] = null;
 
-        if (GridManager.instance.ExhibitFinderBFS(grid1, grid2) != null)
+        if ((grid1.GetExhibit() == null || grid2.GetExhibit() == null) && GridManager.instance.ExhibitFinderBFS(grid1, grid2) != null)
         {
             HashSet<Grid> tempGrids = GridManager.instance.ExhibitFinderBFS(grid1, gridManager.startingGrid);
             GameObject gateInstance = Instantiate(playerControl.gates[playerControl.fenceIndex], playerControl.m_Selected.transform.position, transform.rotation);
@@ -100,17 +100,15 @@ public class Fence : Placeable, Saveable
             exhibit.selectedPrefabId = playerControl.gates[playerControl.fenceIndex].GetInstanceID();
             exhibit.timesRotated = timesRotated;
             CreateExhibitWindow(exhibit);
-            //UnityEditorInternal.ComponentUtility.MoveComponentUp(exhibit);
-            //emiatt nem lehet buildelni
 
-            if (tempGrids != null)
+            if (tempGrids != null && grid1.GetExhibit() == null)
             {
                 exhibit.SetExhibit(tempGrids, grid1, grid2, false);
             }
             else
             {
                 tempGrids = GridManager.instance.ExhibitFinderBFS(grid2, gridManager.startingGrid);
-                if (tempGrids != null)
+                if (tempGrids != null && grid2.GetExhibit() == null)
                 {
                     exhibit.SetExhibit(tempGrids, grid2, grid1, true);
                 }
@@ -129,6 +127,11 @@ public class Fence : Placeable, Saveable
         }
         else
         {
+            if (grid1.GetExhibit() != null)
+                grid1.GetExhibit().ExploreGrids();
+            if (grid2.GetExhibit() != null)
+                grid2.GetExhibit().ExploreGrids();
+
             FenceManager.instance.AddList(this);
         }
     }
@@ -214,36 +217,47 @@ public class Fence : Placeable, Saveable
         grid1.neighbours[(timesRotated + 2) % 4] = grid2;
         grid2.neighbours[timesRotated] = grid1;
 
-        if (grid1.GetExhibit() != null)
+        if (grid1.GetExhibit() != null && grid2.GetExhibit() == null)
+            grid1.GetExhibit().ExploreGrids();
+        if (grid1.GetExhibit() == null && grid2.GetExhibit() != null)
+            grid2.GetExhibit().ExploreGrids();
+
+        if (!(grid1.GetExhibit() != null && grid2.GetExhibit() != null && grid1.GetExhibit() == grid2.GetExhibit()))
         {
-            var pos1 = grid1.GetExhibit().gameObject.transform.position;
-            var rotated1 = grid1.GetExhibit().timesRotated;
+            if (grid1.GetExhibit() != null && grid2.GetExhibit() != null)
+            {
+                grid1.GetExhibit().ConnectGrids();
+                var pos2 = grid2.GetExhibit().gameObject.transform.position;
+                var rotated2 = grid2.GetExhibit().timesRotated;
 
-            grid1.GetExhibit().Remove();
+                grid2.GetExhibit().Remove();
+                PlaceNewFence(pos2, rotated2);
 
-            if (grid2.GetExhibit() != null)
+                grid1.GetExhibit().DisconnectGrids();
+                grid1.GetExhibit().ExploreGrids();
+            }
+            else if (grid1.GetExhibit() != null)
+            {
+                var pos1 = grid1.GetExhibit().gameObject.transform.position;
+                var rotated1 = grid1.GetExhibit().timesRotated;
+
+                grid1.GetExhibit().Remove();
+                PlaceNewFence(pos1, rotated1);
+            }
+            else if (grid2.GetExhibit() != null)
             {
                 var pos2 = grid2.GetExhibit().gameObject.transform.position;
                 var rotated2 = grid2.GetExhibit().timesRotated;
+
                 grid2.GetExhibit().Remove();
-                RemoveHelper(pos2, rotated2);
+                PlaceNewFence(pos2, rotated2);
             }
-
-            RemoveHelper(pos1, rotated1);
-        }
-        else if (grid2.GetExhibit() != null)
-        {
-            var pos2 = grid2.GetExhibit().gameObject.transform.position;
-            var rotated2 = grid2.GetExhibit().timesRotated;
-
-            grid2.GetExhibit().Remove();
-            RemoveHelper(pos2, rotated2);
         }
 
         Destroy(gameObject);
     }
 
-    private void RemoveHelper(Vector3 pos, int rotated)
+    private void PlaceNewFence(Vector3 pos, int rotated)
     {
         playerControl.m_Selected = Instantiate(playerControl.fences[0], pos, new Quaternion(0, 0, 0, 0));
         playerControl.m_Selected.selectedPrefabId = playerControl.fences[0].selectedPrefabId;
@@ -343,7 +357,7 @@ public class Fence : Placeable, Saveable
     }
     
     public FenceData ToData(){
-         return new FenceData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, timesRotated);
+        return new FenceData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, timesRotated);
     }
     
     public void FromData(FenceData data){

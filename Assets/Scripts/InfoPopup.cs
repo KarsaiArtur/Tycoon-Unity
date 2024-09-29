@@ -16,22 +16,6 @@ public class InfoPopup : MonoBehaviour
         Initialize();
     }
 
-    public void RaisePrice(PurchasableItems purchasableItems)
-    {
-        if (purchasableItems.currentPrice < purchasableItems.defaultPrice * (1f + priceChangeLimit))
-        {
-            purchasableItems.currentPrice += (purchasableItems.defaultPrice * priceChangeLimit) / 5;
-        }
-    }
-
-    public void LowerPrice(PurchasableItems purchasableItems)
-    {
-        if (purchasableItems.currentPrice > purchasableItems.defaultPrice * (1f - priceChangeLimit))
-        {
-            purchasableItems.currentPrice -= (purchasableItems.defaultPrice * priceChangeLimit) / 5;
-        }
-    }
-
     public virtual void Initialize()
     {
         infoPanelInstance = Instantiate(UIMenu.Instance.infoPanelPrefab);

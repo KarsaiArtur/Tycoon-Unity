@@ -182,6 +182,13 @@ public abstract class BuildingAncestor : Placeable, Visitable
         FindPaths();
     }
 
+    
+
+    public virtual void LoadedArrived(Visitor visitor)
+    {
+        visitor.SetIsVisible(false);
+    }
+
 ////GENERATED
 
     public List<string> visitorsIds = new List<string>();
