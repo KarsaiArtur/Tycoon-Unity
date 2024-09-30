@@ -101,12 +101,12 @@ public class WaterTrough : Placeable, AnimalVisitable, Saveable
 
     public override void Remove()
     {
-        if (!waiting)
+        if (!waiting && GetExhibit().destroyed)
         {
             waiting = true;
             return;
         }
-        if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
+        if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null && (GetExhibit() == null || GetExhibit().destroyed))
         {
             GridManager.instance.GetGrid(transform.position).GetExhibit().AddWaterPlace(this);
             GetExhibit(GridManager.instance.GetGrid(transform.position).GetExhibit()._id);

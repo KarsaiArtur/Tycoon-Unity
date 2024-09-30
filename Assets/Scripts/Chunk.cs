@@ -13,8 +13,6 @@ public class Chunk : MonoBehaviour
     public Color[] colors;
     public int[] tris;
     public Vector2[] uvs;
-    public Vector2[] uvs2;
-    public Vector2[] uvs3;
     public Vector3 center;
     public PlayerControl playerControl;
 
@@ -22,10 +20,8 @@ public class Chunk : MonoBehaviour
     {
         Grass,
         Forest,
-        Stone,
-        Sand,
+        Savannah,
         Snow,
-        Dirt,
         Mixed
     }
 
@@ -48,11 +44,11 @@ public class Chunk : MonoBehaviour
 
     public Color VertexColor(TerrainType type)
     {
-        if (type == TerrainType.Stone)
+        if (type == TerrainType.Grass)
         {
             return new Color(0, 0, 0, 0);
         }
-        else if (type == TerrainType.Sand)
+        else if (type == TerrainType.Savannah)
         {
             return new Color(1f, 0, 0, 0);
         }
@@ -89,8 +85,6 @@ public class Chunk : MonoBehaviour
         verts = new Vector3[width * width * 6];
         colors = new Color[verts.Length];
         uvs = new Vector2[verts.Length];
-        uvs2 = new Vector2[verts.Length];
-        uvs3 = new Vector2[verts.Length];
         tris = new int[verts.Length];
 
         //pivot point inside of the coord array
@@ -143,21 +137,6 @@ public class Chunk : MonoBehaviour
                     uvs[i + 3] = new Vector2(1, 0);
                     uvs[i + 4] = new Vector2(0, 0);
                     uvs[i + 5] = new Vector2(1, 1);
-
-                    
-                    uvs2[i] = new Vector2(0, 0);
-                    uvs2[i + 1] = new Vector2(0, 1);
-                    uvs2[i + 2] = new Vector2(1, 1);
-                    uvs2[i + 3] = new Vector2(1, 0);
-                    uvs2[i + 4] = new Vector2(0, 0);
-                    uvs2[i + 5] = new Vector2(1, 1);
-
-                    uvs3[i] = new Vector2(0, 0);
-                    uvs3[i + 1] = new Vector2(0, 0);
-                    uvs3[i + 2] = new Vector2(0, 0);
-                    uvs3[i + 3] = new Vector2(0, 0);
-                    uvs3[i + 4] = new Vector2(0, 0);
-                    uvs3[i + 5] = new Vector2(0, 0);
                 }
                 else
                 {
@@ -185,28 +164,12 @@ public class Chunk : MonoBehaviour
                     uvs[i + 3] = new Vector2(1, 0);
                     uvs[i + 4] = new Vector2(1, 0);
                     uvs[i + 5] = new Vector2(0, 1);
-
-                    uvs2[i] = new Vector2(0, 0);
-                    uvs2[i + 1] = new Vector2(0, 1);
-                    uvs2[i + 2] = new Vector2(1, 1);
-                    uvs2[i + 3] = new Vector2(1, 0);
-                    uvs2[i + 4] = new Vector2(0, 0);
-                    uvs2[i + 5] = new Vector2(1, 1);
-
-                    uvs3[i] = new Vector2(0, 0);
-                    uvs3[i + 1] = new Vector2(0, 0);
-                    uvs3[i + 2] = new Vector2(0, 0);
-                    uvs3[i + 3] = new Vector2(0, 0);
-                    uvs3[i + 4] = new Vector2(0, 0);
-                    uvs3[i + 5] = new Vector2(0, 0);
                 }
             }
         }
         mesh.vertices = verts;
         mesh.colors = colors;
         mesh.uv = uvs;
-        mesh.uv2 = uvs2;
-        mesh.uv3 = uvs3;
         mesh.triangles = tris;
         mesh.RecalculateNormals();
     }

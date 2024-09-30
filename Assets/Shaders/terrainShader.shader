@@ -7,7 +7,6 @@
         _Layer2("Layer2", 2D) = "white"{}
         _Layer3("Layer3", 2D) = "white"{}
         _Layer4("Layer4", 2D) = "white"{}
-        _Layer5("Layer5", 2D) = "white"{}
         _LineThickness ("LineThickness", Range(0, 0.025)) = 0.02
         _LineVisibility ("LineVisibility", Range(0, 1)) = 0.2
     }
@@ -21,8 +20,6 @@
     struct Input 
     {
           float2 uv_MainTex;
-          float2 uv_Layer4;
-          float2 uv_Layer5;
           float4 vertColor : COLOR;
     };
 
@@ -31,13 +28,11 @@
     sampler2D _Layer2;
     sampler2D _Layer3;
     sampler2D _Layer4;
-    sampler2D _Layer5;
     float _LineThickness;
     float _LineVisibility;
 
     void surf (Input IN, inout SurfaceOutput o) 
     {
-
       
       fixed4 layer0 = tex2D(_MainTex, IN.uv_MainTex).rgba * (1.0 - IN.vertColor.r - IN.vertColor.g -IN.vertColor.b-IN.vertColor.a);
       fixed4 layer1 = tex2D(_Layer1, IN.uv_MainTex).rgba * IN.vertColor.r;

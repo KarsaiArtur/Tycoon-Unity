@@ -100,7 +100,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public void ChangeMoney(float amount)
     {
         money += amount;
-        moneyText.text = money.ToString() + "$";
+        moneyText.text = money.ToString() + " $";
         if (amount > 0)
             allTimeMoneyEarned += amount;
     }

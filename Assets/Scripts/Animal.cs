@@ -164,6 +164,9 @@ public class Animal : Placeable, Saveable
 
         SetSize();
 
+        CalculateNatureBonus();
+        CalculateTerrainBonus();
+
         VisitorManager.instance.CalculateAnimalBonus(this);
         StartCoroutine(DecreaseNeeds());
     }
@@ -174,7 +177,7 @@ public class Animal : Placeable, Saveable
         base.Remove();
 
         ZooManager.instance.ChangeMoney(-placeablePrice * 0.2f);
-        ZooManager.instance.ChangeMoney(Mathf.Floor(placeablePrice * 0.5f * health / 100 * (((1 - age / lifeExpectancy)) > 0 ? (1 - age / lifeExpectancy) : 0)));
+        ZooManager.instance.ChangeMoney(Mathf.Floor(placeablePrice * 0.5f * health / 100 * ((1 - age / lifeExpectancy) > 0 ? (1 - age / lifeExpectancy) : 0)));
 
         if (GetExhibit() != null)
             GetExhibit().RemoveAnimal(this);
@@ -182,10 +185,10 @@ public class Animal : Placeable, Saveable
             AnimalManager.instance.freeAnimals.Remove(this);
 
         VisitorManager.instance.DecreaseAnimalBonus(this);
-        if (currentPlacingPriceInstance != null)
-        {
-            Destroy(currentPlacingPriceInstance.gameObject);
-        }
+        
+        //if (currentPlacingPriceInstance != null)
+            //Destroy(currentPlacingPriceInstance.gameObject);
+
         Destroy(gameObject);
     }
 
@@ -310,7 +313,7 @@ public class Animal : Placeable, Saveable
             float likedTerrainPercent = 0;
             foreach (var terrainType in terrainsPreferred)
             {
-                likedTerrainPercent += GetExhibit().CalculateTerrainPercent(terrainType) < 1 / terrainsPreferred.Count + 10 ? GetExhibit().CalculateTerrainPercent(terrainType): 1 / terrainsPreferred.Count + 10;
+                likedTerrainPercent += GetExhibit().CalculateTerrainPercent(terrainType) < (1 / terrainsPreferred.Count + 0.1f) ? GetExhibit().CalculateTerrainPercent(terrainType): (1 / terrainsPreferred.Count + 0.1f);
             }
             likedTerrainPercent = likedTerrainPercent < 1 ? likedTerrainPercent : 1;
             terrainBonusMultiplier = likedTerrainPercent * 3 - 2;
@@ -322,7 +325,7 @@ public class Animal : Placeable, Saveable
         if (GetExhibit() != null)
         {
             var tempList = GetExhibit().GetFoliages().Where(f => terrainsPreferred.Contains(f.terrainPreferred));
-            tempList = tempList.Where(f => GridManager.instance.GetGrid(f.transform.position).terrainType == f.terrainPreferred);
+            tempList = tempList.Where(f => GridManager.instance.GetGrid(f.transform.position).GetTerrainTypes().Contains(f.terrainPreferred));
             natureBonus = Mathf.Sqrt(tempList.Count() + 1);
         }
     }
@@ -399,11 +402,10 @@ public class Animal : Placeable, Saveable
             if (UnityEngine.Random.Range(lifeExpectancy - lifeExpectancy / 10, lifeExpectancy + lifeExpectancy / 5) < age)
                 Die();
 
-            age += 1 / DateTime.DaysInMonth(CalendarManager.instance.currentDate.Year, CalendarManager.instance.currentDate.Month);
+            age += 1f / DateTime.DaysInMonth(CalendarManager.instance.currentDate.Year, CalendarManager.instance.currentDate.Month);
 
             if (birthDate.Day == CalendarManager.instance.currentDate.Day)
                 age = ((CalendarManager.instance.currentDate.Year - birthDate.Year) * 12) + CalendarManager.instance.currentDate.Month - birthDate.Month;
-            Debug.Log("Age: " + age);
 
             SetSize();
         }
@@ -490,7 +492,7 @@ public class Animal : Placeable, Saveable
                     baby.isMale = UnityEngine.Random.Range(0, 2) == 0;
                     baby.FinalPlace();
                     age = 0;
-                    Debug.Log(numberOfBabies + " " + placeableName + "babies born");
+                    Debug.Log(numberOfBabies + " " + placeableName + " babies born");
                     //notification
                     //anination?
                 }
@@ -627,6 +629,17 @@ public class Animal : Placeable, Saveable
 
     void ChooseDestination()
     {
+        if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null && GetExhibit() == null)
+        {
+            GetExhibit(GridManager.instance.GetGrid(transform.position).GetExhibit()._id);
+            GetExhibit().AddAnimal(this);
+        }
+        else if (GridManager.instance.GetGrid(transform.position).GetExhibit() == null && GetExhibit() != null)
+        {
+            GetExhibit().RemoveAnimal(this);
+            GetExhibit("");
+        }
+
         if (action != Action.Mating && action != Action.Fleeing && action != Action.Attacking)
             ChooseDestinationType();
         Grid destinationGrid;

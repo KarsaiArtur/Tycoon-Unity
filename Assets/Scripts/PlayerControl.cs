@@ -6,6 +6,7 @@ using UnityEngine.AI;
 using Unity.AI.Navigation;
 using Cinemachine;
 using System.Linq;
+using static Chunk;
 
 /////Attributes, DONT DELETE
 //////Vector3 position;Quaternion rotation//////////
@@ -35,6 +36,7 @@ public class PlayerControl : MonoBehaviour
     public bool canBePlaced = true;
     public bool terraForming = false;
     public bool deleting = false;
+    public bool terrainType = false;
     public bool isMouseDown = false;
     public bool isClickableSelected = false;
     public List<GameObject> gates;
@@ -57,6 +59,7 @@ public class PlayerControl : MonoBehaviour
     public InfoPopup currentInfopopup;
     public bool stopMovement = false;
     public LineRenderer terraformerLine;
+    public TerrainType currentTerrainType;
 
     public void ChangeTerraformer()
     {
@@ -87,6 +90,11 @@ public class PlayerControl : MonoBehaviour
             chosenForDelete = null;
         }
         ReloadGuestNavMesh();
+    }
+
+    public void ChangeTerrainType()
+    {
+        terrainType = !terrainType;
     }
 
     private bool MouseOverUI()
@@ -120,41 +128,53 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    int typeIndex = 0;
 
-    public void ChangeGrid(RaycastHit hit)
+    public void TerrainType()
     {
-        List<Chunk.TerrainType> types = new List<Chunk.TerrainType>() { Chunk.TerrainType.Sand, Chunk.TerrainType.Stone, Chunk.TerrainType.Grass, Chunk.TerrainType.Snow, Chunk.TerrainType.Forest};
-        var ind = typeIndex % types.Count;
-
-        var grid = GridManager.instance.GetGrid(hit.point);
-        foreach(var coord in grid.coords)
+        if (Input.GetMouseButtonDown(0)){
+            Debug.Log(currentTerrainType);
+            var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
+        Vector3 hitPoint = Vector3.zero;
+        RaycastHit[] hits = Physics.RaycastAll(ray);
+        Array.Sort(hits, (a, b) => (a.distance.CompareTo(b.distance)));
+        foreach (RaycastHit hit in hits)
         {
-            GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] = types[ind];
-        }
-        /*var element = hit.collider.gameObject.GetComponent<Chunk>();
-        string[] xz = element.name.Split("_");
-        element.ReRender(int.Parse(xz[0]), int.Parse(xz[1]));*/
-        foreach (Chunk tempChunk in gridM.terrainElements)
-        {
-            if (tempChunk.gameObject.CompareTag("Terrain"))
-                tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
-        }
-
-        if (grid.GetExhibit() != null)
-        {
-            grid.GetExhibit().CalculateAnimalsTerrainBonus();
-        }
-        for (int i = 0; i < 4; i++)
-        {
-            if (grid.neighbours[i] == null && grid.trueNeighbours[i].GetExhibit() != null)
+            if (hit.collider.CompareTag("Terrain"))
             {
-                grid.trueNeighbours[i].GetExhibit().CalculateAnimalsTerrainBonus();
+                hitPoint = hit.point;
+                break;
             }
-            if (grid.trueNeighbours[i].neighbours[(i + 1) % 4] == null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit() != null)
+        }
+        if(hitPoint != Vector3.zero){
+            Debug.Log(currentTerrainType);
+            var grid = GridManager.instance.GetGrid(hitPoint);
+            foreach(var coord in grid.coords)
             {
-                grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit().CalculateAnimalsTerrainBonus();
+                GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] = currentTerrainType;
             }
+            
+            foreach (Chunk tempChunk in gridM.terrainElements)
+            {
+                if (tempChunk.gameObject.CompareTag("Terrain"))
+                    tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
+            }
+
+            if (grid.GetExhibit() != null)
+            {
+                grid.GetExhibit().CalculateAnimalsTerrainBonus();
+            }
+            for (int i = 0; i < 4; i++)
+            {
+                if (grid.neighbours[i] == null && grid.trueNeighbours[i].GetExhibit() != null)
+                {
+                    grid.trueNeighbours[i].GetExhibit().CalculateAnimalsTerrainBonus();
+                }
+                if (grid.trueNeighbours[i].neighbours[(i + 1) % 4] == null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit() != null)
+                {
+                    grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit().CalculateAnimalsTerrainBonus();
+                }
+            }
+        }
         }
     }
 
@@ -191,6 +211,8 @@ public class PlayerControl : MonoBehaviour
                     Terraform(currentTerraformSize, currentTerraformSize);
                 else if (deleting)
                     Delete();
+                else if (terrainType)
+                    TerrainType();
                 else
                     PlaceObject();
             }
@@ -205,18 +227,6 @@ public class PlayerControl : MonoBehaviour
 
     public void PlaceObject()
     {
-        if (Input.GetMouseButtonDown(1))
-        {
-            var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit[] hits = Physics.RaycastAll(ray);
-            foreach (RaycastHit hit in hits)
-            {
-                if (hit.collider.CompareTag("Terrain"))
-                {
-                    typeIndex++;
-                }
-            }
-        }
         if (Input.GetMouseButtonDown(0))
         {
             isMouseDown = true;
@@ -254,10 +264,6 @@ public class PlayerControl : MonoBehaviour
                     {
                         var clickedOnObject = hit.collider.gameObject.GetComponent<Clickable>();
                         clickedOnObject.ClickedOn();
-                        break;
-                    }
-                    if(hit.collider.CompareTag("Terrain")){
-                        ChangeGrid(hit);
                         break;
                     }
                 }
@@ -864,6 +870,8 @@ public class PlayerControl : MonoBehaviour
                 }
                 if(prevChosenForDelete != null && prevChosenForDelete != chosenForDelete)
                 {
+                    if (prevChosenForDelete.currentPlacingPriceInstance != null)
+                        Destroy(prevChosenForDelete.currentPlacingPriceInstance.gameObject);
                     prevChosenForDelete.ChangeMaterial(0);
                 }
                 if(prevChosenForDelete != chosenForDelete)
@@ -873,12 +881,15 @@ public class PlayerControl : MonoBehaviour
                 }
                 if (Input.GetMouseButtonDown(0))
                 {
+                    StartCoroutine(chosenForDelete.MoveText(2f));
                     chosenForDelete.Remove();
                     ReloadGuestNavMesh();
                 }
             }
             else if(prevChosenForDelete != null)
             {
+                if (prevChosenForDelete.currentPlacingPriceInstance != null)
+                    Destroy(prevChosenForDelete.currentPlacingPriceInstance.gameObject);
                 prevChosenForDelete.ChangeMaterial(0);
                 prevChosenForDelete = null;
             }

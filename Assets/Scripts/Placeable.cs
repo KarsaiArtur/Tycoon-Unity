@@ -67,7 +67,7 @@ public class Placeable : MonoBehaviour, Clickable
     {
         currentPlacingPriceInstance = currentPlacingPriceInstance == null ? Instantiate(currentPlacingPrice) : currentPlacingPriceInstance;
         currentPlacingPriceInstance.transform.SetParent(playerControl.canvas.transform);
-        currentPlacingPriceInstance.text = "-" + placeablePrice + "$";
+        currentPlacingPriceInstance.text = "-" + placeablePrice + " $";
         if (ZooManager.instance.money < placeablePrice)
         {
             currentPlacingPriceInstance.text = "Not Enough Money!";
@@ -75,7 +75,7 @@ public class Placeable : MonoBehaviour, Clickable
         }
         else
             currentPlacingPriceInstance.color = Color.green;
-        var zoomIn = playerControl.transform.position.y / 6.0f; ;
+        var zoomIn = playerControl.transform.position.y / 6.0f;
         var posi = new Vector3(Input.mousePosition.x + (500.0f / zoomIn), Input.mousePosition.y - (150.0f / zoomIn), 0);
         currentPlacingPriceInstance.transform.position = posi;
         //transform.position = new Vector3(playerControl.Round(mouseHit.x), mouseHit.y + 0.5f, playerControl.Round(mouseHit.z));
@@ -85,10 +85,10 @@ public class Placeable : MonoBehaviour, Clickable
     {
         currentPlacingPriceInstance = currentPlacingPriceInstance == null ? Instantiate(currentPlacingPrice) : currentPlacingPriceInstance;
         currentPlacingPriceInstance.transform.SetParent(playerControl.canvas.transform);
-        currentPlacingPriceInstance.text = "+" + GetSellPrice() + "$";
+        currentPlacingPriceInstance.text = "+" + GetSellPrice() + " $";
         currentPlacingPriceInstance.color = Color.green;
-        var zoomIn = playerControl.transform.position.y / 6.0f; ;
-        var posi = new Vector3(Input.mousePosition.x + (500.0f / zoomIn), Input.mousePosition.y - (150.0f / zoomIn), 0);
+        var zoomIn = playerControl.transform.position.y / 6.0f;
+        var posi = new Vector3(Input.mousePosition.x + (500.0f / zoomIn), Input.mousePosition.y - (150.0f / zoomIn) + 50, 0);
         currentPlacingPriceInstance.transform.position = posi;
         //transform.position = new Vector3(playerControl.Round(mouseHit.x), mouseHit.y + 0.5f, playerControl.Round(mouseHit.z));
     }
@@ -105,8 +105,8 @@ public class Placeable : MonoBehaviour, Clickable
 
     public virtual void Remove()
     {
-        if (currentPlacingPriceInstance != null)
-            Destroy(currentPlacingPriceInstance.gameObject);
+        //if (currentPlacingPriceInstance != null)
+            //Destroy(currentPlacingPriceInstance.gameObject);
 
         ZooManager.instance.ChangeMoney(placeablePrice * 0.2f);
 
@@ -176,14 +176,15 @@ public class Placeable : MonoBehaviour, Clickable
 
     public virtual IEnumerator MoveText(float distance)
     {
-        while(distance > 0)
+        while(distance > 0 && currentPlacingPriceInstance != null)
         {
             var posi = new Vector3(currentPlacingPriceInstance.transform.position.x, currentPlacingPriceInstance.transform.position.y + 0.3f, 0);
             currentPlacingPriceInstance.transform.position = posi;
             distance -= 0.01f;
             yield return new WaitForSeconds(.01f);
         }
-        if (currentPlacingPriceInstance != null){
+        if (currentPlacingPriceInstance != null)
+        {
             Destroy(currentPlacingPriceInstance.gameObject);
         }
     }

@@ -73,27 +73,6 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         startingGrid = GetGrid(new Vector3(35, 0, 50));
         initializing = false;
         edgeChanged = false;
-
-        //StartCoroutine(Coloring());
-    }
-
-    IEnumerator Coloring(){
-        foreach(var element in terrainElements.Skip(7)){
-            for(int i = 0; i < element.colors.Length; i++){
-                element.colors[i] = element.VertexColor(Chunk.TerrainType.Stone);
-                string[] xz = element.name.Split("_");
-                Debug.Log(int.Parse(xz[0]) +    "         "+int.Parse(xz[1]) +  "         "+i +"/"+element.colors.Length);
-                element.meshFilter = this.GetComponent<MeshFilter>();
-                element.mesh = new Mesh();
-                element.meshFilter.mesh = element.mesh;
-                element.mesh.vertices = element.verts;
-                element.mesh.colors = element.colors;
-                element.mesh.uv = element.uvs;
-                element.mesh.triangles = element.tris;
-                element.mesh.RecalculateNormals();
-                yield return new WaitForSeconds(0.005f);
-            }
-        }
     }
 
     public bool GetIsLoaded()

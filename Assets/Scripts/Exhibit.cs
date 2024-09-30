@@ -37,6 +37,7 @@ public class Exhibit : Placeable, Visitable, Saveable
     Vector3 gateObstacleCenter;
     float time = 0;
     public bool unreachableForStaff = false;
+    public bool destroyed = false;
 
     public float food = 0;
     public float water = 0;
@@ -56,6 +57,7 @@ public class Exhibit : Placeable, Visitable, Saveable
     override public void Awake()
     {
         base.Awake();
+        destroyed = false;
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
     }
 
@@ -119,7 +121,7 @@ public class Exhibit : Placeable, Visitable, Saveable
         {
             terrainTypes.AddRange(grid.GetTerrainTypes());
         }
-        return terrainTypes.Where(t => t == terrainType).Count() / terrainTypes.Count;
+        return (float)terrainTypes.Count(t => t == terrainType) / terrainTypes.Count;
     }
 
     public void CalculateAnimalsTerrainBonus()
@@ -127,6 +129,7 @@ public class Exhibit : Placeable, Visitable, Saveable
         foreach (var animal in GetAnimals())
         {
             animal.CalculateTerrainBonus();
+            animal.CalculateNatureBonus();
         }
     }
 
@@ -432,6 +435,8 @@ public class Exhibit : Placeable, Visitable, Saveable
 
     public override void Remove()
     {
+        destroyed = true;
+
         ExhibitManager.instance.exhibitList.Remove(this);
 
         ConnectGrids();
@@ -468,11 +473,11 @@ public class Exhibit : Placeable, Visitable, Saveable
         }
 
         size = GetFoodPlaces().Count;
-        for (int i = 0; i < size; i++)
+        for (int i = size - 1; i >= 0; i--)
             GetFoodPlaces()[i].Delete();
-        
+
         size = GetWaterPlaces().Count;
-        for (int i = 0; i < size; i++)
+        for (int i = size - 1; i >= 0; i--)
             GetWaterPlaces()[i].Remove();
             
         Destroy(gameObject);
