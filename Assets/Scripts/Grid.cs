@@ -19,7 +19,7 @@ public class Grid
     private Bench bench;
     /////GENERATE
     private List<Nature> natures;
-    public Chunk.TerrainType terrainType;
+    public TerrainType terrainType;
 
     public void CheckTerrainType()
     {
@@ -27,7 +27,7 @@ public class Grid
         {
             if (GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[0])] != GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[i])])
             {
-                terrainType = Chunk.TerrainType.Mixed;
+                terrainType = TerrainType.Mixed;
                 return;
             }
         }
@@ -35,9 +35,9 @@ public class Grid
         terrainType = GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[0])];
     }
 
-    public List<Chunk.TerrainType> GetTerrainTypes()
+    public List<TerrainType> GetTerrainTypes()
     {
-        List<Chunk.TerrainType> terrainTypes = new();
+        List<TerrainType> terrainTypes = new();
         for (int i = 1; i < coords.Length; i++)
         {
             terrainTypes.Add(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[i])]);

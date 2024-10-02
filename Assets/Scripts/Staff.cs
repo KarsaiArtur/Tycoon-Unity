@@ -146,6 +146,7 @@ public abstract class Staff : Placeable
     {
         time = 0;
         timeGoal = UnityEngine.Random.Range(9, 11);
+
         if (exhibit != null)
         {
             if (workingState == WorkingState.GoingToExhibitEntranceToEnter || workingState == WorkingState.GoingToExhibitEntranceToLeave)
@@ -164,8 +165,6 @@ public abstract class Staff : Placeable
             }
             else if (workingState == WorkingState.GoingToExhibitExitToEnter || workingState == WorkingState.GoingToExhibitExitToLeave)
                 agent.SetDestination(new Vector3(exhibit.exitGrid.coords[0].x + UnityEngine.Random.Range(0.1f, 0.9f), exhibit.exitGrid.coords[0].y, exhibit.exitGrid.coords[0].z + UnityEngine.Random.Range(0.1f, 0.9f)));
-            else if (workingState == WorkingState.Working)
-                FindInsideDestination();
             else if (workingState == WorkingState.Resting && exhibit.entranceGrid.neighbours.Length > 0)
             {
                 foreach (Grid grid in exhibit.entranceGrid.trueNeighbours)
@@ -177,16 +176,19 @@ public abstract class Staff : Placeable
                     }
                 }
             }
-            agent.isStopped = false;
-            destinationReached = false;
         }
+        else if (workingState == WorkingState.Working)
+            FindWorkDestination();
+                
+        agent.isStopped = false;
+        destinationReached = false;
     }
 
     public virtual void FindJob() { }
 
     public virtual bool DoJob() { return true; }
 
-    public virtual void FindInsideDestination() { }
+    public virtual void FindWorkDestination() { }
 
     public virtual void SetToDefault()
     {

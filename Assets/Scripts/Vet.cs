@@ -15,7 +15,6 @@ public class Vet : Staff, Saveable
     public override void Start()
     {
         base.Start();
-        salary = 500;
     }
 
     public override void Update()
@@ -97,7 +96,7 @@ public class Vet : Staff, Saveable
         return true;
     }
 
-    public override void FindInsideDestination()
+    public override void FindWorkDestination()
     {
         if (animalToHeal != null)
         {

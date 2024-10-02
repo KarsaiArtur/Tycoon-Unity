@@ -14,14 +14,16 @@ public class StaffManager : MonoBehaviour, Manager, Saveable
     void Awake()
     {
         instance = this;
-        if(LoadMenu.loadedGame != null){
+        if(LoadMenu.loadedGame != null)
+        {
             LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
             LoadMenu.objectLoadedEvent.Invoke();
         }
     }
 
-    public void AddList(Staff staff){
+    public void AddList(Staff staff)
+    {
         staffList.Add(staff);
         staff.transform.SetParent(StaffManager.instance.transform);
     }

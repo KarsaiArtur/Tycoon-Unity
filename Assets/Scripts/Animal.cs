@@ -66,7 +66,7 @@ public class Animal : Placeable, Saveable
     public bool isSick = false;
     public bool isGettingHealed = false;
     public float requiredExhibitSpace = 1;
-    public List<Chunk.TerrainType> terrainsPreferred = new();
+    public List<TerrainType> terrainsPreferred = new();
     public float terrainBonusMultiplier = 0;
     public float natureBonus = 1;
     public float age = 0;
@@ -194,7 +194,7 @@ public class Animal : Placeable, Saveable
 
     public override float GetSellPrice()
     {
-        return Mathf.Floor(placeablePrice * 0.5f * health / 100 * (((1 - age / lifeExpectancy)) > 0 ? (1 - age / lifeExpectancy) : 0));
+        return Mathf.Floor(placeablePrice * 0.5f * health / 100 * ((1 - age / lifeExpectancy) > 0 ? (1 - age / lifeExpectancy) : 0));
     }
 
     public override void Awake()
@@ -841,8 +841,10 @@ public class Animal : Placeable, Saveable
         public bool isPregnant;
         public int dayOfConception;
         public int fertility;
+        public float terrainBonusMultiplier;
+        public float natureBonus;
 
-        public AnimalData(string _idParam, Vector3 positionParam, Quaternion rotationParam, Vector3 localScaleParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, string placeableNameParam, string exhibitIdParam, float hungerParam, float thirstParam, float restroomNeedsParam, float happinessParam, float healthParam, DateTime prevDayParam, bool isSickParam, float ageParam, DateTime birthDateParam, bool isMaleParam, bool isPregnantParam, int dayOfConceptionParam, int fertilityParam)
+        public AnimalData(string _idParam, Vector3 positionParam, Quaternion rotationParam, Vector3 localScaleParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, string placeableNameParam, string exhibitIdParam, float hungerParam, float thirstParam, float restroomNeedsParam, float happinessParam, float healthParam, DateTime prevDayParam, bool isSickParam, float ageParam, DateTime birthDateParam, bool isMaleParam, bool isPregnantParam, int dayOfConceptionParam, int fertilityParam, float terrainBonusMultiplierParam, float natureBonusParam)
         {
            _id = _idParam;
            position = positionParam;
@@ -866,13 +868,15 @@ public class Animal : Placeable, Saveable
            isPregnant = isPregnantParam;
            dayOfConception = dayOfConceptionParam;
            fertility = fertilityParam;
+           terrainBonusMultiplier = terrainBonusMultiplierParam;
+           natureBonus = natureBonusParam;
         }
     }
 
     AnimalData data; 
     
     public string DataToJson(){
-        AnimalData data = new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility);
+        AnimalData data = new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility, terrainBonusMultiplier, natureBonus);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -884,14 +888,14 @@ public class Animal : Placeable, Saveable
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data._id, data.position, data.rotation, data.localScale, data.selectedPrefabId, data.tag, data.placeablePrice, data.placeableName, data.exhibitId, data.hunger, data.thirst, data.restroomNeeds, data.happiness, data.health, new DateTime(data.prevDay), data.isSick, data.age, new DateTime(data.birthDate), data.isMale, data.isPregnant, data.dayOfConception, data.fertility);
+        SetData(data._id, data.position, data.rotation, data.localScale, data.selectedPrefabId, data.tag, data.placeablePrice, data.placeableName, data.exhibitId, data.hunger, data.thirst, data.restroomNeeds, data.happiness, data.health, new DateTime(data.prevDay), data.isSick, data.age, new DateTime(data.birthDate), data.isMale, data.isPregnant, data.dayOfConception, data.fertility, data.terrainBonusMultiplier, data.natureBonus);
     }
     
     public string GetFileName(){
         return "Animal.json";
     }
     
-    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, Vector3 localScaleParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, string placeableNameParam, string exhibitIdParam, float hungerParam, float thirstParam, float restroomNeedsParam, float happinessParam, float healthParam, DateTime prevDayParam, bool isSickParam, float ageParam, DateTime birthDateParam, bool isMaleParam, bool isPregnantParam, int dayOfConceptionParam, int fertilityParam){ 
+    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, Vector3 localScaleParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, string placeableNameParam, string exhibitIdParam, float hungerParam, float thirstParam, float restroomNeedsParam, float happinessParam, float healthParam, DateTime prevDayParam, bool isSickParam, float ageParam, DateTime birthDateParam, bool isMaleParam, bool isPregnantParam, int dayOfConceptionParam, int fertilityParam, float terrainBonusMultiplierParam, float natureBonusParam){ 
         
            _id = _idParam;
            transform.position = positionParam;
@@ -915,10 +919,12 @@ public class Animal : Placeable, Saveable
            isPregnant = isPregnantParam;
            dayOfConception = dayOfConceptionParam;
            fertility = fertilityParam;
+           terrainBonusMultiplier = terrainBonusMultiplierParam;
+           natureBonus = natureBonusParam;
     }
     
     public AnimalData ToData(){
-        return new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility);
+        return new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility, terrainBonusMultiplier, natureBonus);
     }
     
     public void FromData(AnimalData data){
@@ -945,5 +951,7 @@ public class Animal : Placeable, Saveable
            isPregnant = data.isPregnant;
            dayOfConception = data.dayOfConception;
            fertility = data.fertility;
+           terrainBonusMultiplier = data.terrainBonusMultiplier;
+           natureBonus = data.natureBonus;
     }
 }

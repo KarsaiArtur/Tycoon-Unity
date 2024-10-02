@@ -36,9 +36,7 @@ public class Building : BuildingAncestor, Saveable
     public override void Awake()
     {
         base.Awake();
-        
     } 
-
 
     void AddList(PurchasableItems purchasableItems){
         purchasableItemInstances.Add(purchasableItems);

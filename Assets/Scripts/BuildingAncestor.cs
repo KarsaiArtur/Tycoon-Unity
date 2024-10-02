@@ -91,17 +91,17 @@ public abstract class BuildingAncestor : Placeable, Visitable
             offsetX = UnityEngine.Random.Range(0, 1.0f);
             offsetZ = 0.1f;
         }
-        if ((grid.trueNeighbours[1].GetBench() != null && grid.trueNeighbours[1].GetBench() == this) || (grid.trueNeighbours[1].GetBuilding() != null && grid.trueNeighbours[1].GetBuilding() == this))
+        else if ((grid.trueNeighbours[1].GetBench() != null && grid.trueNeighbours[1].GetBench() == this) || (grid.trueNeighbours[1].GetBuilding() != null && grid.trueNeighbours[1].GetBuilding() == this))
         {
             offsetX = 0.1f;
             offsetZ = UnityEngine.Random.Range(0, 1.0f);
         }
-        if ((grid.trueNeighbours[2].GetBench() != null && grid.trueNeighbours[2].GetBench() == this) || (grid.trueNeighbours[2].GetBuilding() != null && grid.trueNeighbours[2].GetBuilding() == this))
+        else if ((grid.trueNeighbours[2].GetBench() != null && grid.trueNeighbours[2].GetBench() == this) || (grid.trueNeighbours[2].GetBuilding() != null && grid.trueNeighbours[2].GetBuilding() == this))
         {
             offsetX = UnityEngine.Random.Range(0, 1.0f);
             offsetZ = 0.9f;
         }
-        if ((grid.trueNeighbours[3].GetBench() != null && grid.trueNeighbours[3].GetBench() == this) || (grid.trueNeighbours[3].GetBuilding() != null && grid.trueNeighbours[3].GetBuilding() == this))
+        else if ((grid.trueNeighbours[3].GetBench() != null && grid.trueNeighbours[3].GetBench() == this) || (grid.trueNeighbours[3].GetBuilding() != null && grid.trueNeighbours[3].GetBuilding() == this))
         {
             offsetX = 0.9f;
             offsetZ = UnityEngine.Random.Range(0, 1.0f);

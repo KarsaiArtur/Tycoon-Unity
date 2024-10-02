@@ -11,7 +11,9 @@ public class FenceManager : MonoBehaviour, Saveable, Manager
 {
     static public FenceManager instance;
     public List<Fence> fences;
-    void Start(){
+
+    void Start()
+    {
         instance = this;
         if(LoadMenu.loadedGame != null){
             LoadMenu.currentManager = this;

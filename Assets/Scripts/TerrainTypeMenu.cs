@@ -31,6 +31,7 @@ public class TerrainTypeMenu : ExtraMenu
 
     public void ChangeValue(int value)
     {
+        playerControl.currentClickGrid = null;
         slider.value += value;
         if(slider.value == slider.maxValue)
         {
@@ -46,7 +47,7 @@ public class TerrainTypeMenu : ExtraMenu
             minus.enabled = true;
         }
         currentSize.SetText(slider.value + "x" + slider.value);
-        List<TerrainType> types = new List<TerrainType>(){ TerrainType.Grass, TerrainType.Savannah, TerrainType.Forest, TerrainType.Snow };
+        List<TerrainType> types = new List<TerrainType>(){ TerrainType.Grass, TerrainType.Savannah, TerrainType.Forest, TerrainType.Snow, TerrainType.Sand , TerrainType.Dirt , TerrainType.Water , TerrainType.Stone, TerrainType.Rainforest, TerrainType.Ice};
         Debug.Log(types[(int)slider.value-1]);
         playerControl.currentTerrainType = (types[(int)slider.value-1]);
     }
@@ -84,7 +85,7 @@ public class TerrainTypeMenu : ExtraMenu
 
     public override string GetName()
     {
-        return "terraformer";
+        return "terraintype";
     }
 
     public override void UpdateWindow()

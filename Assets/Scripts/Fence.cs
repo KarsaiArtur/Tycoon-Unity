@@ -7,7 +7,7 @@ using UnityEngine.AI;
 using UnityEngine.UI;
 
 /////Saveable Attributes, DONT DELETE
-//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;int placeablePrice;string tag;int timesRotated//////////
+//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;int placeablePrice;string tag;int timesRotated;int health//////////
 //////SERIALIZABLE:YES/
 
 public class Fence : Placeable, Saveable
@@ -18,8 +18,38 @@ public class Fence : Placeable, Saveable
     public Grid grid1;
     public Grid grid2;
     bool collided = false;
+    public int maxHealth = 3;
+    public int health;
+    public bool isBeingFixed = false;
+    DateTime prevDay;
 
     public Material[] materials;
+
+    public override void Awake()
+    {
+        base.Awake();
+
+        prevDay = CalendarManager.instance.currentDate;
+        health = maxHealth;
+    }
+
+    public void Update()
+    {
+        if (CalendarManager.instance.currentDate != prevDay && tag == "Placed Fence")
+        {
+            prevDay = CalendarManager.instance.currentDate;
+            if (UnityEngine.Random.Range(0, 100) == 0)
+            {
+                health--;
+            }
+
+            if (health <= 0)
+            {
+                Remove();
+            }
+        }
+
+    }
 
     public override void Place(Vector3 mouseHit)
     {
@@ -30,7 +60,7 @@ public class Fence : Placeable, Saveable
 
         RaycastHit[] hits = Physics.RaycastAll(position, -transform.up);
 
-        if(playerControl.canBePlaced)
+        if (playerControl.canBePlaced)
         {
             ChangeMaterial(1);
         }
@@ -40,7 +70,8 @@ public class Fence : Placeable, Saveable
 
         foreach (RaycastHit hit2 in hits)
         {
-            if (playerControl.placedTags.Contains(hit2.collider.tag) && playerControl.canBePlaced) {
+            if (playerControl.placedTags.Contains(hit2.collider.tag) && playerControl.canBePlaced)
+            {
                 playerControl.canBePlaced = false;
                 ChangeMaterial(2);
             }
@@ -214,6 +245,9 @@ public class Fence : Placeable, Saveable
         FenceManager.instance.fences.Remove(this);
         base.Remove();
 
+        ZooManager.instance.ChangeMoney(-placeablePrice * 0.2f);
+        ZooManager.instance.ChangeMoney(Mathf.Floor(placeablePrice * 0.2f * health / maxHealth));
+
         grid1.neighbours[(timesRotated + 2) % 4] = grid2;
         grid2.neighbours[timesRotated] = grid1;
 
@@ -310,8 +344,9 @@ public class Fence : Placeable, Saveable
         public int placeablePrice;
         public string tag;
         public int timesRotated;
+        public int health;
 
-        public FenceData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, int placeablePriceParam, string tagParam, int timesRotatedParam)
+        public FenceData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, int placeablePriceParam, string tagParam, int timesRotatedParam, int healthParam)
         {
            _id = _idParam;
            position = positionParam;
@@ -320,13 +355,14 @@ public class Fence : Placeable, Saveable
            placeablePrice = placeablePriceParam;
            tag = tagParam;
            timesRotated = timesRotatedParam;
+           health = healthParam;
         }
     }
 
     FenceData data; 
     
     public string DataToJson(){
-        FenceData data = new FenceData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, timesRotated);
+        FenceData data = new FenceData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, timesRotated, health);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -338,14 +374,14 @@ public class Fence : Placeable, Saveable
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data._id, data.position, data.selectedPrefabId, data.rotation, data.placeablePrice, data.tag, data.timesRotated);
+        SetData(data._id, data.position, data.selectedPrefabId, data.rotation, data.placeablePrice, data.tag, data.timesRotated, data.health);
     }
     
     public string GetFileName(){
         return "Fence.json";
     }
     
-    void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, int placeablePriceParam, string tagParam, int timesRotatedParam){ 
+    void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, int placeablePriceParam, string tagParam, int timesRotatedParam, int healthParam){ 
         
            _id = _idParam;
            transform.position = positionParam;
@@ -354,10 +390,11 @@ public class Fence : Placeable, Saveable
            placeablePrice = placeablePriceParam;
            tag = tagParam;
            timesRotated = timesRotatedParam;
+           health = healthParam;
     }
     
     public FenceData ToData(){
-        return new FenceData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, timesRotated);
+        return new FenceData(_id, transform.position, selectedPrefabId, transform.rotation, placeablePrice, tag, timesRotated, health);
     }
     
     public void FromData(FenceData data){
@@ -369,5 +406,6 @@ public class Fence : Placeable, Saveable
            placeablePrice = data.placeablePrice;
            tag = data.tag;
            timesRotated = data.timesRotated;
+           health = data.health;
     }
 }

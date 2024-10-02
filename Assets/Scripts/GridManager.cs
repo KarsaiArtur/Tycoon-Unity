@@ -61,6 +61,7 @@ public class GridManager : MonoBehaviour, Saveable, Manager
 
         SetEdgeHeight();
         SetSpawnHeight();
+        ReloadGrids();
 
         foreach (Chunk chunk in terrainElements)
         {
@@ -253,12 +254,33 @@ public class GridManager : MonoBehaviour, Saveable, Manager
 
     public Grid GetGrid(Vector3 position)
     {
-        /*Debug.Log((int)Mathf.Floor(position.x) - elementWidth + "       " + ((int)Mathf.Floor(position.z) - elementWidth));
-        if (position.x >= grids[0,0].coords[0].x && position.z >= grids[0,0].coords[0].z && position.x <= grids[(int)Math.Sqrt(grids.Length) - 2,(int)Math.Sqrt(grids.Length) - 2].coords[3].x && position.z <= grids[(int)Math.Sqrt(grids.Length) - 2,(int)Math.Sqrt(grids.Length) - 2].coords[3].z)
-        {*/
-            return grids[(int)Mathf.Floor(position.x) - elementWidth, (int)Mathf.Floor(position.z) - elementWidth];
-        /*}
-        return null;*/
+        return grids[(int)Mathf.Floor(position.x) - elementWidth, (int)Mathf.Floor(position.z) - elementWidth];
+    }
+
+    public List<Chunk> GetNeighbourChunks(Grid grid)
+    {
+        List<Chunk> chunks = new();
+        int chunkIndex = (int)(Mathf.Floor(grid.coords[0].x / elementWidth) + Mathf.Floor(grid.coords[0].z / elementWidth) * (terrainWidth / elementWidth));
+        if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth) && !chunks.Contains(terrainElements[chunkIndex]))
+            chunks.Add(terrainElements[chunkIndex]);
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (grid.trueNeighbours[i] != null)
+            {
+                chunkIndex = (int)(Mathf.Floor(grid.trueNeighbours[i].coords[0].x / elementWidth) + Mathf.Floor(grid.trueNeighbours[i].coords[0].z / elementWidth) * (terrainWidth / elementWidth));
+                if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth) && !chunks.Contains(terrainElements[chunkIndex]))
+                    chunks.Add(terrainElements[chunkIndex]);
+            }
+            if (grid.trueNeighbours[i] != null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4] != null)
+            {
+                chunkIndex = (int)(Mathf.Floor(grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].coords[0].x / elementWidth) + Mathf.Floor(grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].coords[0].z / elementWidth) * (terrainWidth / elementWidth));
+                if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth) && !chunks.Contains(terrainElements[chunkIndex]))
+                    chunks.Add(terrainElements[chunkIndex]);
+            }
+        }
+
+        return chunks;
     }
 
     //void OnDrawGizmosSelected()

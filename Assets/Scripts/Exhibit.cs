@@ -114,9 +114,9 @@ public class Exhibit : Placeable, Visitable, Saveable
         }
     }
 
-    public float CalculateTerrainPercent(Chunk.TerrainType terrainType)
+    public float CalculateTerrainPercent(TerrainType terrainType)
     {
-        List<Chunk.TerrainType> terrainTypes = new();
+        List<TerrainType> terrainTypes = new();
         foreach (var grid in gridList)
         {
             terrainTypes.AddRange(grid.GetTerrainTypes());

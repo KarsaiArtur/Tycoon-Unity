@@ -7,6 +7,7 @@ using Unity.AI.Navigation;
 using Cinemachine;
 using System.Linq;
 using static Chunk;
+using Unity.VisualScripting;
 
 /////Attributes, DONT DELETE
 //////Vector3 position;Quaternion rotation//////////
@@ -94,7 +95,9 @@ public class PlayerControl : MonoBehaviour
 
     public void ChangeTerrainType()
     {
+        terraformerLine.positionCount = 5;
         terrainType = !terrainType;
+        terraformerLine.gameObject.SetActive(terrainType);
     }
 
     private bool MouseOverUI()
@@ -128,15 +131,24 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    public Grid currentClickGrid;
+    public Grid currentMouseGrid;
 
     public void TerrainType()
     {
-        if (Input.GetMouseButtonDown(0)){
-            Debug.Log(currentTerrainType);
-            var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
+        if (Input.GetMouseButtonDown(0))
+        {
+            isMouseDown = true;
+        }
+        if (Input.GetMouseButtonUp(0))
+        {
+            isMouseDown = false;;
+        }
+
+        var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
         Vector3 hitPoint = Vector3.zero;
         RaycastHit[] hits = Physics.RaycastAll(ray);
-        Array.Sort(hits, (a, b) => (a.distance.CompareTo(b.distance)));
+        Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
         foreach (RaycastHit hit in hits)
         {
             if (hit.collider.CompareTag("Terrain"))
@@ -145,36 +157,54 @@ public class PlayerControl : MonoBehaviour
                 break;
             }
         }
-        if(hitPoint != Vector3.zero){
-            Debug.Log(currentTerrainType);
-            var grid = GridManager.instance.GetGrid(hitPoint);
-            foreach(var coord in grid.coords)
-            {
-                GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] = currentTerrainType;
-            }
-            
-            foreach (Chunk tempChunk in gridM.terrainElements)
-            {
-                if (tempChunk.gameObject.CompareTag("Terrain"))
-                    tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
-            }
 
-            if (grid.GetExhibit() != null)
+        if(hitPoint != Vector3.zero)
+        {
+            var grid = GridManager.instance.GetGrid(hitPoint);
+            if(grid != currentMouseGrid)
             {
-                grid.GetExhibit().CalculateAnimalsTerrainBonus();
+                
+                terraformerLine.SetPosition(0, grid.coords[3]);
+                terraformerLine.SetPosition(1, grid.coords[2]);
+                terraformerLine.SetPosition(2, grid.coords[0]);
+                terraformerLine.SetPosition(3, grid.coords[1]);
+                terraformerLine.SetPosition(4, grid.coords[3]);
+                currentMouseGrid = grid;
             }
-            for (int i = 0; i < 4; i++)
-            {
-                if (grid.neighbours[i] == null && grid.trueNeighbours[i].GetExhibit() != null)
+            if(isMouseDown && grid != currentClickGrid)
                 {
-                    grid.trueNeighbours[i].GetExhibit().CalculateAnimalsTerrainBonus();
+                    int ind = 0;
+                    foreach(var coord in grid.coords)
+                    {
+                        if(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] != currentTerrainType){
+                            GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] = currentTerrainType;
+                            ZooManager.instance.ChangeMoney(-(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)].GetPrice() / 4));
+                        }
+                    }
+                    Debug.Log(ind);
+                    
+                    foreach (Chunk tempChunk in gridM.GetNeighbourChunks(grid))
+                    {
+                        tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
+                    }
+
+                    if (grid.GetExhibit() != null)
+                    {
+                        grid.GetExhibit().CalculateAnimalsTerrainBonus();
+                    }
+                    for (int i = 0; i < 4; i++)
+                    {
+                        if (grid.trueNeighbours[i] != null && grid.neighbours[i] == null && grid.trueNeighbours[i].GetExhibit() != null)
+                        {
+                            grid.trueNeighbours[i].GetExhibit().CalculateAnimalsTerrainBonus();
+                        }
+                        if (grid.trueNeighbours[i] != null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4] != null && grid.trueNeighbours[i].neighbours[(i + 1) % 4] == null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit() != null)
+                        {
+                            grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit().CalculateAnimalsTerrainBonus();
+                        }
+                    }
+                    currentClickGrid = grid;
                 }
-                if (grid.trueNeighbours[i].neighbours[(i + 1) % 4] == null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit() != null)
-                {
-                    grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit().CalculateAnimalsTerrainBonus();
-                }
-            }
-        }
         }
     }
 
@@ -221,6 +251,10 @@ public class PlayerControl : MonoBehaviour
                 isMouseDown = false;
                 m_Selected.DestroyPlaceable();
                 Spawn(curPlaceable);
+            }
+            else if (MouseOverUI() && Input.GetMouseButtonUp(0) && terrainType)
+            {
+                isMouseDown = false;
             }
         }
     }

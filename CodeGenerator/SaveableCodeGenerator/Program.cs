@@ -26,7 +26,7 @@ public class MyProgram{
         (
             "Staff", 
             true,
-            ["Vet", "Zookeeper"],
+            ["Vet", "Zookeeper", "Maintainer"],
             ["position", "selectedPrefabId", "rotation"]
         ),
     };

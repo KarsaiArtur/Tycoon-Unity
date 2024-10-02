@@ -13,17 +13,11 @@ public class Chunk : MonoBehaviour
     public Color[] colors;
     public int[] tris;
     public Vector2[] uvs;
+    public Vector2[] uvs2;
+    public Vector2[] uvs3;
+    public Vector2[] uvs4;
     public Vector3 center;
     public PlayerControl playerControl;
-
-    public enum TerrainType
-    {
-        Grass,
-        Forest,
-        Savannah,
-        Snow,
-        Mixed
-    }
 
     public void Awake()
     {
@@ -46,23 +40,70 @@ public class Chunk : MonoBehaviour
     {
         if (type == TerrainType.Grass)
         {
-            return new Color(0, 0, 0, 0);
+            return new Color(1f, 0, 0, 0);
         }
         else if (type == TerrainType.Savannah)
         {
-            return new Color(1f, 0, 0, 0);
+            return new Color(0, 1f, 0, 0);
         }
         else if (type == TerrainType.Snow)
         {
-            return new Color(0, 1f, 0, 0);
+            return new Color(0, 0, 1f, 0);
         }
         else if (type == TerrainType.Forest)
         {
-            return new Color(0, 0, 1f, 0);
+            return new Color(0, 0, 0, 1f);
         }
         else
         {
-            return new Color(0, 0, 0, 1f);
+            return new Color(0, 0, 0, 0);
+        }
+    }
+
+    public Vector2 VertexColor2(TerrainType type)
+    {
+        if (type == TerrainType.Sand)
+        {
+            return new Vector2(1f, 0);
+        }
+        else if (type == TerrainType.Dirt)
+        {
+            return new Vector2(0, 1f);
+        }
+        else
+        {
+            return new Vector2(0, 0);
+        }
+    }
+    public Vector2 VertexColor3(TerrainType type)
+    {
+        if (type == TerrainType.Stone)
+        {
+            return new Vector2(1f, 0);
+        }
+        else if (type == TerrainType.Water)
+        {
+            return new Vector2(0, 1f);
+        }
+        else
+        {
+            return new Vector2(0, 0);
+        }
+    }
+
+    public Vector2 VertexColor4(TerrainType type)
+    {
+        if (type == TerrainType.Rainforest)
+        {
+            return new Vector2(1f, 0);
+        }
+        else if (type == TerrainType.Ice)
+        {
+            return new Vector2(0, 1f);
+        }
+        else
+        {
+            return new Vector2(0, 0);
         }
     }
 
@@ -85,6 +126,9 @@ public class Chunk : MonoBehaviour
         verts = new Vector3[width * width * 6];
         colors = new Color[verts.Length];
         uvs = new Vector2[verts.Length];
+        uvs2 = new Vector2[verts.Length];
+        uvs3 = new Vector2[verts.Length];
+        uvs4 = new Vector2[verts.Length];
         tris = new int[verts.Length];
 
         //pivot point inside of the coord array
@@ -105,11 +149,21 @@ public class Chunk : MonoBehaviour
                 colors[i + 1] = VertexColor(coordTypes[origin + ((x + 1) * (tWidth + 1) + z)]);
                 colors[i + 2] = VertexColor(coordTypes[origin + ((x + 1) * (tWidth + 1) + z + 1)]);
                 colors[i + 3] = VertexColor(coordTypes[origin + (x * (tWidth + 1) + z + 1)]);
-                /*var typeds = UnityEngine.Random.Range(1, 3) == 1 ? TerrainType.Grass : TerrainType.Sand;
-                colors[i] = VertexColor(typeds);
-                colors[i + 1] = VertexColor(typeds);
-                colors[i + 2] = VertexColor(typeds);
-                colors[i + 3] = VertexColor(typeds);*/
+                
+                uvs2[i] = VertexColor2(coordTypes[origin + (x * (tWidth + 1) + z)]);
+                uvs2[i + 1] = VertexColor2(coordTypes[origin + ((x + 1) * (tWidth + 1) + z)]);
+                uvs2[i + 2] = VertexColor2(coordTypes[origin + ((x + 1) * (tWidth + 1) + z + 1)]);
+                uvs2[i + 3] = VertexColor2(coordTypes[origin + (x * (tWidth + 1) + z + 1)]);
+
+                uvs3[i] = VertexColor3(coordTypes[origin + (x * (tWidth + 1) + z)]);
+                uvs3[i + 1] = VertexColor3(coordTypes[origin + ((x + 1) * (tWidth + 1) + z)]);
+                uvs3[i + 2] = VertexColor3(coordTypes[origin + ((x + 1) * (tWidth + 1) + z + 1)]);
+                uvs3[i + 3] = VertexColor3(coordTypes[origin + (x * (tWidth + 1) + z + 1)]);
+                
+                uvs4[i] = VertexColor4(coordTypes[origin + (x * (tWidth + 1) + z)]);
+                uvs4[i + 1] = VertexColor4(coordTypes[origin + ((x + 1) * (tWidth + 1) + z)]);
+                uvs4[i + 2] = VertexColor4(coordTypes[origin + ((x + 1) * (tWidth + 1) + z + 1)]);
+                uvs4[i + 3] = VertexColor4(coordTypes[origin + (x * (tWidth + 1) + z + 1)]);
 
                 if (TriangulationCheck(coords[origin + (x * (tWidth + 1) + z)], coords[origin + ((x + 1) * (tWidth + 1) + z + 1)]))
                 {
@@ -122,6 +176,14 @@ public class Chunk : MonoBehaviour
                     colors[i + 5] = VertexColor(coordTypes[origin + ((x + 1) * (tWidth + 1) + z + 1)]);
                     /*colors[i + 4] = VertexColor(TerrainType.Grass);
                     colors[i + 5] = VertexColor(TerrainType.Grass);*/
+                    uvs2[i + 4] = VertexColor2(coordTypes[origin + (x * (tWidth + 1) + z)]);
+                    uvs2[i + 5] = VertexColor2(coordTypes[origin + ((x + 1) * (tWidth + 1) + z + 1)]);
+
+                    uvs3[i + 4] = VertexColor3(coordTypes[origin + (x * (tWidth + 1) + z)]);
+                    uvs3[i + 5] = VertexColor3(coordTypes[origin + ((x + 1) * (tWidth + 1) + z + 1)]);
+
+                    uvs4[i + 4] = VertexColor4(coordTypes[origin + (x * (tWidth + 1) + z)]);
+                    uvs4[i + 5] = VertexColor4(coordTypes[origin + ((x + 1) * (tWidth + 1) + z + 1)]);
 
                     //setting tris
                     tris[i] = i;
@@ -132,11 +194,11 @@ public class Chunk : MonoBehaviour
                     tris[i + 5] = i + 3;
                     //setting uvs
                     uvs[i] = new Vector2(0, 0);
-                    uvs[i + 1] = new Vector2(0, 1);
-                    uvs[i + 2] = new Vector2(1, 1);
-                    uvs[i + 3] = new Vector2(1, 0);
+                    uvs[i + 1] = new Vector2(0, 1f);
+                    uvs[i + 2] = new Vector2(1f, 1f);
+                    uvs[i + 3] = new Vector2(1f, 0);
                     uvs[i + 4] = new Vector2(0, 0);
-                    uvs[i + 5] = new Vector2(1, 1);
+                    uvs[i + 5] = new Vector2(1f, 1f);
                 }
                 else
                 {
@@ -149,6 +211,14 @@ public class Chunk : MonoBehaviour
                     colors[i + 5] = VertexColor(coordTypes[origin + ((x + 1) * (tWidth + 1) + z)]);
                     /*colors[i + 4] = VertexColor(TerrainType.Grass);
                     colors[i + 5] = VertexColor(TerrainType.Grass);*/
+                    uvs2[i + 4] = VertexColor2(coordTypes[origin + (x * (tWidth + 1) + z + 1)]);
+                    uvs2[i + 5] = VertexColor2(coordTypes[origin + ((x + 1) * (tWidth + 1) + z)]);
+
+                    uvs3[i + 4] = VertexColor3(coordTypes[origin + (x * (tWidth + 1) + z + 1)]);
+                    uvs3[i + 5] = VertexColor3(coordTypes[origin + ((x + 1) * (tWidth + 1) + z)]);
+
+                    uvs4[i + 4] = VertexColor4(coordTypes[origin + (x * (tWidth + 1) + z + 1)]);
+                    uvs4[i + 5] = VertexColor4(coordTypes[origin + ((x + 1) * (tWidth + 1) + z)]);
 
                     //setting tris
                     tris[i] = i;
@@ -159,17 +229,21 @@ public class Chunk : MonoBehaviour
                     tris[i + 5] = i + 2;
                     //setting uvs
                     uvs[i] = new Vector2(0, 0);
-                    uvs[i + 1] = new Vector2(0, 1);
-                    uvs[i + 2] = new Vector2(1, 1);
-                    uvs[i + 3] = new Vector2(1, 0);
-                    uvs[i + 4] = new Vector2(1, 0);
-                    uvs[i + 5] = new Vector2(0, 1);
+                    uvs[i + 1] = new Vector2(0, 1f);
+                    uvs[i + 2] = new Vector2(1f, 1f);
+                    uvs[i + 3] = new Vector2(1f, 0);
+                    uvs[i + 4] = new Vector2(1f, 0);
+                    uvs[i + 5] = new Vector2(0, 1f);
                 }
             }
         }
         mesh.vertices = verts;
         mesh.colors = colors;
-        mesh.uv = uvs;
+        mesh.SetUVs(0, uvs);
+        mesh.SetUVs(1, uvs2);
+        mesh.SetUVs(2, uvs3);
+        mesh.SetUVs(3, uvs4);
+        mesh.SetColors(colors);
         mesh.triangles = tris;
         mesh.RecalculateNormals();
     }

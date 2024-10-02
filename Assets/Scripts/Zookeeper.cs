@@ -27,7 +27,6 @@ public class Zookeeper : Staff, Saveable
     {
         base.Start();
         jobAtExhibit = ZookeperJobs.Nothing;
-        salary = 300;
     }
 
     public override void FindJob()
@@ -161,7 +160,7 @@ public class Zookeeper : Staff, Saveable
         return true;
     }
 
-    public override void FindInsideDestination()
+    public override void FindWorkDestination()
     {
         if (jobAtExhibit == ZookeperJobs.CleaningExhibit)
         {

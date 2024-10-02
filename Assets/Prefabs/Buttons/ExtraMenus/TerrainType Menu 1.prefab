@@ -190,7 +190,7 @@ MonoBehaviour:
   currentSize: {fileID: 2075616398850687123}
   playerControl: {fileID: 0}
   icon: {fileID: 0}
-  terrainTypeIconPrefab: {fileID: 4314752366531909523, guid: cf328675d1705934e8d591638c2cf694, type: 3}
+  terrainTypeIconPrefab: {fileID: 4314752366531909523, guid: 33ee9cf0fba6a864c819bcd5cfb83f41, type: 3}
 --- !u!1 &187063914991861071
 GameObject:
   m_ObjectHideFlags: 0
@@ -764,7 +764,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 0}
   m_Direction: 0
   m_MinValue: 0
-  m_MaxValue: 4
+  m_MaxValue: 10
   m_WholeNumbers: 1
   m_Value: 1
   m_OnValueChanged:

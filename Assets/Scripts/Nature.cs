@@ -14,7 +14,7 @@ public class Nature : Placeable, Saveable
     float height;
     public NavMeshObstacle navMeshObstacle;
     GameObject chosenPrefab;
-    public Chunk.TerrainType terrainPreferred;
+    public TerrainType terrainPreferred;
 
     public override void Awake()
     {
