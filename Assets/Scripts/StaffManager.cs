@@ -30,7 +30,7 @@ public class StaffManager : MonoBehaviour, Manager, Saveable
 
     void Update()
     {
-        if (staffList.Count > 0 && ExhibitManager.instance.exhibitList.Count > 0)
+        if (staffList.Count > 0)
         {
             foreach (Staff staff in staffList)
             {

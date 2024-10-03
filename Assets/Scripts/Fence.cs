@@ -48,7 +48,6 @@ public class Fence : Placeable, Saveable
                 Remove();
             }
         }
-
     }
 
     public override void Place(Vector3 mouseHit)
@@ -123,8 +122,8 @@ public class Fence : Placeable, Saveable
         grid1.neighbours[(timesRotated + 2) % 4] = null;
         grid2.neighbours[timesRotated] = null;
 
-        if ((grid1.GetExhibit() == null || grid2.GetExhibit() == null) && GridManager.instance.ExhibitFinderBFS(grid1, grid2) != null)
-        {
+        if ((grid1.GetExhibit() == null || grid2.GetExhibit() == null) && GridManager.instance.ExhibitFinderBFS(grid1, grid2) != null && (GridManager.instance.ExhibitFinderBFS(grid1, gridManager.startingGrid) == null || GridManager.instance.ExhibitFinderBFS(grid2, gridManager.startingGrid) == null))
+{
             HashSet<Grid> tempGrids = GridManager.instance.ExhibitFinderBFS(grid1, gridManager.startingGrid);
             GameObject gateInstance = Instantiate(playerControl.gates[playerControl.fenceIndex], playerControl.m_Selected.transform.position, transform.rotation);
             Exhibit exhibit = gateInstance.GetComponent<Exhibit>();
@@ -238,6 +237,11 @@ public class Fence : Placeable, Saveable
                 playerControl.stopMovement = false;
                 playerControl.Spawn(UIMenu.Instance.curPlaceable);
             });
+    }
+
+    public override float GetSellPrice()
+    {
+        return Mathf.Floor(placeablePrice * 0.2f * health / maxHealth);
     }
 
     public override void Remove()

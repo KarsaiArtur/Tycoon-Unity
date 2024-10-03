@@ -64,7 +64,7 @@ public class Animal : Placeable, Saveable
 
     DateTime prevDay;
     public bool isSick = false;
-    public bool isGettingHealed = false;
+    public bool isOccupiedByVet = false;
     public float requiredExhibitSpace = 1;
     public List<TerrainType> terrainsPreferred = new();
     public float terrainBonusMultiplier = 0;

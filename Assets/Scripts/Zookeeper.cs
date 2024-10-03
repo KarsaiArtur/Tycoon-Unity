@@ -73,6 +73,8 @@ public class Zookeeper : Staff, Saveable
 
         if (animalNeeds.Count > 0)
             FindExhibitToWorkOn(animalNeeds);
+        else
+            isAvailable = true;
     }
 
     public void FindExhibitToWorkOn(List<(Exhibit exhibit, ZookeperJobs job, float percent)> animalNeeds)

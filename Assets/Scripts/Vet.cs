@@ -10,21 +10,32 @@ using UnityEngine;
 
 public class Vet : Staff, Saveable
 {
-    Animal animalToHeal;
+    public enum VetJobs
+    {
+        HealingAnimal,
+        PuttingAnimalToSleep,
+        GoingToAnimal,
+        CarryingAnimal,
+        Nothing
+    }
+
+    Animal animalOccupied;
+    public VetJobs job = VetJobs.Nothing;
 
     public override void Start()
     {
         base.Start();
+        job = VetJobs.Nothing;
     }
 
     public override void Update()
     {
         base.Update();
 
-        if (workingState == WorkingState.Working && animalToHeal != null && animalToHeal.agent.isOnNavMesh)
+        if (workingState == WorkingState.Working && animalOccupied != null && animalOccupied.agent.isOnNavMesh)
         {
-            animalToHeal.agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
-            animalToHeal.atDestination = false;
+            animalOccupied.agent.SetDestination(new Vector3(animalOccupied.transform.position.x, animalOccupied.transform.position.y, animalOccupied.transform.position.z));
+            animalOccupied.atDestination = false;
         }
     }
 
@@ -32,33 +43,38 @@ public class Vet : Staff, Saveable
     {
         isAvailable = false;
 
-        var animalSickness = new List<(Exhibit exhibit, Animal animal, float health)>();
+        var possibleJobs = new List<(Exhibit exhibit, Animal animal, float percent)>();
         foreach (Exhibit exhibit in ExhibitManager.instance.exhibitList)
         {
             if (exhibit.GetAnimals().Count > 0 && !exhibit.unreachableForStaff)
             {
-                foreach (var animalId in exhibit.GetAnimals())
+                foreach (var animal in exhibit.GetAnimals())
                 {
-                    var animal = animalId;
-                    if (!animal.isGettingHealed)
-                        animalSickness.Add((exhibit, animal, animal.health));
+                    if (!animal.isOccupiedByVet)
+                        possibleJobs.Add((exhibit, animal, animal.health));
                 }
             }
         }
+        //foreach (var animal in AnimalManager.instance.freeAnimals)
+        //{
+        //    if (!animal.isOccupiedByVet)
+        //        possibleJobs.Add((null, animal, 50));
+        //}
 
-        if (animalSickness.Count > 0)
-            FindAnimalToHeal(animalSickness);
+        if (possibleJobs.Count > 0)
+            FindAnimalToHeal(possibleJobs);
         else
             isAvailable = true;
     }
 
     public void FindAnimalToHeal(List<(Exhibit exhibit, Animal animal, float health)> animalSickness)
     {
+        //ez jön!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         animalSickness = animalSickness.OrderBy(x => x.health).ToList();
-        animalToHeal = animalSickness[0].animal;
-        if (animalToHeal.health < 75)
+        animalOccupied = animalSickness[0].animal;
+        if (animalOccupied.health < 75)
         {
-            animalToHeal.isGettingHealed = true;
+            animalOccupied.isOccupiedByVet = true;
 
             destinationExhibit = animalSickness[0].exhibit;
 
@@ -86,21 +102,21 @@ public class Vet : Staff, Saveable
 
     public override bool DoJob()
     {
-        if (animalToHeal != null)
+        if (animalOccupied != null)
         {
             float healthRecovered = UnityEngine.Random.Range(40, 60);
-            animalToHeal.health = animalToHeal.health + healthRecovered > 100 ? 100 : animalToHeal.health + healthRecovered;
-            animalToHeal.isSick = false;
-            animalToHeal.isGettingHealed = false;
+            animalOccupied.health = animalOccupied.health + healthRecovered > 100 ? 100 : animalOccupied.health + healthRecovered;
+            animalOccupied.isSick = false;
+            animalOccupied.isOccupiedByVet = false;
         }
         return true;
     }
 
     public override void FindWorkDestination()
     {
-        if (animalToHeal != null)
+        if (animalOccupied != null)
         {
-            agent.SetDestination(new Vector3(animalToHeal.transform.position.x, animalToHeal.transform.position.y, animalToHeal.transform.position.z));
+            agent.SetDestination(new Vector3(animalOccupied.transform.position.x, animalOccupied.transform.position.y, animalOccupied.transform.position.z));
         }
     }
 
@@ -112,10 +128,12 @@ public class Vet : Staff, Saveable
     public override void SetToDefault()
     {
         base.SetToDefault();
-        if (animalToHeal != null)
+        job = VetJobs.Nothing;
+
+        if (animalOccupied != null)
         {
-            animalToHeal.isGettingHealed = false;
-            animalToHeal = null;
+            animalOccupied.isOccupiedByVet = false;
+            animalOccupied = null;
         }
     }
 
@@ -123,8 +141,8 @@ public class Vet : Staff, Saveable
     {
         base.Remove();
 
-        if (animalToHeal != null)
-            animalToHeal.isGettingHealed = false;
+        if (animalOccupied != null)
+            animalOccupied.isOccupiedByVet = false;
         Destroy(gameObject);
     }
 ///******************************

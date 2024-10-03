@@ -8,7 +8,7 @@ using static Chunk;
 using static Grid;
 
 /////Saveable Attributes, DONT DELETE
-//////Vector3[] coords//////////
+//////Vector3[] coords;TerrainType[] coordTypes//////////
 
 public class GridManager : MonoBehaviour, Saveable, Manager
 {
@@ -45,8 +45,6 @@ public class GridManager : MonoBehaviour, Saveable, Manager
             LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
             LoadMenu.objectLoadedEvent.Invoke();
-            coordTypes = new TerrainType[(terrainWidth + 1) * (terrainWidth + 1)];
-            coordTypes = Enumerable.Repeat(TerrainType.Grass, (terrainWidth + 1) * (terrainWidth + 1)).ToArray();
         }
         else
         {
@@ -530,17 +528,19 @@ public class GridManager : MonoBehaviour, Saveable, Manager
     {
         [JsonConverter(typeof(Vector3ArrayConverter))]
         public Vector3[] coords;
+        public TerrainType[] coordTypes;
 
-        public GridManagerData(Vector3[] coordsParam)
+        public GridManagerData(Vector3[] coordsParam, TerrainType[] coordTypesParam)
         {
            coords = coordsParam;
+           coordTypes = coordTypesParam;
         }
     }
 
     GridManagerData data; 
     
     public string DataToJson(){
-        GridManagerData data = new GridManagerData(coords);
+        GridManagerData data = new GridManagerData(coords, coordTypes);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -552,15 +552,16 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data.coords);
+        SetData(data.coords, data.coordTypes);
     }
     
     public string GetFileName(){
         return "GridManager.json";
     }
     
-    void SetData(Vector3[] coordsParam){ 
+    void SetData(Vector3[] coordsParam, TerrainType[] coordTypesParam){ 
         
            coords = coordsParam;
+           coordTypes = coordTypesParam;
     }
 }

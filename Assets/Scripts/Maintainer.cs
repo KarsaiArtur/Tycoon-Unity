@@ -17,27 +17,29 @@ public class Maintainer : Staff, Saveable
     public override void Start()
     {
         base.Start();
-        salary = 200;
     }
 
     public override void FindJob()
     {
         isAvailable = false;
 
-        var fenceHealths = new List<(Fence fence, float closeness)>();
+        var possibleJobs = new List<(Fence fence, float closeness)>();
+
         if (FenceManager.instance.fences.Count > 0)
         {
             foreach (Fence fence in FenceManager.instance.fences)
             {
                 if (!fence.isBeingFixed && fence.health < fence.maxHealth)
                 {
-                    fenceHealths.Add((fence, Vector3.Distance(transform.position, fence.transform.position)));
+                    possibleJobs.Add((fence, Vector3.Distance(transform.position, fence.transform.position)));
                 }
             }
         }
 
-        if (fenceHealths.Count > 0)
-            FindFenceToRepair(fenceHealths);
+        if (possibleJobs.Count > 0)
+            FindFenceToRepair(possibleJobs);
+        else
+            isAvailable = true;
     }
 
     public void FindFenceToRepair(List<(Fence fence, float closeness)> fenceHealths)
@@ -67,7 +69,8 @@ public class Maintainer : Staff, Saveable
                 else
                 {
                     workingState = WorkingState.GoingToExhibitExitToLeave;
-                    destinationExhibit = insideExhibit;
+                    fenceToRepair.isBeingFixed = false;
+                    fenceToRepair = null;
                     FindDestination(insideExhibit);
                     return;
                 }
@@ -75,7 +78,8 @@ public class Maintainer : Staff, Saveable
             else
             {
                 workingState = WorkingState.GoingToExhibitExitToLeave;
-                destinationExhibit = insideExhibit;
+                fenceToRepair.isBeingFixed = false;
+                fenceToRepair = null;
                 FindDestination(insideExhibit);
                 return;
             }
@@ -111,6 +115,7 @@ public class Maintainer : Staff, Saveable
                     gridDestination = fenceToRepair.grid1;
                 else
                     gridDestination = fenceToRepair.grid2;
+
                 workingState = WorkingState.Working;
                 FindDestination(null);
                 return;
@@ -132,26 +137,41 @@ public class Maintainer : Staff, Saveable
 
     public override void FindWorkDestination()
     {
-        if ((gridDestination.coords[0] + new Vector3(0.5f, 0, 0.5f)).x > fenceToRepair.transform.position.x)
+        if (fenceToRepair != null)
         {
-            agent.SetDestination(new Vector3(gridDestination.coords[0].x + 0.1f, gridDestination.coords[0].y, gridDestination.coords[0].z + UnityEngine.Random.Range(0.1f, 0.9f)));
-        }
-        if ((gridDestination.coords[0] + new Vector3(0.5f, 0, 0.5f)).x < fenceToRepair.transform.position.x)
-        {
-            agent.SetDestination(new Vector3(gridDestination.coords[0].x + 0.9f, gridDestination.coords[0].y, gridDestination.coords[0].z + UnityEngine.Random.Range(0.1f, 0.9f)));
-        }
-        if ((gridDestination.coords[0] + new Vector3(0.5f, 0, 0.5f)).z > fenceToRepair.transform.position.z)
-        {
-            agent.SetDestination(new Vector3(gridDestination.coords[0].x + UnityEngine.Random.Range(0.1f, 0.9f), gridDestination.coords[0].y, gridDestination.coords[0].z + 0.1f));
-        }
-        if ((gridDestination.coords[0] + new Vector3(0.5f, 0, 0.5f)).z < fenceToRepair.transform.position.z)
-        {
-            agent.SetDestination(new Vector3(gridDestination.coords[0].x + UnityEngine.Random.Range(0.1f, 0.9f), gridDestination.coords[0].y, gridDestination.coords[0].z + 0.9f));
+            if (fenceToRepair.timesRotated == 0)
+            {
+                if (fenceToRepair.grid1 == gridDestination)
+                    agent.SetDestination(new Vector3(gridDestination.coords[0].x + UnityEngine.Random.Range(0.1f, 0.9f), gridDestination.coords[0].y, gridDestination.coords[0].z + 0.9f));
+                else
+                    agent.SetDestination(new Vector3(gridDestination.coords[0].x + UnityEngine.Random.Range(0.1f, 0.9f), gridDestination.coords[0].y, gridDestination.coords[0].z + 0.1f));
+            }
+            else if (fenceToRepair.timesRotated == 1)
+            {
+                if (fenceToRepair.grid1 == gridDestination)
+                    agent.SetDestination(new Vector3(gridDestination.coords[0].x + 0.9f, gridDestination.coords[0].y, gridDestination.coords[0].z + UnityEngine.Random.Range(0.1f, 0.9f)));
+                else
+                    agent.SetDestination(new Vector3(gridDestination.coords[0].x + 0.1f, gridDestination.coords[0].y, gridDestination.coords[0].z + UnityEngine.Random.Range(0.1f, 0.9f)));
+            }
+            else if (fenceToRepair.timesRotated == 2)
+            {
+                if (fenceToRepair.grid1 == gridDestination)
+                    agent.SetDestination(new Vector3(gridDestination.coords[0].x + UnityEngine.Random.Range(0.1f, 0.9f), gridDestination.coords[0].y, gridDestination.coords[0].z + 0.1f));
+                else
+                    agent.SetDestination(new Vector3(gridDestination.coords[0].x + UnityEngine.Random.Range(0.1f, 0.9f), gridDestination.coords[0].y, gridDestination.coords[0].z + 0.9f));
+            }
+            else if (fenceToRepair.timesRotated == 3)
+            {
+                if (fenceToRepair.grid1 == gridDestination)
+                    agent.SetDestination(new Vector3(gridDestination.coords[0].x + 0.1f, gridDestination.coords[0].y, gridDestination.coords[0].z + UnityEngine.Random.Range(0.1f, 0.9f)));
+                else
+                    agent.SetDestination(new Vector3(gridDestination.coords[0].x + 0.9f, gridDestination.coords[0].y, gridDestination.coords[0].z + UnityEngine.Random.Range(0.1f, 0.9f)));
+            }
         }
 
         var path = new NavMeshPath();
         agent.CalculatePath(agent.destination, path);
-        if (path.status != NavMeshPathStatus.PathComplete)
+        if (path.status != NavMeshPathStatus.PathComplete || fenceToRepair == null)
         {
             SetToDefault();
         }

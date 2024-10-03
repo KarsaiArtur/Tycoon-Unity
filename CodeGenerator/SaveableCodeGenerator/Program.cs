@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 public class MyProgram{
     static List<string> convertableTypes = ["Vector3", "Quaternion", "Vector3[]"];
-    static List<string> primitives = ["bool", "string", "int", "float", "long", "Vector3", "Vector2", "Vector3[]", "Quaternion", "DateTime", "Grid", "AnimalBonus", "Action", "PurchasableItemsData"];
+    static List<string> primitives = ["bool", "string", "int", "float", "long", "Vector3", "Vector2", "Vector3[]", "Quaternion", "DateTime", "Grid", "AnimalBonus", "Action", "PurchasableItemsData", "TerrainType[]"];
     static List<string> nonBehaviour = ["Grid", "Grid[,]"];
     
     static List<string> saveHelperClasses = ["Building"];

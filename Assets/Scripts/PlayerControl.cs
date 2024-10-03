@@ -231,12 +231,12 @@ public class PlayerControl : MonoBehaviour
         if (!stopMovement)
         {
             Move();
-            Zoom();
             Rotate();
             RotateObject();
 
             if (!MouseOverUI())
             {
+                Zoom();
                 if (terraForming)
                     Terraform(currentTerraformSize, currentTerraformSize);
                 else if (deleting)

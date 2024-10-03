@@ -47,4 +47,33 @@ static class TerrainTypeMethods
                 return 0;
         }
     }
+
+    public static string GetName(this TerrainType s1)
+    {
+        switch (s1)
+        {
+            case TerrainType.Grass:
+                return "Grass";
+            case TerrainType.Forest:
+                return "Forest";
+            case TerrainType.Savannah:
+                return "Savannah";
+            case TerrainType.Snow:
+                return "Snow";
+            case TerrainType.Sand:
+                return "Sand";
+            case TerrainType.Dirt:
+                return "Dirt";
+            case TerrainType.Water:
+                return "Water";
+            case TerrainType.Stone:
+                return "Stone";
+            case TerrainType.Ice:
+                return "Ice";
+            case TerrainType.Rainforest:
+                return "Rainforest";
+            default:
+                return "";
+        }
+    }
 }

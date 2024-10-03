@@ -116,7 +116,14 @@ public abstract class Staff : Placeable
                             }
                             else
                             {
-                                workingState = WorkingState.GoingToExhibitExitToLeave;
+                                if (insideExhibit != null)
+                                {
+                                    workingState = WorkingState.GoingToExhibitExitToLeave;
+                                }
+                                else
+                                {
+                                    workingState = WorkingState.Resting;
+                                }
                                 isAvailable = true;
                                 destinationExhibit = null;
                                 FindDestination(insideExhibit);
@@ -126,6 +133,7 @@ public abstract class Staff : Placeable
                     case WorkingState.Resting:
                         agent.isStopped = true;
                         destinationReached = false;
+                        isAvailable = true;
                         break;
                     default:
                         break;
@@ -177,7 +185,7 @@ public abstract class Staff : Placeable
                 }
             }
         }
-        else if (workingState == WorkingState.Working)
+        if (workingState == WorkingState.Working)
             FindWorkDestination();
                 
         agent.isStopped = false;

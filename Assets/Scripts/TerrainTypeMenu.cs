@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -8,48 +10,57 @@ using static Chunk;
 
 public class TerrainTypeMenu : ExtraMenu
 {
-    public Button plus;
-    public Button minus;
-    public TextMeshProUGUI price;
-    public Slider slider;
-    public TextMeshProUGUI currentSize;
+    public TextMeshProUGUI priceText;
+    public TextMeshProUGUI nameText;
     public PlayerControl playerControl;
     public GameObject icon;
     public GameObject terrainTypeIconPrefab;
+    public GameObject terrainTypeButton;
+    public GameObject terrainTypeButtonsPanel;
+    public List<Sprite> terrainTypeSprites;
+    List<Outline> outlines;
+    Color defaultOutlineColor;
 
     public void Awake()
     {
-        plus.onClick.AddListener(() => ChangeValue(1));
-        minus.onClick.AddListener(() => ChangeValue(-1));
-        minus.enabled = false;
+        outlines = new List<Outline>();
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
         icon = Instantiate(terrainTypeIconPrefab, Vector3.zero, Quaternion.identity);
         icon.transform.SetParent(GameObject.FindGameObjectWithTag("Canvas").transform);
         playerControl.SetTerraformerSize(1);
         playerControl.ChangeTerrainType();
+
+        foreach(var terrainType in ((TerrainType[])Enum.GetValues(typeof(TerrainType))).Where(element => element != TerrainType.Mixed)){
+            if(terrainType != TerrainType.Mixed){
+                var button = Instantiate(terrainTypeButton).GetComponent<Button>();
+                button.transform.SetParent(terrainTypeButtonsPanel.transform);
+
+                var outline = button.GetComponent<Outline>();
+                defaultOutlineColor = outline.effectColor;
+                outlines.Add(outline);
+
+                button.onClick.AddListener(() => {
+                    playerControl.currentTerrainType = terrainType;
+                    playerControl.currentClickGrid = null;
+                    nameText.SetText(terrainType.GetName());
+                    priceText.SetText(terrainType.GetPrice().ToString() + " $");
+                    ResetOutlines();
+                    outline.effectColor = Color.red;
+                });
+                var image = button.GetComponent<Image>();
+                image.sprite = terrainTypeSprites.Where(element => element.name.ToLower().Equals(terrainType.GetName().ToLower())).FirstOrDefault();
+
+            }
+        }
+        if(outlines.Count > 0){
+            outlines[0].effectColor = Color.red;
+        }
     }
 
-    public void ChangeValue(int value)
-    {
-        playerControl.currentClickGrid = null;
-        slider.value += value;
-        if(slider.value == slider.maxValue)
-        {
-            plus.enabled = false;
+    void ResetOutlines(){
+        foreach(var outline in outlines){
+            outline.effectColor = defaultOutlineColor;
         }
-        if (slider.value == slider.minValue + 1)
-        {
-            minus.enabled = false;
-        }
-        else
-        {
-            plus.enabled = true;
-            minus.enabled = true;
-        }
-        currentSize.SetText(slider.value + "x" + slider.value);
-        List<TerrainType> types = new List<TerrainType>(){ TerrainType.Grass, TerrainType.Savannah, TerrainType.Forest, TerrainType.Snow, TerrainType.Sand , TerrainType.Dirt , TerrainType.Water , TerrainType.Stone, TerrainType.Rainforest, TerrainType.Ice};
-        Debug.Log(types[(int)slider.value-1]);
-        playerControl.currentTerrainType = (types[(int)slider.value-1]);
     }
 
     public void Update(){
