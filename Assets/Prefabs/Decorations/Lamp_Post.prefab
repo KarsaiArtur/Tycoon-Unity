@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 8446429489843854160}
   - component: {fileID: 589249263281458743}
+  - component: {fileID: 4650283953306801683}
   m_Layer: 0
-  m_Name: Spot Light
+  m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,9 +45,9 @@ Light:
   m_Type: 0
   m_Shape: 0
   m_Color: {r: 0.9633899, g: 1, b: 0, a: 1}
-  m_Intensity: 1
-  m_Range: 3.52
-  m_SpotAngle: 79.3
+  m_Intensity: 1.7
+  m_Range: 6.36
+  m_SpotAngle: 153.1
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
@@ -78,7 +79,7 @@ Light:
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
   m_Flare: {fileID: 0}
-  m_RenderMode: 0
+  m_RenderMode: 1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -94,6 +95,29 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!136 &4650283953306801683
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8829310533953040001}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 3
+  m_Height: 1
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1001 &4497606823263371058
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -150,11 +174,15 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lamp_Post
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a685cc4fff57608488199268be649c04, type: 3}
+      propertyPath: m_TagString
+      value: Light
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: a685cc4fff57608488199268be649c04, type: 3}
-      insertIndex: 0
+      insertIndex: -1
       addedObject: {fileID: 8446429489843854160}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: a685cc4fff57608488199268be649c04, type: 3}
@@ -187,6 +215,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf5682e4f04ec894db190ac62bdb0b21, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Lamp
@@ -194,7 +223,9 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: 4d92487ee72837349a6d09ba31deada5, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
+  renderers: []
+  selectedPrefabId: 0
+  lightSource: {fileID: 0}
 --- !u!65 &8972903668909951811
 BoxCollider:
   m_ObjectHideFlags: 0

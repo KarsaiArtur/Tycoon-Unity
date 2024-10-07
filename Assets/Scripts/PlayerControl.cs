@@ -88,6 +88,8 @@ public class PlayerControl : MonoBehaviour
         if(chosenForDelete != null)
         {
             chosenForDelete.ChangeMaterial(0);
+            if (chosenForDelete.currentPlacingPriceInstance != null)
+                Destroy(chosenForDelete.currentPlacingPriceInstance.gameObject);
             chosenForDelete = null;
         }
         ReloadGuestNavMesh();
@@ -261,15 +263,37 @@ public class PlayerControl : MonoBehaviour
 
     public void PlaceObject()
     {
+        //if (Input.GetMouseButtonDown(1))
+        //{
+        //    var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
+        //    RaycastHit[] hits = Physics.RaycastAll(ray);
+        //    foreach (RaycastHit hit in hits)
+        //    {
+        //        if (hit.collider.CompareTag("Terrain"))
+        //        {
+        //            Debug.Log(GridManager.instance.GetGrid(hit.point).coords[0]);
+        //            Debug.Log(GridManager.instance.GetGrid(hit.point).GetExhibit()._id);
+        //        }
+        //    }
+        //}
+        if (Input.GetMouseButtonDown(1))
+        {
+            if (m_Selected != null && m_Selected.tag == "Placed")
+            {
+                m_Selected.ChangeMaterial(0);
+                m_Selected.FinalPlace();
+                m_Selected = null;
+            }
+        }
         if (Input.GetMouseButtonDown(0))
         {
             isMouseDown = true;
-            if (m_Selected !=null)
+            if (m_Selected != null)
                 Path.startingPoint = m_Selected.transform.position;
         }
         else if (Input.GetMouseButtonUp(0))
         {
-            if(m_Selected != null)
+            if(m_Selected != null && m_Selected.tag != "Placed")
             {
                 isMouseDown = false;
                 if (canBePlaced && ZooManager.instance.money >= m_Selected.placeablePrice)
@@ -285,6 +309,16 @@ public class PlayerControl : MonoBehaviour
                 {
                     m_Selected.DestroyPlaceable();
                     Spawn(curPlaceable);
+                }
+            }
+            else if (m_Selected != null && m_Selected.tag == "Placed")
+            {
+                isMouseDown = false;
+                if (canBePlaced)
+                {
+                    m_Selected.ChangeMaterial(0);
+                    m_Selected.FinalPlace();
+                    m_Selected = null;
                 }
             }
             else

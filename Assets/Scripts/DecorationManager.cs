@@ -11,23 +11,27 @@ public class DecorationManager : MonoBehaviour, Manager, Saveable
 {
     static public DecorationManager instance;
     public List<Decoration> decorations;
-    void Start(){
+
+    void Start()
+    {
         instance = this;
-        if(LoadMenu.loadedGame != null){
+        if(LoadMenu.loadedGame != null)
+        {
             LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
             LoadMenu.objectLoadedEvent.Invoke();
         }
     }
 
-    public void AddList(Decoration decoration){
+    public void AddList(Decoration decoration)
+    {
         decorations.Add(decoration);
         decoration.transform.SetParent(DecorationManager.instance.transform);
     }
 
     public bool GetIsLoaded()
     {
-        return decorations.Count + 1 == LoadMenu.loadedObjects;
+        return data.decorations.Count + 1 == LoadMenu.loadedObjects;
     }
 ///******************************
     ///GENERATED CODE, DONT MODIFY

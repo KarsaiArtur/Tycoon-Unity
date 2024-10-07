@@ -14,13 +14,12 @@ public class Vet : Staff, Saveable
     {
         HealingAnimal,
         PuttingAnimalToSleep,
-        GoingToAnimal,
-        CarryingAnimal,
         Nothing
     }
 
     Animal animalOccupied;
     public VetJobs job = VetJobs.Nothing;
+    public bool aiming = false;
 
     public override void Start()
     {
@@ -32,103 +31,137 @@ public class Vet : Staff, Saveable
     {
         base.Update();
 
-        if (workingState == WorkingState.Working && animalOccupied != null && animalOccupied.agent.isOnNavMesh)
+        if (workingState == WorkingState.Working && job == VetJobs.HealingAnimal && animalOccupied != null && animalOccupied.agent.isOnNavMesh)
         {
-            animalOccupied.agent.SetDestination(new Vector3(animalOccupied.transform.position.x, animalOccupied.transform.position.y, animalOccupied.transform.position.z));
+            animalOccupied.agent.SetDestination(animalOccupied.transform.position);
             animalOccupied.atDestination = false;
+        }
+        else if (workingState == WorkingState.Working && job == VetJobs.PuttingAnimalToSleep && animalOccupied != null && animalOccupied.agent.isOnNavMesh)
+        {
+            if (Vector3.Distance(transform.position, animalOccupied.transform.position) < 5 && !aiming)
+            {
+                agent.isStopped = true;
+                aiming = true;
+                time = 0;
+            }
+            if (!aiming)
+                agent.SetDestination(animalOccupied.transform.position);
+            else
+            {
+                //animation?
+                time += Time.deltaTime;
+                if (time > 3)
+                {
+                    DoJob();
+                }
+            }
         }
     }
 
     public override void FindJob()
     {
         isAvailable = false;
+        aiming = false;
 
-        var possibleJobs = new List<(Exhibit exhibit, Animal animal, float percent)>();
+        var possibleJobs = new List<(Exhibit exhibit, Animal animal, VetJobs vetJob, float percent)>();
         foreach (Exhibit exhibit in ExhibitManager.instance.exhibitList)
         {
             if (exhibit.GetAnimals().Count > 0 && !exhibit.unreachableForStaff)
             {
                 foreach (var animal in exhibit.GetAnimals())
                 {
-                    if (!animal.isOccupiedByVet)
-                        possibleJobs.Add((exhibit, animal, animal.health));
+                    if (!animal.isOccupiedByVet && animal.health < 75)
+                        possibleJobs.Add((exhibit, animal, VetJobs.HealingAnimal, animal.health));
                 }
             }
         }
-        //foreach (var animal in AnimalManager.instance.freeAnimals)
-        //{
-        //    if (!animal.isOccupiedByVet)
-        //        possibleJobs.Add((null, animal, 50));
-        //}
+        foreach (var animal in AnimalManager.instance.freeAnimals)
+        {
+            if (!animal.isOccupiedByVet && !animal.isSlept)
+                possibleJobs.Add((null, animal, VetJobs.PuttingAnimalToSleep, 50));
+        }
 
         if (possibleJobs.Count > 0)
-            FindAnimalToHeal(possibleJobs);
+            ChooseAnimal(possibleJobs);
         else
             isAvailable = true;
     }
 
-    public void FindAnimalToHeal(List<(Exhibit exhibit, Animal animal, float health)> animalSickness)
+    public void ChooseAnimal(List<(Exhibit exhibit, Animal animal, VetJobs vetJob, float percent)> possibleJobs)
     {
-        //ez jön!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        animalSickness = animalSickness.OrderBy(x => x.health).ToList();
-        animalOccupied = animalSickness[0].animal;
-        if (animalOccupied.health < 75)
+        possibleJobs = possibleJobs.OrderBy(x => x.percent).ToList();
+        animalOccupied = possibleJobs[0].animal;
+        animalOccupied.isOccupiedByVet = true;
+        destinationExhibit = possibleJobs[0].exhibit;
+        job = possibleJobs[0].vetJob;
+
+        if (insideExhibit != null)
         {
-            animalOccupied.isOccupiedByVet = true;
-
-            destinationExhibit = animalSickness[0].exhibit;
-
-            if (insideExhibit != null)
+            if (insideExhibit == destinationExhibit)
             {
-                if (insideExhibit == destinationExhibit)
-                {
-                    workingState = WorkingState.Working;
-                    FindDestination(destinationExhibit);
-                    return;
-                }
-                else
-                {
-                    workingState = WorkingState.GoingToExhibitExitToLeave;
-                    FindDestination(insideExhibit);
-                    return;
-                }
+                workingState = WorkingState.Working;
+                FindDestination(destinationExhibit);
+                return;
             }
+            else
+            {
+                workingState = WorkingState.GoingToExhibitExitToLeave;
+                FindDestination(insideExhibit);
+                return;
+            }
+        }
+        if (destinationExhibit != null)
+        {
             workingState = WorkingState.GoingToExhibitEntranceToEnter;
             FindDestination(destinationExhibit);
             return;
         }
-        isAvailable = true;
+        workingState = WorkingState.Working;
+        FindDestination(destinationExhibit);
     }
 
     public override bool DoJob()
     {
-        if (animalOccupied != null)
+        if (animalOccupied != null && job == VetJobs.HealingAnimal)
         {
             float healthRecovered = UnityEngine.Random.Range(40, 60);
             animalOccupied.health = animalOccupied.health + healthRecovered > 100 ? 100 : animalOccupied.health + healthRecovered;
             animalOccupied.isSick = false;
             animalOccupied.isOccupiedByVet = false;
+            job = VetJobs.Nothing;
+        }
+        else if (animalOccupied != null && job == VetJobs.PuttingAnimalToSleep)
+        {
+            agent.isStopped = false;
+            aiming = false;
+            animalOccupied.isOccupiedByVet = false;
+            animalOccupied.isSlept = true;
+            animalOccupied.sleptPosition = animalOccupied.transform.position;
+            animalOccupied.timeGoal = UnityEngine.Random.Range(110, 130);
+            SetToDefault();
+            Debug.Log("Animal slept");
         }
         return true;
     }
 
     public override void FindWorkDestination()
     {
-        if (animalOccupied != null)
+        if (animalOccupied != null && (job == VetJobs.HealingAnimal || job == VetJobs.PuttingAnimalToSleep))
         {
-            agent.SetDestination(new Vector3(animalOccupied.transform.position.x, animalOccupied.transform.position.y, animalOccupied.transform.position.z));
+            agent.SetDestination(animalOccupied.transform.position);
         }
     }
 
     public override string GetCurrentAction()
     {
-        return "Healing animal";
+        return job.ToString();
     }
 
     public override void SetToDefault()
     {
         base.SetToDefault();
         job = VetJobs.Nothing;
+        aiming = false;
 
         if (animalOccupied != null)
         {

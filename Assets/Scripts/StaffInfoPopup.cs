@@ -30,7 +30,7 @@ public class StaffInfoPopup : InfoPopup
         switch (staff.workingState)
         {
             case WorkingState.Working:
-                currentAction.text = "Currently: " + staff.GetCurrentAction() + " at " + staff.destinationExhibit.exhibitName;
+                currentAction.text = "Currently: " + staff.GetCurrentAction() +  (staff.destinationExhibit == null ? "" : (" at " + staff.destinationExhibit.exhibitName));
                 break;
             case WorkingState.Resting:
                 currentAction.text = "Currently: Resting";

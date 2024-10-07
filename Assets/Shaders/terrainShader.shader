@@ -20,7 +20,7 @@
     {
     Tags { "RenderType" = "Opaque" }
     CGPROGRAM
-    #pragma surface surf Lambert addshadow
+    #pragma surface surf StandardSpecular fullforwardshadows
       
     struct Input 
     {
@@ -44,8 +44,10 @@
     float _LineThickness;
     float _LineVisibility;
 
-    void surf (Input IN, inout SurfaceOutput o) 
+
+    void surf (Input IN, inout SurfaceOutputStandardSpecular o) 
     {
+
       fixed4 layer0 = tex2D(_MainTex, IN.uv_MainTex).rgba * IN.color.r;
       fixed4 layer1 = tex2D(_Layer1, IN.uv_MainTex).rgba * IN.color.g;
       fixed4 layer2 = tex2D(_Layer2, IN.uv_MainTex).rgba * IN.color.b;

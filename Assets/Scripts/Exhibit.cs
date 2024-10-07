@@ -462,15 +462,13 @@ public class Exhibit : Placeable, Visitable, Saveable
         for (int i = 0; i < size; i++)
             GetStaffsAtGate()[i].SetToDefault();
             
-        while (GetVisitors().Count > 0)
-        {
-            GetVisitors()[0].ChooseDestination();
-        }
-        
-        while (animalDroppings.Count > 0)
-        {
-            Destroy(animalDroppings[0]);
-        }
+        size = GetVisitors().Count;
+        for (int i = size - 1; i >= 0; i--)
+            GetVisitors()[i].ChooseDestination();
+
+        size = animalDroppings.Count;
+        for (int i = size - 1; i >= 0; i--)
+            Destroy(animalDroppings[i]);
 
         size = GetFoodPlaces().Count;
         for (int i = size - 1; i >= 0; i--)

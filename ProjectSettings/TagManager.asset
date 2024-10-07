@@ -22,6 +22,9 @@ TagManager:
   - Canvas
   - NotUI
   - ZooFence
+  - Placed Light
+  - Light
+  - Undefined
   layers:
   - Default
   - TransparentFX

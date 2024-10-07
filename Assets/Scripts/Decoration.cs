@@ -12,16 +12,20 @@ public class Decoration : Placeable, Saveable
 {
     float height;
     NavMeshObstacle navMeshObstacle;
+    public GameObject lightSource;
 
     public override void Awake()
     {
         height = gameObject.GetComponent<BoxCollider>().size.y;
         base.Awake();
         navMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
+        lightSource = transform.GetComponentsInChildren<Light>().Where(element => element.name.Equals("Light")).First().gameObject;
+        lightSource.GetComponent<Light>().enabled = CalendarManager.instance.lightsOn;
     }
 
     public override void FinalPlace()
     {
+        lightSource.GetComponent<CapsuleCollider>().enabled = true;
         DecorationManager.instance.AddList(this);
         ChangeMaterial(0);
         navMeshObstacle.enabled = true;
@@ -55,6 +59,9 @@ public class Decoration : Placeable, Saveable
         {
             playerControl.canBePlaced = false;
         }
+        if(tag.Equals("Placed") && collision.collider.tag.Equals("Light")){
+            playerControl.canBePlaced = false;
+        }
     }
 
     void OnCollisionExit(Collision collision)
@@ -76,6 +83,9 @@ public class Decoration : Placeable, Saveable
 
     public void LoadHelper()
     {
+        lightSource = transform.GetComponentsInChildren<Light>().Where(element => element.name.Equals("Light")).First().gameObject;
+        lightSource.GetComponent<Light>().enabled = CalendarManager.instance.lightsOn;
+        lightSource.GetComponent<CapsuleCollider>().enabled = true;
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
         LoadMenu.objectLoadedEvent.Invoke();
     }

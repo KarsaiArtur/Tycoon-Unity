@@ -41,7 +41,7 @@ public class Animal : Placeable, Saveable
     public float reputationBonus;
 
     float time = 0;
-    float timeGoal = 0;
+    public float timeGoal = 0;
     float stuckTime = 0;
     public bool destinationReached = false;
     Vector3 destination;
@@ -65,6 +65,8 @@ public class Animal : Placeable, Saveable
     DateTime prevDay;
     public bool isSick = false;
     public bool isOccupiedByVet = false;
+    public bool isSlept = false;
+    public Vector3 sleptPosition = Vector3.zero;
     public float requiredExhibitSpace = 1;
     public List<TerrainType> terrainsPreferred = new();
     public float terrainBonusMultiplier = 0;
@@ -96,7 +98,8 @@ public class Animal : Placeable, Saveable
 
     public override void Place(Vector3 mouseHit)
     {
-        base.Place(mouseHit);
+        if (tag != "Placed")
+            base.Place(mouseHit);
 
         terraintHeight = mouseHit.y;
         Vector3 position = new Vector3(mouseHit.x, mouseHit.y + 0.01f, mouseHit.z);
@@ -140,35 +143,52 @@ public class Animal : Placeable, Saveable
 
     public override void FinalPlace()
     {
-        AnimalManager.instance.AddList(this);
-        if (terraintHeight > -100)
-            transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
+        if (tag == "Placed" && !playerControl.canBePlaced && sleptPosition != Vector3.zero)
+        {
+            transform.position = sleptPosition;
+        }
         else
-            transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
-        
-        GetExhibit(gridManager.GetGrid(transform.position).GetExhibit()._id);
-        GetExhibit().AddAnimal(this);
+        {
+            if (terraintHeight > -100)
+                transform.position = new Vector3(transform.position.x, terraintHeight, transform.position.z);
+            else
+                transform.position = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+
+            GetExhibit(gridManager.GetGrid(transform.position).GetExhibit()._id);
+            GetExhibit().AddAnimal(this);
+        }
+
         agent.Warp(transform.position);
-        placed = true;
-        birthDate = CalendarManager.instance.currentDate;
+        agent.enabled = true;
 
-        hunger = UnityEngine.Random.Range(50, 100);
-        thirst = UnityEngine.Random.Range(50, 100);
-        restroomNeeds = UnityEngine.Random.Range(50, 100);
-        happiness = UnityEngine.Random.Range(50, 100);
-        health = UnityEngine.Random.Range(75, 100);
+        if (!isSlept)
+        {
+            AnimalManager.instance.AddList(this);
 
-        fertility = UnityEngine.Random.Range(50, 100);
-        
-        age = UnityEngine.Random.Range((int)Math.Ceiling((double)lifeExpectancy / 10), (int)Mathf.Floor((float)lifeExpectancy / 5));
+            placed = true;
+            birthDate = CalendarManager.instance.currentDate;
 
-        SetSize();
+            hunger = UnityEngine.Random.Range(50, 100);
+            thirst = UnityEngine.Random.Range(50, 100);
+            restroomNeeds = UnityEngine.Random.Range(50, 100);
+            happiness = UnityEngine.Random.Range(50, 100);
+            health = UnityEngine.Random.Range(75, 100);
 
-        CalculateNatureBonus();
-        CalculateTerrainBonus();
+            fertility = UnityEngine.Random.Range(50, 100);
 
-        VisitorManager.instance.CalculateAnimalBonus(this);
-        StartCoroutine(DecreaseNeeds());
+            age = UnityEngine.Random.Range((int)Math.Ceiling((double)lifeExpectancy / 10), (int)Mathf.Floor((float)lifeExpectancy / 5));
+
+            SetSize();
+
+            CalculateNatureBonus();
+            CalculateTerrainBonus();
+
+            VisitorManager.instance.CalculateAnimalBonus(this);
+            StartCoroutine(DecreaseNeeds());
+        }
+
+        if (tag != "Placed" || playerControl.canBePlaced || sleptPosition == Vector3.zero)
+            isSlept = false;
     }
 
     public override void Remove()
@@ -217,6 +237,18 @@ public class Animal : Placeable, Saveable
 
     public void Update()
     {
+        if (isSlept && playerControl.m_Selected != this && agent.enabled)
+        {
+            agent.isStopped = true;
+            time += Time.deltaTime;
+            if (time > timeGoal)
+            {
+                isSlept = false;
+                time = 0;
+                agent.isStopped = false;
+            }
+        }
+
         if (placed)
         {
             if (action ==  Action.Attacking)
@@ -629,6 +661,9 @@ public class Animal : Placeable, Saveable
 
     void ChooseDestination()
     {
+        if (isSlept)
+            return;
+
         if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null && GetExhibit() == null)
         {
             GetExhibit(GridManager.instance.GetGrid(transform.position).GetExhibit()._id);
@@ -740,11 +775,19 @@ public class Animal : Placeable, Saveable
 
     public override void ClickedOn()
     {
-        playerControl.SetFollowedObject(this.gameObject, 5);
-        playerControl.DestroyCurrentInfopopup();
-        var newInfopopup = new GameObject().AddComponent<AnimalInfoPopup>();
-        newInfopopup.SetClickable(this);
-        playerControl.SetInfopopup(newInfopopup);
+        if (!isSlept)
+        {
+            playerControl.SetFollowedObject(this.gameObject, 5);
+            playerControl.DestroyCurrentInfopopup();
+            var newInfopopup = new GameObject().AddComponent<AnimalInfoPopup>();
+            newInfopopup.SetClickable(this);
+            playerControl.SetInfopopup(newInfopopup);
+        }
+        else if (!playerControl.deleting && !playerControl.terraForming && !playerControl.terrainType)
+        {
+            playerControl.m_Selected = this;
+            agent.enabled = false;
+        }
     }
 
     public void LoadHelper()

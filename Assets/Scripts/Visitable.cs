@@ -31,5 +31,6 @@ public interface Visitable
     public bool GetReachable();
 
     public void SetReachable(bool newReachable);
+    
     public string GetId();
 }

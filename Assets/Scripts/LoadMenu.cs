@@ -50,12 +50,14 @@ public class LoadMenu : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    void LoadSavesList(){
-        var folders = AssetDatabase.GetSubFolders("Assets"+System.IO.Path.AltDirectorySeparatorChar+"Saves");
+    void LoadSavesList(){;
+        //var folders = AssetDatabase.GetSubFolders("Assets"+System.IO.Path.AltDirectorySeparatorChar+"Saves");
+        var appPath = Application.dataPath;
+        var saveFolder = Directory.CreateDirectory(appPath+System.IO.Path.AltDirectorySeparatorChar+"Saves");
+        var folders = saveFolder.GetDirectories();
         foreach(var folder in folders){
-            var folder2 = folder.Remove(0, ("Assets"+System.IO.Path.AltDirectorySeparatorChar+"Saves"+System.IO.Path.AltDirectorySeparatorChar).Length);
             var listItem = Instantiate(saveItemPrefab, Vector3.zero, Quaternion.identity);
-            listItem.SetLoadName(folder2);
+            listItem.SetLoadName(folder.Name);
             listItem.transform.SetParent(listPanel.transform);
         }
     }

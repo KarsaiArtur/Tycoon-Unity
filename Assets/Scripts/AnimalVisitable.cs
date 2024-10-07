@@ -1,7 +1,6 @@
 
 using System;
 using UnityEngine;
-using System.Text.Json;
 using Newtonsoft.Json;
 
 public interface AnimalVisitable

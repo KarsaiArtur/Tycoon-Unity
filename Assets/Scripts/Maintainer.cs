@@ -11,19 +11,30 @@ using UnityEngine.AI;
 
 public class Maintainer : Staff, Saveable
 {
+    public enum MaintainerJobs
+    {
+        RepairingFence,
+        PickingUpTrash,
+        EmptyingTrashCan,
+        Nothing
+    }
+
     Fence fenceToRepair;
+    TrashCan trashCanToEmpty;
     Grid gridDestination;
+    public MaintainerJobs job = MaintainerJobs.Nothing;
 
     public override void Start()
     {
         base.Start();
+        job = MaintainerJobs.Nothing;
     }
 
     public override void FindJob()
     {
         isAvailable = false;
 
-        var possibleJobs = new List<(Fence fence, float closeness)>();
+        var possibleJobs = new List<(Fence fence, TrashCan trashCan, MaintainerJobs maintainerJob, float percent)>();
 
         if (FenceManager.instance.fences.Count > 0)
         {
@@ -31,23 +42,44 @@ public class Maintainer : Staff, Saveable
             {
                 if (!fence.isBeingFixed && fence.health < fence.maxHealth)
                 {
-                    possibleJobs.Add((fence, Vector3.Distance(transform.position, fence.transform.position)));
+                    possibleJobs.Add((fence, null, MaintainerJobs.RepairingFence, (float)fence.health / fence.maxHealth * 100));
                 }
             }
         }
+        if (TrashCanManager.instance.trashCans.Count > 0)
+        {
+            foreach (TrashCan trashCan in TrashCanManager.instance.trashCans)
+            {
+                if (!trashCan.isBeingEmptied && trashCan.capacity < 25)
+                {
+                    possibleJobs.Add((null, trashCan, MaintainerJobs.EmptyingTrashCan, trashCan.capacity));
+                }
+            }
+        }
+        if (TrashCanManager.instance.trashOnTheGround.Count > 0 && !TrashCanManager.instance.trashIsBeingPickedUp)
+        {
+            possibleJobs.Add((null, null, MaintainerJobs.PickingUpTrash, 100 - 5 * TrashCanManager.instance.trashOnTheGround.Count));
+        }
 
         if (possibleJobs.Count > 0)
-            FindFenceToRepair(possibleJobs);
+            ChooseJob(possibleJobs);
         else
             isAvailable = true;
     }
 
-    public void FindFenceToRepair(List<(Fence fence, float closeness)> fenceHealths)
+    public void ChooseJob(List<(Fence fence, TrashCan trashCan, MaintainerJobs maintainerJob, float percent)> possibleJobs)
     {
-        fenceHealths = fenceHealths.OrderBy(x => x.fence.health).ThenBy(x => x.closeness).ToList();
-        fenceToRepair = fenceHealths[0].fence;
-        fenceToRepair.isBeingFixed = true;
+        possibleJobs = possibleJobs.OrderBy(x => x.percent).ToList();
+        job = possibleJobs[0].maintainerJob;
 
+        fenceToRepair = possibleJobs[0].fence;
+        if (fenceToRepair != null)
+            fenceToRepair.isBeingFixed = true;
+
+        trashCanToEmpty = possibleJobs[0].trashCan;
+        if (trashCanToEmpty != null)
+            trashCanToEmpty.isBeingEmptied = true;
+        //itt tartok!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         if (insideExhibit != null)
         {
             if (fenceToRepair.grid1.GetExhibit() != null && fenceToRepair.grid2.GetExhibit() != null)
@@ -241,7 +273,7 @@ public class Maintainer : Staff, Saveable
     }
     
     public string GetFileName(){
-        return "Maintainter.json";
+        return "Maintainer.json";
     }
     
     void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, int placeablePriceParam, string tagParam){ 
