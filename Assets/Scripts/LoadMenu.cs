@@ -43,6 +43,7 @@ public class LoadMenu : MonoBehaviour
             //Debug.Log("LOADED MANAGER" + ((MonoBehaviour)currentManager).gameObject.name);
             loadedObjects = 0;
             LoadMenu.currentManager = Instantiate(LoadMenu.managerPrefabs[LoadMenu.currentManagerIndex++]).GetComponent<Manager>();
+            LoadMenu.currentManager.LoadHelper();
         }
     }
 

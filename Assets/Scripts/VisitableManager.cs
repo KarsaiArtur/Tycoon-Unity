@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 /////Saveable Attributes, DONT DELETE
-//////List<string> reachableExhibitsIds;List<string> reachableFoodBuildingsIds;List<string> reachableDrinkBuildingsIds;List<string> reachableEnergyBuildingsIds;List<string> reachableRestroomBuildingsIds;List<string> reachableHappinessBuildingsIds//////////
+//////List<string> reachableExhibitsIds;List<string> reachableFoodBuildingsIds;List<string> reachableDrinkBuildingsIds;List<string> reachableEnergyBuildingsIds;List<string> reachableRestroomBuildingsIds;List<string> reachableHappinessBuildingsIds;List<string> reachableTrashBuildingsIds//////////
 
 public class VisitableManager : MonoBehaviour, Saveable, Manager
 {
@@ -22,6 +22,8 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
     private List<Visitable> reachableRestroomBuildings;
     /////GENERATE
     private List<Visitable> reachableHappinessBuildings;
+    /////GENERATE
+    private List<Visitable> reachableTrashBuildings;
     public List<Visitable> visitableList
     {
         get
@@ -30,6 +32,7 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
             list.AddRange(BuildingManager.instance.buildingList);
             list.AddRange(BenchManager.instance.benchList);
             list.AddRange(ExhibitManager.instance.exhibitList);
+            list.AddRange(TrashCanManager.instance.trashcanList);
             list.Add(ZooManager.instance);
             return list;
         }
@@ -208,6 +211,31 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
         reachableHappinessBuildingsIds.Remove(visitable.GetId());
         reachableHappinessBuildings.Remove(visitable);
     }
+
+    public List<string> reachableTrashBuildingsIds = new List<string>();
+    public List<Visitable> GetReachableTrashBuildings()
+    {
+        if(reachableTrashBuildings == null)
+        {
+             reachableTrashBuildings = new List<Visitable>();
+             foreach(var element in reachableTrashBuildingsIds){
+                reachableTrashBuildings.Add(VisitableManager.instance.visitableList.Where((e) => e.GetId() == element).FirstOrDefault());
+             }
+        }
+        return reachableTrashBuildings;
+    }
+    public void AddReachableTrashBuildings(Visitable visitable)
+    {
+        GetReachableTrashBuildings();
+        reachableTrashBuildingsIds.Add(visitable.GetId());
+        reachableTrashBuildings.Add(visitable);
+    }
+    public void RemoveReachableTrashBuildings(Visitable visitable)
+    {
+        GetReachableTrashBuildings();
+        reachableTrashBuildingsIds.Remove(visitable.GetId());
+        reachableTrashBuildings.Remove(visitable);
+    }
 ///******************************
     ///GENERATED CODE, DONT MODIFY
     ///******************************
@@ -220,8 +248,9 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
         public List<string> reachableEnergyBuildingsIds;
         public List<string> reachableRestroomBuildingsIds;
         public List<string> reachableHappinessBuildingsIds;
+        public List<string> reachableTrashBuildingsIds;
 
-        public VisitableManagerData(List<string> reachableExhibitsIdsParam, List<string> reachableFoodBuildingsIdsParam, List<string> reachableDrinkBuildingsIdsParam, List<string> reachableEnergyBuildingsIdsParam, List<string> reachableRestroomBuildingsIdsParam, List<string> reachableHappinessBuildingsIdsParam)
+        public VisitableManagerData(List<string> reachableExhibitsIdsParam, List<string> reachableFoodBuildingsIdsParam, List<string> reachableDrinkBuildingsIdsParam, List<string> reachableEnergyBuildingsIdsParam, List<string> reachableRestroomBuildingsIdsParam, List<string> reachableHappinessBuildingsIdsParam, List<string> reachableTrashBuildingsIdsParam)
         {
            reachableExhibitsIds = reachableExhibitsIdsParam;
            reachableFoodBuildingsIds = reachableFoodBuildingsIdsParam;
@@ -229,13 +258,14 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
            reachableEnergyBuildingsIds = reachableEnergyBuildingsIdsParam;
            reachableRestroomBuildingsIds = reachableRestroomBuildingsIdsParam;
            reachableHappinessBuildingsIds = reachableHappinessBuildingsIdsParam;
+           reachableTrashBuildingsIds = reachableTrashBuildingsIdsParam;
         }
     }
 
     VisitableManagerData data; 
     
     public string DataToJson(){
-        VisitableManagerData data = new VisitableManagerData(reachableExhibitsIds, reachableFoodBuildingsIds, reachableDrinkBuildingsIds, reachableEnergyBuildingsIds, reachableRestroomBuildingsIds, reachableHappinessBuildingsIds);
+        VisitableManagerData data = new VisitableManagerData(reachableExhibitsIds, reachableFoodBuildingsIds, reachableDrinkBuildingsIds, reachableEnergyBuildingsIds, reachableRestroomBuildingsIds, reachableHappinessBuildingsIds, reachableTrashBuildingsIds);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -247,14 +277,14 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data.reachableExhibitsIds, data.reachableFoodBuildingsIds, data.reachableDrinkBuildingsIds, data.reachableEnergyBuildingsIds, data.reachableRestroomBuildingsIds, data.reachableHappinessBuildingsIds);
+        SetData(data.reachableExhibitsIds, data.reachableFoodBuildingsIds, data.reachableDrinkBuildingsIds, data.reachableEnergyBuildingsIds, data.reachableRestroomBuildingsIds, data.reachableHappinessBuildingsIds, data.reachableTrashBuildingsIds);
     }
     
     public string GetFileName(){
         return "VisitableManager.json";
     }
     
-    void SetData(List<string> reachableExhibitsIdsParam, List<string> reachableFoodBuildingsIdsParam, List<string> reachableDrinkBuildingsIdsParam, List<string> reachableEnergyBuildingsIdsParam, List<string> reachableRestroomBuildingsIdsParam, List<string> reachableHappinessBuildingsIdsParam){ 
+    void SetData(List<string> reachableExhibitsIdsParam, List<string> reachableFoodBuildingsIdsParam, List<string> reachableDrinkBuildingsIdsParam, List<string> reachableEnergyBuildingsIdsParam, List<string> reachableRestroomBuildingsIdsParam, List<string> reachableHappinessBuildingsIdsParam, List<string> reachableTrashBuildingsIdsParam){ 
         
            reachableExhibitsIds = reachableExhibitsIdsParam;
            reachableFoodBuildingsIds = reachableFoodBuildingsIdsParam;
@@ -262,5 +292,6 @@ public class VisitableManager : MonoBehaviour, Saveable, Manager
            reachableEnergyBuildingsIds = reachableEnergyBuildingsIdsParam;
            reachableRestroomBuildingsIds = reachableRestroomBuildingsIdsParam;
            reachableHappinessBuildingsIds = reachableHappinessBuildingsIdsParam;
+           reachableTrashBuildingsIds = reachableTrashBuildingsIdsParam;
     }
 }

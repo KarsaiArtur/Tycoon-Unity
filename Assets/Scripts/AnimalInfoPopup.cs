@@ -32,6 +32,7 @@ public class AnimalInfoPopup : InfoPopup
             animal.Remove();
             DestroyPanel();
         });
+        AddOutline();
         StartCoroutine(CheckAnimalAttributes());
     }
 
@@ -86,7 +87,18 @@ public class AnimalInfoPopup : InfoPopup
 
     public override void DestroyPanel()
     {
+        foreach(var renderer in animal.renderers){
+            Destroy(renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>());
+        }
         base.DestroyPanel();
         animalCam.SetActive(false);
+    }
+
+    public override void AddOutline()
+    {
+        foreach(var renderer in animal.renderers){
+            Debug.Log("EZ");
+            renderer.gameObject.gameObject.AddComponent<cakeslice.Outline>();
+        }
     }
 }

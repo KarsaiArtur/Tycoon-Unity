@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /////Saveable Attributes, DONT DELETE
-//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;bool atDestination;bool arrived;Vector3 destination;string destinationVisitableId;List<string> unvisitedExhibitsIds;string visitorName;float time;float timeGoal;string currentExhibitId;float hunger;float thirst;float energy;float restroomNeeds;float happiness;Action action;bool isFleeing//////////
+//////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;bool atDestination;bool arrived;Vector3 destination;string destinationVisitableId;List<string> unvisitedExhibitsIds;string visitorName;float time;float timeGoal;string currentExhibitId;float hunger;float thirst;float energy;float restroomNeeds;float happiness;float trash;float trashDetriment;Action action;bool isFleeing//////////
 //////SERIALIZABLE:YES/
 
 public class Visitor : MonoBehaviour, Clickable, Saveable
@@ -20,6 +20,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         Energy,
         Restroom,
         Happiness,
+        Trash,
         Leave
     }
 
@@ -49,12 +50,14 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     public float energy = 100;
     public float restroomNeeds = 100;
     public float happiness = 100;
+    public float trash = 100;
 
     float hungerDetriment = 0.25f;
     float thirstDetriment = 0.5f;
     float energyDetriment = 0.25f;
     float restroomNeedsDetriment = 0.25f;
     float happinessDetriment = 0.25f;
+    float trashDetriment = 0.25f;
 
     public Action action;
     bool isFleeing = false;
@@ -75,12 +78,14 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         energyDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
         restroomNeedsDetriment = UnityEngine.Random.Range(0.05f, 0.15f);
         happinessDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
+        trashDetriment = UnityEngine.Random.Range(0.05f, 0.15f);
 
         hunger = UnityEngine.Random.Range(50, 75);
         thirst = UnityEngine.Random.Range(50, 75);
         energy = UnityEngine.Random.Range(50, 75);
         restroomNeeds = UnityEngine.Random.Range(50, 75);
         happiness = UnityEngine.Random.Range(50, 75);
+        trash = UnityEngine.Random.Range(50, 75);
 
         foreach (Visitable exhibit in VisitableManager.instance.GetReachableExhibits())
         {
@@ -106,6 +111,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
             thirst = thirst > thirstDetriment ? thirst - thirstDetriment : 0;
             energy = energy > energyDetriment ? energy - energyDetriment : 0;
             restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
+            trash = trash > trashDetriment ? trash - trashDetriment : 0;
 
             if (GetComponent<NavMeshAgent>().enabled && !arrived)
                 energy = energy > energyDetriment ? energy - energyDetriment : 0;
@@ -118,6 +124,28 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
             if (restroomNeeds < 33)
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+
+            if (TrashCanManager.instance.trashOnTheGround.Count > 0)
+            {
+                Grid tempGrid = GridManager.instance.GetGrid(transform.position);
+                int trashCount = tempGrid.trashCount;
+                for (int i = 0; i < 4; i++)
+                {
+                    if (tempGrid.trueNeighbours[i] != null)
+                    {
+                        trashCount += tempGrid.trueNeighbours[i].trashCount;
+                        if (tempGrid.trueNeighbours[i].trueNeighbours[(i + 1) % 4] != null)
+                            trashCount += tempGrid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].trashCount;
+                    }
+                }
+
+                if (trashCount > 0)
+                {
+                    Debug.Log("before: " + happiness);
+                    happiness = happiness > happinessDetriment * trashCount ? happiness - happinessDetriment * trashCount : 0;
+                    Debug.Log("after: " + happiness);
+                }
+            }
 
             yield return new WaitForSeconds(1);
         }
@@ -191,8 +219,9 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         hunger = hunger + item.hungerBonus > 100 ? 100 : hunger + item.hungerBonus;
         thirst = thirst + item.thirstBonus > 100 ? 100 : thirst + item.thirstBonus;
         energy = energy + item.energyBonus > 100 ? 100 : energy + item.energyBonus;
-        restroomNeedsDetriment = item.hungerBonus / 100 + item.thirstBonus / 50;
+        restroomNeedsDetriment += item.hungerBonus / 100 + item.thirstBonus / 50;
         happiness = happiness + item.happinessBonus > 100 ? 100 : happiness + item.happinessBonus;
+        trashDetriment += UnityEngine.Random.Range(0.5f, 1f);
 
         ZooManager.instance.ChangeMoney(item.currentPrice);
     }
@@ -202,6 +231,21 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         var random = UnityEngine.Random.Range(40, 60);
         restroomNeeds = restroomNeeds + random > 100 ? 100 : restroomNeeds + random;
         restroomNeedsDetriment = UnityEngine.Random.Range(0.05f, 0.15f);
+    }
+
+    public void LowerTrash(int amount)
+    {
+        trash = trash + amount > 100 ? 100 : trash + amount;
+        trashDetriment = UnityEngine.Random.Range(0.05f, 0.15f);
+        time += 10;
+    }
+
+    public void ThrowTrash()
+    {
+        var trashOnTheGround = Instantiate(playerControl.trashOnTheGroundPrefabs[UnityEngine.Random.Range(0, playerControl.trashOnTheGroundPrefabs.Count)], transform.position, transform.rotation);
+        trashOnTheGround.tag = "Placed";
+        TrashCanManager.instance.AddTrashOnTheGround(trashOnTheGround);
+        LowerTrash(UnityEngine.Random.Range(40, 60));
     }
 
     public void ChooseDestination()
@@ -227,6 +271,17 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
                 break;
             case Action.Restroom:
                 GetDestinationVisitable(ChooseCloseDestination(VisitableManager.instance.GetReachableRestroomBuildings()).GetId());
+                break;
+            case Action.Trash:
+                var tempDestination = ChooseCloseDestination(VisitableManager.instance.GetReachableTrashBuildings());
+                if (tempDestination == null)
+                {
+                    ThrowTrash();
+                    atDestination = true;
+                    return;
+                }
+                else
+                    GetDestinationVisitable(tempDestination.GetId());
                 break;
             case Action.Happiness:
                 List<Visitable> tempVisitables = new();
@@ -266,24 +321,32 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         var probabilities = new List<(Action action, float probability)>();
         float sum = 0;
 
+        //sum += (110 - trash);
+        sum += trash < 50 ? 110 - trash : 0;
+        probabilities.Add((Action.Trash, sum));
+
         if (VisitableManager.instance.GetReachableFoodBuildings().Count > 0)
         {
-            sum += (110 - hunger);
+            //sum += (110 - hunger);
+            sum += hunger < 75 ? 110 - hunger : 0;
             probabilities.Add((Action.Food, sum));
         }
         if (VisitableManager.instance.GetReachableDrinkBuildings().Count > 0)
         {
-            sum += (110 - thirst);
+            //sum += (110 - thirst);
+            sum += thirst < 75 ? 110 - thirst : 0;
             probabilities.Add((Action.Drink, sum));
         }
         if (VisitableManager.instance.GetReachableEnergyBuildings().Count > 0)
         {
-            sum += (110 - energy);
+            //sum += (110 - energy);
+            sum += energy < 75 ? 110 - energy : 0;
             probabilities.Add((Action.Energy, sum));
         }
         if (VisitableManager.instance.GetReachableRestroomBuildings().Count > 0)
         {
-            sum += (110 - restroomNeeds);
+            //sum += (110 - restroomNeeds);
+            sum += restroomNeeds < 75 ? 110 - restroomNeeds : 0;
             probabilities.Add((Action.Restroom, sum));
         }
         if (GetUnvisitedExhibits().Count > 0 || VisitableManager.instance.GetReachableHappinessBuildings().Count > 0)
@@ -292,14 +355,13 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
             probabilities.Add((Action.Happiness, sum));
         }
         sum += (100 + 50 * ((VisitableManager.instance.GetReachableExhibits().Count + 1 - GetUnvisitedExhibits().Count) / (VisitableManager.instance.GetReachableExhibits().Count + 1)) - happiness);
+        
         if (GetUnvisitedExhibits().Count == 0)
             sum += 100;
         probabilities.Add((Action.Leave, sum));
 
         var random = UnityEngine.Random.Range(0, sum);
         action = probabilities.SkipWhile(i => i.probability < random).FirstOrDefault().action;
-        if (action == null)
-            action = Action.Leave;
     }
 
     Visitable ChooseCloseDestination(List<Visitable> visitables)
@@ -316,7 +378,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
 
         foreach (var visitable in visitables)
         {
-            if (visitable.GetCapacity() > 0)
+            if (visitable.GetCapacity() > 0 && (action != Action.Trash || (action == Action.Trash && Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0] + new Vector3(0.5f, 0, 0.5f)) < 5)))
             {
                 sum += (maxDistance + 10 - Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0]));
                 VisitableDistances.Add((visitable, sum));
@@ -324,8 +386,10 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         }
 
         var random = UnityEngine.Random.Range(0.0f, sum);
-        if (VisitableDistances.Count == 0)
+        if (VisitableDistances.Count == 0 && action != Action.Trash)
             return ZooManager.instance;
+        if (VisitableDistances.Count == 0 && action == Action.Trash)
+            return null;
         return VisitableDistances.SkipWhile(i => i.distance < random).First().visitable;
     }
 
@@ -534,10 +598,12 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         public float energy;
         public float restroomNeeds;
         public float happiness;
+        public float trash;
+        public float trashDetriment;
         public Action action;
         public bool isFleeing;
 
-        public VisitorData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, bool atDestinationParam, bool arrivedParam, Vector3 destinationParam, string destinationVisitableIdParam, List<string> unvisitedExhibitsIdsParam, string visitorNameParam, float timeParam, float timeGoalParam, string currentExhibitIdParam, float hungerParam, float thirstParam, float energyParam, float restroomNeedsParam, float happinessParam, Action actionParam, bool isFleeingParam)
+        public VisitorData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, bool atDestinationParam, bool arrivedParam, Vector3 destinationParam, string destinationVisitableIdParam, List<string> unvisitedExhibitsIdsParam, string visitorNameParam, float timeParam, float timeGoalParam, string currentExhibitIdParam, float hungerParam, float thirstParam, float energyParam, float restroomNeedsParam, float happinessParam, float trashParam, float trashDetrimentParam, Action actionParam, bool isFleeingParam)
         {
            _id = _idParam;
            position = positionParam;
@@ -557,6 +623,8 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
            energy = energyParam;
            restroomNeeds = restroomNeedsParam;
            happiness = happinessParam;
+           trash = trashParam;
+           trashDetriment = trashDetrimentParam;
            action = actionParam;
            isFleeing = isFleeingParam;
         }
@@ -565,7 +633,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     VisitorData data; 
     
     public string DataToJson(){
-        VisitorData data = new VisitorData(_id, transform.position, selectedPrefabId, transform.rotation, atDestination, arrived, destination, destinationVisitableId, unvisitedExhibitsIds, visitorName, time, timeGoal, currentExhibitId, hunger, thirst, energy, restroomNeeds, happiness, action, isFleeing);
+        VisitorData data = new VisitorData(_id, transform.position, selectedPrefabId, transform.rotation, atDestination, arrived, destination, destinationVisitableId, unvisitedExhibitsIds, visitorName, time, timeGoal, currentExhibitId, hunger, thirst, energy, restroomNeeds, happiness, trash, trashDetriment, action, isFleeing);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -577,14 +645,14 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data._id, data.position, data.selectedPrefabId, data.rotation, data.atDestination, data.arrived, data.destination, data.destinationVisitableId, data.unvisitedExhibitsIds, data.visitorName, data.time, data.timeGoal, data.currentExhibitId, data.hunger, data.thirst, data.energy, data.restroomNeeds, data.happiness, data.action, data.isFleeing);
+        SetData(data._id, data.position, data.selectedPrefabId, data.rotation, data.atDestination, data.arrived, data.destination, data.destinationVisitableId, data.unvisitedExhibitsIds, data.visitorName, data.time, data.timeGoal, data.currentExhibitId, data.hunger, data.thirst, data.energy, data.restroomNeeds, data.happiness, data.trash, data.trashDetriment, data.action, data.isFleeing);
     }
     
     public string GetFileName(){
         return "Visitor.json";
     }
     
-    void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, bool atDestinationParam, bool arrivedParam, Vector3 destinationParam, string destinationVisitableIdParam, List<string> unvisitedExhibitsIdsParam, string visitorNameParam, float timeParam, float timeGoalParam, string currentExhibitIdParam, float hungerParam, float thirstParam, float energyParam, float restroomNeedsParam, float happinessParam, Action actionParam, bool isFleeingParam){ 
+    void SetData(string _idParam, Vector3 positionParam, int selectedPrefabIdParam, Quaternion rotationParam, bool atDestinationParam, bool arrivedParam, Vector3 destinationParam, string destinationVisitableIdParam, List<string> unvisitedExhibitsIdsParam, string visitorNameParam, float timeParam, float timeGoalParam, string currentExhibitIdParam, float hungerParam, float thirstParam, float energyParam, float restroomNeedsParam, float happinessParam, float trashParam, float trashDetrimentParam, Action actionParam, bool isFleeingParam){ 
         
            _id = _idParam;
            transform.position = positionParam;
@@ -604,12 +672,14 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
            energy = energyParam;
            restroomNeeds = restroomNeedsParam;
            happiness = happinessParam;
+           trash = trashParam;
+           trashDetriment = trashDetrimentParam;
            action = actionParam;
            isFleeing = isFleeingParam;
     }
     
     public VisitorData ToData(){
-        return new VisitorData(_id, transform.position, selectedPrefabId, transform.rotation, atDestination, arrived, destination, destinationVisitableId, unvisitedExhibitsIds, visitorName, time, timeGoal, currentExhibitId, hunger, thirst, energy, restroomNeeds, happiness, action, isFleeing);
+        return new VisitorData(_id, transform.position, selectedPrefabId, transform.rotation, atDestination, arrived, destination, destinationVisitableId, unvisitedExhibitsIds, visitorName, time, timeGoal, currentExhibitId, hunger, thirst, energy, restroomNeeds, happiness, trash, trashDetriment, action, isFleeing);
     }
     
     public void FromData(VisitorData data){
@@ -632,6 +702,8 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
            energy = data.energy;
            restroomNeeds = data.restroomNeeds;
            happiness = data.happiness;
+           trash = data.trash;
+           trashDetriment = data.trashDetriment;
            action = data.action;
            isFleeing = data.isFleeing;
     }

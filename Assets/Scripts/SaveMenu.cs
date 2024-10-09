@@ -34,6 +34,7 @@ public class SaveMenu : MonoBehaviour
         SaveData(text.text, BenchManager.instance);
         SaveData(text.text, StaffManager.instance);
         SaveData(text.text, VisitorManager.instance);
+        SaveData(text.text, TrashCanManager.instance);
         DestroyWindow();
     }
 

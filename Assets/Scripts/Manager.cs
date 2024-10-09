@@ -5,4 +5,5 @@ using UnityEngine;
 public interface Manager
 {
     public abstract bool GetIsLoaded();
+    public virtual void LoadHelper(){}
 }

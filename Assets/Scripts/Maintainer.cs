@@ -46,13 +46,13 @@ public class Maintainer : Staff, Saveable
                 }
             }
         }
-        if (TrashCanManager.instance.trashCans.Count > 0)
+        if (TrashCanManager.instance.trashcanList.Count > 0)
         {
-            foreach (TrashCan trashCan in TrashCanManager.instance.trashCans)
+            foreach (TrashCan trashCan in TrashCanManager.instance.trashcanList)
             {
-                if (!trashCan.isBeingEmptied && trashCan.capacity < 25)
+                if (!trashCan.isBeingEmptied && (float)trashCan.trashCapacity / trashCan.maxTrashCapacity * 100 < 50)
                 {
-                    possibleJobs.Add((null, trashCan, MaintainerJobs.EmptyingTrashCan, trashCan.capacity));
+                    possibleJobs.Add((null, trashCan, MaintainerJobs.EmptyingTrashCan, (float)trashCan.trashCapacity / trashCan.maxTrashCapacity * 100));
                 }
             }
         }
@@ -73,81 +73,104 @@ public class Maintainer : Staff, Saveable
         job = possibleJobs[0].maintainerJob;
 
         fenceToRepair = possibleJobs[0].fence;
-        if (fenceToRepair != null)
-            fenceToRepair.isBeingFixed = true;
-
         trashCanToEmpty = possibleJobs[0].trashCan;
-        if (trashCanToEmpty != null)
-            trashCanToEmpty.isBeingEmptied = true;
-        //itt tartok!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if (insideExhibit != null)
+
+        if (job == MaintainerJobs.RepairingFence && fenceToRepair != null)
         {
-            if (fenceToRepair.grid1.GetExhibit() != null && fenceToRepair.grid2.GetExhibit() != null)
+            fenceToRepair.isBeingFixed = true;
+            if (insideExhibit != null)
             {
-                if (fenceToRepair.grid1.GetExhibit() == insideExhibit)
+                if (fenceToRepair.grid1.GetExhibit() != null && fenceToRepair.grid2.GetExhibit() != null)
                 {
-                    gridDestination = fenceToRepair.grid1;
-                    workingState = WorkingState.Working;
-                    FindDestination(insideExhibit);
-                    return;
+                    if (fenceToRepair.grid1.GetExhibit() == insideExhibit)
+                    {
+                        gridDestination = fenceToRepair.grid1;
+                        workingState = WorkingState.Working;
+                        FindDestination(insideExhibit);
+                        return;
+                    }
+                    else if (fenceToRepair.grid2.GetExhibit() == insideExhibit)
+                    {
+                        gridDestination = fenceToRepair.grid2;
+                        workingState = WorkingState.Working;
+                        FindDestination(insideExhibit);
+                        return;
+                    }
                 }
-                else if (fenceToRepair.grid2.GetExhibit() == insideExhibit)
-                {
-                    gridDestination = fenceToRepair.grid2;
-                    workingState = WorkingState.Working;
-                    FindDestination(insideExhibit);
-                    return;
-                }
-                else
-                {
-                    workingState = WorkingState.GoingToExhibitExitToLeave;
-                    fenceToRepair.isBeingFixed = false;
-                    fenceToRepair = null;
-                    FindDestination(insideExhibit);
-                    return;
-                }
-            }
-            else
-            {
                 workingState = WorkingState.GoingToExhibitExitToLeave;
                 fenceToRepair.isBeingFixed = false;
                 fenceToRepair = null;
                 FindDestination(insideExhibit);
                 return;
             }
-        }
-        else
-        {
-            if (fenceToRepair.grid1.GetExhibit() != null && fenceToRepair.grid2.GetExhibit() != null)
+            else
             {
-                if (!fenceToRepair.grid1.GetExhibit().unreachableForStaff)
+                if (fenceToRepair.grid1.GetExhibit() != null && fenceToRepair.grid2.GetExhibit() != null)
                 {
-                    gridDestination = fenceToRepair.grid1;
-                    destinationExhibit = fenceToRepair.grid1.GetExhibit();
-                    workingState = WorkingState.GoingToExhibitEntranceToEnter;
-                    FindDestination(fenceToRepair.grid1.GetExhibit());
-                    return;
-                }
-                else if (!fenceToRepair.grid2.GetExhibit().unreachableForStaff)
-                {
-                    gridDestination = fenceToRepair.grid2;
-                    destinationExhibit = fenceToRepair.grid2.GetExhibit();
-                    workingState = WorkingState.GoingToExhibitEntranceToEnter;
-                    FindDestination(fenceToRepair.grid1.GetExhibit());
-                    return;
+                    if (!fenceToRepair.grid1.GetExhibit().unreachableForStaff)
+                    {
+                        gridDestination = fenceToRepair.grid1;
+                        destinationExhibit = fenceToRepair.grid1.GetExhibit();
+                        workingState = WorkingState.GoingToExhibitEntranceToEnter;
+                        FindDestination(fenceToRepair.grid1.GetExhibit());
+                        return;
+                    }
+                    else if (!fenceToRepair.grid2.GetExhibit().unreachableForStaff)
+                    {
+                        gridDestination = fenceToRepair.grid2;
+                        destinationExhibit = fenceToRepair.grid2.GetExhibit();
+                        workingState = WorkingState.GoingToExhibitEntranceToEnter;
+                        FindDestination(fenceToRepair.grid1.GetExhibit());
+                        return;
+                    }
+                    else
+                    {
+                        SetToDefault();
+                    }
                 }
                 else
                 {
-                    SetToDefault();
+                    if (fenceToRepair.grid1.GetExhibit() == null)
+                        gridDestination = fenceToRepair.grid1;
+                    else
+                        gridDestination = fenceToRepair.grid2;
+
+                    workingState = WorkingState.Working;
+                    FindDestination(null);
+                    return;
                 }
+            }
+        }
+        else if (job == MaintainerJobs.EmptyingTrashCan && trashCanToEmpty != null)
+        {
+            trashCanToEmpty.isBeingEmptied = true;
+            if (insideExhibit != null)
+            {
+                workingState = WorkingState.GoingToExhibitExitToLeave;
+                trashCanToEmpty.isBeingEmptied = false;
+                trashCanToEmpty = null;
+                FindDestination(insideExhibit);
+                return;
             }
             else
             {
-                if (fenceToRepair.grid1.GetExhibit() == null)
-                    gridDestination = fenceToRepair.grid1;
-                else
-                    gridDestination = fenceToRepair.grid2;
-
+                workingState = WorkingState.Working;
+                FindDestination(null);
+                return;
+            }
+        }
+        else if (job == MaintainerJobs.PickingUpTrash)
+        {
+            TrashCanManager.instance.trashIsBeingPickedUp = true;
+            if (insideExhibit != null)
+            {
+                workingState = WorkingState.GoingToExhibitExitToLeave;
+                TrashCanManager.instance.trashIsBeingPickedUp = false;
+                FindDestination(insideExhibit);
+                return;
+            }
+            else
+            {
                 workingState = WorkingState.Working;
                 FindDestination(null);
                 return;
@@ -159,17 +182,39 @@ public class Maintainer : Staff, Saveable
 
     public override bool DoJob()
     {
-        if (fenceToRepair != null)
+        if (job == MaintainerJobs.RepairingFence && fenceToRepair != null)
         {
-            fenceToRepair.health += UnityEngine.Random.Range(1, fenceToRepair.maxHealth - fenceToRepair.health + 1);
+            fenceToRepair.health = fenceToRepair.maxHealth;
             fenceToRepair.isBeingFixed = false;
+            return true;
         }
+        else if (job == MaintainerJobs.EmptyingTrashCan && trashCanToEmpty != null)
+        {
+            trashCanToEmpty.trashCapacity = trashCanToEmpty.maxTrashCapacity;
+            trashCanToEmpty.isBeingEmptied = false;
+            return true;
+        }
+        else if (job == MaintainerJobs.PickingUpTrash)
+        {
+            var temp = TrashCanManager.instance.trashOnTheGround[0];
+            TrashCanManager.instance.RemoveTrashOnTheGround(0);
+            Destroy(temp);
+
+            if (TrashCanManager.instance.trashOnTheGround.Count == 0)
+            {
+                TrashCanManager.instance.trashIsBeingPickedUp = false;
+                job = MaintainerJobs.Nothing;
+                return true;
+            }
+            return false;
+        }
+
         return true;
     }
 
     public override void FindWorkDestination()
     {
-        if (fenceToRepair != null)
+        if (job == MaintainerJobs.RepairingFence && fenceToRepair != null)
         {
             if (fenceToRepair.timesRotated == 0)
             {
@@ -200,28 +245,50 @@ public class Maintainer : Staff, Saveable
                     agent.SetDestination(new Vector3(gridDestination.coords[0].x + 0.9f, gridDestination.coords[0].y, gridDestination.coords[0].z + UnityEngine.Random.Range(0.1f, 0.9f)));
             }
         }
+        else if (job == MaintainerJobs.EmptyingTrashCan && trashCanToEmpty != null)
+        {
+            agent.SetDestination(trashCanToEmpty.transform.position);
+        }
+        else if (job == MaintainerJobs.PickingUpTrash)
+        {
+            time = 8;
+            agent.SetDestination(TrashCanManager.instance.trashOnTheGround[0].transform.position);
+        }
 
         var path = new NavMeshPath();
         agent.CalculatePath(agent.destination, path);
-        if (path.status != NavMeshPathStatus.PathComplete || fenceToRepair == null)
+        if (path.status != NavMeshPathStatus.PathComplete)
         {
+            Debug.Log("Path not complete");
             SetToDefault();
         }
     }
 
     public override string GetCurrentAction()
     {
-        return "Repairing fence";
+        return job.ToString();
     }
 
     public override void SetToDefault()
     {
         base.SetToDefault();
+
         if (fenceToRepair != null)
         {
             fenceToRepair.isBeingFixed = false;
             fenceToRepair = null;
         }
+        if (trashCanToEmpty != null)
+        {
+            trashCanToEmpty.isBeingEmptied = false;
+            trashCanToEmpty = null;
+        }
+        if (job == MaintainerJobs.PickingUpTrash)
+        {
+            TrashCanManager.instance.trashIsBeingPickedUp = false;
+        }
+
+        job = MaintainerJobs.Nothing;
     }
 
     public override void Remove()
@@ -230,6 +297,11 @@ public class Maintainer : Staff, Saveable
 
         if (fenceToRepair != null)
             fenceToRepair.isBeingFixed = false;
+        if (trashCanToEmpty != null)
+            trashCanToEmpty.isBeingEmptied = false;
+        if (job == MaintainerJobs.PickingUpTrash)
+            TrashCanManager.instance.trashIsBeingPickedUp = false;
+
         Destroy(gameObject);
     }
 ///******************************

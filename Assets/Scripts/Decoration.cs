@@ -19,8 +19,8 @@ public class Decoration : Placeable, Saveable
         height = gameObject.GetComponent<BoxCollider>().size.y;
         base.Awake();
         navMeshObstacle = gameObject.GetComponent<NavMeshObstacle>();
-        lightSource = transform.GetComponentsInChildren<Light>().Where(element => element.name.Equals("Light")).First().gameObject;
-        lightSource.GetComponent<Light>().enabled = CalendarManager.instance.lightsOn;
+        lightSource = transform.GetComponentsInChildren<Transform>().Where(element => element.name.Equals("Light")).First().gameObject;
+        lightSource.transform.GetChild(0).gameObject.SetActive(CalendarManager.instance.lightsOn);
     }
 
     public override void FinalPlace()
@@ -83,8 +83,8 @@ public class Decoration : Placeable, Saveable
 
     public void LoadHelper()
     {
-        lightSource = transform.GetComponentsInChildren<Light>().Where(element => element.name.Equals("Light")).First().gameObject;
-        lightSource.GetComponent<Light>().enabled = CalendarManager.instance.lightsOn;
+        lightSource = transform.GetComponentsInChildren<Transform>().Where(element => element.name.Equals("Light")).First().gameObject;
+        lightSource.transform.GetChild(0).gameObject.SetActive(CalendarManager.instance.lightsOn);
         lightSource.GetComponent<CapsuleCollider>().enabled = true;
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
         LoadMenu.objectLoadedEvent.Invoke();

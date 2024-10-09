@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.AI;
@@ -22,7 +21,6 @@ public class Exhibit : Placeable, Visitable, Saveable
     private List<Nature> foliages;
     public List<GameObject> animalDroppings = new();
     public Vector3[] animalDroppingCoords = new Vector3[0];
-    public Vector3[] animalDroppingPositions;
     public Grid exitGrid;
     public Grid entranceGrid;
     bool isExitGridInverted = false;
@@ -303,10 +301,10 @@ public class Exhibit : Placeable, Visitable, Saveable
     {
         animalDroppings.Add(dropping);
         var temp = new Vector3[animalDroppingCoords.Length + 1];
+
         for (int i = 0; i < animalDroppingCoords.Length; i++)
-        {
             temp[i] = animalDroppingCoords[i];
-        }
+
         temp[temp.Length - 1] = dropping.transform.position;
         animalDroppingCoords = temp;
     }
@@ -315,6 +313,7 @@ public class Exhibit : Placeable, Visitable, Saveable
     {
         animalDroppings.RemoveAt(index);
         var temp = new Vector3[animalDroppingCoords.Length - 1];
+
         for (int i = 0; i < animalDroppingCoords.Length; i++)
         {
             if (i < index)
@@ -322,6 +321,7 @@ public class Exhibit : Placeable, Visitable, Saveable
             else if (i > index)
                 temp[i - 1] = animalDroppingCoords[i];
         }
+
         animalDroppingCoords = temp;
     }
 
@@ -533,9 +533,9 @@ public class Exhibit : Placeable, Visitable, Saveable
             gridList[i].GetNatures().ForEach((element) => AddFoliages(element));
         }
 
-        foreach (var dropping in animalDroppingCoords)
+        foreach (var droppingPos in animalDroppingCoords)
         {
-            var animalDropping = Instantiate(playerControl.animalDroppingPrefab, dropping, Quaternion.identity);
+            var animalDropping = Instantiate(playerControl.animalDroppingPrefab, droppingPos, Quaternion.identity);
             animalDropping.tag = "Placed";
             animalDroppings.Add(animalDropping);
         }

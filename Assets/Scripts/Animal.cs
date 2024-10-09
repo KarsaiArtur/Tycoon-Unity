@@ -374,7 +374,9 @@ public class Animal : Placeable, Saveable
     public void Die()
     {
         health = 0;
-        Debug.Log(placeableName + " died");
+        if(playerControl.currentInfopopup != null)
+            playerControl.currentInfopopup.DestroyPanel();
+            
         //notification
         //corpse?
         Remove();

@@ -80,12 +80,12 @@ public class CalendarManager : MonoBehaviour, Saveable
     {
         foreach(var decoration in DecorationManager.instance.decorations){
             if(decoration.lightSource != null){
-                decoration.lightSource.GetComponent<Light>().enabled = lightsOn;
+                decoration.lightSource.transform.GetChild(0).gameObject.SetActive(lightsOn);
             }
         }
-        if(playerControl.m_Selected != null && playerControl.m_Selected.GetComponent<Decoration>() != null && playerControl.m_Selected.GetComponent<Decoration>().lightSource.GetComponent<Light>() != null)
+        if(playerControl.m_Selected != null && playerControl.m_Selected.GetComponent<Decoration>() != null && playerControl.m_Selected.GetComponent<Decoration>().lightSource.transform.GetChild(0) != null)
         {
-            playerControl.m_Selected.GetComponent<Decoration>().lightSource.GetComponent<Light>().enabled = lightsOn;
+            playerControl.m_Selected.GetComponent<Decoration>().lightSource.transform.GetChild(0).gameObject.SetActive(lightsOn);
         }
     }
 

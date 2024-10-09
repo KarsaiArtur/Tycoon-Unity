@@ -35,7 +35,7 @@ public class EntranceChunk : BackGroundChunk
                     newPos = new Vector3(center.x + elementWidth / 2 + 0.5f + j, center.y, center.z - 1.5f + i);
                 }
                 path = Instantiate(path, newPos, transform.rotation);
-                path.tag = "Placed";
+                path.tag = "Entrance";
                 path.transform.parent = this.transform;
             }
         }

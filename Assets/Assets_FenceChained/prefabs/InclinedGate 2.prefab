@@ -102,8 +102,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.09, y: 1.43, z: 0.16}
-  m_Center: {x: 0, y: -0.18, z: 0.5}
+  m_Size: {x: 0.8247528, y: 1.43, z: 0.15999997}
+  m_Center: {x: 0.01935196, y: -0.18, z: 0.5}
 --- !u!114 &135352077319337724
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -125,28 +125,31 @@ MonoBehaviour:
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
+  selectedPrefabId: 0
+  gridListPositions: []
   exhibitName: 
-  animalIds: []
-  animals: []
-  foliageIds: []
-  foliages: []
   animalDroppings: []
+  animalDroppingCoords: []
+  animalDroppingPositions: []
   timesRotated: 0
   isOpen: 0
-  reachable: 0
-  staff: []
-  staffAtGate: []
   unreachableForStaff: 0
+  destroyed: 0
   food: 0
   water: 0
   waterCapacity: 0
-  foodPlaces: []
-  waterPlaces: []
   isGettingFood: 0
   isGettingWater: 0
   isGettingCleaned: 0
   occupiedSpace: 0
   isMixed: 0
+  animalsIds: []
+  foliagesIds: []
+  staffsIds: []
+  staffsAtGateIds: []
+  foodPlacesIds: []
+  waterPlacesIds: []
+  visitorsIds: []
 --- !u!1 &3703858568900742765
 GameObject:
   m_ObjectHideFlags: 0

@@ -42,8 +42,10 @@ public class PlayerControl : MonoBehaviour
     public bool isClickableSelected = false;
     public List<GameObject> gates;
     public GameObject animalDroppingPrefab;
+    public List<GameObject> trashOnTheGroundPrefabs;
     public List<string> placedTags;
 
+    public List<string> deletableTags;
     public List<string> environmentTags;
     public float maxTerrainHeight = 7;
     public float minTerrainHeight = -3;
@@ -212,8 +214,9 @@ public class PlayerControl : MonoBehaviour
 
     void Start()
     {
-        placedTags = new List<string>() { "Placed", "Placed Fence", "Placed Path", "ZooFence"};
+        placedTags = new List<string>() { "Placed", "Placed Fence", "Placed Path", "ZooFence", "Entrance"};
         environmentTags = new List<string>() {"ZooFence"};
+        deletableTags = new List<string>() {"Placed","Placed Fence", "Placed Path"};
         angle = 90 - transform.eulerAngles.y;
         VirtualCamera.transform.rotation = GameCamera.transform.rotation;
         gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
@@ -331,7 +334,9 @@ public class PlayerControl : MonoBehaviour
                     if (hit.collider.CompareTag("Clickable") || placedTags.Contains(hit.collider.tag))
                     {
                         var clickedOnObject = hit.collider.gameObject.GetComponent<Clickable>();
-                        clickedOnObject.ClickedOn();
+                        if(clickedOnObject != null){
+                            clickedOnObject.ClickedOn();
+                        }
                         break;
                     }
                 }
@@ -926,10 +931,13 @@ public class PlayerControl : MonoBehaviour
     public void Delete()
     {
         var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit))
+        
+        RaycastHit[] hits = Physics.RaycastAll(ray);
+        Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        bool deletableFound = false;
+        foreach (RaycastHit hit in hits)
         {
-            if (placedTags.Contains(hit.collider.tag) && !environmentTags.Contains(hit.collider.tag))
+            if (deletableTags.Contains(hit.collider.tag))
             {
                 chosenForDelete = hit.collider.GetComponentInParent<Placeable>();
                 if(prevChosenForDelete != null)
@@ -953,15 +961,21 @@ public class PlayerControl : MonoBehaviour
                     chosenForDelete.Remove();
                     ReloadGuestNavMesh();
                 }
-            }
-            else if(prevChosenForDelete != null)
-            {
-                if (prevChosenForDelete.currentPlacingPriceInstance != null)
-                    Destroy(prevChosenForDelete.currentPlacingPriceInstance.gameObject);
-                prevChosenForDelete.ChangeMaterial(0);
-                prevChosenForDelete = null;
+                deletableFound = true;
+                break;
             }
         }
+        if(!deletableFound && prevChosenForDelete != null)
+        {
+            if (prevChosenForDelete.currentPlacingPriceInstance != null)
+                Destroy(prevChosenForDelete.currentPlacingPriceInstance.gameObject);
+            prevChosenForDelete.ChangeMaterial(0);
+            prevChosenForDelete = null;
+        }
+        /*if (Physics.Raycast(ray, out hit))
+        {
+            
+        }*/
         /*if (Input.GetMouseButtonDown(0))
         {
             var ray = GameCamera.ScreenPointToRay(Input.mousePosition);

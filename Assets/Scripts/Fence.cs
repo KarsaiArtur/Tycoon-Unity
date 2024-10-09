@@ -96,21 +96,24 @@ public class Fence : Placeable, Saveable
 
                 grid1 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
 
-                if (timesRotated == 0)
+                if (playerControl.canBePlaced || playerControl.deleting)
                 {
-                    grid2 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z + 0.5f) - gridManager.elementWidth];
-                }
-                else if (timesRotated == 1)
-                {
-                    grid2 = gridManager.grids[(int)(transform.position.x + 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
-                }
-                else if (timesRotated == 2)
-                {
-                    grid2 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 1.5f) - gridManager.elementWidth];
-                }
-                else if (timesRotated == 3)
-                {
-                    grid2 = gridManager.grids[(int)(transform.position.x - 1.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
+                    if (timesRotated == 0)
+                    {
+                        grid2 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z + 0.5f) - gridManager.elementWidth];
+                    }
+                    else if (timesRotated == 1)
+                    {
+                        grid2 = gridManager.grids[(int)(transform.position.x + 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
+                    }
+                    else if (timesRotated == 2)
+                    {
+                        grid2 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 1.5f) - gridManager.elementWidth];
+                    }
+                    else if (timesRotated == 3)
+                    {
+                        grid2 = gridManager.grids[(int)(transform.position.x - 1.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
+                    }
                 }
             }
         }

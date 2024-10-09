@@ -25,6 +25,7 @@ TagManager:
   - Placed Light
   - Light
   - Undefined
+  - Entrance
   layers:
   - Default
   - TransparentFX

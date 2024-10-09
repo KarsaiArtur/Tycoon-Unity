@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InfoPopup : MonoBehaviour
+public abstract class InfoPopup : MonoBehaviour
 {
     public float priceChangeLimit = 0.2f;
     public GameObject infoPanelInstance;
@@ -32,6 +32,8 @@ public class InfoPopup : MonoBehaviour
     {
         return false;
     }
+
+    public virtual   void AddOutline(){}
 
 
 }

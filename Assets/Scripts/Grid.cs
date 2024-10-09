@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Newtonsoft.Json;
 using UnityEngine;
-using static Chunk;
 
 public class Grid
 {
@@ -18,7 +15,10 @@ public class Grid
     /////GENERATE
     private Bench bench;
     /////GENERATE
+    private TrashCan trashCan;
+    /////GENERATE
     private List<Nature> natures;
+    public int trashCount = 0;
     public TerrainType terrainType;
 
     public void CheckTerrainType()
@@ -99,6 +99,19 @@ public class Grid
             bench = BenchManager.instance.benchList.Where((element) => element.GetId() == benchId).FirstOrDefault();
         }
         return bench;
+    }
+
+    public string trashCanId;
+    public TrashCan GetTrashCan(string id = null)
+    {
+        id ??=trashCanId;
+
+        if(id != trashCanId || trashCan == null)
+        {
+            trashCanId = id;
+            trashCan = TrashCanManager.instance.trashcanList.Where((element) => element.GetId() == trashCanId).FirstOrDefault();
+        }
+        return trashCan;
     }
 
     public List<string> naturesIds = new List<string>();

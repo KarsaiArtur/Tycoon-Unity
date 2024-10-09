@@ -177,8 +177,8 @@ public class Building : BuildingAncestor, Saveable
 
     public override void Remove()
     {
-        base.Remove();
         BuildingManager.instance.buildingList.Remove(this);
+        base.Remove();
     }
 
     public override void FindPaths()
@@ -197,6 +197,7 @@ public class Building : BuildingAncestor, Saveable
 
     void OnCollisionStay(Collision collision)
     {
+        Debug.Log(collision.collider.tag);
         var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(collision.collider.tag) && collision.collider.tag != "Placed Path");
         if (isTagPlaced.Any() && !playerControl.placedTags.Contains(gameObject.tag))
         {

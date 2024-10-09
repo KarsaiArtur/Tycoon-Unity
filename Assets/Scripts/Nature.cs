@@ -25,7 +25,7 @@ public class Nature : Placeable, Saveable
         selectedVariantInstance.transform.SetParent(transform);
         height = selectedVariantInstance.GetComponent<BoxCollider>().size.y;
         base.Awake();
-        Debug.Log(selectedPrefabId);
+        //Debug.Log(selectedPrefabId);
 
         navMeshObstacle = selectedVariantInstance.GetComponent<NavMeshObstacle>();
 

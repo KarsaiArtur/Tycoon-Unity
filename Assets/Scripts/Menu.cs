@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Menu : MonoBehaviour
 {
     public SubMenu[] submenuPrefabs;
+    public Sprite menuBackground;
 
     public Placeable GetSelectedPlaceable(int placeableIndex)
     {

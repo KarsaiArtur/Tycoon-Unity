@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /////Saveable Attributes, DONT DELETE
@@ -40,31 +39,31 @@ public class Zookeeper : Staff, Saveable
             {
                 if (!exhibit.unreachableForStaff)
                 {
-                    if (!exhibit.isGettingFood && !float.IsNaN(exhibit.food / (exhibit.GetAnimals().Count * 50)))
+                    if (!exhibit.isGettingFood && !float.IsNaN(exhibit.food / (exhibit.GetAnimals().Count * 50)) && exhibit.food / (exhibit.GetAnimals().Count * 50) * 100 < 75)
                     {
-                        animalNeeds.Add((exhibit, ZookeperJobs.PlacingFood, exhibit.food / (exhibit.GetAnimals().Count * 50)));
+                        animalNeeds.Add((exhibit, ZookeperJobs.PlacingFood, exhibit.food / (exhibit.GetAnimals().Count * 50) * 100));
                         if (insideExhibit != null && insideExhibit == exhibit)
                         {
                             animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
-                            animalNeeds.Add((exhibit, ZookeperJobs.PlacingFood, exhibit.food / (exhibit.GetAnimals().Count * 50) - 0.1f));
+                            animalNeeds.Add((exhibit, ZookeperJobs.PlacingFood, exhibit.food / (exhibit.GetAnimals().Count * 50) * 100 - 10));
                         }
                     }
-                    if (!exhibit.isGettingWater && !float.IsNaN(exhibit.water / exhibit.waterCapacity))
+                    if (!exhibit.isGettingWater && !float.IsNaN(exhibit.water / exhibit.waterCapacity) && exhibit.water / exhibit.waterCapacity * 100 < 75)
                     {
-                        animalNeeds.Add((exhibit, ZookeperJobs.FillingWater, exhibit.water / exhibit.waterCapacity));
+                        animalNeeds.Add((exhibit, ZookeperJobs.FillingWater, exhibit.water / exhibit.waterCapacity * 100));
                         if (insideExhibit != null && insideExhibit == exhibit)
                         {
                             animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
-                            animalNeeds.Add((exhibit, ZookeperJobs.FillingWater, exhibit.water / exhibit.waterCapacity - 0.1f));
+                            animalNeeds.Add((exhibit, ZookeperJobs.FillingWater, exhibit.water / exhibit.waterCapacity * 100 - 10));
                         }
                     }
-                    if (!exhibit.isGettingCleaned && !float.IsNaN(1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)))
+                    if (!exhibit.isGettingCleaned && exhibit.animalDroppings.Count > 0 && !float.IsNaN(1 - (float)exhibit.animalDroppings.Count / exhibit.gridList.Count))
                     {
-                        animalNeeds.Add((exhibit, ZookeperJobs.CleaningExhibit, 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count)));
+                        animalNeeds.Add((exhibit, ZookeperJobs.CleaningExhibit, (1 - (float)exhibit.animalDroppings.Count / exhibit.gridList.Count) * 100));
                         if (insideExhibit != null && insideExhibit == exhibit)
                         {
                             animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
-                            animalNeeds.Add((exhibit, ZookeperJobs.CleaningExhibit, 1 - (float)((float)exhibit.animalDroppings.Count / (float)exhibit.gridList.Count) - 0.1f));
+                            animalNeeds.Add((exhibit, ZookeperJobs.CleaningExhibit, (1 - (float)exhibit.animalDroppings.Count / exhibit.gridList.Count) * 100 - 10));
                         }
                     }
                 }
@@ -82,46 +81,42 @@ public class Zookeeper : Staff, Saveable
         animalNeeds = animalNeeds.OrderBy(x => x.percent).ToList();
         exhibitToWorkAt = animalNeeds[0].exhibit;
 
-        if (animalNeeds[0].percent < 0.75)
+        if (animalNeeds[0].job == ZookeperJobs.PlacingFood)
         {
-            if (animalNeeds[0].job == ZookeperJobs.PlacingFood)
-            {
-                exhibitToWorkAt.isGettingFood = true;
-                jobAtExhibit = ZookeperJobs.PlacingFood;
-            }
-            if (animalNeeds[0].job == ZookeperJobs.FillingWater)
-            {
-                exhibitToWorkAt.isGettingWater = true;
-                jobAtExhibit = ZookeperJobs.FillingWater;
-            }
-            if (animalNeeds[0].job == ZookeperJobs.CleaningExhibit)
-            {
-                exhibitToWorkAt.isGettingCleaned = true;
-                jobAtExhibit = ZookeperJobs.CleaningExhibit;
-            }
-
-            destinationExhibit = exhibitToWorkAt;
-
-            if (insideExhibit != null)
-            {
-                if (insideExhibit == destinationExhibit)
-                {
-                    workingState = WorkingState.Working;
-                    FindDestination(destinationExhibit);
-                    return;
-                }
-                else
-                {
-                    workingState = WorkingState.GoingToExhibitExitToLeave;
-                    FindDestination(insideExhibit);
-                    return;
-                }
-            }
-            workingState = WorkingState.GoingToExhibitEntranceToEnter;
-            FindDestination(destinationExhibit);
-            return;
+            exhibitToWorkAt.isGettingFood = true;
+            jobAtExhibit = ZookeperJobs.PlacingFood;
         }
-        isAvailable = true;
+        if (animalNeeds[0].job == ZookeperJobs.FillingWater)
+        {
+            exhibitToWorkAt.isGettingWater = true;
+            jobAtExhibit = ZookeperJobs.FillingWater;
+        }
+        if (animalNeeds[0].job == ZookeperJobs.CleaningExhibit)
+        {
+            exhibitToWorkAt.isGettingCleaned = true;
+            jobAtExhibit = ZookeperJobs.CleaningExhibit;
+        }
+
+        destinationExhibit = exhibitToWorkAt;
+
+        if (insideExhibit != null)
+        {
+            if (insideExhibit == destinationExhibit)
+            {
+                workingState = WorkingState.Working;
+                FindDestination(destinationExhibit);
+                return;
+            }
+            else
+            {
+                workingState = WorkingState.GoingToExhibitExitToLeave;
+                FindDestination(insideExhibit);
+                return;
+            }
+        }
+
+        workingState = WorkingState.GoingToExhibitEntranceToEnter;
+        FindDestination(destinationExhibit);
     }
 
     public override bool DoJob()
@@ -151,6 +146,7 @@ public class Zookeeper : Staff, Saveable
             var temp = exhibitToWorkAt.animalDroppings[0];
             exhibitToWorkAt.RemoveDropping(0);
             Destroy(temp);
+            
             if (exhibitToWorkAt.animalDroppings.Count == 0)
             {
                 exhibitToWorkAt.isGettingCleaned = false;

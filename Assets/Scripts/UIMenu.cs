@@ -41,9 +41,9 @@ public class UIMenu : MonoBehaviour
     public GameObject staffInfoPanelPrefab;
     public List<GameObject> exhibitCreateWindows;
 
-    const float defaultMenuButtonWidth = 137.7f;
-    const float defaultMenuButtonHeight = 100;
-    const float defaultMenuIconSize = 100;
+    const float defaultMenuButtonWidth = 113;
+    const float defaultMenuButtonHeight = 80;
+    const float defaultMenuIconSize = 85;
 
 
     private void Awake()
@@ -98,6 +98,7 @@ public class UIMenu : MonoBehaviour
         }
         else
         {
+            GetComponent<Image>().sprite = newMenu.menuBackground;
             if(curMenu != null){
                 curMenuRectTransform = curMenu.GetComponent<RectTransform>();
                 curMenuRectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, defaultMenuButtonHeight);

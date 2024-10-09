@@ -122,8 +122,6 @@ public class Bench : BuildingAncestor, Saveable
 
     public override void Arrived(Visitor visitor)
     {
-        //visitor.SetIsVisible(false);
-
         float tempEnergy = UnityEngine.Random.Range(40, 60);
         visitor.energy = visitor.energy + tempEnergy > 100 ? 100 : visitor.energy + tempEnergy;
     }
@@ -142,14 +140,12 @@ public class Bench : BuildingAncestor, Saveable
 
     public override void AddToReachableLists()
     {
-        //GridManager.instance.reachableBenches.Add(this);
         reachable = true;
         VisitableManager.instance.AddReachableEnergyBuildings(this);
     }
 
     public override void RemoveFromReachableLists()
     {
-        //GridManager.instance.reachableBenches.Remove(this);
         reachable = false;
         VisitableManager.instance.RemoveReachableEnergyBuildings(this);
     }
@@ -161,8 +157,8 @@ public class Bench : BuildingAncestor, Saveable
 
     public override void Remove()
     {
-        base.Remove();
         BenchManager.instance.benchList.Remove(this);
+        base.Remove();
     }
 
     public override void LoadHelper()
