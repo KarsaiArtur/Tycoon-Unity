@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Runtime.InteropServices.WindowsRuntime;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -42,6 +40,7 @@ public class Placeable : MonoBehaviour, Clickable
 
         foreach (var renderer in renderers)
         {
+            renderer.AddComponent<cakeslice.Outline>().enabled = false;
             foreach (var material in renderer.sharedMaterials)
             {
                 defaultMaterials.Add((renderer.GetHashCode(), material));
@@ -49,6 +48,7 @@ public class Placeable : MonoBehaviour, Clickable
         }
         foreach (var renderer in renderers2)
         {
+            renderer.AddComponent<cakeslice.Outline>().enabled = false;
             foreach (var material in renderer.sharedMaterials)
             {
                 defaultMaterials.Add((renderer.GetHashCode(), material));

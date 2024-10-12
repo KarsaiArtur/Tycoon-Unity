@@ -38,7 +38,8 @@ public class Building : BuildingAncestor, Saveable
         base.Awake();
     } 
 
-    void AddList(PurchasableItems purchasableItems){
+    void AddList(PurchasableItems purchasableItems)
+    {
         purchasableItemInstances.Add(purchasableItems);
         purchasableItems.transform.SetParent(transform);
     }
@@ -197,7 +198,6 @@ public class Building : BuildingAncestor, Saveable
 
     void OnCollisionStay(Collision collision)
     {
-        Debug.Log(collision.collider.tag);
         var isTagPlaced = playerControl.placedTags.Where(tag => tag.Equals(collision.collider.tag) && collision.collider.tag != "Placed Path");
         if (isTagPlaced.Any() && !playerControl.placedTags.Contains(gameObject.tag))
         {

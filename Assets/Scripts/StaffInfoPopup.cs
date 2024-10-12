@@ -15,7 +15,7 @@ public class StaffInfoPopup : InfoPopup
     public override void Initialize()
     {
         infoPanelInstance = Instantiate(UIMenu.Instance.staffInfoPanelPrefab);
-        infoPanelInstance.transform.SetParent(playerControl.canvas.transform);
+        base.Initialize();
         infoPanelInstance.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = staff.GetName();
         infoPanelInstance.transform.GetChild(0).Find("DataPanel").Find("Fire Staff").GetComponent<Button>().onClick.AddListener(() => {
             staff.Remove();
@@ -49,6 +49,20 @@ public class StaffInfoPopup : InfoPopup
         this.staff = staff;
     }
 
+    public override void DestroyPanel()
+    {
+        foreach(var renderer in staff.renderers){
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
+        }
+        base.DestroyPanel();
+    }
+
+    public override void AddOutline()
+    {
+        foreach(var renderer in staff.renderers){
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = true;
+        }
+    }
     
 }
 

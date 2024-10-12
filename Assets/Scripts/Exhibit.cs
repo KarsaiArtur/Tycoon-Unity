@@ -119,7 +119,7 @@ public class Exhibit : Placeable, Visitable, Saveable
         {
             terrainTypes.AddRange(grid.GetTerrainTypes());
         }
-        return (float)terrainTypes.Count(t => t == terrainType) / terrainTypes.Count;
+        return (float)terrainTypes.Count(t => t == terrainType) / terrainTypes.Count * 100;
     }
 
     public void CalculateAnimalsTerrainBonus()
@@ -148,6 +148,13 @@ public class Exhibit : Placeable, Visitable, Saveable
         if (reachable && GetAnimals().Count == 0)
         {
             RemoveFromReachableLists();
+        }
+
+        if (GetAnimals().Count == 0)
+        {
+            var size = GetFoodPlaces().Count;
+            for (int i = size - 1; i >= 0; i--)
+                GetFoodPlaces()[i].Delete();
         }
     }
 

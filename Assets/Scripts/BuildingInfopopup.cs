@@ -15,7 +15,7 @@ public class BuildingInfopopup : InfoPopup
     public override void Initialize()
     {
         infoPanelInstance = Instantiate(UIMenu.Instance.buildingInfoPanelPrefab);
-        infoPanelInstance.transform.SetParent(playerControl.canvas.transform);
+        base.Initialize();
         purchasableItemsUI = new List<PurchasableItemUi>();
         infoPanelInstance.transform.GetChild(0).Find("Name").GetComponent<TextMeshProUGUI>().text = building.GetName();
 
@@ -55,5 +55,20 @@ public class BuildingInfopopup : InfoPopup
         newItem.SetItem(purchasableItem);
         newItem.transform.SetParent(infoPanelInstance.transform.GetChild(0).Find("DataPanel").transform);
         return newItem;
+    }
+
+    public override void DestroyPanel()
+    {
+        foreach(var renderer in building.renderers){
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
+        }
+        base.DestroyPanel();
+    }
+
+    public override void AddOutline()
+    {
+        foreach(var renderer in building.renderers){
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = true;
+        }
     }
 }

@@ -24,6 +24,26 @@ public class Animal : Placeable, Saveable
         Nothing
     }
 
+    public enum SadnessReason
+    {
+        TerrainType,
+        Space,
+        Hunger,
+        Thirst,
+        Health
+    }
+
+    public enum HealthReason
+    {
+        Hunger,
+        Thirst,
+        Happiness,
+        Droppings,
+        Sickness
+    }
+
+    public List<SadnessReason> sadnessReasons = new();
+    public List<HealthReason> healthReasons = new();
     public Material[] materials;
     Vector3 defaultScale;
     float defaultSpeed;
@@ -69,6 +89,7 @@ public class Animal : Placeable, Saveable
     public Vector3 sleptPosition = Vector3.zero;
     public float requiredExhibitSpace = 1;
     public List<TerrainType> terrainsPreferred = new();
+    public List<float> terrainsPreferredPercents = new();
     public float terrainBonusMultiplier = 0;
     public float natureBonus = 1;
     public float age = 0;
@@ -98,8 +119,10 @@ public class Animal : Placeable, Saveable
 
     public override void Place(Vector3 mouseHit)
     {
-        if (tag != "Placed")
+        if (tag != "Placed"){
             base.Place(mouseHit);
+            isMale = playerControl.isMale;
+        }
 
         terraintHeight = mouseHit.y;
         Vector3 position = new Vector3(mouseHit.x, mouseHit.y + 0.01f, mouseHit.z);
@@ -281,7 +304,7 @@ public class Animal : Placeable, Saveable
                 NewDay();
             }
 
-            if (GetExhibit() == null && GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
+            if (GetExhibit() == null && GridManager.instance.GetGrid(transform.position).GetExhibit() != null && !isSlept)
             {
                 CheckIfInsideExhibit();
             }
@@ -294,6 +317,9 @@ public class Animal : Placeable, Saveable
     {
         while (true)
         {
+            sadnessReasons.Clear();
+            healthReasons.Clear();
+
             hunger = hunger > hungerDetriment ? hunger - hungerDetriment : 0;
             if (isPregnant)
                 hunger = hunger > hungerDetriment ? hunger - hungerDetriment : 0;
@@ -301,29 +327,59 @@ public class Animal : Placeable, Saveable
             restroomNeeds = restroomNeeds > restroomNeedsDetriment ? restroomNeeds - restroomNeedsDetriment : 0;
 
             if (GetExhibit() != null && terrainBonusMultiplier < 0)
+            {
                 happiness = happiness > happinessDetriment * terrainBonusMultiplier ? happiness + happinessDetriment * terrainBonusMultiplier : 0;
+                sadnessReasons.Add(SadnessReason.TerrainType);
+            }
             if (GetExhibit() != null && terrainBonusMultiplier > 0)
                 happiness = happiness + happinessDetriment * terrainBonusMultiplier < 100 ? happiness + happinessDetriment * terrainBonusMultiplier : 100;
 
             if (GetExhibit() != null && (GetExhibit().gridList.Count < requiredExhibitSpace || GetExhibit().gridList.Count < GetExhibit().occupiedSpace))
+            {
                 happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
+                sadnessReasons.Add(SadnessReason.Space);
+            }
             if (hunger < 33)
+            {
                 happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
+                sadnessReasons.Add(SadnessReason.Hunger);
+            }
             if (thirst < 33)
+            {
                 happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
+                sadnessReasons.Add(SadnessReason.Thirst);
+            }
             if (health < 33)
+            {
                 happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
+                sadnessReasons.Add(SadnessReason.Health);
+            }
 
             if (hunger < 20)
+            {
                 health = health > healthDetriment ? health - healthDetriment : 0;
+                healthReasons.Add(HealthReason.Hunger);
+            }
             if (thirst < 20)
+            {
                 health = health > healthDetriment ? health - healthDetriment : 0;
+                healthReasons.Add(HealthReason.Thirst);
+            }
             if (happiness < 20)
+            {
                 health = health > healthDetriment ? health - healthDetriment : 0;
+                healthReasons.Add(HealthReason.Happiness);
+            }
             if (GetExhibit() != null && GetExhibit().animalDroppings.Count > GetExhibit().gridList.Count)
+            {
                 health = health > healthDetriment ? health - healthDetriment : 0;
+                healthReasons.Add(HealthReason.Droppings);
+            }
             if (isSick)
+            {
                 health = health > healthDetriment * 5 ? health - healthDetriment * 5 : 0;
+                healthReasons.Add(HealthReason.Sickness);
+            }
 
             if (hunger > 75 && thirst > 75 && health > 75)
                 happiness = happiness + happinessDetriment * natureBonus > 100 ? 100 : happiness + happinessDetriment * natureBonus;
@@ -331,11 +387,22 @@ public class Animal : Placeable, Saveable
             if (health <= 0)
                 Die();
 
-            if (GetExhibit() != null && restroomNeeds <= 0)
+            if (GetExhibit() != null && restroomNeeds <= 0 && !isSlept)
                 Poop();
 
             yield return new WaitForSeconds(1);
         }
+    }
+
+    public TerrainType GetMostPreferredTerrain()
+    {
+        int maxIndex = 0;
+        for (int i = 1; i < terrainsPreferred.Count; i++)
+        {
+            if (terrainsPreferredPercents[i] > terrainsPreferredPercents[maxIndex])
+                maxIndex = i;
+        }
+        return terrainsPreferred[maxIndex];
     }
 
     public void CalculateTerrainBonus()
@@ -343,11 +410,15 @@ public class Animal : Placeable, Saveable
         if (GetExhibit() != null)
         {
             float likedTerrainPercent = 0;
-            foreach (var terrainType in terrainsPreferred)
+            for (int i = 0; i < terrainsPreferred.Count; i++)
             {
-                likedTerrainPercent += GetExhibit().CalculateTerrainPercent(terrainType) < (1 / terrainsPreferred.Count + 0.1f) ? GetExhibit().CalculateTerrainPercent(terrainType): (1 / terrainsPreferred.Count + 0.1f);
+                var percent = GetExhibit().CalculateTerrainPercent(terrainsPreferred[i]);
+                likedTerrainPercent += percent < (terrainsPreferredPercents[i] + 10) ? percent : (terrainsPreferredPercents[i] + 10);
+                //Debug.Log(terrainsPreferred[i] + ": " + terrainsPreferredPercents[i] + " Actual: " + percent + " All: " + likedTerrainPercent);
             }
+            likedTerrainPercent /= 100;
             likedTerrainPercent = likedTerrainPercent < 1 ? likedTerrainPercent : 1;
+            //Debug.Log(likedTerrainPercent);
             terrainBonusMultiplier = likedTerrainPercent * 3 - 2;
         }
     }
@@ -384,8 +455,7 @@ public class Animal : Placeable, Saveable
 
     public void Damage()
     {
-        Debug.Log(attackCooldown);
-        if (attackCooldown >= 2)
+        if (attackCooldown >= 3)
         {
             GetTarget().health = GetTarget().health - 20 * dangerLevel / GetTarget().dangerLevel;
             Debug.Log(placeableName + " damaged");
@@ -584,11 +654,11 @@ public class Animal : Placeable, Saveable
             ChooseDestination();
         }
         if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1
-            || (action == Action.Mating && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.5))
+            || (action == Action.Mating && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= agent.radius * 2 * transform.localScale.x + 0.2))
         {
             destinationReached = true;
         }
-        if (action == Action.Attacking && GetTarget() != null && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.5)
+        if (action == Action.Attacking && GetTarget() != null && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= agent.radius * transform.localScale.x + target.agent.radius * target.transform.localScale.x + 0.2)
         {
             Damage();
         }

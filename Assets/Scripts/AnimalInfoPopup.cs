@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using cakeslice;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using static Unity.VisualScripting.Antlr3.Runtime.Tree.TreeWizard;
@@ -16,7 +18,7 @@ public class AnimalInfoPopup : InfoPopup
     public override void Initialize()
     {
         infoPanelInstance = Instantiate(UIMenu.Instance.animalInfoPanelPrefab);
-        infoPanelInstance.transform.SetParent(playerControl.canvas.transform);
+        base.Initialize();
         animalCam = animal.transform.Find("AnimalCam").gameObject;
         animalCam.SetActive(true);
         InitAttributeList();
@@ -32,7 +34,6 @@ public class AnimalInfoPopup : InfoPopup
             animal.Remove();
             DestroyPanel();
         });
-        AddOutline();
         StartCoroutine(CheckAnimalAttributes());
     }
 
@@ -88,7 +89,7 @@ public class AnimalInfoPopup : InfoPopup
     public override void DestroyPanel()
     {
         foreach(var renderer in animal.renderers){
-            Destroy(renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>());
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
         }
         base.DestroyPanel();
         animalCam.SetActive(false);
@@ -97,8 +98,7 @@ public class AnimalInfoPopup : InfoPopup
     public override void AddOutline()
     {
         foreach(var renderer in animal.renderers){
-            Debug.Log("EZ");
-            renderer.gameObject.gameObject.AddComponent<cakeslice.Outline>();
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = true;
         }
     }
 }

@@ -17,7 +17,6 @@ public class TerrainTypeMenu : ExtraMenu
     public GameObject terrainTypeIconPrefab;
     public GameObject terrainTypeButton;
     public GameObject terrainTypeButtonsPanel;
-    public List<Sprite> terrainTypeSprites;
     List<Outline> outlines;
     Color defaultOutlineColor;
 
@@ -48,7 +47,7 @@ public class TerrainTypeMenu : ExtraMenu
                     outline.effectColor = Color.red;
                 });
                 var image = button.GetComponent<Image>();
-                image.sprite = terrainTypeSprites.Where(element => element.name.ToLower().Equals(terrainType.GetName().ToLower())).FirstOrDefault();
+                image.sprite = UIMenu.Instance.terrainTypeSprites.Where(element => element.name.ToLower().Equals(terrainType.GetName().ToLower())).FirstOrDefault();
 
             }
         }

@@ -25,6 +25,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public List<float> latestVisitorHappinesses = new();
     int listSizeLimit = 25;
     public float reputation = 75;
+    public List<Renderer> renderers;
 
     public void Awake()
     {
@@ -43,6 +44,19 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
 
         entranceGrid = GridManager.instance.GetGrid(new Vector3(0 + GridManager.instance.elementWidth, 0, 17 + GridManager.instance.elementWidth));
         exitGrid = GridManager.instance.GetGrid(new Vector3(0 + GridManager.instance.elementWidth, 0, 20 + GridManager.instance.elementWidth));
+
+        renderers = new List<Renderer>(GetComponentsInChildren<MeshRenderer>());
+        var renderers2 = new List<Renderer>(GetComponentsInChildren<SkinnedMeshRenderer>());
+
+        foreach (var renderer in renderers)
+        {
+            renderer.gameObject.AddComponent<cakeslice.Outline>().enabled = false;
+        }
+        foreach (var renderer in renderers2)
+        {
+            renderer.gameObject.AddComponent<cakeslice.Outline>().enabled = false;
+        }
+        renderers2.ForEach(r => renderers.Add(r));
     }
 
     public void Arrived(Visitor visitor)

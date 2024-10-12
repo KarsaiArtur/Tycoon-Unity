@@ -276,6 +276,18 @@ public abstract class Staff : Placeable
 
     public abstract string GetCurrentAction();
 
+    public override void Remove()
+    {
+        base.Remove();
+
+        if (insideExhibit != null)
+        {
+            insideExhibit.RemoveStaffs(this);
+            if (insideExhibit.GetStaffsAtGate().Contains(this))
+                insideExhibit.RemoveStaffsAtGate(this);
+        }
+    }
+
     public void LoadHelper()
     {
         agent.Warp(transform.position);

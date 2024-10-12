@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
@@ -20,6 +21,9 @@ public class Vet : Staff, Saveable
     Animal animalOccupied;
     public VetJobs job = VetJobs.Nothing;
     public bool aiming = false;
+    int shootingDistance = 5;
+    IEnumerator coroutine;
+    bool CRRunning = false;
 
     public override void Start()
     {
@@ -38,11 +42,10 @@ public class Vet : Staff, Saveable
         }
         else if (workingState == WorkingState.Working && job == VetJobs.PuttingAnimalToSleep && animalOccupied != null && animalOccupied.agent.isOnNavMesh)
         {
-            if (Vector3.Distance(transform.position, animalOccupied.transform.position) < 5 && !aiming)
+            if (!CRRunning)
             {
-                agent.isStopped = true;
-                aiming = true;
-                time = 0;
+                coroutine = Aiming();
+                StartCoroutine(coroutine);
             }
             if (!aiming)
                 agent.SetDestination(animalOccupied.transform.position);
@@ -58,10 +61,37 @@ public class Vet : Staff, Saveable
         }
     }
 
+    IEnumerator Aiming()
+    {
+        CRRunning = true;
+
+        while (!aiming && animalOccupied != null && workingState == WorkingState.Working && job == VetJobs.PuttingAnimalToSleep)
+        {
+            Vector3 shootPos = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
+            Vector3 targetPos = new Vector3(animalOccupied.transform.position.x, animalOccupied.transform.position.y + 0.25f, animalOccupied.transform.position.z);
+            RaycastHit hit;
+
+            if (Physics.Raycast(shootPos, (targetPos - shootPos), out hit, shootingDistance) && hit.transform.gameObject == animalOccupied.gameObject)
+            {
+                agent.isStopped = true;
+                aiming = true;
+                time = 0;
+            }
+
+            yield return new WaitForSeconds(1);
+        }
+    }
+
     public override void FindJob()
     {
+        if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
+            insideExhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
+        else if (workingState != WorkingState.GoingToExhibitEntranceToLeave)
+            insideExhibit = null;
+
         isAvailable = false;
         aiming = false;
+        CRRunning = false;
 
         var possibleJobs = new List<(Exhibit exhibit, Animal animal, VetJobs vetJob, float percent)>();
         foreach (Exhibit exhibit in ExhibitManager.instance.exhibitList)
@@ -103,9 +133,17 @@ public class Vet : Staff, Saveable
                 FindDestination(destinationExhibit);
                 return;
             }
+            else if (destinationExhibit != null)
+            {
+                workingState = WorkingState.GoingToExhibitExitToLeave;
+                FindDestination(insideExhibit);
+                return;
+            }
             else
             {
                 workingState = WorkingState.GoingToExhibitExitToLeave;
+                animalOccupied.isOccupiedByVet = false;
+                animalOccupied = null;
                 FindDestination(insideExhibit);
                 return;
             }
@@ -134,6 +172,7 @@ public class Vet : Staff, Saveable
         {
             agent.isStopped = false;
             aiming = false;
+            CRRunning = false;
             animalOccupied.isOccupiedByVet = false;
             animalOccupied.isSlept = true;
             animalOccupied.sleptPosition = animalOccupied.transform.position;
@@ -162,6 +201,7 @@ public class Vet : Staff, Saveable
         base.SetToDefault();
         job = VetJobs.Nothing;
         aiming = false;
+            CRRunning = false;
 
         if (animalOccupied != null)
         {
@@ -176,6 +216,7 @@ public class Vet : Staff, Saveable
 
         if (animalOccupied != null)
             animalOccupied.isOccupiedByVet = false;
+            
         Destroy(gameObject);
     }
 ///******************************

@@ -5,12 +5,14 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.VisualScripting;
 using System;
+using UnityEngine.Events;
 
 public class UIMenu : MonoBehaviour
 {
     public static UIMenu Instance { get; private set; }
     public Menu curMenu = null;
     public ExtraMenu curExtraMenu = null;
+    public GameObject curInfoPanel;
     public NotificationWindow curNotification = null;
     public int curSubMenuIndex;
     public int curPlaceableIndex;
@@ -40,6 +42,9 @@ public class UIMenu : MonoBehaviour
     public GameObject animalInfoItemPrefab; 
     public GameObject staffInfoPanelPrefab;
     public List<GameObject> exhibitCreateWindows;
+    public GameObject windows;
+    public UnityEvent placeableChanged;
+    public List<Sprite> terrainTypeSprites;
 
     const float defaultMenuButtonWidth = 113;
     const float defaultMenuButtonHeight = 80;
@@ -79,6 +84,7 @@ public class UIMenu : MonoBehaviour
 
     public void ChangeCurrentMenu(Menu newMenu)
     {
+        DestroyCurInfoPanel();
         DestroyPlaceables();
         DestroySubmenus();
         RectTransform curMenuRectTransform;
@@ -118,6 +124,7 @@ public class UIMenu : MonoBehaviour
 
             curSubMenuIndex = 0;
             SpawnSubmenus();
+            SpawnInfoPanel();
             isMenuVisible = true;
         }
         gameObject.SetActive(isMenuVisible);
@@ -131,7 +138,7 @@ public class UIMenu : MonoBehaviour
         playerControl.DestroyPlaceableInHand();
         curPlaceable = curMenu.GetSelectedPlaceable(curPlaceableIndex).GetComponent<Placeable>();
         curName.text = curPlaceable.GetName();
-        curPrice.text = curPlaceable.GetPrice() + " $";
+        curPrice.text = curPlaceable.GetPrice();
         playerControl.objectTimesRotated = 0;
         playerControl.Spawn(curPlaceable);
     }
@@ -154,6 +161,13 @@ public class UIMenu : MonoBehaviour
             curMenu.submenuPrefabs[i].subMenuInstance.transform.SetParent(submenuPanel);
         }
         SetSubmenu(0, submenuPanel.childCount - curMenu.submenuPrefabs.Length);
+
+    }
+
+    void SpawnInfoPanel()
+    {
+        curInfoPanel = Instantiate(curMenu.infoPanel, new Vector3(transform.position.x,transform.position.y, transform.position.z) , Quaternion.identity);
+        curInfoPanel.transform.SetParent(transform);
     }
 
 
@@ -166,7 +180,7 @@ public class UIMenu : MonoBehaviour
     }
 
 
-    public Button button;
+    public PlaceableButton button;
     public void SpawnPlaceables()
     {
         Placeable[] placeables = curMenu.submenuPrefabs[curSubMenuIndex].subMenuInstance.GetComponent<SubMenu>().placeables;
@@ -186,6 +200,13 @@ public class UIMenu : MonoBehaviour
         for (int i = 0; i < placeableListPanel.childCount; i++)
         {
             Destroy(placeableListPanel.GetChild(i).gameObject);
+        }
+    }
+
+    void DestroyCurInfoPanel()
+    {
+        if(curInfoPanel != null){
+            Destroy(curInfoPanel.gameObject);
         }
     }
 

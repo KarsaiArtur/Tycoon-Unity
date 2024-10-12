@@ -13,6 +13,7 @@ public class VisitorInfoPopup : InfoPopup
 
     public override void Initialize()
     {
+        infoPanelInstance = Instantiate(UIMenu.Instance.infoPanelPrefab);
         base.Initialize();
         InitAttributeList();
         visitorInfoItemInstances = new List<GameObject>();
@@ -86,5 +87,21 @@ public class VisitorInfoPopup : InfoPopup
     public override bool DidVisitorLeft(Visitor visitor)
     {
         return this.visitor == visitor;
+    }
+
+    public override void DestroyPanel()
+    {
+        foreach(var renderer in visitor.renderers){
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
+        }
+        base.DestroyPanel();
+    }
+
+    public override void AddOutline()
+    {
+        foreach(var renderer in visitor.renderers){
+            Debug.Log(renderer);
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = true;
+        }
     }
 }

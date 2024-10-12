@@ -7,6 +7,7 @@ public class Menu : MonoBehaviour
 {
     public SubMenu[] submenuPrefabs;
     public Sprite menuBackground;
+    public GameObject infoPanel;
 
     public Placeable GetSelectedPlaceable(int placeableIndex)
     {

@@ -12,6 +12,7 @@ public class WaterTrough : Placeable, AnimalVisitable, Saveable
 {
     float height;
     NavMeshObstacle navMeshObstacle;
+    public float waterCapacity = 500;
     public float water = 500;
     /////GENERATE
     private Exhibit exhibit;
@@ -95,8 +96,8 @@ public class WaterTrough : Placeable, AnimalVisitable, Saveable
 
     public void FillWithWater()
     {
-        GetExhibit().water += 500 - water;
-        water = 500;
+        GetExhibit().water += waterCapacity - water;
+        water = waterCapacity;
     }
 
     public override void Remove()
@@ -118,7 +119,11 @@ public class WaterTrough : Placeable, AnimalVisitable, Saveable
         base.Remove();
 
         if (GetExhibit() != null)
+        {
+            GetExhibit().water -= water;
+            GetExhibit().waterCapacity -= waterCapacity;
             GetExhibit().RemoveWaterTrough(this);
+        }
             
         Destroy(gameObject);
     }

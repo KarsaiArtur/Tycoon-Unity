@@ -30,6 +30,11 @@ public class Zookeeper : Staff, Saveable
 
     public override void FindJob()
     {
+        if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
+            insideExhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
+        else if (workingState != WorkingState.GoingToExhibitEntranceToLeave)
+            insideExhibit = null;
+
         isAvailable = false;
 
         var animalNeeds = new List<(Exhibit exhibit, ZookeperJobs job, float percent)>();
@@ -204,18 +209,15 @@ public class Zookeeper : Staff, Saveable
         if (exhibitToWorkAt != null)
         {
             if (jobAtExhibit == ZookeperJobs.PlacingFood)
-            {
                 exhibitToWorkAt.isGettingFood = false;
-            }
+                
             else if (jobAtExhibit == ZookeperJobs.FillingWater)
-            {
                 exhibitToWorkAt.isGettingWater = false;
-            }
+                
             else if (jobAtExhibit == ZookeperJobs.CleaningExhibit)
-            {
                 exhibitToWorkAt.isGettingCleaned = false;
-            }
         }
+        
         Destroy(gameObject);
     }
 ///******************************

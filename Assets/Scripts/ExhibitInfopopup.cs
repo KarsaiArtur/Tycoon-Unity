@@ -16,7 +16,7 @@ public class ExhibitInfopopup : InfoPopup
     public override void Initialize()
     {
         infoPanelInstance = Instantiate(UIMenu.Instance.exhibitInfoPanelPrefab);
-        infoPanelInstance.transform.SetParent(playerControl.canvas.transform);
+        base.Initialize();
         animalInfos = new List<GameObject>();
         scrollArea = infoPanelInstance.transform.GetComponentsInChildren<Transform>().Where(t => t.name.Equals("Scroll Area")).SingleOrDefault()?.gameObject;
         CreateAnimalInfos();
@@ -82,5 +82,20 @@ public class ExhibitInfopopup : InfoPopup
     public void SetClickable(Exhibit exhibit)
     {
         this.exhibit = exhibit;
+    }
+
+    public override void DestroyPanel()
+    {
+        foreach(var renderer in exhibit.renderers){
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
+        }
+        base.DestroyPanel();
+    }
+
+    public override void AddOutline()
+    {
+        foreach(var renderer in exhibit.renderers){
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = true;
+        }
     }
 }

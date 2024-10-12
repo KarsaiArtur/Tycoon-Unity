@@ -24,6 +24,17 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         Leave
     }
 
+    public enum SadnessReason
+    {
+        Hunger,
+        Thirst,
+        Energy,
+        Restroom,
+        Trash
+    }
+
+    public List<SadnessReason> sadnessReasons = new();
+
     public string _id;
     public Animator animator;
     public NavMeshSurface surface;
@@ -63,6 +74,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     bool isFleeing = false;
     public int dangerLevel = 3;
     public int selectedPrefabId;
+    public List<Renderer> renderers;
 
     public void Awake()
     {
@@ -101,12 +113,27 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
                 photoCamera = renderer;
             }
         }
+
+        renderers = new List<Renderer>(GetComponentsInChildren<MeshRenderer>());
+        var renderers2 = new List<Renderer>(GetComponentsInChildren<SkinnedMeshRenderer>());
+
+        foreach (var renderer in renderers)
+        {
+            renderer.gameObject.AddComponent<cakeslice.Outline>().enabled = false;
+        }
+        foreach (var renderer in renderers2)
+        {
+            renderer.gameObject.AddComponent<cakeslice.Outline>().enabled = false;
+        }
+        renderers2.ForEach(r => renderers.Add(r));
     }
 
     IEnumerator DecreaseNeeds()
     {
         while (true)
         {
+            sadnessReasons.Clear();
+
             hunger = hunger > hungerDetriment ? hunger - hungerDetriment : 0;
             thirst = thirst > thirstDetriment ? thirst - thirstDetriment : 0;
             energy = energy > energyDetriment ? energy - energyDetriment : 0;
@@ -117,13 +144,25 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
                 energy = energy > energyDetriment ? energy - energyDetriment : 0;
 
             if (hunger < 33)
+            {
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+                sadnessReasons.Add(SadnessReason.Hunger);
+            }
             if (thirst < 33)
+            {
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+                sadnessReasons.Add(SadnessReason.Thirst);
+            }
             if (energy < 33)
+            {
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+                sadnessReasons.Add(SadnessReason.Energy);
+            }
             if (restroomNeeds < 33)
+            {
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
+                sadnessReasons.Add(SadnessReason.Restroom);
+            }
 
             if (TrashCanManager.instance.trashOnTheGround.Count > 0)
             {
@@ -141,9 +180,8 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
 
                 if (trashCount > 0)
                 {
-                    Debug.Log("before: " + happiness);
                     happiness = happiness > happinessDetriment * trashCount ? happiness - happinessDetriment * trashCount : 0;
-                    Debug.Log("after: " + happiness);
+                    sadnessReasons.Add(SadnessReason.Trash);
                 }
             }
 

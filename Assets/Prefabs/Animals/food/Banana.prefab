@@ -46,7 +46,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eab82316ca4570243a1f4ccdf0cc4692, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
+  selectedPrefabId: 0
   food: 200
+  image: {fileID: 21300000, guid: b053aab0f5356b44ebba3a8569f0a6a3, type: 3}
   exhibitId: 
 --- !u!65 &4725240412694757483
 BoxCollider:

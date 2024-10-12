@@ -32,6 +32,11 @@ public class Maintainer : Staff, Saveable
 
     public override void FindJob()
     {
+        if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null)
+            insideExhibit = GridManager.instance.GetGrid(transform.position).GetExhibit();
+        else if (workingState != WorkingState.GoingToExhibitEntranceToLeave)
+            insideExhibit = null;
+
         isAvailable = false;
 
         var possibleJobs = new List<(Fence fence, TrashCan trashCan, MaintainerJobs maintainerJob, float percent)>();
@@ -297,8 +302,10 @@ public class Maintainer : Staff, Saveable
 
         if (fenceToRepair != null)
             fenceToRepair.isBeingFixed = false;
+
         if (trashCanToEmpty != null)
             trashCanToEmpty.isBeingEmptied = false;
+            
         if (job == MaintainerJobs.PickingUpTrash)
             TrashCanManager.instance.trashIsBeingPickedUp = false;
 

@@ -12,6 +12,7 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable, Saveable
     public string _id;
     public int selectedPrefabId;
     public float food = 200;
+    public Sprite image;
     /////GENERATE
     private Exhibit exhibit;
 
@@ -56,6 +57,13 @@ public class AnimalFood : MonoBehaviour, AnimalVisitable, Saveable
     public void Delete()
     {
         AnimalVisitableManager.instance.animalvisitableList.Remove(this);
+        
+        if (exhibit != null)
+        {
+            exhibit.food -= food;
+            exhibit.RemoveFoodPlaces(this);
+        }
+
         if (gameObject != null)
             Destroy(gameObject);
     }

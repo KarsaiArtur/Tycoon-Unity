@@ -38,7 +38,7 @@ public class Grid
     public List<TerrainType> GetTerrainTypes()
     {
         List<TerrainType> terrainTypes = new();
-        for (int i = 1; i < coords.Length; i++)
+        for (int i = 0; i < coords.Length; i++)
         {
             terrainTypes.Add(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[i])]);
         }

@@ -26,7 +26,7 @@ public class ZooManagerInfopopup : InfoPopup
         zooManager = ZooManager.instance;
         gameObject.SetActive(true);
         infoPanelInstance = Instantiate(UIMenu.Instance.zooManagerInfoPrefab);
-        infoPanelInstance.transform.SetParent(playerControl.canvas.transform);
+        base.Initialize();
         staffInfos = new List<GameObject>();
         scrollArea = infoPanelInstance.transform.GetComponentsInChildren<Transform>().Where(t => t.name.Equals("Scroll Area")).SingleOrDefault()?.gameObject;
         CreateStaffInfos();
@@ -117,5 +117,19 @@ public class ZooManagerInfopopup : InfoPopup
     public static float TwoDecimal(float value)
     {
         return (float)Math.Round((Decimal)value, 2, MidpointRounding.AwayFromZero);
+    }
+    public override void DestroyPanel()
+    {
+        foreach(var renderer in zooManager.renderers){
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
+        }
+        base.DestroyPanel();
+    }
+
+    public override void AddOutline()
+    {
+        foreach(var renderer in zooManager.renderers){
+            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = true;
+        }
     }
 }
