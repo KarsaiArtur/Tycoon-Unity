@@ -66,7 +66,7 @@ public class Placeable : MonoBehaviour, Clickable
     public virtual void Place(Vector3 mouseHit)
     {
         currentPlacingPriceInstance = currentPlacingPriceInstance == null ? Instantiate(currentPlacingPrice) : currentPlacingPriceInstance;
-        currentPlacingPriceInstance.transform.SetParent(playerControl.canvas.transform);
+        currentPlacingPriceInstance.transform.SetParent(playerControl.canvas.transform.GetChild(0).transform);
         currentPlacingPriceInstance.text = "-" + placeablePrice + " $";
         if (ZooManager.instance.money < placeablePrice)
         {

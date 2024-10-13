@@ -141,6 +141,7 @@ public class UIMenu : MonoBehaviour
         curPrice.text = curPlaceable.GetPrice();
         playerControl.objectTimesRotated = 0;
         playerControl.Spawn(curPlaceable);
+    
     }
 
     public void SetSubmenu(int index, int offset)

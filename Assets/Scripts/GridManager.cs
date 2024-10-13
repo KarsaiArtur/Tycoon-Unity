@@ -393,13 +393,17 @@ public class GridManager : MonoBehaviour, Saveable, Manager
             //Destroy(terraformCollider.gameObject, 50);
         }
 
-        int[] neighbourIndexes = new int[4];
+        int[] neighbourIndexes = new int[8];
         neighbourIndexes[0] = index + 1;
         neighbourIndexes[1] = index + terrainWidth + 1;
         neighbourIndexes[2] = index - 1;
         neighbourIndexes[3] = index - terrainWidth - 1;
+        neighbourIndexes[4] = index - terrainWidth - 2;
+        neighbourIndexes[5] = index - terrainWidth;
+        neighbourIndexes[6] = index + terrainWidth;
+        neighbourIndexes[7] = index + terrainWidth + 2;
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < neighbourIndexes.Count(); i++)
         {
             if (coords[neighbourIndexes[i]].y <= height - 1 && positive)
             {

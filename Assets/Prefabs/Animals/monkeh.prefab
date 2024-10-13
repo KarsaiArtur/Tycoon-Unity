@@ -261,6 +261,9 @@ MonoBehaviour:
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
+  selectedPrefabId: 0
+  sadnessReasons: 
+  healthReasons: 
   materials:
   - {fileID: 2100000, guid: e8eee43141a377848a3027dbe52e5f3e, type: 2}
   - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
@@ -270,8 +273,9 @@ MonoBehaviour:
   atDestination: 1
   foodPrefab: {fileID: 63179339203581416, guid: 9a447cd8e61c9004aa147f1ba2c6ec5c, type: 3}
   reputationBonus: 0.04
+  timeGoal: 0
   destinationReached: 0
-  action: 
+  action: 0
   hunger: 100
   thirst: 100
   restroomNeeds: 100
@@ -283,21 +287,36 @@ MonoBehaviour:
   happinessDetriment: 0.25
   healthDetriment: 0.25
   isSick: 0
-  isGettingHealed: 0
-  requiredExhibitSpace: 1
+  isOccupiedByVet: 0
+  isSlept: 0
+  sleptPosition: {x: 0, y: 0, z: 0}
+  requiredExhibitSpace: 53
+  continents: 0100000006000000
+  terrainsPreferred: 02000000
+  terrainsPreferredPercents:
+  - 100
+  terrainBonusMultiplier: 0
+  natureBonus: 1
   age: 0
-  lifeExpectancy: 10
+  lifeExpectancy: 20
   fullGrownAgeMonth: 12
   isMale: 1
   reproductionAgeMonth: 1
-  pregnancyDurationMonth: 1
+  pregnancyDurationMonth: 5
   isPregnant: 0
   pregnancyTimeMonth: 0
   averageNumberOfBabies: 1
   fertility: 100
   isAgressive: 0
   dangerLevel: 2
+  description: Squirrel monkeys are omnivores, primarily eating fruits, insects,
+    and small animals like frogs or bird eggs. Unlike many other species, they are
+    social animals that live in large groups, sometimes numbering up to 500 individuals.
+    Squirrel monkeys thrive in tropical rainforests, usually found in the canopy,
+    and are native to Central and South America. Their group behavior and habitat
+    preferences help them thrive in the diverse ecosystems of these regions.
   exhibitId: 
+  destinationVisitableId: 
   matingPartnerId: 
   targetId: 
 --- !u!4 &3207112213477443929 stripped

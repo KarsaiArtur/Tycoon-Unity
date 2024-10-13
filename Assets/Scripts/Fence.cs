@@ -18,6 +18,7 @@ public class Fence : Placeable, Saveable
     public Grid grid1;
     public Grid grid2;
     bool collided = false;
+    public int strength = 1;
     public int maxHealth = 3;
     public int health;
     public bool isBeingFixed = false;
@@ -38,7 +39,24 @@ public class Fence : Placeable, Saveable
         if (CalendarManager.instance.currentDate != prevDay && tag == "Placed Fence")
         {
             prevDay = CalendarManager.instance.currentDate;
-            if (UnityEngine.Random.Range(0, 100) == 0)
+            int chance = 100 * strength;
+            if (grid1.GetExhibit() != null && grid1.GetExhibit().GetAnimals().Count > 0)
+            {
+                chance /= grid1.GetExhibit().GetAnimals()[0].dangerLevel;
+                if (grid1.GetExhibit().GetAnimals()[0].isAgressive)
+                {
+                    chance /= 2;
+                }
+            }
+            if (grid2.GetExhibit() != null && grid2.GetExhibit().GetAnimals().Count > 0)
+            {
+                chance /= grid2.GetExhibit().GetAnimals()[0].dangerLevel;
+                if (grid2.GetExhibit().GetAnimals()[0].isAgressive)
+                {
+                    chance /= 2;
+                }
+            }
+            if (UnityEngine.Random.Range(0, chance) == 0)
             {
                 health--;
             }

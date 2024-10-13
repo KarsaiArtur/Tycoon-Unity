@@ -8096,7 +8096,21 @@ MonoBehaviour:
   - {fileID: 6410034903815843560, guid: 05c9c78e62dd0154fa1cbbe09c43547f, type: 3}
   - {fileID: 8012818236100604548, guid: 97704fd455ca4f448b189a125c88c190, type: 3}
   windows: {fileID: 1172593616}
-  button: {fileID: 1402598303060906925, guid: 81fd13ef955bfa84ebd425e468ba6450, type: 3}
+  placeableChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  terrainTypeSprites:
+  - {fileID: 21300000, guid: 16ade1b7ee296dc448ede68473d7d7f9, type: 3}
+  - {fileID: 21300000, guid: a57ec8b3941bd364ab1a43d3e6043121, type: 3}
+  - {fileID: 21300000, guid: 483147f936877de41821fdbb37b23c20, type: 3}
+  - {fileID: 21300000, guid: 86a75df301aee2844b3eff816f1b2c66, type: 3}
+  - {fileID: 21300000, guid: 48f92b43e609de6449f0c3169c9dbfed, type: 3}
+  - {fileID: 21300000, guid: 9fa2ca306dbdf20408e18580d1b4e274, type: 3}
+  - {fileID: 21300000, guid: 6409b4891ff9d7148bcc74acdf7cf3f0, type: 3}
+  - {fileID: 21300000, guid: 7009af7aa9370864889e7021e134ef2d, type: 3}
+  - {fileID: 21300000, guid: e00c33fdc95376d4c9266494d21d907c, type: 3}
+  - {fileID: 21300000, guid: 149cfa1d5fe8cde4f97eed2cbdab7a24, type: 3}
+  button: {fileID: 2482787116023568812, guid: 81fd13ef955bfa84ebd425e468ba6450, type: 3}
 --- !u!114 &1415407952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8530,8 +8544,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -886.8945, y: 242.83002}
-  m_SizeDelta: {x: -1773.829, y: -485.66}
+  m_AnchoredPosition: {x: -886.89, y: 188.69}
+  m_SizeDelta: {x: -1773.8, y: -377.38}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1591592308
 MonoBehaviour:

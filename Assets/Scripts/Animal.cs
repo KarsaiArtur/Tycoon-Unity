@@ -88,6 +88,7 @@ public class Animal : Placeable, Saveable
     public bool isSlept = false;
     public Vector3 sleptPosition = Vector3.zero;
     public float requiredExhibitSpace = 1;
+    public List<Continent> continents;
     public List<TerrainType> terrainsPreferred = new();
     public List<float> terrainsPreferredPercents = new();
     public float terrainBonusMultiplier = 0;
@@ -116,6 +117,7 @@ public class Animal : Placeable, Saveable
     private Animal target;
     Vector3 dangerPos;
     float attackCooldown = 2;
+    public string description;
 
     public override void Place(Vector3 mouseHit)
     {
@@ -331,8 +333,8 @@ public class Animal : Placeable, Saveable
                 happiness = happiness > happinessDetriment * terrainBonusMultiplier ? happiness + happinessDetriment * terrainBonusMultiplier : 0;
                 sadnessReasons.Add(SadnessReason.TerrainType);
             }
-            if (GetExhibit() != null && terrainBonusMultiplier > 0)
-                happiness = happiness + happinessDetriment * terrainBonusMultiplier < 100 ? happiness + happinessDetriment * terrainBonusMultiplier : 100;
+            if (GetExhibit() != null && terrainBonusMultiplier >= 0)
+                happiness = happiness + happinessDetriment < 100 ? happiness + happinessDetriment : 100;
 
             if (GetExhibit() != null && (GetExhibit().gridList.Count < requiredExhibitSpace || GetExhibit().gridList.Count < GetExhibit().occupiedSpace))
             {
@@ -419,7 +421,7 @@ public class Animal : Placeable, Saveable
             likedTerrainPercent /= 100;
             likedTerrainPercent = likedTerrainPercent < 1 ? likedTerrainPercent : 1;
             //Debug.Log(likedTerrainPercent);
-            terrainBonusMultiplier = likedTerrainPercent * 3 - 2;
+            terrainBonusMultiplier = likedTerrainPercent * 2 - 2;
         }
     }
 

@@ -12,6 +12,7 @@ public class AnimalInfoPanel : MonoBehaviour
     public Image maleImage;
     public Image femaleImage;
     public GameObject animalInfoWindow;
+    public Image animalImage;
     private PlayerControl playerControl;
 
     void Start(){
@@ -26,6 +27,14 @@ public class AnimalInfoPanel : MonoBehaviour
                 Destroy(windows.transform.GetChild(0).gameObject);
             }
         });
+        SetImage();
+        foreach(var placeableButton in UIMenu.Instance.placeableListPanel.GetComponentsInChildren<PlaceableButton>()){
+            placeableButton.m_onDown.AddListener(SetImage);
+        }
+    }
+
+    void SetImage(){
+        animalImage.sprite = playerControl.m_Selected.icon;
     }
 
     public void OnSwitchButtonClicked(){

@@ -8,6 +8,8 @@ using Cinemachine;
 using System.Linq;
 using static Chunk;
 using Unity.VisualScripting;
+using TMPro;
+using System.Collections;
 
 /////Attributes, DONT DELETE
 //////Vector3 position;Quaternion rotation//////////
@@ -21,6 +23,7 @@ public class PlayerControl : MonoBehaviour
     float zoomSpeed = 10;
     public Camera GameCamera;
     public CinemachineVirtualCamera VirtualCamera;
+    public TextMeshProUGUI terraformerPriceTag;
     public Placeable m_Selected = null;
     public Placeable curPlaceable = null;
     int cameraTimesRotated = 0;
@@ -58,6 +61,7 @@ public class PlayerControl : MonoBehaviour
     float startingHeight = -10;
     public int currentTerraformSize = 1;
     public Vector3[] startingCoords;
+    bool terrainHit = false;
 
     public InfoPopup currentInfopopup;
     public bool stopMovement = false;
@@ -147,7 +151,7 @@ public class PlayerControl : MonoBehaviour
         }
         if (Input.GetMouseButtonUp(0))
         {
-            isMouseDown = false;;
+            isMouseDown = false;
         }
 
         var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
@@ -168,7 +172,6 @@ public class PlayerControl : MonoBehaviour
             var grid = GridManager.instance.GetGrid(hitPoint);
             if(grid != currentMouseGrid)
             {
-                
                 terraformerLine.SetPosition(0, grid.coords[3]);
                 terraformerLine.SetPosition(1, grid.coords[2]);
                 terraformerLine.SetPosition(2, grid.coords[0]);
@@ -176,39 +179,42 @@ public class PlayerControl : MonoBehaviour
                 terraformerLine.SetPosition(4, grid.coords[3]);
                 currentMouseGrid = grid;
             }
-            if(isMouseDown && grid != currentClickGrid)
-                {
-                    int ind = 0;
-                    foreach(var coord in grid.coords)
-                    {
-                        if(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] != currentTerrainType){
-                            GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] = currentTerrainType;
-                            ZooManager.instance.ChangeMoney(-(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)].GetPrice() / 4));
-                        }
-                    }
-                    
-                    foreach (Chunk tempChunk in gridM.GetNeighbourChunks(grid))
-                    {
-                        tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
-                    }
 
-                    if (grid.GetExhibit() != null)
+            if(isMouseDown && grid != currentClickGrid)
+            {
+                int ind = 0;
+                foreach(var coord in grid.coords)
+                {
+                    if(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] != currentTerrainType)
                     {
-                        grid.GetExhibit().CalculateAnimalsTerrainBonus();
+                        GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] = currentTerrainType;
+                        ZooManager.instance.ChangeMoney(-(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)].GetPrice() / 4));
                     }
-                    for (int i = 0; i < 4; i++)
-                    {
-                        if (grid.trueNeighbours[i] != null && grid.neighbours[i] == null && grid.trueNeighbours[i].GetExhibit() != null)
-                        {
-                            grid.trueNeighbours[i].GetExhibit().CalculateAnimalsTerrainBonus();
-                        }
-                        if (grid.trueNeighbours[i] != null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4] != null && grid.trueNeighbours[i].neighbours[(i + 1) % 4] == null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit() != null)
-                        {
-                            grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit().CalculateAnimalsTerrainBonus();
-                        }
-                    }
-                    currentClickGrid = grid;
                 }
+                
+                foreach (Chunk tempChunk in gridM.GetNeighbourChunks(grid))
+                {
+                    tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
+                }
+
+                if (grid.GetExhibit() != null)
+                {
+                    grid.GetExhibit().CalculateAnimalsTerrainBonus();
+                }
+
+                for (int i = 0; i < 4; i++)
+                {
+                    if (grid.trueNeighbours[i] != null && grid.neighbours[i] == null && grid.trueNeighbours[i].GetExhibit() != null)
+                    {
+                        grid.trueNeighbours[i].GetExhibit().CalculateAnimalsTerrainBonus();
+                    }
+                    if (grid.trueNeighbours[i] != null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4] != null && grid.trueNeighbours[i].neighbours[(i + 1) % 4] == null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit() != null)
+                    {
+                        grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit().CalculateAnimalsTerrainBonus();
+                    }
+                }
+                currentClickGrid = grid;
+            }
         }
     }
 
@@ -342,10 +348,6 @@ public class PlayerControl : MonoBehaviour
                 }
             }
         }
-        //else if (Input.GetMouseButtonUp(0))
-        //{
-        //    HandleSelection();
-        //}
         if (m_Selected != null)
         {
             var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
@@ -463,21 +465,6 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    //public void HandleSelection()
-    //{
-    //    var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
-    //    RaycastHit hit;
-    //    if (Physics.Raycast(ray, out hit))
-    //    {
-    //        if (placedTags.Contains(hit.collider.tag))
-    //        {
-    //            var building = hit.collider.GetComponentInParent<Placeable>();
-    //            m_Selected = building;
-    //            m_Selected.SetTag("Untagged");
-    //        }
-    //    }
-    //}
-
     public Placeable[] prefabs;
     public Placeable[] fences;
 
@@ -538,18 +525,21 @@ public class PlayerControl : MonoBehaviour
         return newPath;
     }
 
-    public void SetTerraformerSize(int size){
+    public void SetTerraformerSize(int size)
+    {
         currentTerraformSize = size;
         terraformerLine.positionCount = currentTerraformSize * currentTerraformSize * 5;
 
-        if(prevHit != null){
+        if(prevHit != null)
+        {
             Debug.Log(prevHit);
             int currentPosition = 0;
             Vector3 pos;
 
             for(int j = 0; j < currentTerraformSize; j++)
             {
-                if(j % 2 == 0){
+                if(j % 2 == 0)
+                {
                     for(int i = 0; i < currentTerraformSize; i++)
                     {
                         pos = (Vector3)prevHit + new Vector3(i, 0, j);
@@ -574,301 +564,38 @@ public class PlayerControl : MonoBehaviour
                         terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
                     }
                 }
-
             }
         }
     }
 
-    bool terrainHit = false;
-    //Grid grid;
+    public virtual void SetTerraformerPriceTag(Vector3 mouseHit, float price)
+    {
+        terraformerPriceTag = terraformerPriceTag == null ? Instantiate(GameObject.Find("Placing Price").GetComponent<TextMeshProUGUI>()) : terraformerPriceTag;
+        terraformerPriceTag.transform.SetParent(canvas.transform);
+        terraformerPriceTag.text = "-" + price + " $";
+        terraformerPriceTag.color = Color.red;
+        var zoomIn = transform.position.y / 6.0f;
+        var posi = new Vector3(Input.mousePosition.x + (500.0f / zoomIn), Input.mousePosition.y - (150.0f / zoomIn) + 50, 0);
+        terraformerPriceTag.transform.position = posi;
+    }
 
-    //public void Terraform(int xWidth, int zWidth)
-    //{
-    //    //Vector3 startingGrid;
-
-    //    if (Input.GetMouseButtonUp(0))
-    //    {
-    //        gridM.ReloadGrids();
-
-    //        if (startingHeight > -10 && coordIndex != 0 && terrainHit)
-    //        {
-    //            int price = 0;
-
-    //            for (int i = 0; i < Mathf.Abs(startingHeight - gridM.coords[coordIndex].y) * 2; i++)
-    //            {
-    //                price += ((3 + i * 2 + currentTerraformSize - 1) * (3 + i * 2 + currentTerraformSize - 1) - 4 * (i)) * 3;
-    //            }
-
-    //            if (ZooManager.instance.money >= price)
-    //            {
-    //                ZooManager.instance.ChangeMoney(-price);
-    //            }
-    //            else
-    //            {
-    //                gridM.edgeChanged = false;
-    //                terrainCollided = false;
-    //                gridM.coords = new Vector3[startingCoords.Length];
-    //                Array.Copy(startingCoords, gridM.coords, startingCoords.Length);
-    //            }
-    //        }
-
-    //        terrainHit = false;
-
-    //        foreach (Chunk tempChunk in gridM.terrainElements)
-    //        {
-    //            if (tempChunk.gameObject.CompareTag("Terrain"))
-    //                tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
-    //        }
-    //    }
-
-    //    if (Input.GetMouseButtonDown(0))
-    //    {
-    //        var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
-    //        RaycastHit hit;
-    //        if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.CompareTag("Terrain"))
-    //        {
-    //            //coordIndex = (int)(Mathf.Floor(hit.point.x) + Mathf.Floor(hit.point.z) * (gridM.terrainWidth + 1));
-    //            grid = gridM.GetGrid(hit.point);
-
-    //            terrainHit = true;
-
-    //            if (!gridM.edgeChanged && !terrainCollided)
-    //            {
-    //                //startingHeight = gridM.coords[coordIndex].y;
-    //                startingHeight = grid.coords[0].y;
-    //                startingCoords = new Vector3[gridM.coords.Length];
-    //                Array.Copy(gridM.coords, startingCoords, gridM.coords.Length);
-    //            }
-    //        }
-    //    }
-
-    //    if (Input.GetMouseButton(0) && terrainHit)
-    //    {
-    //        //startingGrid = GridManager.instance.coords[coordIndex];
-
-    //        mouseDistnace += Input.GetAxis("Mouse Y");
-    //        if (Input.GetAxis("Mouse Y") > 0)
-    //        {
-    //            if (mouseDistnace > 0.6f && grid.coords[0].y <= maxTerrainHeight)
-    //            {
-    //                mouseDistnace = 0;
-    //                float height = 0;
-
-    //                //gridM.tempCoords = new Vector3[gridM.coords.Length];
-    //                //Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
-
-    //                Grid currentGrid = grid;
-
-    //                for (int i = 0; i < xWidth + 1; i++)
-    //                {
-    //                    for (int j = 0; j < zWidth + 1; j++)
-    //                    {
-    //                        height += gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
-    //                        if (gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y < startingHeight)
-    //                            startingHeight = gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
-    //                    }
-    //                }
-
-    //                for (int i = 0; i < xWidth + 1; i++)
-    //                {
-    //                    for (int j = 0; j < zWidth + 1; j++)
-    //                    {
-    //                        gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y = Mathf.Floor(height / (xWidth + 1) / (zWidth + 1) * 2) / 2 + 0.5f;
-
-    //                        BoxCollider terraformCollider = Instantiate(TerraformColliderPrefab).GetComponent<BoxCollider>();
-
-    //                        terraformCollider.isTrigger = true;
-    //                        terraformCollider.size = new Vector3(1.9f, 30, 1.9f);
-    //                        terraformCollider.center = new Vector3(gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].x, gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y, gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].z);
-    //                        Destroy(terraformCollider.gameObject, 0.3f);
-    //                        //Destroy(terraformCollider.gameObject, 50f);
-    //                    }
-    //                }
-
-    //                for (int i = 0; i < xWidth + 1; i++)
-    //                {
-    //                    for (int j = 0; j < zWidth + 1; j++)
-    //                    {
-    //                        gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, true);
-    //                    }
-    //                }
-    //            }
-    //        }
-    //        else
-    //        {
-    //            if (mouseDistnace < -0.6f && gridM.coords[coordIndex].y >= minTerrainHeight)
-    //            {
-    //                mouseDistnace = 0;
-    //                float height = 0;
-
-    //                //gridM.tempCoords = new Vector3[gridM.coords.Length];
-    //                //Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
-
-    //                for (int i = 0; i < xWidth + 1; i++)
-    //                {
-    //                    for (int j = 0; j < zWidth + 1; j++)
-    //                    {
-    //                        height += gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
-    //                        if (gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y > startingHeight)
-    //                            startingHeight = gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
-    //                    }
-    //                }
-
-    //                for (int i = 0; i < xWidth + 1; i++)
-    //                {
-    //                    for (int j = 0; j < zWidth + 1; j++)
-    //                    {
-    //                        gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y = MathF.Ceiling(height / (xWidth + 1) / (zWidth + 1) * 2) / 2 - 0.5f;
-
-    //                        BoxCollider terraformCollider = Instantiate(TerraformColliderPrefab).GetComponent<BoxCollider>();
-
-    //                        terraformCollider.isTrigger = true;
-    //                        terraformCollider.size = new Vector3(1.9f, 30, 1.9f);
-    //                        terraformCollider.center = new Vector3(gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].x, gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y, gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].z);
-    //                        Destroy(terraformCollider.gameObject, 0.3f);
-    //                    }
-    //                }
-
-    //                for (int i = 0; i < xWidth + 1; i++)
-    //                {
-    //                    for (int j = 0; j < zWidth + 1; j++)
-    //                    {
-    //                        gridM.TerraformNeighbours(coordIndex + i + j * (gridM.terrainWidth + 1), gridM.coords[coordIndex].y, false);
-    //                    }
-    //                }
-    //            }
-    //        }
-
-    //        //if (modifiedChunks.Count > 0)
-    //        //{
-    //        //    BoxCollider terraformCollider = Instantiate(TerraformColliderPrefab).GetComponent<BoxCollider>();
-
-    //        //    maxDepth = maxDepth > 2 ? maxDepth - 1 : maxDepth;
-    //        //    terraformCollider.size = new Vector3(maxDepth * 2, 30, maxDepth * 2);
-    //        //    terraformCollider.center = new Vector3(startingGrid.x + 0.5f, startingGrid.y, startingGrid.z + 0.5f);
-    //        //    maxDepth = 1;
-
-    //        //    Destroy(terraformCollider.gameObject, 0.5f);
-
-    //        //    Destroy(terraformCollider.gameObject, 50);
-    //        //}
-
-    //        if (gridM.edgeChanged || terrainCollided)
-    //        {
-    //            gridM.edgeChanged = false;
-    //            terrainCollided = false;
-    //            gridM.coords = new Vector3[startingCoords.Length];
-    //            Array.Copy(startingCoords, gridM.coords, startingCoords.Length);
-    //        }
-
-    //        //if (gridM.edgeChanged || terrainCollided)
-    //        //{
-    //        //    Debug.Log(terrainCollided);
-    //        //    gridM.edgeChanged = false;
-    //        //    terrainCollided = false;
-    //        //    gridM.coords = new Vector3[gridM.tempCoords.Length];
-    //        //    Array.Copy(gridM.tempCoords, gridM.coords, gridM.tempCoords.Length);
-    //        //}
-
-    //        //gridM.tempCoords = null;
-
-    //        gridM.ReloadGrids();
-
-    //        int chunkIndex = (int)(Mathf.Floor(gridM.coords[coordIndex].x / gridM.elementWidth) + Mathf.Floor(gridM.coords[coordIndex].z / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth));
-    //        if (chunkIndex < (gridM.terrainWidth / gridM.elementWidth) * (gridM.terrainWidth / gridM.elementWidth) && !modifiedChunks.Contains(gridM.terrainElements[chunkIndex]))
-    //            modifiedChunks.Add(gridM.terrainElements[chunkIndex]);
-
-    //        foreach (Chunk tempChunk in modifiedChunks)
-    //        {
-    //            if (tempChunk.gameObject.CompareTag("Terrain"))
-    //                tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
-    //        }
-    //        modifiedChunks = new List<Chunk>();
-
-    //        Grid startGrid = gridM.GetGrid(gridM.coords[coordIndex]);
-
-    //        int currentPosition = 0;
-    //        Vector3 pos;
-
-    //        for(int j = 0; j < zWidth; j++)
-    //        {
-    //            if(j % 2 == 0)
-    //            {
-    //                for(int i = 0; i < xWidth; i++)
-    //                {
-    //                    pos = startGrid.coords[0] + new Vector3(i + 0.2f, 0, j + 0.2f);
-    //                    Grid grid = gridM.GetGrid(pos);
-    //                    terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-    //                    terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
-    //                    terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
-    //                    terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
-    //                    terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-    //                }
-    //            }
-    //            else
-    //            {
-    //                for(int i = xWidth - 1; i >= 0; i--)
-    //                {
-    //                    pos = startGrid.coords[0] + new Vector3(i + 0.2f, 0, j + 0.2f);
-    //                    Grid grid = gridM.GetGrid(pos);
-    //                    terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-    //                    terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
-    //                    terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
-    //                    terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
-    //                    terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-    //                }
-    //            }
-
-    //        }
-    //    }
-    //    else
-    //    {
-    //        var ray2 = GameCamera.ScreenPointToRay(Input.mousePosition);
-    //        RaycastHit hit2;
-    //        if (Physics.Raycast(ray2, out hit2) && hit2.collider.gameObject.CompareTag("Terrain"))
-    //        {
-    //            int currentPosition = 0;
-    //            Vector3 pos;
-
-    //            for(int j = 0; j < zWidth; j++)
-    //            {
-    //                if(j % 2 == 0)
-    //                {
-    //                    for(int i = 0; i < xWidth; i++)
-    //                    {
-    //                        pos = hit2.point + new Vector3(i, 0, j);
-    //                        Grid grid = gridM.GetGrid(pos);
-    //                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-    //                        terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
-    //                        terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
-    //                        terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
-    //                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-    //                    }
-    //                }
-    //                else
-    //                {
-    //                    for(int i = xWidth - 1; i >= 0; i--)
-    //                    {
-    //                        pos = hit2.point + new Vector3(i, 0, j);
-    //                        Grid grid = gridM.GetGrid(pos);
-    //                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-    //                        terraformerLine.SetPosition(currentPosition++, grid.coords[2]);
-    //                        terraformerLine.SetPosition(currentPosition++, grid.coords[0]);
-    //                        terraformerLine.SetPosition(currentPosition++, grid.coords[1]);
-    //                        terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
-    //                    }
-    //                }
-
-    //            }
-    //            prevHit = hit2.point;
-    //        }
-    //    }
-    //}
+    public virtual IEnumerator MoveText(float distance)
+    {
+        while (distance > 0 && terraformerPriceTag != null)
+        {
+            var posi = new Vector3(terraformerPriceTag.transform.position.x, terraformerPriceTag.transform.position.y + 0.3f, 0);
+            terraformerPriceTag.transform.position = posi;
+            distance -= 0.01f;
+            yield return new WaitForSeconds(.01f);
+        }
+        if (terraformerPriceTag != null)
+        {
+            Destroy(terraformerPriceTag.gameObject);
+        }
+    }
 
     public void Terraform(int xWidth, int zWidth)
     {
-        //Vector3 startingGrid;
-
         if (Input.GetMouseButtonUp(0))
         {
             gridM.ReloadGrids();
@@ -885,6 +612,8 @@ public class PlayerControl : MonoBehaviour
                 if (ZooManager.instance.money >= price)
                 {
                     ZooManager.instance.ChangeMoney(-price);
+                    SetTerraformerPriceTag(gridM.coords[coordIndex], price);
+                    StartCoroutine(MoveText(2.0f));
                 }
                 else
                 {
@@ -925,8 +654,6 @@ public class PlayerControl : MonoBehaviour
 
         if (Input.GetMouseButton(0) && terrainHit)
         {
-            //startingGrid = GridManager.instance.coords[coordIndex];
-
             mouseDistnace += Input.GetAxis("Mouse Y");
             if (Input.GetAxis("Mouse Y") > 0)
             {
@@ -934,9 +661,6 @@ public class PlayerControl : MonoBehaviour
                 {
                     mouseDistnace = 0;
                     float height = 0;
-
-                    //gridM.tempCoords = new Vector3[gridM.coords.Length];
-                    //Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
 
                     for (int i = 0; i < xWidth + 1; i++)
                     {
@@ -980,9 +704,6 @@ public class PlayerControl : MonoBehaviour
                     mouseDistnace = 0;
                     float height = 0;
 
-                    //gridM.tempCoords = new Vector3[gridM.coords.Length];
-                    //Array.Copy(gridM.coords, gridM.tempCoords, gridM.coords.Length);
-
                     for (int i = 0; i < xWidth + 1; i++)
                     {
                         for (int j = 0; j < zWidth + 1; j++)
@@ -1018,20 +739,6 @@ public class PlayerControl : MonoBehaviour
                 }
             }
 
-            //if (modifiedChunks.Count > 0)
-            //{
-            //    BoxCollider terraformCollider = Instantiate(TerraformColliderPrefab).GetComponent<BoxCollider>();
-
-            //    maxDepth = maxDepth > 2 ? maxDepth - 1 : maxDepth;
-            //    terraformCollider.size = new Vector3(maxDepth * 2, 30, maxDepth * 2);
-            //    terraformCollider.center = new Vector3(startingGrid.x + 0.5f, startingGrid.y, startingGrid.z + 0.5f);
-            //    maxDepth = 1;
-
-            //    Destroy(terraformCollider.gameObject, 0.5f);
-
-            //    Destroy(terraformCollider.gameObject, 50);
-            //}
-
             if (gridM.edgeChanged || terrainCollided)
             {
                 gridM.edgeChanged = false;
@@ -1039,17 +746,6 @@ public class PlayerControl : MonoBehaviour
                 gridM.coords = new Vector3[startingCoords.Length];
                 Array.Copy(startingCoords, gridM.coords, startingCoords.Length);
             }
-
-            //if (gridM.edgeChanged || terrainCollided)
-            //{
-            //    Debug.Log(terrainCollided);
-            //    gridM.edgeChanged = false;
-            //    terrainCollided = false;
-            //    gridM.coords = new Vector3[gridM.tempCoords.Length];
-            //    Array.Copy(gridM.tempCoords, gridM.coords, gridM.tempCoords.Length);
-            //}
-
-            //gridM.tempCoords = null;
 
             gridM.ReloadGrids();
 
@@ -1069,11 +765,11 @@ public class PlayerControl : MonoBehaviour
             int currentPosition = 0;
             Vector3 pos;
 
-            for(int j = 0; j < zWidth; j++)
+            for (int j = 0; j < zWidth; j++)
             {
-                if(j % 2 == 0)
+                if (j % 2 == 0)
                 {
-                    for(int i = 0; i < xWidth; i++)
+                    for (int i = 0; i < xWidth; i++)
                     {
                         pos = startGrid.coords[0] + new Vector3(i + 0.2f, 0, j + 0.2f);
                         Grid grid = gridM.GetGrid(pos);
@@ -1086,7 +782,7 @@ public class PlayerControl : MonoBehaviour
                 }
                 else
                 {
-                    for(int i = xWidth - 1; i >= 0; i--)
+                    for (int i = xWidth - 1; i >= 0; i--)
                     {
                         pos = startGrid.coords[0] + new Vector3(i + 0.2f, 0, j + 0.2f);
                         Grid grid = gridM.GetGrid(pos);
@@ -1109,11 +805,11 @@ public class PlayerControl : MonoBehaviour
                 int currentPosition = 0;
                 Vector3 pos;
 
-                for(int j = 0; j < zWidth; j++)
+                for (int j = 0; j < zWidth; j++)
                 {
-                    if(j % 2 == 0)
+                    if (j % 2 == 0)
                     {
-                        for(int i = 0; i < xWidth; i++)
+                        for (int i = 0; i < xWidth; i++)
                         {
                             pos = hit2.point + new Vector3(i, 0, j);
                             Grid grid = gridM.GetGrid(pos);
@@ -1126,7 +822,7 @@ public class PlayerControl : MonoBehaviour
                     }
                     else
                     {
-                        for(int i = xWidth - 1; i >= 0; i--)
+                        for (int i = xWidth - 1; i >= 0; i--)
                         {
                             pos = hit2.point + new Vector3(i, 0, j);
                             Grid grid = gridM.GetGrid(pos);
@@ -1137,7 +833,6 @@ public class PlayerControl : MonoBehaviour
                             terraformerLine.SetPosition(currentPosition++, grid.coords[3]);
                         }
                     }
-
                 }
                 prevHit = hit2.point;
             }
@@ -1191,12 +886,6 @@ public class PlayerControl : MonoBehaviour
         VirtualCamera.GetCinemachineComponent<CinemachineFramingTransposer>().m_CameraDistance = cameraDistance;
     }
 
-    //public NavMeshSurface test;
-    //public void Reload()
-    //{
-    //    test.UpdateNavMesh(test.navMeshData);
-    //}
-
     public GameObject gateTest;
     bool closed = true;
 
@@ -1223,6 +912,7 @@ public class PlayerControl : MonoBehaviour
         RaycastHit[] hits = Physics.RaycastAll(ray);
         Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
         bool deletableFound = false;
+
         foreach (RaycastHit hit in hits)
         {
             if (deletableTags.Contains(hit.collider.tag))
@@ -1253,6 +943,7 @@ public class PlayerControl : MonoBehaviour
                 break;
             }
         }
+
         if(!deletableFound && prevChosenForDelete != null)
         {
             if (prevChosenForDelete.currentPlacingPriceInstance != null)
@@ -1260,28 +951,5 @@ public class PlayerControl : MonoBehaviour
             prevChosenForDelete.ChangeMaterial(0);
             prevChosenForDelete = null;
         }
-        /*if (Physics.Raycast(ray, out hit))
-        {
-            
-        }*/
-        /*if (Input.GetMouseButtonDown(0))
-        {
-            var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
-            {
-                if (placedTags.Contains(hit.collider.tag))
-                {
-                    var placeable = hit.collider.GetComponentInParent<Placeable>();
-                    placeable.Remove();
-                    ReloadGuestNavMesh();
-                }
-                else if (hit.collider.GetComponentInParent<Exhibit>())
-                {
-                    var exhibit = hit.collider.GetComponentInParent<Exhibit>();
-                    exhibit.Remove();
-                }
-            }
-        }*/
     }
 }

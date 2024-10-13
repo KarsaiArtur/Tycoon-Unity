@@ -57,8 +57,6 @@ public class CalendarManager : MonoBehaviour, Saveable
             timer = 0;
         }
 
-
-
         timeOfDay += Time.deltaTime / 7;
         timeOfDay %= secondsPerDay;
         UpdateLighting(timeOfDay / secondsPerDay);
