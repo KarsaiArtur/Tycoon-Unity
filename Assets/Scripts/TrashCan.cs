@@ -81,7 +81,7 @@ public class TrashCan : Placeable, Visitable, Saveable
 
     public void FindPaths()
     {
-        if (grid.isPath)
+        if (grid.isPath && !paths.Contains(grid))
             paths.Add(grid);
         for (int j = 0; j < 4; j++)
             if (grid.neighbours[j] != null && grid.trueNeighbours[j].isPath && !paths.Contains(grid.trueNeighbours[j]))

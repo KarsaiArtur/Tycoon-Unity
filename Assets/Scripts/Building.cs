@@ -2,8 +2,6 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.AI;
-using static Grid;
 using Newtonsoft.Json;
 using static PurchasableItems;
 
@@ -186,6 +184,9 @@ public class Building : BuildingAncestor, Saveable
     {
         for (int i = 0; i < gridList.Count; i++)
         {
+            if (gridList[i].isPath && !paths.Contains(gridList[i]))
+                paths.Add(gridList[i]);
+
             for (int j = 0; j < 4; j++)
             {
                 if (gridList[i].neighbours[j] != null && gridList[i].trueNeighbours[j].isPath && !paths.Contains(gridList[i].trueNeighbours[j]))

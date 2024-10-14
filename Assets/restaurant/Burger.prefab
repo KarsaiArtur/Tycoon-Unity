@@ -107,11 +107,11 @@ NavMeshObstacle:
   m_Enabled: 0
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 19.800995, y: 9.694505, z: 12.38114}
+  m_Extents: {x: 14.5, y: 9.694505, z: 10.75}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 0
-  m_Center: {x: 14.12609, y: 2.054575, z: 7.010897}
+  m_Center: {x: 14.5, y: 2.054575, z: 7.5}
   m_TimeToStationary: 0.5
 --- !u!54 &8798953132222982825
 Rigidbody:
@@ -251,9 +251,9 @@ Transform:
   m_GameObject: {fileID: 583947740226012297}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 5.82151, y: 1.7263908, z: 0.23920785}
-  m_LocalScale: {x: 12.054308, y: 12.054306, z: 12.054306}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 5.82151, y: 1.711, z: 0.185}
+  m_LocalScale: {x: 11, y: 11, z: 11}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7295283579224609235}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -917,9 +917,9 @@ Transform:
   m_GameObject: {fileID: 1839855017877746611}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 4.4858327, y: 1.7263908, z: 0.23775196}
-  m_LocalScale: {x: 12.054308, y: 12.054306, z: 12.054306}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 4.4858327, y: 1.711, z: 0.184}
+  m_LocalScale: {x: 11, y: 11, z: 11}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 7295283579224609235}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2339,7 +2339,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.000000021855694, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 5.737949, y: 2.5348272, z: 0.12657051}
-  m_LocalScale: {x: 0.256906, y: 0.256906, z: 8.00423}
+  m_LocalScale: {x: 0.256906, y: 0.256906, z: 7}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7295283579224609235}

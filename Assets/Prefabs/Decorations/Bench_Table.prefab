@@ -200,7 +200,7 @@ NavMeshObstacle:
   m_Enabled: 0
   serializedVersion: 3
   m_Shape: 1
-  m_Extents: {x: 0.45, y: 0.225, z: 0.35}
+  m_Extents: {x: 0.375, y: 0.225, z: 0.325}
   m_MoveThreshold: 0.1
   m_Carve: 1
   m_CarveOnlyStationary: 1
@@ -218,6 +218,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4083b2f23c0ad89418aa13ad4273cf4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Picnic Table
@@ -226,7 +227,9 @@ MonoBehaviour:
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
+  selectedPrefabId: 0
   capacity: 4
+  visitorsIds: []
 --- !u!1 &4388968587899370605
 GameObject:
   m_ObjectHideFlags: 0

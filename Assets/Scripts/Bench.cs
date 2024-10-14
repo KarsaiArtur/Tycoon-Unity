@@ -128,6 +128,8 @@ public class Bench : BuildingAncestor, Saveable
 
     public override void FindPaths()
     {
+        if (grid.isPath && !paths.Contains(grid))
+            paths.Add(grid);
         for (int j = 0; j < 4; j++)
             if (grid.neighbours[j] != null && grid.trueNeighbours[j].isPath && !paths.Contains(grid.trueNeighbours[j]))
                  paths.Add(grid.trueNeighbours[j]);
