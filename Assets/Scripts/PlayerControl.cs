@@ -6,8 +6,6 @@ using UnityEngine.AI;
 using Unity.AI.Navigation;
 using Cinemachine;
 using System.Linq;
-using static Chunk;
-using Unity.VisualScripting;
 using TMPro;
 using System.Collections;
 
@@ -67,6 +65,7 @@ public class PlayerControl : MonoBehaviour
     public bool stopMovement = false;
     public LineRenderer terraformerLine;
     public TerrainType currentTerrainType;
+    float terrainTypeCost = 0;
     public bool isMale = true;
 
     public void ChangeTerraformer()
@@ -74,7 +73,8 @@ public class PlayerControl : MonoBehaviour
         terraForming = !terraForming;
         SetTerraformerSize(currentTerraformSize);
         terraformerLine.gameObject.SetActive(terraForming);
-        if(!terraForming)
+
+        if (!terraForming)
         {
             animalNavMesh.UpdateNavMesh(animalNavMesh.navMeshData);
         }
@@ -107,6 +107,13 @@ public class PlayerControl : MonoBehaviour
         terraformerLine.positionCount = 5;
         terrainType = !terrainType;
         terraformerLine.gameObject.SetActive(terrainType);
+
+        if (!terrainType)
+        {
+            SetPriceTag(Input.mousePosition, terrainTypeCost);
+            StartCoroutine(MoveText(2.0f));
+        }
+        terrainTypeCost = 0;
     }
 
     private bool MouseOverUI()
@@ -189,6 +196,7 @@ public class PlayerControl : MonoBehaviour
                     {
                         GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] = currentTerrainType;
                         ZooManager.instance.ChangeMoney(-(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)].GetPrice() / 4));
+                        terrainTypeCost += GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)].GetPrice() / 4;
                     }
                 }
                 
@@ -249,7 +257,13 @@ public class PlayerControl : MonoBehaviour
             {
                 Zoom();
                 if (terraForming)
+                {
+                    if (gridM.edgeChanged || terrainCollided)
+                    {
+                        ResetGrids();
+                    }
                     Terraform(currentTerraformSize, currentTerraformSize);
+                }
                 else if (deleting)
                     Delete();
                 else if (terrainType)
@@ -532,7 +546,6 @@ public class PlayerControl : MonoBehaviour
 
         if(prevHit != null)
         {
-            Debug.Log(prevHit);
             int currentPosition = 0;
             Vector3 pos;
 
@@ -568,7 +581,7 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
-    public virtual void SetTerraformerPriceTag(Vector3 mouseHit, float price)
+    public virtual void SetPriceTag(Vector3 mouseHit, float price)
     {
         terraformerPriceTag = terraformerPriceTag == null ? Instantiate(GameObject.Find("Placing Price").GetComponent<TextMeshProUGUI>()) : terraformerPriceTag;
         terraformerPriceTag.transform.SetParent(canvas.transform);
@@ -594,6 +607,21 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    public void ResetGrids()
+    {
+        gridM.edgeChanged = false;
+        terrainCollided = false;
+        gridM.coords = new Vector3[startingCoords.Length];
+        Array.Copy(startingCoords, gridM.coords, startingCoords.Length);
+        gridM.ReloadGrids();
+
+        foreach (Chunk tempChunk in gridM.terrainElements)
+        {
+            if (tempChunk.gameObject.CompareTag("Terrain"))
+                tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
+        }
+    }
+
     public void Terraform(int xWidth, int zWidth)
     {
         if (Input.GetMouseButtonUp(0))
@@ -609,18 +637,11 @@ public class PlayerControl : MonoBehaviour
                     price += ((3 + i * 2 + currentTerraformSize - 1) * (3 + i * 2 + currentTerraformSize - 1) - 4 * (i)) * 3;
                 }
 
-                if (ZooManager.instance.money >= price)
+                if (ZooManager.instance.money >= price && !gridM.edgeChanged && !terrainCollided)
                 {
                     ZooManager.instance.ChangeMoney(-price);
-                    SetTerraformerPriceTag(gridM.coords[coordIndex], price);
+                    SetPriceTag(gridM.coords[coordIndex], price);
                     StartCoroutine(MoveText(2.0f));
-                }
-                else
-                {
-                    gridM.edgeChanged = false;
-                    terrainCollided = false;
-                    gridM.coords = new Vector3[startingCoords.Length];
-                    Array.Copy(startingCoords, gridM.coords, startingCoords.Length);
                 }
             }
 
@@ -737,14 +758,6 @@ public class PlayerControl : MonoBehaviour
                         }
                     }
                 }
-            }
-
-            if (gridM.edgeChanged || terrainCollided)
-            {
-                gridM.edgeChanged = false;
-                terrainCollided = false;
-                gridM.coords = new Vector3[startingCoords.Length];
-                Array.Copy(startingCoords, gridM.coords, startingCoords.Length);
             }
 
             gridM.ReloadGrids();

@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /////Saveable Attributes, DONT DELETE
-//////string _id;Vector3 position;Quaternion rotation;Vector3 localScale;int selectedPrefabId;string tag;int placeablePrice;string placeableName;string exhibitId;float hunger;float thirst;float restroomNeeds;float happiness;float health;DateTime prevDay;bool isSick;float age;DateTime birthDate;bool isMale;bool isPregnant;int dayOfConception;int fertility;float terrainBonusMultiplier;float natureBonus//////////
+//////string _id;Vector3 position;Quaternion rotation;Vector3 localScale;int selectedPrefabId;string tag;int placeablePrice;string placeableName;string exhibitId;float hunger;float thirst;float restroomNeeds;float happiness;float health;DateTime prevDay;bool isSick;float age;DateTime birthDate;bool isMale;bool isPregnant;int dayOfConception;int fertility;float terrainBonusMultiplier;float natureBonusMultiplier//////////
 //////SERIALIZABLE:YES/
 
 public class Animal : Placeable, Saveable
@@ -27,6 +27,7 @@ public class Animal : Placeable, Saveable
     public enum SadnessReason
     {
         TerrainType,
+        Foliage,
         Space,
         Hunger,
         Thirst,
@@ -92,7 +93,8 @@ public class Animal : Placeable, Saveable
     public List<TerrainType> terrainsPreferred = new();
     public List<float> terrainsPreferredPercents = new();
     public float terrainBonusMultiplier = 0;
-    public float natureBonus = 1;
+    public float naturePreferredCount;
+    public float natureBonusMultiplier = 1;
     public float age = 0;
     public int lifeExpectancy = 10;
     public int fullGrownAgeMonth = 12;
@@ -330,30 +332,38 @@ public class Animal : Placeable, Saveable
 
             if (GetExhibit() != null && terrainBonusMultiplier < 0)
             {
-                happiness = happiness > happinessDetriment * terrainBonusMultiplier ? happiness + happinessDetriment * terrainBonusMultiplier : 0;
+                happiness = happiness + happinessDetriment * terrainBonusMultiplier > 0 ? happiness + happinessDetriment * terrainBonusMultiplier : 0;
                 sadnessReasons.Add(SadnessReason.TerrainType);
             }
-            if (GetExhibit() != null && terrainBonusMultiplier >= 0)
+            else if (GetExhibit() != null && terrainBonusMultiplier >= 0)
                 happiness = happiness + happinessDetriment < 100 ? happiness + happinessDetriment : 100;
+
+            if (GetExhibit() != null && natureBonusMultiplier < 0)
+            {
+                happiness = happiness + happinessDetriment * natureBonusMultiplier > 0 ? happiness + happinessDetriment * natureBonusMultiplier : 0;
+                sadnessReasons.Add(SadnessReason.Foliage);
+            }
+            else if (GetExhibit() != null && natureBonusMultiplier > 0)
+                happiness = happiness + happinessDetriment * natureBonusMultiplier < 100 ? happiness + happinessDetriment * natureBonusMultiplier : 100;
 
             if (GetExhibit() != null && (GetExhibit().gridList.Count < requiredExhibitSpace || GetExhibit().gridList.Count < GetExhibit().occupiedSpace))
             {
-                happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
+                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
                 sadnessReasons.Add(SadnessReason.Space);
             }
             if (hunger < 33)
             {
-                happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
+                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
                 sadnessReasons.Add(SadnessReason.Hunger);
             }
             if (thirst < 33)
             {
-                happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
+                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
                 sadnessReasons.Add(SadnessReason.Thirst);
             }
             if (health < 33)
             {
-                happiness = happiness > happinessDetriment / natureBonus ? happiness - happinessDetriment / natureBonus : 0;
+                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
                 sadnessReasons.Add(SadnessReason.Health);
             }
 
@@ -384,7 +394,7 @@ public class Animal : Placeable, Saveable
             }
 
             if (hunger > 75 && thirst > 75 && health > 75)
-                happiness = happiness + happinessDetriment * natureBonus > 100 ? 100 : happiness + happinessDetriment * natureBonus;
+                happiness = happiness + happinessDetriment > 100 ? 100 : happiness + happinessDetriment;
 
             if (health <= 0)
                 Die();
@@ -412,15 +422,15 @@ public class Animal : Placeable, Saveable
         if (GetExhibit() != null)
         {
             float likedTerrainPercent = 0;
+
             for (int i = 0; i < terrainsPreferred.Count; i++)
             {
                 var percent = GetExhibit().CalculateTerrainPercent(terrainsPreferred[i]);
                 likedTerrainPercent += percent < (terrainsPreferredPercents[i] + 10) ? percent : (terrainsPreferredPercents[i] + 10);
-                //Debug.Log(terrainsPreferred[i] + ": " + terrainsPreferredPercents[i] + " Actual: " + percent + " All: " + likedTerrainPercent);
             }
+
             likedTerrainPercent /= 100;
             likedTerrainPercent = likedTerrainPercent < 1 ? likedTerrainPercent : 1;
-            //Debug.Log(likedTerrainPercent);
             terrainBonusMultiplier = likedTerrainPercent * 2 - 2;
         }
     }
@@ -429,9 +439,20 @@ public class Animal : Placeable, Saveable
     {
         if (GetExhibit() != null)
         {
-            var tempList = GetExhibit().GetFoliages().Where(f => terrainsPreferred.Contains(f.terrainPreferred));
-            tempList = tempList.Where(f => GridManager.instance.GetGrid(f.transform.position).GetTerrainTypes().Contains(f.terrainPreferred));
-            natureBonus = Mathf.Sqrt(tempList.Count() + 1);
+            var gridCount = GetExhibit().gridList.Count;
+            var tempList1 = GetExhibit().GetFoliages();
+            if (tempList1.Count > naturePreferredCount * gridCount * 1.5)
+                natureBonusMultiplier = Mathf.Abs(tempList1.Count() - naturePreferredCount * gridCount) * -1 + naturePreferredCount * gridCount * 0.5f;
+            else
+            {
+                var tempList2 = GetExhibit().GetFoliages().Where(f => terrainsPreferred.Contains(f.terrainPreferred));
+                tempList2 = tempList2.Where(f => GridManager.instance.GetGrid(f.transform.position).GetTerrainTypes().Contains(f.terrainPreferred));
+                //natureBonusMultiplier = Mathf.Sqrt(tempList2.Count() + 1);
+                natureBonusMultiplier = Mathf.Abs(tempList2.Count() - naturePreferredCount * gridCount) * -1 + naturePreferredCount * gridCount * 0.5f;
+            }
+
+            natureBonusMultiplier = natureBonusMultiplier / (naturePreferredCount * gridCount * 0.5f) * 2;
+            natureBonusMultiplier = natureBonusMultiplier < -2 ? -2 : natureBonusMultiplier;
         }
     }
 
@@ -993,7 +1014,7 @@ public class Animal : Placeable, Saveable
     AnimalData data; 
     
     public string DataToJson(){
-        AnimalData data = new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility, terrainBonusMultiplier, natureBonus);
+        AnimalData data = new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility, terrainBonusMultiplier, natureBonusMultiplier);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -1037,11 +1058,11 @@ public class Animal : Placeable, Saveable
            dayOfConception = dayOfConceptionParam;
            fertility = fertilityParam;
            terrainBonusMultiplier = terrainBonusMultiplierParam;
-           natureBonus = natureBonusParam;
+           natureBonusMultiplier = natureBonusParam;
     }
     
     public AnimalData ToData(){
-        return new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility, terrainBonusMultiplier, natureBonus);
+        return new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility, terrainBonusMultiplier, natureBonusMultiplier);
     }
     
     public void FromData(AnimalData data){
@@ -1069,6 +1090,6 @@ public class Animal : Placeable, Saveable
            dayOfConception = data.dayOfConception;
            fertility = data.fertility;
            terrainBonusMultiplier = data.terrainBonusMultiplier;
-           natureBonus = data.natureBonus;
+           natureBonusMultiplier = data.natureBonus;
     }
 }
