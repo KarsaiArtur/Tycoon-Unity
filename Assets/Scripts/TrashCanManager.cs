@@ -18,12 +18,12 @@ public class TrashCanManager : MonoBehaviour, Manager, Saveable
     {
         instance = this;
         trashIsBeingPickedUp = false;
-        //if (LoadMenu.loadedGame != null)
-        //{
-        //    LoadMenu.currentManager = this;
-        //    LoadMenu.instance.LoadData(this);
-        //    LoadMenu.objectLoadedEvent.Invoke();
-        //}
+        if (LoadMenu.loadedGame != null)
+        {
+            LoadMenu.currentManager = this;
+            LoadMenu.instance.LoadData(this);
+            LoadMenu.objectLoadedEvent.Invoke();
+        }
     }
 
     public void AddList(TrashCan trashCan)

@@ -197,6 +197,7 @@ public class PlayerControl : MonoBehaviour
                         GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] = currentTerrainType;
                         ZooManager.instance.ChangeMoney(-(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)].GetPrice() / 4));
                         terrainTypeCost += GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)].GetPrice() / 4;
+                        QuestManager.instance.terrainTypeUsed = true;
                     }
                 }
                 
@@ -642,6 +643,8 @@ public class PlayerControl : MonoBehaviour
                     ZooManager.instance.ChangeMoney(-price);
                     SetPriceTag(gridM.coords[coordIndex], price);
                     StartCoroutine(MoveText(2.0f));
+                    if (price > 0)
+                        QuestManager.instance.terraformerUsed = true;
                 }
             }
 
@@ -950,6 +953,7 @@ public class PlayerControl : MonoBehaviour
                 {
                     StartCoroutine(chosenForDelete.MoveText(2f));
                     chosenForDelete.Remove();
+                    QuestManager.instance.deleteUsed = true;
                     ReloadGuestNavMesh();
                 }
                 deletableFound = true;

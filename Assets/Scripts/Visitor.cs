@@ -241,7 +241,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
                 {
                     isFleeing = true;
                     int scaredMultiplier = animal.isAgressive ? animal.dangerLevel : animal.dangerLevel - 2;
-                    happiness = happiness - 10 * scaredMultiplier > 0 ? happiness - 10 * scaredMultiplier : 0;
+                    happiness = happiness - 15 * scaredMultiplier > 0 ? happiness - 15 * scaredMultiplier : 0;
                 }
             }
             if (isFleeing)
@@ -262,6 +262,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         trashDetriment += UnityEngine.Random.Range(0.5f, 1f);
 
         ZooManager.instance.ChangeMoney(item.currentPrice);
+        ZooManager.instance.ChangeXp(item.xpBonus);
     }
 
     public void LowerRestroomNeeds()
@@ -392,7 +393,8 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
             sum += (200 - happiness);
             probabilities.Add((Action.Happiness, sum));
         }
-        sum += (100 + 50 * ((VisitableManager.instance.GetReachableExhibits().Count + 1 - GetUnvisitedExhibits().Count) / (VisitableManager.instance.GetReachableExhibits().Count + 1)) - happiness);
+        if (VisitableManager.instance.GetReachableExhibits().Count == 0 || VisitableManager.instance.GetReachableExhibits().Count - GetUnvisitedExhibits().Count > 0)
+            sum += (100 + 50 * ((VisitableManager.instance.GetReachableExhibits().Count + 1 - GetUnvisitedExhibits().Count) / (VisitableManager.instance.GetReachableExhibits().Count + 1)) - happiness);
         
         if (GetUnvisitedExhibits().Count == 0)
             sum += 100;

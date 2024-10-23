@@ -166,13 +166,15 @@ public class TrashCan : Placeable, Visitable, Saveable
     public void AddToReachableLists()
     {
         reachable = true;
-        VisitableManager.instance.AddReachableTrashBuildings(this);
+        if (!VisitableManager.instance.GetReachableTrashBuildings().Contains(this))
+            VisitableManager.instance.AddReachableTrashBuildings(this);
     }
 
     public void RemoveFromReachableLists()
     {
         reachable = false;
-        VisitableManager.instance.RemoveReachableTrashBuildings(this);
+        if (VisitableManager.instance.GetReachableTrashBuildings().Contains(this))
+            VisitableManager.instance.RemoveReachableTrashBuildings(this);
     }
 
     public int GetCapacity()
@@ -206,8 +208,7 @@ public class TrashCan : Placeable, Visitable, Saveable
     {
         base.Remove();
         TrashCanManager.instance.trashcanList.Remove(this);
-        if (reachable)
-            RemoveFromReachableLists();
+        RemoveFromReachableLists();
 
         while (GetVisitors().Count > 0)
         {
@@ -222,10 +223,10 @@ public class TrashCan : Placeable, Visitable, Saveable
         grid = GridManager.instance.GetGrid(transform.position);
         grid.GetBench(_id);
         gameObject.GetComponent<UnityEngine.AI.NavMeshObstacle>().enabled = true;
-        LoadMenu.objectLoadedEvent.Invoke();
-
         paths = new List<Grid>();
         FindPaths();
+        
+        LoadMenu.objectLoadedEvent.Invoke();
     }
 ////GENERATED
 

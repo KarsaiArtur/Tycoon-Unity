@@ -7,12 +7,15 @@ using TMPro;
 using UnityEngine;
 
 /////Saveable Attributes, DONT DELETE
-//////float money;float currentEntranceFee;int allTimeVisitorCount;float allTimeMoneyEarned;List<float> latestVisitorHappinesses;float reputation//////////
+//////float money;int xp;int xpGoal;int xpLevel;float currentEntranceFee;int allTimeVisitorCount;float allTimeMoneyEarned;List<float> latestVisitorHappinesses;float reputation//////////
 
 public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
 {
     public static ZooManager instance;
     public float money = 50000;
+    public int xp = 0;
+    public int xpGoal = 1000;
+    public int xpLevel = 1;
     public TextMeshProUGUI moneyText;
     public Grid entranceGrid;
     Grid exitGrid;
@@ -62,6 +65,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public void Arrived(Visitor visitor)
     {
         latestVisitorHappinesses.Add(visitor.happiness);
+
         if (latestVisitorHappinesses.Count > listSizeLimit)
         {
             reputation -= latestVisitorHappinesses[0] / listSizeLimit;
@@ -74,6 +78,8 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
             if (playerControl.currentInfopopup.DidVisitorLeft(visitor))
                 playerControl.DestroyCurrentInfopopup();
         }
+
+        ChangeXp((int)MathF.Floor(visitor.happiness / 10));
         VisitorManager.instance.visitorList.Remove(visitor);
 
         Destroy(visitor.gameObject);
@@ -83,7 +89,6 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     {
         
     }
-    
 
     public void PayExpenses()
     {
@@ -117,6 +122,18 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         moneyText.text = money.ToString() + " $";
         if (amount > 0)
             allTimeMoneyEarned += amount;
+    }
+
+    public void ChangeXp(int xpBonus)
+    {
+        xp += xpBonus;
+
+        if (xp >= xpGoal)
+        {
+            xpLevel++;
+            xpGoal *= 5;
+            Debug.Log("Level Up! New Level: " + xpLevel);
+        }
     }
 
     public void DecideIfReachable() { }
@@ -195,15 +212,21 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public class ZooManagerData
     {
         public float money;
+        public int xp;
+        public int xpGoal;
+        public int xpLevel;
         public float currentEntranceFee;
         public int allTimeVisitorCount;
         public float allTimeMoneyEarned;
         public List<float> latestVisitorHappinesses;
         public float reputation;
 
-        public ZooManagerData(float moneyParam, float currentEntranceFeeParam, int allTimeVisitorCountParam, float allTimeMoneyEarnedParam, List<float> latestVisitorHappinessesParam, float reputationParam)
+        public ZooManagerData(float moneyParam, int xpParam, int xpGoalParam, int xpLevelParam, float currentEntranceFeeParam, int allTimeVisitorCountParam, float allTimeMoneyEarnedParam, List<float> latestVisitorHappinessesParam, float reputationParam)
         {
            money = moneyParam;
+           xp = xpParam;
+           xpGoal = xpGoalParam;
+           xpLevel = xpLevelParam;
            currentEntranceFee = currentEntranceFeeParam;
            allTimeVisitorCount = allTimeVisitorCountParam;
            allTimeMoneyEarned = allTimeMoneyEarnedParam;
@@ -215,7 +238,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     ZooManagerData data; 
     
     public string DataToJson(){
-        ZooManagerData data = new ZooManagerData(money, currentEntranceFee, allTimeVisitorCount, allTimeMoneyEarned, latestVisitorHappinesses, reputation);
+        ZooManagerData data = new ZooManagerData(money, xp, xpGoal, xpLevel, currentEntranceFee, allTimeVisitorCount, allTimeMoneyEarned, latestVisitorHappinesses, reputation);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -227,16 +250,19 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data.money, data.currentEntranceFee, data.allTimeVisitorCount, data.allTimeMoneyEarned, data.latestVisitorHappinesses, data.reputation);
+        SetData(data.money, data.xp, data.xpGoal, data.xpLevel, data.currentEntranceFee, data.allTimeVisitorCount, data.allTimeMoneyEarned, data.latestVisitorHappinesses, data.reputation);
     }
     
     public string GetFileName(){
         return "ZooManager.json";
     }
     
-    void SetData(float moneyParam, float currentEntranceFeeParam, int allTimeVisitorCountParam, float allTimeMoneyEarnedParam, List<float> latestVisitorHappinessesParam, float reputationParam){ 
+    void SetData(float moneyParam, int xpParam, int xpGoalParam, int xpLevelParam, float currentEntranceFeeParam, int allTimeVisitorCountParam, float allTimeMoneyEarnedParam, List<float> latestVisitorHappinessesParam, float reputationParam){ 
         
            money = moneyParam;
+           xp = xpParam;
+           xpGoal = xpGoalParam;
+           xpLevel = xpLevelParam;
            currentEntranceFee = currentEntranceFeeParam;
            allTimeVisitorCount = allTimeVisitorCountParam;
            allTimeMoneyEarned = allTimeMoneyEarnedParam;

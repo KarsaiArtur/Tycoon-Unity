@@ -250,9 +250,12 @@ MonoBehaviour:
   requiredExhibitSpace: 22
   continents: 0500000001000000
   terrainsPreferred: 0200000009000000
-  terrainsPreferredPercents: []
+  terrainsPreferredPercents:
+  - 50
+  - 50
   terrainBonusMultiplier: 0
-  natureBonus: 1
+  naturePreferredCount: 0
+  natureBonusMultiplier: 1
   age: 0
   lifeExpectancy: 14
   fullGrownAgeMonth: 12

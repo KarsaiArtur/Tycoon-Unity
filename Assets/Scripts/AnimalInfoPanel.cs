@@ -21,7 +21,6 @@ public class AnimalInfoPanel : MonoBehaviour
             var windows = UIMenu.Instance.windows;
             if(windows.transform.childCount == 0){
                 var window = Instantiate(animalInfoWindow, windows.transform.position , Quaternion.identity);
-                Debug.Log(windows);
                 window.transform.SetParent(windows.transform);
             } else{
                 Destroy(windows.transform.GetChild(0).gameObject);
@@ -31,6 +30,7 @@ public class AnimalInfoPanel : MonoBehaviour
         foreach(var placeableButton in UIMenu.Instance.placeableListPanel.GetComponentsInChildren<PlaceableButton>()){
             placeableButton.m_onDown.AddListener(SetImage);
         }
+        playerControl.isMale = true;
     }
 
     void SetImage(){

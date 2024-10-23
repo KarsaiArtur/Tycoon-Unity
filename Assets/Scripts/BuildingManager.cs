@@ -6,12 +6,14 @@ using UnityEngine;
 using static Building;
 
 /////Saveable Attributes, DONT DELETE
-//////List<Building> buildingList///////////////
+//////List<Building> buildingList;int itemsBought///////////////
 
 public class BuildingManager : MonoBehaviour, Saveable, Manager
 {
     static public BuildingManager instance;
     public List<Building> buildingList;
+    public int itemsBought = 0;
+
     void Start(){
         instance = this;
         if(LoadMenu.loadedGame != null){
@@ -37,10 +39,12 @@ public class BuildingManager : MonoBehaviour, Saveable, Manager
     public class BuildingManagerData
     {
         public List<BuildingData> buildingList;
+        public int itemsBought;
 
-        public BuildingManagerData(List<BuildingData> buildingListParam)
+        public BuildingManagerData(List<BuildingData> buildingListParam, int itemsBoughtParam)
         {
            buildingList = buildingListParam;
+           itemsBought = itemsBoughtParam;
         }
     }
 
@@ -52,7 +56,7 @@ public class BuildingManager : MonoBehaviour, Saveable, Manager
         foreach(var element in this.buildingList){
             buildingList.Add(element.ToData());
         }
-        BuildingManagerData data = new BuildingManagerData(buildingList);
+        BuildingManagerData data = new BuildingManagerData(buildingList, itemsBought);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -64,14 +68,14 @@ public class BuildingManager : MonoBehaviour, Saveable, Manager
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data.buildingList);
+        SetData(data.buildingList, data.itemsBought);
     }
     
     public string GetFileName(){
         return "BuildingManager.json";
     }
     
-    void SetData(List<BuildingData> buildingListParam){ 
+    void SetData(List<BuildingData> buildingListParam, int itemsBoughtParam){ 
         
         foreach(var element in buildingListParam){
             var spawned = Instantiate(PrefabManager.instance.GetPrefab(element.selectedPrefabId), element.position, element.rotation);
@@ -81,5 +85,6 @@ public class BuildingManager : MonoBehaviour, Saveable, Manager
             AddList(script);
         }
 
+           itemsBought = itemsBoughtParam;
     }
 }

@@ -6,6 +6,7 @@ using TMPro;
 using Unity.VisualScripting;
 using System;
 using UnityEngine.Events;
+using UnityEngine.ProBuilder;
 
 public class UIMenu : MonoBehaviour
 {
@@ -84,7 +85,6 @@ public class UIMenu : MonoBehaviour
 
     public void ChangeCurrentMenu(Menu newMenu)
     {
-        DestroyCurInfoPanel();
         DestroyPlaceables();
         DestroySubmenus();
         RectTransform curMenuRectTransform;
@@ -124,7 +124,6 @@ public class UIMenu : MonoBehaviour
 
             curSubMenuIndex = 0;
             SpawnSubmenus();
-            SpawnInfoPanel();
             isMenuVisible = true;
         }
         gameObject.SetActive(isMenuVisible);
@@ -149,9 +148,11 @@ public class UIMenu : MonoBehaviour
         submenuPanel.GetChild(curSubMenuIndex+offset).GetComponent<Outline>().enabled = false;
         curSubMenuIndex = index;
         submenuPanel.GetChild(curSubMenuIndex+ offset).GetComponent<Outline>().enabled = true;
+        DestroyCurInfoPanel();
         DestroyPlaceables();
         curPlaceableIndex = 0;
         SpawnPlaceables();
+        SpawnInfoPanel(curSubMenuIndex+ offset);
     }
 
     void SpawnSubmenus()
@@ -165,9 +166,10 @@ public class UIMenu : MonoBehaviour
 
     }
 
-    void SpawnInfoPanel()
+    void SpawnInfoPanel(int index)
     {
-        curInfoPanel = Instantiate(curMenu.infoPanel, new Vector3(transform.position.x,transform.position.y, transform.position.z) , Quaternion.identity);
+        Debug.Log(submenuPanel.GetChild(index));
+        curInfoPanel = Instantiate(submenuPanel.GetChild(index).GetComponent<SubMenu>().infoPanel, new Vector3(transform.position.x,transform.position.y, transform.position.z) , Quaternion.identity);
         curInfoPanel.transform.SetParent(transform);
     }
 

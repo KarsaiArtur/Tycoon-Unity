@@ -47,7 +47,7 @@ MonoBehaviour:
   itemName: 
   defaultPrice: 10
   currentPrice: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: d0f2ee5774d40a24683ded24128cdcf6, type: 3}
   happinessBonus: 5
   hungerBonus: 15
   thirstBonus: -5

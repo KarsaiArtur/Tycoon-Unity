@@ -237,15 +237,23 @@ public class Exhibit : Placeable, Visitable, Saveable
     public void AddToReachableLists()
     {
         reachable = true;
-        if (GetAnimals().Count > 0)
-        {
+
+        if (GetAnimals().Count > 0 && !VisitableManager.instance.GetReachableExhibits().Contains(this))
             VisitableManager.instance.AddReachableExhibits(this);
-        }
+
+        foreach (var visitor in VisitorManager.instance.visitorList)
+            if (!visitor.GetUnvisitedExhibits().Contains(this))
+                visitor.AddUnvisitedExhibits(this);
     }
 
     public void RemoveFromReachableLists()
     {
-        VisitableManager.instance.RemoveReachableExhibits(this);
+        if (VisitableManager.instance.GetReachableExhibits().Contains(this))
+            VisitableManager.instance.RemoveReachableExhibits(this);
+
+        foreach (var visitor in VisitorManager.instance.visitorList)
+            if (visitor.GetUnvisitedExhibits().Contains(this))
+                visitor.RemoveUnvisitedExhibits(this);
     }
 
     override public void ClickedOn()
@@ -358,6 +366,9 @@ public class Exhibit : Placeable, Visitable, Saveable
     public void RemoveNature(Nature nature)
     {
         RemoveFoliages(nature);
+        
+        foreach (var animal in GetAnimals())
+            animal.CalculateNatureBonus();
     }
 
     public void RemoveWaterTrough(WaterTrough waterTrough)
@@ -443,11 +454,8 @@ public class Exhibit : Placeable, Visitable, Saveable
     public override void Remove()
     {
         destroyed = true;
-
         ExhibitManager.instance.exhibitList.Remove(this);
-
         ConnectGrids();
-
         RemoveFromReachableLists();
 
         var size = gridList.Count;

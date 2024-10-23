@@ -8,7 +8,7 @@ using static PurchasableItems;
 //,List<PurchasableItems> purchasableItemInstances
 
 /////Saveable Attributes, DONT DELETE
-//////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice;bool reachable;int capacity;List<string> visitorsIds;int itemsBought;int x;int z;Vector3 startingGridIndex;List<PurchasableItemsData> purchasableItemInstancesData//////////
+//////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice;bool reachable;int capacity;List<string> visitorsIds;int x;int z;Vector3 startingGridIndex;List<PurchasableItemsData> purchasableItemInstancesData//////////
 //////SERIALIZABLE:YES/
 
 public class Building : BuildingAncestor, Saveable
@@ -29,7 +29,6 @@ public class Building : BuildingAncestor, Saveable
 
     public bool hasRestroom = false;
     public int expense = 0;
-    public static int itemsBought = 0;
 
     public override void Awake()
     {
@@ -244,7 +243,7 @@ public class Building : BuildingAncestor, Saveable
         if (index < purchasableItemInstances.Count)
         {
             visitor.PurchaseItem(purchasableItemInstances[index]);
-            itemsBought++;
+            BuildingManager.instance.itemsBought++;
         }
         else
         {
@@ -346,8 +345,8 @@ public class Building : BuildingAncestor, Saveable
 
     public bool HasFood()
     {
-        if (purchasableItemInstances.Count > 0)
-            foreach (var item in purchasableItemInstances)
+        if (purchasableItemPrefabs.Count > 0)
+            foreach (var item in purchasableItemPrefabs)
                 if (item.hungerBonus > 10)
                     return true;
         return false;
@@ -355,8 +354,8 @@ public class Building : BuildingAncestor, Saveable
 
     public bool HasDrink()
     {
-        if (purchasableItemInstances.Count > 0)
-            foreach (var item in purchasableItemInstances)
+        if (purchasableItemPrefabs.Count > 0)
+            foreach (var item in purchasableItemPrefabs)
                 if (item.thirstBonus > 10)
                     return true;
         return false;
@@ -364,8 +363,8 @@ public class Building : BuildingAncestor, Saveable
 
     public bool HasEnergy()
     {
-        if (purchasableItemInstances.Count > 0)
-            foreach (var item in purchasableItemInstances)
+        if (purchasableItemPrefabs.Count > 0)
+            foreach (var item in purchasableItemPrefabs)
                 if (item.energyBonus > 10)
                     return true;
         return false;
@@ -373,8 +372,8 @@ public class Building : BuildingAncestor, Saveable
 
     public bool HasHappiness()
     {
-        if (purchasableItemInstances.Count > 0)
-            foreach (var item in purchasableItemInstances)
+        if (purchasableItemPrefabs.Count > 0)
+            foreach (var item in purchasableItemPrefabs)
                 if (item.happinessBonus > 10)
                     return true;
         return false;
@@ -397,18 +396,16 @@ public class Building : BuildingAncestor, Saveable
     public override void AddToReachableLists()
     {
         reachable = true;
-        if (HasFood())
+        if (HasFood() && !VisitableManager.instance.GetReachableFoodBuildings().Contains(this))
             VisitableManager.instance.AddReachableFoodBuildings(this);
-        if (HasDrink())
+        if (HasDrink() && !VisitableManager.instance.GetReachableDrinkBuildings().Contains(this))
             VisitableManager.instance.AddReachableDrinkBuildings(this);
-        if (HasEnergy())
+        if (HasEnergy() && !VisitableManager.instance.GetReachableEnergyBuildings().Contains(this))
             VisitableManager.instance.AddReachableEnergyBuildings(this);
-        if (hasRestroom)
+        if (hasRestroom && !VisitableManager.instance.GetReachableRestroomBuildings().Contains(this))
             VisitableManager.instance.AddReachableRestroomBuildings(this);
-        if (HasHappiness())
-        {
+        if (HasHappiness() && !VisitableManager.instance.GetReachableHappinessBuildings().Contains(this))
             VisitableManager.instance.AddReachableHappinessBuildings(this);
-        }
     }
 
     public override void RemoveFromLists()
@@ -419,18 +416,16 @@ public class Building : BuildingAncestor, Saveable
     public override void RemoveFromReachableLists()
     {
         reachable = false;
-        if (HasFood())
+        if (HasFood() && VisitableManager.instance.GetReachableFoodBuildings().Contains(this))
             VisitableManager.instance.RemoveReachableFoodBuildings(this);
-        if (HasDrink())
+        if (HasDrink() && VisitableManager.instance.GetReachableDrinkBuildings().Contains(this))
             VisitableManager.instance.RemoveReachableDrinkBuildings(this);
-        if (HasEnergy())
+        if (HasEnergy() && VisitableManager.instance.GetReachableEnergyBuildings().Contains(this))
             VisitableManager.instance.RemoveReachableEnergyBuildings(this);
-        if (hasRestroom)
+        if (hasRestroom && VisitableManager.instance.GetReachableRestroomBuildings().Contains(this))
             VisitableManager.instance.RemoveReachableRestroomBuildings(this);
-        if (HasHappiness())
-        {
+        if (HasHappiness() && VisitableManager.instance.GetReachableHappinessBuildings().Contains(this))
             VisitableManager.instance.RemoveReachableHappinessBuildings(this);
-        }
     }
 
     public override void LoadHelper()
@@ -490,14 +485,13 @@ public class Building : BuildingAncestor, Saveable
         public bool reachable;
         public int capacity;
         public List<string> visitorsIds;
-        public int itemsBought;
         public int x;
         public int z;
         [JsonConverter(typeof(Vector3Converter))]
         public Vector3 startingGridIndex;
         public List<PurchasableItemsData> purchasableItemInstancesData;
 
-        public BuildingData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam, int xParam, int zParam, Vector3 startingGridIndexParam, List<PurchasableItemsData> purchasableItemInstancesDataParam)
+        public BuildingData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int xParam, int zParam, Vector3 startingGridIndexParam, List<PurchasableItemsData> purchasableItemInstancesDataParam)
         {
            _id = _idParam;
            position = positionParam;
@@ -508,7 +502,6 @@ public class Building : BuildingAncestor, Saveable
            reachable = reachableParam;
            capacity = capacityParam;
            visitorsIds = visitorsIdsParam;
-           itemsBought = itemsBoughtParam;
            x = xParam;
            z = zParam;
            startingGridIndex = startingGridIndexParam;
@@ -519,7 +512,7 @@ public class Building : BuildingAncestor, Saveable
     BuildingData data; 
     
     public string DataToJson(){
-        BuildingData data = new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought, x, z, startingGridIndex, purchasableItemInstancesData);
+        BuildingData data = new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, x, z, startingGridIndex, purchasableItemInstancesData);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -531,14 +524,14 @@ public class Building : BuildingAncestor, Saveable
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.visitorsIds, data.itemsBought, data.x, data.z, data.startingGridIndex, data.purchasableItemInstancesData);
+        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.visitorsIds, data.x, data.z, data.startingGridIndex, data.purchasableItemInstancesData);
     }
     
     public string GetFileName(){
         return "Building.json";
     }
     
-    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int itemsBoughtParam, int xParam, int zParam, Vector3 startingGridIndexParam, List<PurchasableItemsData> purchasableItemInstancesDataParam){ 
+    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int xParam, int zParam, Vector3 startingGridIndexParam, List<PurchasableItemsData> purchasableItemInstancesDataParam){ 
         
            _id = _idParam;
            transform.position = positionParam;
@@ -549,7 +542,6 @@ public class Building : BuildingAncestor, Saveable
            reachable = reachableParam;
            capacity = capacityParam;
            visitorsIds = visitorsIdsParam;
-           itemsBought = itemsBoughtParam;
            x = xParam;
            z = zParam;
            startingGridIndex = startingGridIndexParam;
@@ -558,7 +550,7 @@ public class Building : BuildingAncestor, Saveable
     
     public BuildingData ToData(){
         SaveHelper();
-        return new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, itemsBought, x, z, startingGridIndex, purchasableItemInstancesData);
+        return new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, x, z, startingGridIndex, purchasableItemInstancesData);
     }
     
     public void FromData(BuildingData data){
@@ -572,7 +564,6 @@ public class Building : BuildingAncestor, Saveable
            reachable = data.reachable;
            capacity = data.capacity;
            visitorsIds = data.visitorsIds;
-           itemsBought = data.itemsBought;
            x = data.x;
            z = data.z;
            startingGridIndex = data.startingGridIndex;

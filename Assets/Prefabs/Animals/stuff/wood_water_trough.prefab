@@ -196,6 +196,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04b551c55f81a444499e6b84d2262bfd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Water Trough
@@ -203,8 +204,13 @@ MonoBehaviour:
   icon: {fileID: 21300000, guid: b54e6399dc5b98e42bc155d4cfdac5f8, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
+  renderers: []
+  selectedPrefabId: 0
+  waterCapacity: 500
   water: 500
+  description: Provides drinking water for smaller animals. Needs to be refilled
+    by Zookeepers!
+  exhibitId: 
 --- !u!1 &8928261863753087272
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,13 +7,15 @@ using UnityEngine;
 using static Animal;
 
 /////Saveable Attributes, DONT DELETE
-//////List<Animal> animalList//////////
+//////List<Animal> animalList;int babiesBorn//////////
 
 public class AnimalManager : MonoBehaviour, Saveable, Manager
 {
     static public AnimalManager instance;
     public List<Animal> freeAnimals = new List<Animal>();
     public List<Animal> animalList;
+    public int babiesBorn = 0;
+
     void Start(){
         instance = this;
         if(LoadMenu.loadedGame != null){
@@ -40,10 +42,12 @@ public class AnimalManager : MonoBehaviour, Saveable, Manager
     public class AnimalManagerData
     {
         public List<AnimalData> animalList;
+        public int babiesBorn;
 
-        public AnimalManagerData(List<AnimalData> animalListParam)
+        public AnimalManagerData(List<AnimalData> animalListParam, int babiesBornParam)
         {
            animalList = animalListParam;
+           babiesBorn = babiesBornParam;
         }
     }
 
@@ -55,7 +59,7 @@ public class AnimalManager : MonoBehaviour, Saveable, Manager
         foreach(var element in this.animalList){
             animalList.Add(element.ToData());
         }
-        AnimalManagerData data = new AnimalManagerData(animalList);
+        AnimalManagerData data = new AnimalManagerData(animalList, babiesBorn);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -67,14 +71,14 @@ public class AnimalManager : MonoBehaviour, Saveable, Manager
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data.animalList);
+        SetData(data.animalList, data.babiesBorn);
     }
     
     public string GetFileName(){
         return "AnimalManager.json";
     }
     
-    void SetData(List<AnimalData> animalListParam){ 
+    void SetData(List<AnimalData> animalListParam, int babiesBornParam){ 
         
         foreach(var element in animalListParam){
             var spawned = Instantiate(PrefabManager.instance.GetPrefab(element.selectedPrefabId), element.position, element.rotation);
@@ -84,5 +88,6 @@ public class AnimalManager : MonoBehaviour, Saveable, Manager
             AddList(script);
         }
 
+           babiesBorn = babiesBornParam;
     }
 }

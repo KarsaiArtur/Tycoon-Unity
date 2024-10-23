@@ -13,6 +13,7 @@ public class PurchasableItems : MonoBehaviour, Saveable
     public string itemName = "";
     public float defaultPrice;
     public float currentPrice;
+    public int xpBonus;
     public Sprite icon;
     public float happinessBonus;
     public float hungerBonus;

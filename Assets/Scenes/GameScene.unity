@@ -5336,6 +5336,7 @@ MonoBehaviour:
   canvas: {fileID: 985433067}
   GameCamera: {fileID: 963194227}
   VirtualCamera: {fileID: 475673814}
+  terraformerPriceTag: {fileID: 0}
   m_Selected: {fileID: 0}
   curPlaceable: {fileID: 0}
   objectTimesRotated: 0
@@ -5352,7 +5353,8 @@ MonoBehaviour:
   - {fileID: 4829063289264420038, guid: 8aead24c6a95e1140b56a65086f40b02, type: 3}
   - {fileID: 3145295711143037553, guid: b6b5e1aba65fdbe4b82ef0a22e3918e8, type: 3}
   animalDroppingPrefab: {fileID: 7783030472800621690, guid: cf37b44116b808947b5fa08c6ee45a0f, type: 3}
-  trashOnTheGroundPrefabs: []
+  trashOnTheGroundPrefabs:
+  - {fileID: 4091595479981995933, guid: e76d09a5e8a7d034fa9dabdffc54ab7e, type: 3}
   placedTags:
   - Placed
   - Placed Fence
@@ -9210,54 +9212,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1711023079}
   m_CullTransparentMesh: 1
---- !u!1 &1768648185
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1768648187}
-  - component: {fileID: 1768648186}
-  m_Layer: 0
-  m_Name: Trash Can Manager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1768648186
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1768648185}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e555a9787fb29284b82f644954131edf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  trashcanList: []
-  trashOnTheGround: []
-  trashOnTheGroundCoords: []
-  trashIsBeingPickedUp: 0
---- !u!4 &1768648187
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1768648185}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 50.06684, y: 4.3330817, z: 57.235485}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1829014157
 GameObject:
   m_ObjectHideFlags: 3
@@ -10646,4 +10600,3 @@ SceneRoots:
   - {fileID: 675441133}
   - {fileID: 579500657}
   - {fileID: 1206602353}
-  - {fileID: 1768648187}

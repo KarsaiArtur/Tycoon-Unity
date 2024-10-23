@@ -20,6 +20,8 @@ public class Placeable : MonoBehaviour, Clickable
     public List<(int rendererHashCode, Material material)> defaultMaterials;
     int previousMaterialIndex  = -1;
     public int selectedPrefabId;
+    public int unlockLevel = 1;
+    public int xpBonus = 0;
 
     public virtual void Awake()
     {
@@ -169,6 +171,7 @@ public class Placeable : MonoBehaviour, Clickable
     public void Paid()
     {
         ZooManager.instance.ChangeMoney(-placeablePrice);
+        ZooManager.instance.ChangeXp(xpBonus);
         currentPlacingPriceInstance.color = Color.red;
         float distance = 2.0f;
         StartCoroutine(MoveText(distance));

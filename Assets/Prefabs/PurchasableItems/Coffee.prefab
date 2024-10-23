@@ -47,8 +47,9 @@ MonoBehaviour:
   itemName: Coffee
   defaultPrice: 5
   currentPrice: 0
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 06e9f4d41287f6546b0157500b407661, type: 3}
   happinessBonus: 10
   hungerBonus: 5
   thirstBonus: 5
   energyBonus: 20
+  probabilityToBuy: 1

@@ -5,9 +5,7 @@ using UnityEngine;
 
 public class PrefabManager : MonoBehaviour, Manager
 {
-
     static public PrefabManager instance;
-
     public List<GameObject> naturePrefabs;
 
     void Awake(){
@@ -15,10 +13,10 @@ public class PrefabManager : MonoBehaviour, Manager
         if(LoadMenu.loadedGame != null){
             LoadMenu.objectLoadedEvent.Invoke();
         }
-        foreach(var prefab in naturePrefabs){
+        //foreach(var prefab in naturePrefabs){
             //Debug.Log(prefab.name);
             //Debug.Log(prefab.GetInstanceID());
-        }
+        //}
     }
 
     public GameObject GetPrefab(int id){

@@ -113,32 +113,21 @@ public class Fence : Placeable, Saveable
                 transform.position = new Vector3(position.x - curOffsetX, hit2.point.y + 0.5f, position.z - curOffsetZ);
 
                 grid1 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
-
-                if (playerControl.canBePlaced || playerControl.deleting)
-                {
-                    if (timesRotated == 0)
-                    {
-                        grid2 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z + 0.5f) - gridManager.elementWidth];
-                    }
-                    else if (timesRotated == 1)
-                    {
-                        grid2 = gridManager.grids[(int)(transform.position.x + 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
-                    }
-                    else if (timesRotated == 2)
-                    {
-                        grid2 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 1.5f) - gridManager.elementWidth];
-                    }
-                    else if (timesRotated == 3)
-                    {
-                        grid2 = gridManager.grids[(int)(transform.position.x - 1.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
-                    }
-                }
             }
         }
     }
 
     public override void FinalPlace()
     {
+        if (timesRotated == 0)
+            grid2 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z + 0.5f) - gridManager.elementWidth];
+        else if (timesRotated == 1)
+            grid2 = gridManager.grids[(int)(transform.position.x + 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
+        else if (timesRotated == 2)
+            grid2 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z - 1.5f) - gridManager.elementWidth];
+        else if (timesRotated == 3)
+            grid2 = gridManager.grids[(int)(transform.position.x - 1.5f) - gridManager.elementWidth, (int)(transform.position.z - 0.5f) - gridManager.elementWidth];
+
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
         grid1.neighbours[(timesRotated + 2) % 4] = null;
         grid2.neighbours[timesRotated] = null;

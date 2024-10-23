@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using UnityEngine;
-using static AnimalBonus;
 using static Visitor;
 
 /////Saveable Attributes, DONT DELETE
@@ -14,7 +13,7 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
     public List<Visitor> visitorList;
     public List<Visitor> visitorPrefabs;
     private float timeTillSpawn = 0;
-    public float SpawnTime = 15;
+    public float SpawnTime = 20;
     List<int> numberOfVisitors;
     float animalBonus = 1;
     List<AnimalBonus> animalBonuses = new List<AnimalBonus>();
@@ -41,7 +40,7 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
         if (timeTillSpawn <= 0 && VisitableManager.instance.CanOpen())
         {
             timeTillSpawn = UnityEngine.Random.Range(SpawnTime - 3 < 1 ? 1 : SpawnTime - 3, SpawnTime + 3);
-            SpawnTime = 15;
+            SpawnTime = 20;
             if (VisitableManager.instance.GetReachableExhibits().Count > 0)
                 SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(Mathf.Sqrt(VisitableManager.instance.GetReachableExhibits().Count)));
             SpawnTime = SpawnTime / ZooManager.instance.reputation * 75;

@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 /////Saveable Attributes, DONT DELETE
-//////string _id;Vector3 position;Quaternion rotation;Vector3 localScale;int selectedPrefabId;string tag;int placeablePrice;string placeableName;string exhibitId;float hunger;float thirst;float restroomNeeds;float happiness;float health;DateTime prevDay;bool isSick;float age;DateTime birthDate;bool isMale;bool isPregnant;int dayOfConception;int fertility;float terrainBonusMultiplier;float natureBonusMultiplier//////////
+//////string _id;Vector3 position;Quaternion rotation;Vector3 localScale;int selectedPrefabId;string tag;int placeablePrice;string placeableName;string exhibitId;float hunger;float thirst;float restroomNeeds;float happiness;float health;DateTime prevDay;bool isSick;float age;bool isMale;bool isPregnant;float pregnancyTimeMonth;int fertility;float terrainBonusMultiplier;float natureBonusMultiplier//////////
 //////SERIALIZABLE:YES/
 
 public class Animal : Placeable, Saveable
@@ -99,15 +99,13 @@ public class Animal : Placeable, Saveable
     public int lifeExpectancy = 10;
     public int fullGrownAgeMonth = 12;
     List<float> sizeAges = new();
-    DateTime birthDate;
 
     public bool isMale = true;
     public int reproductionAgeMonth = 1;
     public int pregnancyDurationMonth = 1;
     public bool isPregnant = false;
-    public int pregnancyTimeMonth = 0;
+    public float pregnancyTimeMonth = 0;
     public int averageNumberOfBabies = 1;
-    int dayOfConception = 0;
     public int fertility = 100;
     /////GENERATE
     private Animal matingPartner;
@@ -123,7 +121,8 @@ public class Animal : Placeable, Saveable
 
     public override void Place(Vector3 mouseHit)
     {
-        if (tag != "Placed"){
+        if (tag != "Placed")
+        {
             base.Place(mouseHit);
             isMale = playerControl.isMale;
         }
@@ -193,18 +192,19 @@ public class Animal : Placeable, Saveable
             AnimalManager.instance.AddList(this);
 
             placed = true;
-            birthDate = CalendarManager.instance.currentDate;
 
-            hunger = UnityEngine.Random.Range(50, 100);
-            thirst = UnityEngine.Random.Range(50, 100);
-            restroomNeeds = UnityEngine.Random.Range(50, 100);
-            happiness = UnityEngine.Random.Range(50, 100);
+            hunger = UnityEngine.Random.Range(50, 75);
+            thirst = UnityEngine.Random.Range(50, 75);
+            restroomNeeds = UnityEngine.Random.Range(50, 75);
+            happiness = UnityEngine.Random.Range(50, 75);
             health = UnityEngine.Random.Range(75, 100);
 
             fertility = UnityEngine.Random.Range(50, 100);
 
-            age = UnityEngine.Random.Range((int)Math.Ceiling((double)lifeExpectancy / 10), (int)Mathf.Floor((float)lifeExpectancy / 5));
+            isSick = false;
+            isOccupiedByVet = false;
 
+            age = UnityEngine.Random.Range((int)Math.Ceiling((double)lifeExpectancy / 10), (int)Mathf.Floor((float)lifeExpectancy / 5));
             SetSize();
 
             CalculateNatureBonus();
@@ -447,11 +447,16 @@ public class Animal : Placeable, Saveable
             {
                 var tempList2 = GetExhibit().GetFoliages().Where(f => terrainsPreferred.Contains(f.terrainPreferred));
                 tempList2 = tempList2.Where(f => GridManager.instance.GetGrid(f.transform.position).GetTerrainTypes().Contains(f.terrainPreferred));
-                //natureBonusMultiplier = Mathf.Sqrt(tempList2.Count() + 1);
-                natureBonusMultiplier = Mathf.Abs(tempList2.Count() - naturePreferredCount * gridCount) * -1 + naturePreferredCount * gridCount * 0.5f;
+                if (naturePreferredCount != 0)
+                    natureBonusMultiplier = Mathf.Abs(tempList2.Count() - naturePreferredCount * gridCount) * -1 + naturePreferredCount * gridCount * 0.5f;
+                else
+                    natureBonusMultiplier = Mathf.Abs(tempList2.Count() - naturePreferredCount * gridCount) * -1 + 1 * gridCount * 0.5f;
             }
 
-            natureBonusMultiplier = natureBonusMultiplier / (naturePreferredCount * gridCount * 0.5f) * 2;
+            if (naturePreferredCount != 0)
+                natureBonusMultiplier = natureBonusMultiplier / (naturePreferredCount * gridCount * 0.5f) * 2;
+            else
+                natureBonusMultiplier = natureBonusMultiplier / (1 * gridCount * 0.5f) * 2;
             natureBonusMultiplier = natureBonusMultiplier < -2 ? -2 : natureBonusMultiplier;
         }
     }
@@ -509,7 +514,6 @@ public class Animal : Placeable, Saveable
         {
             isPregnant = true;
             pregnancyTimeMonth = 0;
-            dayOfConception = CalendarManager.instance.currentDate.Day;
             Debug.Log(placeableName + " is pregnant");
             //notification
         }
@@ -517,25 +521,20 @@ public class Animal : Placeable, Saveable
 
     void NewDay()
     {
-        if (CalendarManager.instance.currentDate != prevDay)
+        prevDay = CalendarManager.instance.currentDate;
+
+        if (UnityEngine.Random.Range(0, 100) < 5)
         {
-            prevDay = CalendarManager.instance.currentDate;
-            if (UnityEngine.Random.Range(0, 100) < 5)
-            {
-                isSick = true;
-                healthDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
-            }
-
-            if (UnityEngine.Random.Range(lifeExpectancy - lifeExpectancy / 10, lifeExpectancy + lifeExpectancy / 5) < age)
-                Die();
-
-            age += 1f / DateTime.DaysInMonth(CalendarManager.instance.currentDate.Year, CalendarManager.instance.currentDate.Month);
-
-            if (birthDate.Day == CalendarManager.instance.currentDate.Day)
-                age = ((CalendarManager.instance.currentDate.Year - birthDate.Year) * 12) + CalendarManager.instance.currentDate.Month - birthDate.Month;
-
-            SetSize();
+            isSick = true;
+            healthDetriment = UnityEngine.Random.Range(0.2f, 0.3f);
         }
+
+        if (UnityEngine.Random.Range(lifeExpectancy - lifeExpectancy / 10, lifeExpectancy + lifeExpectancy / 5) < age)
+            Die();
+
+        age += 1f / DateTime.DaysInMonth(CalendarManager.instance.currentDate.Year, CalendarManager.instance.currentDate.Month);
+
+        SetSize();
     }
 
     void FleeAndAttack(List<Animal> animals)
@@ -607,33 +606,40 @@ public class Animal : Placeable, Saveable
 
     void CheckPregnancy()
     {
-        if (isPregnant && dayOfConception == CalendarManager.instance.currentDate.Day)
+        if (isPregnant)
         {
-            pregnancyTimeMonth++;
+            pregnancyTimeMonth += 12f / DateTime.DaysInMonth(CalendarManager.instance.currentDate.Year, CalendarManager.instance.currentDate.Month);
+
             if (pregnancyTimeMonth >= pregnancyDurationMonth)
             {
+                isPregnant = false;
+                pregnancyTimeMonth = 0;
                 var numberOfBabies = UnityEngine.Random.Range((int)Math.Ceiling((double)averageNumberOfBabies - averageNumberOfBabies / 2), (int)Math.Ceiling((double)averageNumberOfBabies + averageNumberOfBabies / 2) + 1);
+                
                 for (int i = 0; i < numberOfBabies; i++)
                 {
                     var baby = Instantiate(this, transform.position, transform.rotation);
-                    baby.isMale = UnityEngine.Random.Range(0, 2) == 0;
                     baby.FinalPlace();
-                    age = 0;
-                    Debug.Log(numberOfBabies + " " + placeableName + " babies born");
+                    baby.isMale = UnityEngine.Random.Range(0, 2) == 0;
+                    baby.age = 0;
+                    baby.defaultScale = defaultScale;
+                    baby.SetSize();
                     //notification
                     //anination?
                 }
-                isPregnant = false;
-                pregnancyTimeMonth = 0;
+
+                ZooManager.instance.ChangeXp(xpBonus * 2);
+                AnimalManager.instance.babiesBorn++;
+                Debug.Log(numberOfBabies + " " + placeableName + " babies born");
             }
         }
     }
 
     void FindMatingPartner()
     {
-        if (GetExhibit() != null && !isMale && !isPregnant && action != Action.Mating && action != Action.Fleeing && action != Action.Attacking && age * 12 >= reproductionAgeMonth && happiness >= 80)
+        if (GetExhibit() != null && !isMale && !isPregnant && action != Action.Mating && action != Action.Fleeing && action != Action.Attacking && age * 12 >= reproductionAgeMonth && happiness >= 75 && health >= 75)
         {
-            var potentialMates = GetExhibit().GetAnimals().Where(animal => animal.placeableName == placeableName && animal.isMale && animal.age * 12 >= animal.reproductionAgeMonth && animal.happiness >= 80);
+            var potentialMates = GetExhibit().GetAnimals().Where(animal => animal.placeableName == placeableName && animal.isMale && animal.age * 12 >= animal.reproductionAgeMonth && animal.happiness >= 75 && animal.health >= 75);
             if (potentialMates.Any())
             {
                 var newMatingPartnerId = potentialMates.ElementAt(UnityEngine.Random.Range(0, potentialMates.Count()))._id;
@@ -974,15 +980,14 @@ public class Animal : Placeable, Saveable
         public long prevDay;
         public bool isSick;
         public float age;
-        public long birthDate;
         public bool isMale;
         public bool isPregnant;
-        public int dayOfConception;
+        public float pregnancyTimeMonth;
         public int fertility;
         public float terrainBonusMultiplier;
-        public float natureBonus;
+        public float natureBonusMultiplier;
 
-        public AnimalData(string _idParam, Vector3 positionParam, Quaternion rotationParam, Vector3 localScaleParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, string placeableNameParam, string exhibitIdParam, float hungerParam, float thirstParam, float restroomNeedsParam, float happinessParam, float healthParam, DateTime prevDayParam, bool isSickParam, float ageParam, DateTime birthDateParam, bool isMaleParam, bool isPregnantParam, int dayOfConceptionParam, int fertilityParam, float terrainBonusMultiplierParam, float natureBonusParam)
+        public AnimalData(string _idParam, Vector3 positionParam, Quaternion rotationParam, Vector3 localScaleParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, string placeableNameParam, string exhibitIdParam, float hungerParam, float thirstParam, float restroomNeedsParam, float happinessParam, float healthParam, DateTime prevDayParam, bool isSickParam, float ageParam, bool isMaleParam, bool isPregnantParam, float pregnancyTimeMonthParam, int fertilityParam, float terrainBonusMultiplierParam, float natureBonusMultiplierParam)
         {
            _id = _idParam;
            position = positionParam;
@@ -1001,20 +1006,19 @@ public class Animal : Placeable, Saveable
            prevDay = prevDayParam.Ticks;
            isSick = isSickParam;
            age = ageParam;
-           birthDate = birthDateParam.Ticks;
            isMale = isMaleParam;
            isPregnant = isPregnantParam;
-           dayOfConception = dayOfConceptionParam;
+           pregnancyTimeMonth = pregnancyTimeMonthParam;
            fertility = fertilityParam;
            terrainBonusMultiplier = terrainBonusMultiplierParam;
-           natureBonus = natureBonusParam;
+           natureBonusMultiplier = natureBonusMultiplierParam;
         }
     }
 
     AnimalData data; 
     
     public string DataToJson(){
-        AnimalData data = new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility, terrainBonusMultiplier, natureBonusMultiplier);
+        AnimalData data = new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, isMale, isPregnant, pregnancyTimeMonth, fertility, terrainBonusMultiplier, natureBonusMultiplier);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -1026,14 +1030,14 @@ public class Animal : Placeable, Saveable
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data._id, data.position, data.rotation, data.localScale, data.selectedPrefabId, data.tag, data.placeablePrice, data.placeableName, data.exhibitId, data.hunger, data.thirst, data.restroomNeeds, data.happiness, data.health, new DateTime(data.prevDay), data.isSick, data.age, new DateTime(data.birthDate), data.isMale, data.isPregnant, data.dayOfConception, data.fertility, data.terrainBonusMultiplier, data.natureBonus);
+        SetData(data._id, data.position, data.rotation, data.localScale, data.selectedPrefabId, data.tag, data.placeablePrice, data.placeableName, data.exhibitId, data.hunger, data.thirst, data.restroomNeeds, data.happiness, data.health, new DateTime(data.prevDay), data.isSick, data.age, data.isMale, data.isPregnant, data.pregnancyTimeMonth, data.fertility, data.terrainBonusMultiplier, data.natureBonusMultiplier);
     }
     
     public string GetFileName(){
         return "Animal.json";
     }
     
-    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, Vector3 localScaleParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, string placeableNameParam, string exhibitIdParam, float hungerParam, float thirstParam, float restroomNeedsParam, float happinessParam, float healthParam, DateTime prevDayParam, bool isSickParam, float ageParam, DateTime birthDateParam, bool isMaleParam, bool isPregnantParam, int dayOfConceptionParam, int fertilityParam, float terrainBonusMultiplierParam, float natureBonusParam){ 
+    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, Vector3 localScaleParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, string placeableNameParam, string exhibitIdParam, float hungerParam, float thirstParam, float restroomNeedsParam, float happinessParam, float healthParam, DateTime prevDayParam, bool isSickParam, float ageParam, bool isMaleParam, bool isPregnantParam, float pregnancyTimeMonthParam, int fertilityParam, float terrainBonusMultiplierParam, float natureBonusMultiplierParam){ 
         
            _id = _idParam;
            transform.position = positionParam;
@@ -1052,17 +1056,16 @@ public class Animal : Placeable, Saveable
            prevDay = prevDayParam;
            isSick = isSickParam;
            age = ageParam;
-           birthDate = birthDateParam;
            isMale = isMaleParam;
            isPregnant = isPregnantParam;
-           dayOfConception = dayOfConceptionParam;
+           pregnancyTimeMonth = pregnancyTimeMonthParam;
            fertility = fertilityParam;
            terrainBonusMultiplier = terrainBonusMultiplierParam;
-           natureBonusMultiplier = natureBonusParam;
+           natureBonusMultiplier = natureBonusMultiplierParam;
     }
     
     public AnimalData ToData(){
-        return new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, birthDate, isMale, isPregnant, dayOfConception, fertility, terrainBonusMultiplier, natureBonusMultiplier);
+        return new AnimalData(_id, transform.position, transform.rotation, transform.localScale, selectedPrefabId, tag, placeablePrice, placeableName, exhibitId, hunger, thirst, restroomNeeds, happiness, health, prevDay, isSick, age, isMale, isPregnant, pregnancyTimeMonth, fertility, terrainBonusMultiplier, natureBonusMultiplier);
     }
     
     public void FromData(AnimalData data){
@@ -1084,12 +1087,11 @@ public class Animal : Placeable, Saveable
            prevDay = new DateTime(data.prevDay);
            isSick = data.isSick;
            age = data.age;
-           birthDate = new DateTime(data.birthDate);
            isMale = data.isMale;
            isPregnant = data.isPregnant;
-           dayOfConception = data.dayOfConception;
+           pregnancyTimeMonth = data.pregnancyTimeMonth;
            fertility = data.fertility;
            terrainBonusMultiplier = data.terrainBonusMultiplier;
-           natureBonusMultiplier = data.natureBonus;
+           natureBonusMultiplier = data.natureBonusMultiplier;
     }
 }

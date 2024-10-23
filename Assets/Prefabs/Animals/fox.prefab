@@ -1643,10 +1643,11 @@ MonoBehaviour:
   continents: 050000000200000003000000
   terrainsPreferred: 0000000001000000
   terrainsPreferredPercents:
-  - 0.5
-  - 0.5
+  - 50
+  - 50
   terrainBonusMultiplier: 0
-  natureBonus: 1
+  naturePreferredCount: 1
+  natureBonusMultiplier: 1
   age: 0
   lifeExpectancy: 4
   fullGrownAgeMonth: 12

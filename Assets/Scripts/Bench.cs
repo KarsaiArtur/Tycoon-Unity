@@ -143,13 +143,15 @@ public class Bench : BuildingAncestor, Saveable
     public override void AddToReachableLists()
     {
         reachable = true;
-        VisitableManager.instance.AddReachableEnergyBuildings(this);
+        if (!VisitableManager.instance.GetReachableEnergyBuildings().Contains(this))
+            VisitableManager.instance.AddReachableEnergyBuildings(this);
     }
 
     public override void RemoveFromReachableLists()
     {
         reachable = false;
-        VisitableManager.instance.RemoveReachableEnergyBuildings(this);
+        if (VisitableManager.instance.GetReachableEnergyBuildings().Contains(this))
+            VisitableManager.instance.RemoveReachableEnergyBuildings(this);
     }
 
     public override void RemoveFromLists()

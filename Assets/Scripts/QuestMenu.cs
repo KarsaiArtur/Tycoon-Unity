@@ -53,6 +53,6 @@ public class QuestMenu : ExtraMenu
         difficulty.text = questManager.findCurrentQuest().difficulty;
         description.text = questManager.findCurrentQuest().description;
         currentQuestProgression.text = questManager.findCurrentQuest().progression.Invoke() + "/" + questManager.findCurrentQuest().goal;
-        reward.text = "Reward: "+questManager.findCurrentQuest().reward+" $";
+        reward.text = "Reward: "+questManager.findCurrentQuest().moneyReward+" $";
     }
 }

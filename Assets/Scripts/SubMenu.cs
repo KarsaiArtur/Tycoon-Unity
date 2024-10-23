@@ -6,6 +6,7 @@ public class SubMenu : MonoBehaviour
 {
     public SubMenu subMenuInstance;
     public Placeable[] placeables;
+    public GameObject infoPanel;
 
     void Start()
     {
