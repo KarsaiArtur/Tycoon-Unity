@@ -126,18 +126,21 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Maintainer
+  description: 
   placeablePrice: 650
   icon: {fileID: 0}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
+  unlockLevel: 1
+  xpBonus: 0
+  expense: 350
   agent: {fileID: 471863204949618624}
   time: 0
   destinationExhibit: {fileID: 0}
   insideExhibit: {fileID: 0}
   isAvailable: 1
-  salary: 250
   workingState: 5
   destinationReached: 0
   job: 3

@@ -28,7 +28,6 @@ public class BuildingInfoPanel : MonoBehaviour
                 Destroy(windows.transform.GetChild(0).gameObject);
             }
         });
-        building = playerControl.curPlaceable.GetComponent<Building>();
         SetData();
         foreach(var placeableButton in UIMenu.Instance.placeableListPanel.GetComponentsInChildren<PlaceableButton>()){
             placeableButton.m_onDown.AddListener(SetData);
@@ -38,7 +37,7 @@ public class BuildingInfoPanel : MonoBehaviour
 
     void SetData(){
         building = playerControl.curPlaceable.GetComponent<Building>();
-        monthlyExpenses.text = building.expense.ToString() + " $";
+        monthlyExpenses.text = building.GetMonthlyExpense().ToString() + " $";
 
         foreach(var icon in needsIcons){
             var tooltip = icon.GetComponent<Tooltip>();

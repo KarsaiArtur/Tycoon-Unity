@@ -47,7 +47,7 @@ public class TerrainTypeMenu : ExtraMenu
                     outline.effectColor = Color.red;
                 });
                 var image = button.GetComponent<Image>();
-                image.sprite = UIMenu.Instance.terrainTypeSprites.Where(element => element.name.ToLower().Equals(terrainType.GetName().ToLower())).FirstOrDefault();
+                image.sprite = terrainType.GetIcon();
 
             }
         }

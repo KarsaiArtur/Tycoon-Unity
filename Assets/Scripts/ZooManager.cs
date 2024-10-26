@@ -94,11 +94,15 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     {
         foreach (var staff in StaffManager.instance.staffList)
         {
-            ChangeMoney(-staff.salary);
+            ChangeMoney(-staff.expense);
         }
         foreach (var building in BuildingManager.instance.buildingList)
         {
             ChangeMoney(-building.expense);
+        }
+        foreach (var decoration in DecorationManager.instance.decorations)
+        {
+            ChangeMoney(-decoration.expense);
         }
     }
 
@@ -107,7 +111,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         float sum = 0;
         foreach (var staff in StaffManager.instance.staffList)
         {
-            sum += staff.salary;
+            sum += staff.expense;
         }
         foreach (var building in BuildingManager.instance.buildingList)
         {

@@ -28,7 +28,6 @@ public class Building : BuildingAncestor, Saveable
     public int defaultCapacity = 10;
 
     public bool hasRestroom = false;
-    public int expense = 0;
 
     public override void Awake()
     {

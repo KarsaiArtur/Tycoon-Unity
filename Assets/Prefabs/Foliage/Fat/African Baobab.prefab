@@ -45,19 +45,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7783d6ea26439045a9c4657051f135a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: African Baobab
+  description: 
   placeablePrice: 50
   icon: {fileID: 21300000, guid: 96429418e2bdd7f4a9bf23662eb65f49, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
-  foligeVariants:
-  - {fileID: 5688831313040708234, guid: d4a7943acef6278448a36125d4404ece, type: 3}
-  - {fileID: 1137848296488959494, guid: b8abb61b5d46af142bdf84d87e2dafbe, type: 3}
-  - {fileID: 4241843750582813381, guid: df7b56d48e841ce4aa1f1b46c3657fe0, type: 3}
-  selectedVariantInstance: {fileID: 0}
+  renderers: []
+  selectedPrefabId: 0
+  unlockLevel: 1
+  xpBonus: 0
+  expense: 0
+  navMeshObstacle: {fileID: 0}
+  terrainPreferred: 2
 --- !u!54 &3293058049489718864
 Rigidbody:
   m_ObjectHideFlags: 0

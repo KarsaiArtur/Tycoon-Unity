@@ -228,6 +228,11 @@ public class TrashCan : Placeable, Visitable, Saveable
         
         LoadMenu.objectLoadedEvent.Invoke();
     }
+
+    public override SceneryType GetSceneryType(){
+        return SceneryType.TRASH;
+    }
+
 ////GENERATED
 
     public List<string> visitorsIds = new List<string>();

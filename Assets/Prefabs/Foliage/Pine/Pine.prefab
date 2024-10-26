@@ -45,24 +45,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7783d6ea26439045a9c4657051f135a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Pine
+  description: 
   placeablePrice: 75
   icon: {fileID: 21300000, guid: 8aa8c7d089927b146b011eca15e22587, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
-  foligeVariants:
-  - {fileID: 3886322433513631021, guid: 3371f5c3fd7ee374eabe0feed440c81e, type: 3}
-  - {fileID: 1009410153541789054, guid: 17e37e57047622b41b1f3815cb754704, type: 3}
-  - {fileID: 5630335326196474926, guid: 57e638bc109a30f439636e68d1e16aa9, type: 3}
-  - {fileID: 8965415907948756142, guid: 2e8a49bc8b444a440993586b76dda7a3, type: 3}
-  - {fileID: 1440121077862442017, guid: 4a84ee51ffc320848b1b0751478cf53d, type: 3}
-  - {fileID: 2922504736442060950, guid: 837541ac9884dbb4fb50e839e7e5328c, type: 3}
-  - {fileID: 2576887344108056095, guid: 301765750bc2bda4eb0171164c074cea, type: 3}
-  - {fileID: 4669266814900154463, guid: fbf82c8fa451c1a489a81bf71f07113a, type: 3}
-  selectedVariantInstance: {fileID: 0}
+  renderers: []
+  selectedPrefabId: 0
+  unlockLevel: 1
+  xpBonus: 0
+  expense: 0
+  navMeshObstacle: {fileID: 0}
+  terrainPreferred: 3
 --- !u!54 &-9046277886167272794
 Rigidbody:
   m_ObjectHideFlags: 0

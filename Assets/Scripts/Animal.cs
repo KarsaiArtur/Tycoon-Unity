@@ -117,7 +117,6 @@ public class Animal : Placeable, Saveable
     private Animal target;
     Vector3 dangerPos;
     float attackCooldown = 2;
-    public string description;
 
     public override void Place(Vector3 mouseHit)
     {

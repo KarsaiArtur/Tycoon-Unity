@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -14,7 +15,6 @@ public abstract class Staff : Placeable
     public Exhibit destinationExhibit;
     public Exhibit insideExhibit;
     public bool isAvailable = true;
-    public int salary;
     public WorkingState workingState;
     public bool destinationReached = false;
 
@@ -27,6 +27,8 @@ public abstract class Staff : Placeable
         Working,
         Resting
     }
+
+    public abstract List<StaffJob> GetJobTypes();
 
     public virtual void Start()
     {

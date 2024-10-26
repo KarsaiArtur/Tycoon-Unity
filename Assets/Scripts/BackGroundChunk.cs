@@ -13,7 +13,6 @@ public class BackGroundChunk : Chunk
     public List<BackgroundBuilding> buildings;
     public GameObject testGridPrefab;
 
-
     public override void Initialize(int index_x, int index_z, Vector3[] coords, TerrainType[] coordTypes)
     {
         rotationAngle = GridManager.instance.rotationAngle;
@@ -69,8 +68,10 @@ public class BackGroundChunk : Chunk
         }
 
         buildings = CheckRemainingCount(buildings);
-        GenerateLeft();
-        GameObject test = Instantiate(testGridPrefab, new Vector3(center.x - 6, 3.01f, center.z - 10.5f), transform.rotation);
+        GenerateLeft(true, false);
+        GenerateLeft(false, false);
+        GameObject test = Instantiate(testGridPrefab, new Vector3(center.x - 6, 3.01f, center.z), transform.rotation);
+        //GameObject test = Instantiate(testGridPrefab, new Vector3(center.x - 6, 3.01f, center.z - 10.5f), transform.rotation);
         test.transform.parent = this.transform;
     }
 
@@ -101,7 +102,7 @@ public class BackGroundChunk : Chunk
         crosswalk3.transform.Rotate(new Vector3(0, 90, 0));
     }
 
-    void GenerateLeft()
+    public void GenerateLeft(bool left, bool corner)
     {
         var generatedHouses = new List<List<BackgroundBuilding>>();
         for (int i = 0; i < 5; i++)
@@ -114,7 +115,8 @@ public class BackGroundChunk : Chunk
         for (int i = 0; i < 5; i++)
         {
             int sumWidth = 0;
-            foreach(var item in generatedHouses[i]){
+            foreach(var item in generatedHouses[i])
+            {
                 sumWidth += item.x;
             }
             if(maxWidth < sumWidth)
@@ -123,20 +125,42 @@ public class BackGroundChunk : Chunk
                 bestList = generatedHouses[i];
             }
         }
+
         float curX = center.x - GridManager.instance.elementWidth/2;
-        float previousWidth = 0;
+        float curZ = center.z - GridManager.instance.elementWidth/2;
+        float previousXWidth = 0;
+        float previousZWidth = 0;
+
         foreach (var clone in bestList)
         {
             buildings = CheckRemainingCount(buildings);
             var building = buildings.Find(x => x.name.Equals(clone.name));
             building.remaining--;
-            curX += previousWidth + building.x/2.0f;
-            var newPos = new Vector3(curX, center.y, center.z-10.5f);
-            BackgroundBuilding house = Instantiate(building, newPos, transform.rotation);
-            house.transform.parent = this.transform;
-            previousWidth = building.x / 2.0f;
-        }
+            curX += previousXWidth + building.x/2.0f;
+            curZ += previousZWidth + building.x/2.0f;
+            BackgroundBuilding house;
+            Vector3 newPos;
 
+            if (left && !corner)
+            {
+                newPos = new Vector3(curX, center.y, center.z - 10.5f);
+                house = Instantiate(building, newPos, transform.rotation);
+            }
+            else if (left)
+            {
+                newPos = new Vector3(center.x + 10.5f, center.y, curZ);
+                house = Instantiate(building, newPos, transform.rotation * Quaternion.Euler(0, 270f, 0));
+            }
+            else
+            {
+                newPos = new Vector3(curX, center.y, center.z + 10.5f);
+                house = Instantiate(building, newPos, transform.rotation * Quaternion.Euler(0, 180f, 0));
+            }
+
+            house.transform.parent = this.transform;
+            previousXWidth = building.x / 2.0f;
+            previousZWidth = building.x / 2.0f;
+        }
     }
 
 
@@ -185,7 +209,7 @@ public class BackGroundChunk : Chunk
         return converted.SkipWhile(i => i.probability < random).First().building;
     }
 
-    List<BackgroundBuilding> CheckRemainingCount(List<BackgroundBuilding> list)
+    public List<BackgroundBuilding> CheckRemainingCount(List<BackgroundBuilding> list)
     {
         var sumRemaining = 0;
         foreach (var building in list)

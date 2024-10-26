@@ -140,6 +140,7 @@ MonoBehaviour:
   - {fileID: 1313980649713704495, guid: 76d13328634367542a9703e7cf7adb97, type: 3}
   - {fileID: 1837626258827964099, guid: 630aa31f0ef86ad4b9d10e20e23ca397, type: 3}
   - {fileID: 862284576952416207, guid: f415f061e14b1cd42b5c8bf2488325f4, type: 3}
+  infoPanel: {fileID: 7577904239619829071, guid: b935dee5bc599104cb18313bcb6395cf, type: 3}
 --- !u!114 &-3909907454791035505
 MonoBehaviour:
   m_ObjectHideFlags: 0

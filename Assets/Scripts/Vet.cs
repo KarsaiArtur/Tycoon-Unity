@@ -11,36 +11,32 @@ using UnityEngine;
 
 public class Vet : Staff, Saveable
 {
-    public enum VetJobs
-    {
-        HealingAnimal,
-        PuttingAnimalToSleep,
-        Nothing
-    }
 
     Animal animalOccupied;
-    public VetJobs job = VetJobs.Nothing;
+    public StaffJob job = StaffJob.Nothing;
     public bool aiming = false;
     int shootingDistance = 5;
     IEnumerator coroutine;
     bool CRRunning = false;
 
+    public override List<StaffJob> GetJobTypes() => new List<StaffJob> { StaffJob.HealingAnimal, StaffJob.PuttingAnimalToSleep };
+
     public override void Start()
     {
         base.Start();
-        job = VetJobs.Nothing;
+        job = StaffJob.Nothing;
     }
 
     public override void Update()
     {
         base.Update();
 
-        if (workingState == WorkingState.Working && job == VetJobs.HealingAnimal && animalOccupied != null && animalOccupied.agent.isOnNavMesh)
+        if (workingState == WorkingState.Working && job == StaffJob.HealingAnimal && animalOccupied != null && animalOccupied.agent.isOnNavMesh)
         {
             animalOccupied.agent.SetDestination(animalOccupied.transform.position);
             animalOccupied.atDestination = false;
         }
-        else if (workingState == WorkingState.Working && job == VetJobs.PuttingAnimalToSleep && animalOccupied != null && animalOccupied.agent.isOnNavMesh)
+        else if (workingState == WorkingState.Working && job == StaffJob.PuttingAnimalToSleep && animalOccupied != null && animalOccupied.agent.isOnNavMesh)
         {
             if (!CRRunning)
             {
@@ -65,7 +61,7 @@ public class Vet : Staff, Saveable
     {
         CRRunning = true;
 
-        while (!aiming && animalOccupied != null && workingState == WorkingState.Working && job == VetJobs.PuttingAnimalToSleep)
+        while (!aiming && animalOccupied != null && workingState == WorkingState.Working && job == StaffJob.PuttingAnimalToSleep)
         {
             Vector3 shootPos = new Vector3(transform.position.x, transform.position.y + 0.5f, transform.position.z);
             Vector3 targetPos = new Vector3(animalOccupied.transform.position.x, animalOccupied.transform.position.y + 0.25f, animalOccupied.transform.position.z);
@@ -93,7 +89,7 @@ public class Vet : Staff, Saveable
         aiming = false;
         CRRunning = false;
 
-        var possibleJobs = new List<(Exhibit exhibit, Animal animal, VetJobs vetJob, float percent)>();
+        var possibleJobs = new List<(Exhibit exhibit, Animal animal, StaffJob vetJob, float percent)>();
         foreach (Exhibit exhibit in ExhibitManager.instance.exhibitList)
         {
             if (exhibit.GetAnimals().Count > 0 && !exhibit.unreachableForStaff)
@@ -101,14 +97,14 @@ public class Vet : Staff, Saveable
                 foreach (var animal in exhibit.GetAnimals())
                 {
                     if (!animal.isOccupiedByVet && animal.health < 75)
-                        possibleJobs.Add((exhibit, animal, VetJobs.HealingAnimal, animal.health));
+                        possibleJobs.Add((exhibit, animal, StaffJob.HealingAnimal, animal.health));
                 }
             }
         }
         foreach (var animal in AnimalManager.instance.freeAnimals)
         {
             if (!animal.isOccupiedByVet && !animal.isSlept)
-                possibleJobs.Add((null, animal, VetJobs.PuttingAnimalToSleep, 50));
+                possibleJobs.Add((null, animal, StaffJob.PuttingAnimalToSleep, 50));
         }
 
         if (possibleJobs.Count > 0)
@@ -117,7 +113,7 @@ public class Vet : Staff, Saveable
             isAvailable = true;
     }
 
-    public void ChooseAnimal(List<(Exhibit exhibit, Animal animal, VetJobs vetJob, float percent)> possibleJobs)
+    public void ChooseAnimal(List<(Exhibit exhibit, Animal animal, StaffJob vetJob, float percent)> possibleJobs)
     {
         possibleJobs = possibleJobs.OrderBy(x => x.percent).ToList();
         animalOccupied = possibleJobs[0].animal;
@@ -160,15 +156,15 @@ public class Vet : Staff, Saveable
 
     public override bool DoJob()
     {
-        if (animalOccupied != null && job == VetJobs.HealingAnimal)
+        if (animalOccupied != null && job == StaffJob.HealingAnimal)
         {
             float healthRecovered = UnityEngine.Random.Range(40, 60);
             animalOccupied.health = animalOccupied.health + healthRecovered > 100 ? 100 : animalOccupied.health + healthRecovered;
             animalOccupied.isSick = false;
             animalOccupied.isOccupiedByVet = false;
-            job = VetJobs.Nothing;
+            job = StaffJob.Nothing;
         }
-        else if (animalOccupied != null && job == VetJobs.PuttingAnimalToSleep)
+        else if (animalOccupied != null && job == StaffJob.PuttingAnimalToSleep)
         {
             agent.isStopped = false;
             aiming = false;
@@ -185,7 +181,7 @@ public class Vet : Staff, Saveable
 
     public override void FindWorkDestination()
     {
-        if (animalOccupied != null && (job == VetJobs.HealingAnimal || job == VetJobs.PuttingAnimalToSleep))
+        if (animalOccupied != null && (job == StaffJob.HealingAnimal || job == StaffJob.PuttingAnimalToSleep))
         {
             agent.SetDestination(animalOccupied.transform.position);
         }
@@ -199,7 +195,7 @@ public class Vet : Staff, Saveable
     public override void SetToDefault()
     {
         base.SetToDefault();
-        job = VetJobs.Nothing;
+        job = StaffJob.Nothing;
         aiming = false;
             CRRunning = false;
 

@@ -141,6 +141,7 @@ MonoBehaviour:
   - {fileID: 5248183375727269835, guid: bc6ccec1ddd620e4fb69a30d62209202, type: 3}
   - {fileID: 3167993997763287526, guid: eaa87812be8145a439a265bf75404a03, type: 3}
   - {fileID: 5807679606110748630, guid: b9b7435d42a60a94e9e26a56b93dc838, type: 3}
+  infoPanel: {fileID: 7577904239619829071, guid: fadd22248bfd2ca4aa05179397f9885d, type: 3}
 --- !u!114 &-3909907454791035505
 MonoBehaviour:
   m_ObjectHideFlags: 0

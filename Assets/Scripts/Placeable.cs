@@ -11,6 +11,7 @@ public class Placeable : MonoBehaviour, Clickable
     public PlayerControl playerControl;
     public GridManager gridManager;
     public string placeableName;
+    public string description;
     public int placeablePrice;
     public Sprite icon;
     public static Vector3 startingPoint = new Vector3(-1, -1, -1);
@@ -22,6 +23,7 @@ public class Placeable : MonoBehaviour, Clickable
     public int selectedPrefabId;
     public int unlockLevel = 1;
     public int xpBonus = 0;
+    public int expense = 0;
 
     public virtual void Awake()
     {
@@ -242,6 +244,12 @@ public class Placeable : MonoBehaviour, Clickable
         return id.Substring(0, id.IndexOf(":"));
     }
 
+    public virtual SceneryType GetSceneryType(){
+        return SceneryType.NONE;
+    }
 
+    public int GetMonthlyExpense(){
+        return expense;
+    }
     
 }

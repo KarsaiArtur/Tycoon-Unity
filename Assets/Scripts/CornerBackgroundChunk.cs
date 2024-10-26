@@ -25,7 +25,9 @@ public class CornerBackgroundChunk : BackGroundChunk
         GameObject road4 = Instantiate(prefabs.Find(y => y.name.Equals("Straight")), new Vector3(posX + 7.5f, center.y, posZ), transform.rotation);
         road4.transform.Rotate(new Vector3(0, 90, 0));
         road4.transform.parent = this.transform;
+        
+        buildings = CheckRemainingCount(buildings);
+        GenerateLeft(true, true);
+        GenerateLeft(false, true);
     }
-
-
 }

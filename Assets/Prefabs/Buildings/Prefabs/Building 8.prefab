@@ -132,7 +132,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   x: 4
   z: 5
-  defCount: 0
+  defCount: 5
   remaining: 0
   probability: 0
 --- !u!1 &4653228211910742271

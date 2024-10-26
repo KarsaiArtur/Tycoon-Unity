@@ -176,6 +176,10 @@ public class Bench : BuildingAncestor, Saveable
     public override void LoadedArrived(Visitor visitor)
     {
     }
+
+    public override SceneryType GetSceneryType(){
+        return SceneryType.ENERGY;
+    }
     
 ///******************************
     ///GENERATED CODE, DONT MODIFY

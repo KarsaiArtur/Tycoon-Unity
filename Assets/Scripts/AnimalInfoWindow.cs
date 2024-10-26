@@ -144,9 +144,10 @@ public class AnimalInfoWindow: MonoBehaviour, IDragHandler, IBeginDragHandler, I
         terrainTypeList.Clear();
         foreach(var terrainType in animal.terrainsPreferred){
             var newTerrainTypeUI = Instantiate(terrainTypeUI);
+            newTerrainTypeUI.name = "TerrainType";
             terrainTypeList.Add(newTerrainTypeUI.gameObject);
             newTerrainTypeUI.transform.GetComponentInChildren<TextMeshProUGUI>().text = terrainType.GetName();
-            newTerrainTypeUI.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = UIMenu.Instance.terrainTypeSprites.Where(element => element.name.ToLower().Equals(terrainType.GetName().ToLower())).FirstOrDefault();
+            newTerrainTypeUI.transform.GetChild(0).GetChild(0).GetComponent<Image>().sprite = terrainType.GetIcon();
             newTerrainTypeUI.transform.SetParent(terrainTypes.transform);
         }
         Destroy(terrainTypes.transform.GetChild(0).gameObject);

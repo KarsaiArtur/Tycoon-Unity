@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
-using static Chunk;
-using static Grid;
 
 /////Saveable Attributes, DONT DELETE
 //////Vector3[] coords;TerrainType[] coordTypes//////////

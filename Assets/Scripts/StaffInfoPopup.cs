@@ -21,7 +21,7 @@ public class StaffInfoPopup : InfoPopup
             staff.Remove();
             DestroyPanel();
         });
-        infoPanelInstance.transform.GetChild(0).Find("DataPanel").Find("Salary").GetComponent<TextMeshProUGUI>().text = "Salary: "+staff.salary+"$/Month";
+        infoPanelInstance.transform.GetChild(0).Find("DataPanel").Find("Salary").GetComponent<TextMeshProUGUI>().text = "Salary: "+staff.expense+"$/Month";
         currentAction = infoPanelInstance.transform.GetChild(0).Find("DataPanel").Find("Current Action Panel").GetChild(0).GetComponent<TextMeshProUGUI>();
     }
 

@@ -8,13 +8,18 @@ using UnityEngine.UI;
 
 public class AnimalPropInfoPanel : MonoBehaviour
 {
-    public GameObject scaleDescription;
     public GameObject scale;
     public TextMeshProUGUI description;
     private PlayerControl playerControl;
 
     void Start(){
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
+        SetData();
+        foreach(var placeableButton in UIMenu.Instance.placeableListPanel.GetComponentsInChildren<PlaceableButton>()){
+            placeableButton.m_onDown.AddListener(SetData);
+        }
+    }
+    void SetData(){
         SetScale();
         scale.transform.GetComponent<Tooltip>().tooltipText = ((WaterTrough)playerControl.curPlaceable).waterCapacity.ToString();
         description.text = ((WaterTrough)playerControl.curPlaceable).description;

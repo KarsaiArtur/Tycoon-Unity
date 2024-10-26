@@ -13,6 +13,7 @@ public class Decoration : Placeable, Saveable
     float height;
     NavMeshObstacle navMeshObstacle;
     public GameObject lightSource;
+    public SceneryType sceneryType;
 
     public override void Awake()
     {
@@ -89,6 +90,11 @@ public class Decoration : Placeable, Saveable
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
         LoadMenu.objectLoadedEvent.Invoke();
     }
+
+    public override SceneryType GetSceneryType(){
+        return sceneryType;
+    }
+
 ///******************************
     ///GENERATED CODE, DONT MODIFY
     ///******************************

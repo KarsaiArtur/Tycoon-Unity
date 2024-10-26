@@ -45,22 +45,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7783d6ea26439045a9c4657051f135a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Medium Rock
+  description: 
   placeablePrice: 75
   icon: {fileID: 21300000, guid: d48046edffe7f4245834481d1a7a0185, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
-  foligeVariants:
-  - {fileID: 6051734374573275912, guid: 87cd6a67d74cab7488fece215a8dc46d, type: 3}
-  - {fileID: 1019722708613779864, guid: 5efdd0f3d8ee1be4896b9bbb26240fe7, type: 3}
-  - {fileID: 243454621643394354, guid: 2e28dcb15f8884f4d87d7267d62d51ca, type: 3}
-  - {fileID: 7173226036210509128, guid: e1e7a3d3774209e408c6c86cca60b153, type: 3}
-  - {fileID: 2505593114301684665, guid: 56dfe7e7a9671cb49b06051b67787f0b, type: 3}
-  - {fileID: 2251138332246075964, guid: 235bb0b22298c484d96055a816db68aa, type: 3}
-  selectedVariantInstance: {fileID: 0}
+  renderers: []
+  selectedPrefabId: 0
+  unlockLevel: 1
+  xpBonus: 0
+  expense: 0
+  navMeshObstacle: {fileID: 0}
+  terrainPreferred: 3
 --- !u!54 &3293058049489718864
 Rigidbody:
   m_ObjectHideFlags: 0

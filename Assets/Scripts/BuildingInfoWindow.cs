@@ -31,6 +31,8 @@ public class BuildingInfoWindow: MonoBehaviour, IDragHandler, IBeginDragHandler,
     [SerializeField] private TextMeshProUGUI capacity;
     [SerializeField] private TextMeshProUGUI monthlyExpenses;
     [SerializeField] private GameObject nextButton;
+    [SerializeField] private List<Image> needsIcons;
+    [SerializeField] private Material greyScaleMaterial;
 
 
 
@@ -91,6 +93,7 @@ public class BuildingInfoWindow: MonoBehaviour, IDragHandler, IBeginDragHandler,
         curIndex = 0;
         building = (Building)playerControl.curPlaceable;
         buildingName.text = building.placeableName;
+        description.text = building.description;
 
         capacity.text = building.capacity+ " persons";
         monthlyExpenses.text = building.expense+ " $ / Month";
@@ -99,6 +102,38 @@ public class BuildingInfoWindow: MonoBehaviour, IDragHandler, IBeginDragHandler,
         SetPage();
 
         SetPurchasableItem();
+
+        foreach(var icon in needsIcons){
+            var tooltip = icon.GetComponent<Tooltip>();
+            switch (icon.gameObject.name){
+                case "Food":
+                icon.material = building.HasFood() ? null : greyScaleMaterial;
+                icon.transform.GetChild(0).gameObject.SetActive(!building.HasFood());
+                tooltip.tooltipText =  building.HasFood() ? "Food items are available for purchase here." : "Food items are not available for purchase here.";
+                break;
+                case "Drink":
+                icon.material = building.HasDrink() ? null : greyScaleMaterial;
+                icon.transform.GetChild(0).gameObject.SetActive(!building.HasDrink());
+                tooltip.tooltipText =  building.HasDrink() ? "Drink items are available for purchase here." : "Drink items are not available for purchase here.";
+                break;
+                case "Happiness":
+                icon.material = building.HasHappiness() ? null : greyScaleMaterial;
+                icon.transform.GetChild(0).gameObject.SetActive(!building.HasHappiness());
+                tooltip.tooltipText =  building.HasHappiness() ? "Happiness items are available for purchase here." : "Happiness items are not available for purchase here.";
+                break;
+                case "Restroom":
+                icon.material = building.hasRestroom ? null : greyScaleMaterial;
+                icon.transform.GetChild(0).gameObject.SetActive(!building.hasRestroom);
+                tooltip.tooltipText =  building.hasRestroom ? "Restroom is available here." : "Restroom is not available here.";
+                break;
+                case "Energy":
+                icon.material = building.HasEnergy() ? null : greyScaleMaterial;
+                icon.transform.GetChild(0).gameObject.SetActive(!building.HasEnergy());
+                tooltip.tooltipText =  building.HasEnergy() ? "Energy items are available for purchase here." : "Energy items not available for purchase here.";
+                break;
+
+            }
+        }
     }
 
     void SetPage(){

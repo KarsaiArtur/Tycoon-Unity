@@ -95,6 +95,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   x: 6
   z: 5
-  defCount: 0
+  defCount: 5
   remaining: 0
   probability: 0

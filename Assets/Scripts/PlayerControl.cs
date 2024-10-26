@@ -238,9 +238,9 @@ public class PlayerControl : MonoBehaviour
         GameCamera.GetComponent<CinemachineBrain>().enabled = false;
 
         minX = gridM.elementWidth;
-        maxX = gridM.terrainWidth + gridM.elementWidth;
+        maxX = gridM.terrainWidth - gridM.elementWidth;
         minZ = gridM.elementWidth;
-        maxZ = gridM.terrainWidth + gridM.elementWidth;
+        maxZ = gridM.terrainWidth - gridM.elementWidth;
 
         startingCoords = new Vector3[gridM.coords.Length];
         Array.Copy(gridM.coords, startingCoords, gridM.coords.Length);

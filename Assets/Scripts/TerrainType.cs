@@ -76,4 +76,8 @@ static class TerrainTypeMethods
                 return "";
         }
     }
+    public static Sprite GetIcon(this TerrainType s1)
+    {
+        return UIMenu.Instance.terrainTypeSprites.Find(e => e.name.ToLower().Equals(s1.GetName().ToLower()));
+    }
 }

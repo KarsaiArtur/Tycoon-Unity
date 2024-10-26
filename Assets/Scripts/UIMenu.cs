@@ -46,6 +46,8 @@ public class UIMenu : MonoBehaviour
     public GameObject windows;
     public UnityEvent placeableChanged;
     public List<Sprite> terrainTypeSprites;
+    public List<Sprite> sceneryTypeSprites;
+    public List<Sprite> staffJobSprites;
 
     const float defaultMenuButtonWidth = 113;
     const float defaultMenuButtonHeight = 80;
