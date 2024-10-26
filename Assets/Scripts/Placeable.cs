@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Placeable : MonoBehaviour, Clickable
 {
@@ -65,6 +66,10 @@ public class Placeable : MonoBehaviour, Clickable
     public virtual void RotateY(float angle)
     {
         transform.Rotate(0, angle, 0);
+    }
+
+    public virtual void SetIcon(Image image){
+        image.sprite = GetIcon();
     }
 
     public virtual void Place(Vector3 mouseHit)

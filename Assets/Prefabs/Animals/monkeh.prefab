@@ -256,12 +256,21 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Squirrel Monkey
+  description: Squirrel monkeys are omnivores, primarily eating fruits, insects,
+    and small animals like frogs or bird eggs. Unlike many other species, they are
+    social animals that live in large groups, sometimes numbering up to 500 individuals.
+    Squirrel monkeys thrive in tropical rainforests, usually found in the canopy,
+    and are native to Central and South America. Their group behavior and habitat
+    preferences help them thrive in the diverse ecosystems of these regions.
   placeablePrice: 850
-  icon: {fileID: 21300000, guid: 7e47fb51c5e60e246a4eef37f32b6121, type: 3}
+  icon: {fileID: 21300000, guid: 713982fbf53c28a43bd600d23d15ca8d, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
+  unlockLevel: 1
+  xpBonus: 0
+  expense: 0
   sadnessReasons: 
   healthReasons: 
   materials:
@@ -296,7 +305,8 @@ MonoBehaviour:
   terrainsPreferredPercents:
   - 100
   terrainBonusMultiplier: 0
-  natureBonus: 1
+  naturePreferredCount: 0
+  natureBonusMultiplier: 1
   age: 0
   lifeExpectancy: 20
   fullGrownAgeMonth: 12
@@ -309,12 +319,6 @@ MonoBehaviour:
   fertility: 100
   isAgressive: 0
   dangerLevel: 2
-  description: Squirrel monkeys are omnivores, primarily eating fruits, insects,
-    and small animals like frogs or bird eggs. Unlike many other species, they are
-    social animals that live in large groups, sometimes numbering up to 500 individuals.
-    Squirrel monkeys thrive in tropical rainforests, usually found in the canopy,
-    and are native to Central and South America. Their group behavior and habitat
-    preferences help them thrive in the diverse ecosystems of these regions.
   exhibitId: 
   destinationVisitableId: 
   matingPartnerId: 

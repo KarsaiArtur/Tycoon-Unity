@@ -46,6 +46,7 @@ public class UIMenu : MonoBehaviour
     public GameObject windows;
     public UnityEvent placeableChanged;
     public List<Sprite> terrainTypeSprites;
+    public List<Sprite> animalBackgroundSprites;
     public List<Sprite> sceneryTypeSprites;
     public List<Sprite> staffJobSprites;
 
@@ -195,7 +196,7 @@ public class UIMenu : MonoBehaviour
             b.transform.SetParent(placeableListPanel);
             if (placeables[i].icon != null)
             {
-                b.GetComponent<Image>().sprite = placeables[i].GetIcon();
+                placeables[i].SetIcon(b.GetComponent<Image>());
             }
         }
         SetPlaceable(0, placeableListPanel.childCount - placeables.Length);

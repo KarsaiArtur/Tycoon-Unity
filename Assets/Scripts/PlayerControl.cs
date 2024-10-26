@@ -27,10 +27,13 @@ public class PlayerControl : MonoBehaviour
     int cameraTimesRotated = 0;
     int maxZoom = 10;
     int minZoom = 30;
+    int minBase;
+    int maxBase;
     int minX;
     int maxX;
     int minZ;
     int maxZ;
+    List<int> offsets;
     private float angle;
     public int objectTimesRotated = 0;
     public Vector3 deletePosition;
@@ -237,10 +240,17 @@ public class PlayerControl : MonoBehaviour
         gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
         GameCamera.GetComponent<CinemachineBrain>().enabled = false;
 
-        minX = gridM.elementWidth;
-        maxX = gridM.terrainWidth - gridM.elementWidth;
-        minZ = gridM.elementWidth;
-        maxZ = gridM.terrainWidth - gridM.elementWidth;
+        //minX = gridM.elementWidth + 5;
+        //maxX = gridM.terrainWidth - gridM.elementWidth - 5;
+        //minZ = gridM.elementWidth + 5;
+        //maxZ = gridM.terrainWidth - gridM.elementWidth - 5;
+        minBase = gridM.elementWidth;
+        maxBase = gridM.terrainWidth - gridM.elementWidth;
+        minX = minBase;
+        maxZ = maxBase - 9;
+        maxX = maxBase + 1;
+        minZ = minBase - 5;
+        offsets = new List<int>() { 0, -5, -1, 9 };
 
         startingCoords = new Vector3[gridM.coords.Length];
         Array.Copy(gridM.coords, startingCoords, gridM.coords.Length);
@@ -412,14 +422,17 @@ public class PlayerControl : MonoBehaviour
         if (cameraTimesRotated == 3)
             transform.position = transform.position + new Vector3(move.y * (float)Math.Cos(angle * degToRad) - move.x * (float)Math.Sin(angle * degToRad), 0, move.y * (float)Math.Sin(angle * degToRad) + move.x * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
 
-        if (transform.position.x < minX + Math.Sign(cameraTimesRotated - 1.5) * (transform.position.y / 2))
-            transform.position = new Vector3(minX + Math.Sign(cameraTimesRotated - 1.5) * (transform.position.y / 2), transform.position.y, transform.position.z);
-        if (transform.position.x > maxX + Math.Sign(cameraTimesRotated - 1.5) * (transform.position.y / 2))
-            transform.position = new Vector3(maxX + Math.Sign(cameraTimesRotated - 1.5) * (transform.position.y / 2), transform.position.y, transform.position.z);
-        if (transform.position.z < minZ - (transform.position.y / 2) + Math.Sign(cameraTimesRotated % 3) * 2 * (transform.position.y / 2))
-            transform.position = new Vector3(transform.position.x, transform.position.y, minZ - (transform.position.y / 2) + Math.Sign(cameraTimesRotated % 3) * 2 * (transform.position.y / 2));
-        if (transform.position.z > maxZ - (transform.position.y / 2) + Math.Sign(cameraTimesRotated % 3) * 2 * (transform.position.y / 2))
-            transform.position = new Vector3(transform.position.x, transform.position.y, maxZ - (transform.position.y / 2) + Math.Sign(cameraTimesRotated % 3) * 2 * (transform.position.y / 2));
+        float number = (transform.position.y - 10) / 20 * 12;
+        //float number = (transform.position.y / 2);
+
+        if (transform.position.x < minX + Math.Sign(cameraTimesRotated - 1.5) * number)
+            transform.position = new Vector3(minX + Math.Sign(cameraTimesRotated - 1.5) * number, transform.position.y, transform.position.z);
+        if (transform.position.x > maxX + Math.Sign(cameraTimesRotated - 1.5) * number)
+            transform.position = new Vector3(maxX + Math.Sign(cameraTimesRotated - 1.5) * number, transform.position.y, transform.position.z);
+        if (transform.position.z < minZ - number + Math.Sign(cameraTimesRotated % 3) * 2 * number)
+            transform.position = new Vector3(transform.position.x, transform.position.y, minZ - number + Math.Sign(cameraTimesRotated % 3) * 2 * number);
+        if (transform.position.z > maxZ - number + Math.Sign(cameraTimesRotated % 3) * 2 * number)
+            transform.position = new Vector3(transform.position.x, transform.position.y, maxZ - number + Math.Sign(cameraTimesRotated % 3) * 2 * number);
 
         MovementSpeedChange();
     }
@@ -477,6 +490,11 @@ public class PlayerControl : MonoBehaviour
             VirtualCamera.ForceCameraPosition(new Vector3(transform.position.x, transform.position.y, transform.position.z), Quaternion.Euler(50, transform.rotation.eulerAngles.y + 90, 0));
             transform.rotation = Quaternion.Euler(50, transform.rotation.eulerAngles.y + 90, 0);
             cameraTimesRotated = (cameraTimesRotated + 1) % 4;
+            
+            minX = minBase + offsets[(cameraTimesRotated + 0) % 4];
+            maxZ = maxBase - offsets[(cameraTimesRotated + 3) % 4];
+            maxX = maxBase - offsets[(cameraTimesRotated + 2) % 4];
+            minZ = minBase + offsets[(cameraTimesRotated + 1) % 4];
         }
     }
 

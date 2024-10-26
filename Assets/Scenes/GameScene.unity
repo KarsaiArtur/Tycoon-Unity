@@ -5752,7 +5752,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0.41900265, y: 0.11829687, z: -0.05516273, w: 0.8985542}
-  m_LocalPosition: {x: 38.528687, y: 11.762024, z: 49.889957}
+  m_LocalPosition: {x: 38.528687, y: 24.92, z: 39.22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -8913,6 +8913,17 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 7009af7aa9370864889e7021e134ef2d, type: 3}
   - {fileID: 21300000, guid: e00c33fdc95376d4c9266494d21d907c, type: 3}
   - {fileID: 21300000, guid: 149cfa1d5fe8cde4f97eed2cbdab7a24, type: 3}
+  animalBackgroundSprites:
+  - {fileID: 21300000, guid: ac02c7f770e8102448e3fb9912be4c90, type: 3}
+  - {fileID: 21300000, guid: 6f976dd5e4d22d44690a353de91bb0d1, type: 3}
+  - {fileID: 21300000, guid: 945451c427fcc0e46975a4dda1420dd7, type: 3}
+  - {fileID: 21300000, guid: 6c60a8137c326ec4c9a28d3e5b8d305a, type: 3}
+  - {fileID: 21300000, guid: b821d0f652fe74b4e9ad891d5cb04491, type: 3}
+  - {fileID: 21300000, guid: 71253aa0050deb64298ce5fc05073a8d, type: 3}
+  - {fileID: 21300000, guid: a1a23e6caf6793349a235a30999b828f, type: 3}
+  - {fileID: 21300000, guid: ff59bd72d0b242146bf03d3b4e12b515, type: 3}
+  - {fileID: 21300000, guid: 296a56fcb9463ea42822c27237da22a3, type: 3}
+  - {fileID: 21300000, guid: 9ade4ad68724e364facd9a5a87073ff6, type: 3}
   sceneryTypeSprites:
   - {fileID: 21300000, guid: 404d3d363dcd33249a18042fdc84477c, type: 3}
   - {fileID: 21300000, guid: e6ca9863ba6d42d4cbd52fdf3d9128ad, type: 3}

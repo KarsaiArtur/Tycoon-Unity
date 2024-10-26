@@ -80,4 +80,9 @@ static class TerrainTypeMethods
     {
         return UIMenu.Instance.terrainTypeSprites.Find(e => e.name.ToLower().Equals(s1.GetName().ToLower()));
     }
+
+    public static Sprite GetAnimalBackgroundImage(this TerrainType s1)
+    {
+        return UIMenu.Instance.animalBackgroundSprites.Find(e => e.name.ToLower().Equals(s1.GetName().ToLower()));
+    }
 }

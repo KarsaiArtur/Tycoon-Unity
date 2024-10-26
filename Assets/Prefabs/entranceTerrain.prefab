@@ -119,11 +119,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2a666855fe4c8046a56c3c6f1f944bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mesh: {fileID: 0}
+  meshFilter: {fileID: 0}
   verts: []
+  colors: []
+  tris: 
+  uvs: []
+  uvs2: []
+  uvs3: []
+  uvs4: []
   center: {x: 0, y: 0, z: 0}
+  playerControl: {fileID: 0}
   prefabs:
   - {fileID: 8028680735698920893, guid: a6724fff9b3b8174791af46495dd03b6, type: 3}
   - {fileID: 6816028668906552917, guid: 07052a64d71427e459f5659d9a6630fd, type: 3}
   - {fileID: 1939299759812802963, guid: 16248dcb97a7e784b8fecde79624573e, type: 3}
   - {fileID: 9176925788028766236, guid: f36d8d3beb3d7354daa3936df8cc286b, type: 3}
   - {fileID: 5682571893627423199, guid: 398d027ecc04d2a4989461af47c4c5c6, type: 3}
+  - {fileID: 8971036323932364037, guid: 198a36b031ab9d940923f62cc2c39ff5, type: 3}
+  buildings: []
+  testGridPrefab: {fileID: 0}
+  middlePrefabs: []

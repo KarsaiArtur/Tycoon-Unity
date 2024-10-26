@@ -4,6 +4,7 @@ using TMPro;
 using System.IO;
 using Newtonsoft.Json;
 using UnityEngine.Experimental.GlobalIllumination;
+using System.Collections.Generic;
 
 /////Saveable Attributes, DONT DELETE
 //////DateTime currentDate;float timeOfDay;bool lightsOn;float totalSeconds///////////////
@@ -23,6 +24,7 @@ public class CalendarManager : MonoBehaviour, Saveable
     [Range(0,24)] public float timeOfDay;
     public bool lightsOn = true;
     PlayerControl playerControl;
+    public static List<GameObject> backgroundLights = new List<GameObject>();
 
     const int sunRise = 6;
     
@@ -76,6 +78,10 @@ public class CalendarManager : MonoBehaviour, Saveable
 
     void ChangeLights()
     {
+        foreach(var lights in backgroundLights){
+            lights.transform.gameObject.SetActive(lightsOn);
+        }
+        
         foreach(var decoration in DecorationManager.instance.decorations){
             if(decoration.lightSource != null){
                 decoration.lightSource.transform.GetChild(0).gameObject.SetActive(lightsOn);

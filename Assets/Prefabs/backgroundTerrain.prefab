@@ -119,13 +119,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee86a3b11282de44abbb150c425901e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mesh: {fileID: 0}
+  meshFilter: {fileID: 0}
   verts: []
+  colors: []
+  tris: 
+  uvs: []
+  uvs2: []
+  uvs3: []
+  uvs4: []
   center: {x: 0, y: 0, z: 0}
+  playerControl: {fileID: 0}
   prefabs:
   - {fileID: 8028680735698920893, guid: a6724fff9b3b8174791af46495dd03b6, type: 3}
   - {fileID: 6816028668906552917, guid: 07052a64d71427e459f5659d9a6630fd, type: 3}
   - {fileID: 9111196713764891046, guid: c2732c5e4f2a9544c93bdc10c23a1892, type: 3}
   - {fileID: 1998764822054507391, guid: 6016cbc88f4a8c24fa00932370c18e79, type: 3}
+  - {fileID: 5233408832128820873, guid: bba7c624a2c360442932674e5878062d, type: 3}
   buildings:
   - {fileID: -4332621930195334098, guid: 26fc50bbe1b701b449a137e3f31bc99c, type: 3}
   - {fileID: -6674459579216038727, guid: 07ae494094537014e84dcc4e7c62144b, type: 3}
@@ -141,3 +151,10 @@ MonoBehaviour:
   - {fileID: 2141508154459382225, guid: 19ad9e01346f9f14a826d56271fa268f, type: 3}
   - {fileID: 1453701442974773991, guid: 94dfa67479325644685f391563496a29, type: 3}
   testGridPrefab: {fileID: 767787271356149229, guid: 73d96e4d2f8d6494ea7ca89162d0eca2, type: 3}
+  middlePrefabs:
+  - {fileID: 6480545133042906578, guid: fc622acabf7705240b7672afbaac10e4, type: 3}
+  - {fileID: 7250245032886006424, guid: 38cb91189133b0148b332bf48b7f2cd2, type: 3}
+  - {fileID: 3608404448302942707, guid: 148b408743ab3924b9da66fe84b54abc, type: 3}
+  - {fileID: 5646781087698210811, guid: 9893528600b95ac42988f868930bdd37, type: 3}
+  - {fileID: 2851215972822082063, guid: cdcc2c9044d41444c8f28a10c328f9f6, type: 3}
+  - {fileID: 1247902043612328284, guid: e4213e21ed029c94dac7fa6fe8571994, type: 3}

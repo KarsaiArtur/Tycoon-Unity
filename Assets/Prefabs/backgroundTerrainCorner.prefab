@@ -133,6 +133,7 @@ MonoBehaviour:
   prefabs:
   - {fileID: 6877127180439009318, guid: 37cb60fd36fc3504d842e476e4a5512f, type: 3}
   - {fileID: 8028680735698920893, guid: a6724fff9b3b8174791af46495dd03b6, type: 3}
+  - {fileID: 5233408832128820873, guid: bba7c624a2c360442932674e5878062d, type: 3}
   buildings:
   - {fileID: -4332621930195334098, guid: 26fc50bbe1b701b449a137e3f31bc99c, type: 3}
   - {fileID: -6674459579216038727, guid: 07ae494094537014e84dcc4e7c62144b, type: 3}
@@ -146,3 +147,8 @@ MonoBehaviour:
   - {fileID: 2141508154459382225, guid: 19ad9e01346f9f14a826d56271fa268f, type: 3}
   - {fileID: 1453701442974773991, guid: 94dfa67479325644685f391563496a29, type: 3}
   testGridPrefab: {fileID: 0}
+  middlePrefabs:
+  - {fileID: 6310619154816358794, guid: 1172c00737835154c8ec9dd466a98b88, type: 3}
+  - {fileID: 238580805281782578, guid: 1b989210fe0ade041a08b4bbf29a01a3, type: 3}
+  - {fileID: 8968699554022915701, guid: 593b18c803a4b054cbf44da1d1b175d1, type: 3}
+  - {fileID: 2366562236989366650, guid: 07a6520cea6f1b141b95b7da1656d226, type: 3}

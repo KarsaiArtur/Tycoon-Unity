@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SaveableCodeGenerator")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+27b09150fded0b1af322a6bc70237698fc031760")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a6b9a28b7466ba0100253bd9a773ecb4f74a6bda")]
 [assembly: System.Reflection.AssemblyProductAttribute("SaveableCodeGenerator")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SaveableCodeGenerator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

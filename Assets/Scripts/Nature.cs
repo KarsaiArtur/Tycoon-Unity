@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 /////Saveable Attributes, DONT DELETE
 //////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;int placeablePrice;string tag//////////
@@ -53,6 +54,11 @@ public class Nature : Placeable, Saveable
             newCollider.center = collider.center;
             Destroy(collider);
         }
+    }
+
+    public override void SetIcon(Image image){
+        image.transform.GetChild(0).GetComponent<Image>().sprite = GetIcon();
+        image.sprite = terrainPreferred.GetAnimalBackgroundImage();
     }
 
     public override void FinalPlace()

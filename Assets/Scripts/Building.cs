@@ -260,14 +260,23 @@ public class Building : BuildingAncestor, Saveable
         {
             if (item.hungerBonus > 10)
             {
-                sum += (100 - Mathf.Abs(100 - (visitor.hunger + item.hungerBonus))) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                sum += (100 - Mathf.Abs(100 - (visitor.hunger + item.hungerBonus)) + 100 - visitor.hunger) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
                 probabilities.Add((index, sum));
             }
             index++;
         }
 
-        sum += 50 + visitor.hunger;
+        sum += 10 + visitor.hunger / 2;
         probabilities.Add((index, sum));
+
+        //string str = "";
+        //for (int i = 0; i < probabilities.Count - 1; i++)
+        //{
+        //    str += purchasableItemInstances[probabilities[i].index] + ": " + probabilities[i].probability + " ";
+        //}
+        //str += "nothing: ";
+        //str += probabilities[probabilities.Count - 1].probability;
+        //Debug.Log(str);
 
         var random = UnityEngine.Random.Range(0, sum);
         return probabilities.SkipWhile(i => i.probability < random).First().index;
@@ -283,14 +292,23 @@ public class Building : BuildingAncestor, Saveable
         {
             if (item.thirstBonus > 10)
             {
-                sum += (100 - Mathf.Abs(100 - (visitor.thirst + item.thirstBonus))) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                sum += ((100 - Mathf.Abs(100 - (visitor.thirst + item.thirstBonus))) / 2 + (100 - visitor.thirst) / 2) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
                 probabilities.Add((index, sum));
             }
             index++;
         }
 
-        sum += 50 + visitor.thirst;
+        sum += 10 + visitor.thirst / 2;
         probabilities.Add((index, sum));
+
+        //string str = "";
+        //for (int i = 0; i < probabilities.Count - 1; i++)
+        //{
+        //    str += purchasableItemInstances[probabilities[i].index] + ": " + probabilities[i].probability + " ";
+        //}
+        //str += "nothing: ";
+        //str += probabilities[probabilities.Count - 1].probability;
+        //Debug.Log(str);
 
         var random = UnityEngine.Random.Range(0, sum);
         return probabilities.SkipWhile(i => i.probability < random).First().index;
@@ -306,14 +324,23 @@ public class Building : BuildingAncestor, Saveable
         {
             if (item.energyBonus > 10)
             {
-                sum += (100 - Mathf.Abs(100 - (visitor.energy + item.energyBonus))) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                sum += ((100 - Mathf.Abs(100 - (visitor.energy + item.energyBonus))) / 2 + (100 - visitor.energy) / 2) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
                 probabilities.Add((index, sum));
             }
             index++;
         }
 
-        sum += 50 + visitor.energy;
+        sum += 10 + visitor.energy / 2;
         probabilities.Add((index, sum));
+
+        //string str = "";
+        //for (int i = 0; i < probabilities.Count - 1; i++)
+        //{
+        //    str += purchasableItemInstances[probabilities[i].index] + ": " + probabilities[i].probability + " ";
+        //}
+        //str += "nothing: ";
+        //str += probabilities[probabilities.Count - 1].probability;
+        //Debug.Log(str);
 
         var random = UnityEngine.Random.Range(0, sum);
         return probabilities.SkipWhile(i => i.probability < random).First().index;
@@ -329,14 +356,23 @@ public class Building : BuildingAncestor, Saveable
         {
             if (item.happinessBonus > 10)
             {
-                sum += (100 - Mathf.Abs(100 - (visitor.happiness + item.happinessBonus))) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
+                sum += ((100 - Mathf.Abs(100 - (visitor.happiness + item.happinessBonus))) / 2 + (100 - visitor.happiness) / 2) / (item.currentPrice / item.defaultPrice * 2) * item.probabilityToBuy;
                 probabilities.Add((index, sum));
             }
             index++;
         }
 
-        sum += 50 + visitor.happiness;
+        sum += 10 + visitor.happiness / 2;
         probabilities.Add((index, sum));
+
+        //string str = "";
+        //for (int i = 0; i < probabilities.Count - 1; i++)
+        //{
+        //    str += purchasableItemInstances[probabilities[i].index] + ": " + probabilities[i].probability + " ";
+        //}
+        //str += "nothing: ";
+        //str += probabilities[probabilities.Count - 1].probability;
+        //Debug.Log(str);
 
         var random = UnityEngine.Random.Range(0, sum);
         return probabilities.SkipWhile(i => i.probability < random).First().index;

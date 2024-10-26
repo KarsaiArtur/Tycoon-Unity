@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 /////Saveable Attributes, DONT DELETE
 //////string _id;Vector3 position;Quaternion rotation;Vector3 localScale;int selectedPrefabId;string tag;int placeablePrice;string placeableName;string exhibitId;float hunger;float thirst;float restroomNeeds;float happiness;float health;DateTime prevDay;bool isSick;float age;bool isMale;bool isPregnant;float pregnancyTimeMonth;int fertility;float terrainBonusMultiplier;float natureBonusMultiplier//////////
@@ -148,6 +149,11 @@ public class Animal : Placeable, Saveable
         }
 
         transform.position = position;
+    }
+
+    public override void SetIcon(Image image){
+        image.transform.GetChild(0).GetComponent<Image>().sprite = GetIcon();
+        image.sprite = GetMostPreferredTerrain().GetAnimalBackgroundImage();
     }
 
     void OnCollisionStay(Collision collision)

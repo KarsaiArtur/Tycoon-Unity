@@ -34,7 +34,7 @@ public class AnimalInfoPanel : MonoBehaviour
     }
 
     void SetImage(){
-        animalImage.sprite = playerControl.m_Selected.icon;
+        playerControl.m_Selected.SetIcon(animalImage);
     }
 
     public void OnSwitchButtonClicked(){

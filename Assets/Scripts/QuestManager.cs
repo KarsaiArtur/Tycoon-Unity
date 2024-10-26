@@ -16,7 +16,7 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
     List<Quest> hardQuests = new List<Quest>();
     List<int> questPoolIds = new List<int>();
     public bool questsCompleted = false;
-    public int questsPerDifficutly = 7;
+    public int questsPerDifficutly;
     public bool questWindowOpened = false;
     static public QuestManager instance;
 
@@ -27,6 +27,8 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
     void Start()
     {
         instance = this;
+        questsPerDifficutly = 7;
+
         easyQuests.Add(new Quest("Start Your Dream Team", "Have 3 staff members of any kind", 1000, 100, "Easy", () => { return StaffManager.instance.staffList.Count >= 2; }, () => { return StaffManager.instance.staffList.Count; }, 2));
         easyQuests.Add(new Quest("Introduce Your First Residents", "Have 15 animals of any species", 1000, 100, "Easy", () => { return AnimalManager.instance.animalList.Count >= 15; }, () => { return AnimalManager.instance.animalList.Count; }, 15));
         easyQuests.Add(new Quest("Build Your First Facilities", "Have 5 buildings of any kind", 1000, 100, "Easy", () => { return BuildingManager.instance.buildingList.Count >= 3; }, () => { return BuildingManager.instance.buildingList.Count; }, 3));
@@ -43,9 +45,9 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
         mediumQuests.Add(new Quest("Expand Your Dream Team", "Have 5 staff members of any kind", 5000, 500, "Medium", () => { return StaffManager.instance.staffList.Count >= 5; }, () => { return StaffManager.instance.staffList.Count; }, 5));
         mediumQuests.Add(new Quest("Add More Fascinating Creatures", "Have 50 animals of any species", 5000, 500, "Medium", () => { return AnimalManager.instance.animalList.Count >= 50; }, () => { return AnimalManager.instance.animalList.Count; }, 50));
         mediumQuests.Add(new Quest("Expand with New Buildings", "Have 10 buildings of any kind", 5000, 500, "Medium", () => { return BuildingManager.instance.buildingList.Count >= 10; }, () => { return BuildingManager.instance.buildingList.Count; }, 10));
-        mediumQuests.Add(new Quest("Draw the Crowds", "Have 2500 visitors all time", 5000, 500, "Medium", () => { return ZooManager.instance.allTimeVisitorCount >= 2500; }, () => { return ZooManager.instance.allTimeVisitorCount; }, 2500));
+        mediumQuests.Add(new Quest("Draw the Crowds", "Have 2500 visitors all time", 5000, 500, "Medium", () => { return ZooManager.instance.allTimeVisitorCount >= 250; }, () => { return ZooManager.instance.allTimeVisitorCount; }, 2500));
         mediumQuests.Add(new Quest("Growing Gains", "Earn 25000 money", 5000, 500, "Medium", () => { return ZooManager.instance.allTimeMoneyEarned >= 25000; }, () => { return ZooManager.instance.allTimeMoneyEarned; }, 25000));
-        mediumQuests.Add(new Quest("Merchandising Magic", "Sell 2500 items in your buildings", 5000, 500, "Medium", () => { return BuildingManager.instance.itemsBought >= 2500; }, () => { return BuildingManager.instance.itemsBought; }, 2500));
+        mediumQuests.Add(new Quest("Merchandising Magic", "Sell 2500 items in your buildings", 5000, 500, "Medium", () => { return BuildingManager.instance.itemsBought >= 250; }, () => { return BuildingManager.instance.itemsBought; }, 2500));
         mediumQuests.Add(new Quest("Witness New Life", "Have one of your animals give birth", 5000, 500, "Medium", () => { return AnimalManager.instance.babiesBorn >= 1; }, () => { return AnimalManager.instance.babiesBorn; }, 1));
         mediumQuests.Add(new Quest("Blissful Sanctuary", "Have a visitor with 100 happiness", 5000, 500, "Medium",
             () => { var happiness = 0.0f; foreach (var visitor in VisitorManager.instance.visitorList) { if (visitor.happiness > happiness) { happiness = visitor.happiness; } } return happiness >= 100; },
@@ -60,9 +62,9 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
         hardQuests.Add(new Quest("Perfect Your Dream Team", "Have 10 staff members of any kind", 10000, 1000, "Hard", () => { return StaffManager.instance.staffList.Count >= 10; }, () => { return StaffManager.instance.staffList.Count; }, 10));
         hardQuests.Add(new Quest("Wild Kingdom", "Have 100 animals of any species", 10000, 1000, "Hard", () => { return AnimalManager.instance.animalList.Count >= 100; }, () => { return AnimalManager.instance.animalList.Count; }, 100));
         hardQuests.Add(new Quest("Master Architect", "Have 25 buildings of any kind", 10000, 1000, "Hard", () => { return BuildingManager.instance.buildingList.Count >= 25; }, () => { return BuildingManager.instance.buildingList.Count; }, 25));
-        hardQuests.Add(new Quest("Zoo Sensation", "Have 10000 visitors all time", 10000, 1000, "Hard", () => { return ZooManager.instance.allTimeVisitorCount >= 10000; }, () => { return ZooManager.instance.allTimeVisitorCount; }, 10000));
+        hardQuests.Add(new Quest("Zoo Sensation", "Have 10000 visitors all time", 10000, 1000, "Hard", () => { return ZooManager.instance.allTimeVisitorCount >= 1000; }, () => { return ZooManager.instance.allTimeVisitorCount; }, 10000));
         hardQuests.Add(new Quest("Financial Mastery", "Earn 100000 money", 10000, 1000, "Hard", () => { return ZooManager.instance.allTimeMoneyEarned >= 100000; }, () => { return ZooManager.instance.allTimeMoneyEarned; }, 100000));
-        hardQuests.Add(new Quest("Top Seller", "Sell 10000 items in your buildings", 10000, 1000, "Hard", () => { return BuildingManager.instance.itemsBought >= 10000; }, () => { return BuildingManager.instance.itemsBought; }, 10000));
+        hardQuests.Add(new Quest("Top Seller", "Sell 10000 items in your buildings", 10000, 1000, "Hard", () => { return BuildingManager.instance.itemsBought >= 1000; }, () => { return BuildingManager.instance.itemsBought; }, 10000));
         hardQuests.Add(new Quest("Legendary Zookeeper", "Have the reputation of the zoo be above 90", 10000, 1000, "Hard", () => { return ZooManager.instance.reputation >= 90; }, () => { return ZooManager.instance.reputation; }, 90));
         hardQuests.Add(new Quest("Baby Boom", "Have three of your animals give birth", 10000, 1000, "Hard", () => { return AnimalManager.instance.babiesBorn >= 3; }, () => { return AnimalManager.instance.babiesBorn; }, 3));
         hardQuests.Add(new Quest("Blissful Beast", "Have an animal with 100 happiness", 10000, 1000, "Hard",

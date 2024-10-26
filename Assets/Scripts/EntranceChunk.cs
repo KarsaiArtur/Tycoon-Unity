@@ -39,5 +39,15 @@ public class EntranceChunk : BackGroundChunk
                 path.transform.parent = this.transform;
             }
         }
+
+        
+        GameObject parkingLot = Instantiate(prefabs[5], center, transform.rotation);
+        parkingLot.transform.parent = this.transform;
+        var lights = parkingLot.transform.GetChild(0).gameObject;
+        if(lights.name.Equals("Lights")){
+            foreach(var light in lights.transform.GetComponentsInChildren<Light>()){
+                CalendarManager.backgroundLights.Add(light.gameObject);
+            }
+        }
     }
 }

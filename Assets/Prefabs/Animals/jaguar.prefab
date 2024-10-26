@@ -213,12 +213,21 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Jaguar
+  description: Jaguars are solitary animals, usually living and hunting alone, except
+    during mating or when a mother is raising cubs. They are carnivores, primarily
+    hunting large prey like deer, peccaries, and caimans, though they also eat smaller
+    animals. Jaguars live in dense rainforests, wetlands, and savannas, typically
+    near water sources, thriving in tropical and subtropical environments across
+    Central and South America.
   placeablePrice: 1000
-  icon: {fileID: 21300000, guid: d831f70cee32bb84a8bb4341ce15635e, type: 3}
+  icon: {fileID: 21300000, guid: 1db7d2b5370c46b4f99d51ba34c9bbd7, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
+  unlockLevel: 1
+  xpBonus: 0
+  expense: 0
   sadnessReasons: 
   healthReasons: 
   materials:
@@ -251,8 +260,8 @@ MonoBehaviour:
   continents: 0500000001000000
   terrainsPreferred: 0200000009000000
   terrainsPreferredPercents:
-  - 50
-  - 50
+  - 49
+  - 51
   terrainBonusMultiplier: 0
   naturePreferredCount: 0
   natureBonusMultiplier: 1
@@ -268,12 +277,6 @@ MonoBehaviour:
   fertility: 100
   isAgressive: 1
   dangerLevel: 5
-  description: Jaguars are solitary animals, usually living and hunting alone, except
-    during mating or when a mother is raising cubs. They are carnivores, primarily
-    hunting large prey like deer, peccaries, and caimans, though they also eat smaller
-    animals. Jaguars live in dense rainforests, wetlands, and savannas, typically
-    near water sources, thriving in tropical and subtropical environments across
-    Central and South America.
   exhibitId: 
   destinationVisitableId: 
   matingPartnerId: 
