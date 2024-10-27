@@ -880,13 +880,18 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Public Restroom
+  description: 
   placeablePrice: 500
   icon: {fileID: 21300000, guid: 28994d40b7e58be4b8c953e668661c9f, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
+  unlockLevel: 1
+  xpBonus: 15
+  expense: 100
   capacity: 10
+  defaultCapacity: 10
   visitorsIds: []
   x: 1
   z: 0
@@ -895,9 +900,7 @@ MonoBehaviour:
   purchasableItemPrefabs: []
   purchasableItemInstances: []
   purchasableItemInstancesData: []
-  defaultCapacity: 10
   hasRestroom: 1
-  expense: 100
 --- !u!65 &4181061997898100527
 BoxCollider:
   m_ObjectHideFlags: 0

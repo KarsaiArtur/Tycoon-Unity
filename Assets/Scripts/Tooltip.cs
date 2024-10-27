@@ -19,7 +19,6 @@ public class Tooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     }
 
     public void OnPointerEnter(PointerEventData eventData){
-        Debug.Log(gameObject.name);
         tooltip = Instantiate(tooltipPrefab);
         tooltip.transform.SetParent(canvas.transform);
         var textElement =  tooltip.transform.GetChild(0).GetChild(0);

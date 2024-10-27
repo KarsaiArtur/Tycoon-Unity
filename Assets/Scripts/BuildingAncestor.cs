@@ -8,6 +8,7 @@ public abstract class BuildingAncestor : Placeable, Visitable
     protected bool collided = false;
     protected float curY = -100;
     public int capacity = 2;
+    public int defaultCapacity = 10;
     public List<Grid> paths;
     /////GENERATE
     private List<Visitor> visitors;
@@ -15,8 +16,9 @@ public abstract class BuildingAncestor : Placeable, Visitable
 
     public override void FinalPlace()
     {
-        paths = new List<Grid>();
+        capacity = defaultCapacity;
 
+        paths = new List<Grid>();
         FindPaths();
         DecideIfReachable();
         gameObject.GetComponent<NavMeshObstacle>().enabled = true;
@@ -145,6 +147,10 @@ public abstract class BuildingAncestor : Placeable, Visitable
     public void SetCapacity(int newCapacity)
     {
         capacity = newCapacity;
+        if (capacity < 0)
+            capacity = 0;
+        else if (capacity > defaultCapacity)
+            capacity = defaultCapacity;
     }
 
     public void AddVisitor(Visitor visitor)

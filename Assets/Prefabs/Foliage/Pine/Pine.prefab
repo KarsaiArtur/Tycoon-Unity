@@ -49,15 +49,17 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Pine
-  description: 
+  description: Besides them brightening up the environment, they are also needed
+    for the animals. They influence the mood of the animals depending on the terrain
+    types and the amount.
   placeablePrice: 75
   icon: {fileID: 21300000, guid: 8aa8c7d089927b146b011eca15e22587, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
-  unlockLevel: 1
-  xpBonus: 0
+  xpUnlockLevel: 1
+  xpBonus: 5
   expense: 0
   navMeshObstacle: {fileID: 0}
   terrainPreferred: 3

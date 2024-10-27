@@ -46,7 +46,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Coffee
   defaultPrice: 5
-  currentPrice: 0
+  currentPrice: 5
+  xpBonus: 3
   icon: {fileID: 21300000, guid: 06e9f4d41287f6546b0157500b407661, type: 3}
   happinessBonus: 10
   hungerBonus: 5

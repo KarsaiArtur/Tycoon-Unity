@@ -226,7 +226,7 @@ MonoBehaviour:
   renderers: []
   selectedPrefabId: 0
   unlockLevel: 1
-  xpBonus: 0
+  xpBonus: 70
   expense: 0
   sadnessReasons: 
   healthReasons: 

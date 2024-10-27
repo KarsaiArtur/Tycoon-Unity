@@ -7,6 +7,7 @@ using Unity.VisualScripting;
 using System;
 using UnityEngine.Events;
 using UnityEngine.ProBuilder;
+using System.Linq;
 
 public class UIMenu : MonoBehaviour
 {
@@ -171,7 +172,6 @@ public class UIMenu : MonoBehaviour
 
     void SpawnInfoPanel(int index)
     {
-        Debug.Log(submenuPanel.GetChild(index));
         curInfoPanel = Instantiate(submenuPanel.GetChild(index).GetComponent<SubMenu>().infoPanel, new Vector3(transform.position.x,transform.position.y, transform.position.z) , Quaternion.identity);
         curInfoPanel.transform.SetParent(transform);
     }

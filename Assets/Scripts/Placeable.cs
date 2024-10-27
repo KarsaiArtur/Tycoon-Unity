@@ -22,7 +22,7 @@ public class Placeable : MonoBehaviour, Clickable
     public List<(int rendererHashCode, Material material)> defaultMaterials;
     int previousMaterialIndex  = -1;
     public int selectedPrefabId;
-    public int unlockLevel = 1;
+    public int xpUnlockLevel = 1;
     public int xpBonus = 0;
     public int expense = 0;
 

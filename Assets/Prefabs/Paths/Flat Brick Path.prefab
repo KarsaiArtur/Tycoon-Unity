@@ -129,15 +129,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f111802db5be2ad468c7fe9874a13c33, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Brick Path
+  description: Visitors walk on paths to reach their destination. Therefore exhibits
+    and buildings are only accessible, if there are paths connecting them to the
+    zoo entrance.
   placeablePrice: 25
   icon: {fileID: 21300000, guid: 37604f4a5b597f144b9804a2dd53d78b, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
-  index: 0
+  renderers: []
+  selectedPrefabId: 0
+  xpUnlockLevel: 1
+  xpBonus: 5
+  expense: 0
   otherVariant: {fileID: 1622757161807058835, guid: 033117b863f6312489029e1decdb796a, type: 3}
 --- !u!65 &7011993740827042270
 BoxCollider:

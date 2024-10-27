@@ -52,12 +52,17 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Trash Can
+  description: Visitors throw trash in them, if there is one close enough, otherwise
+    they throw it on the ground, making others mood worse.
   placeablePrice: 100
   icon: {fileID: 0}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
+  xpUnlockLevel: 1
+  xpBonus: 5
+  expense: 0
   maxTrashCapacity: 1000
   trashCapacity: 1000
   isBeingEmptied: 0

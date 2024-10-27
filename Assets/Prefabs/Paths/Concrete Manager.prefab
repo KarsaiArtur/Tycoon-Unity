@@ -44,16 +44,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e0fbce88b54af845b6e64017660bb89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: 
+  description: Visitors walk on paths to reach their destination. Therefore exhibits
+    and buildings are only accessible, if there are paths connecting them to the
+    zoo entrance.
   placeablePrice: 0
   icon: {fileID: 21300000, guid: 9cb50b8fd853ac545b39fce09d1020f7, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  materials:
-  - {fileID: 2100000, guid: 5c8a4e1f248ae9f4fab83ef327ff3898, type: 2}
-  - {fileID: 2100000, guid: 009dec613c70fdd478c2876011f89d0e, type: 2}
+  renderers: []
+  selectedPrefabId: 0
+  xpUnlockLevel: 1
+  xpBonus: 0
+  expense: 0
   pathPrefab: {fileID: 7551650816147809122, guid: f36d8d3beb3d7354daa3936df8cc286b, type: 3}
   paths: []
   pathIndex: 0

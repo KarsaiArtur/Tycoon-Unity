@@ -46,7 +46,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Burger
   defaultPrice: 15
-  currentPrice: 0
+  currentPrice: 15
+  xpBonus: 8
   icon: {fileID: 21300000, guid: 6b9c10fb7cafadf4ea5a7f4e3e84fca6, type: 3}
   happinessBonus: 8
   hungerBonus: 25

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 /////Saveable Attributes, DONT DELETE
-//////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice;bool reachable;int capacity;List<string> visitorsIds//////////
+//////string _id;Vector3 position;Quaternion rotation;int selectedPrefabId;string tag;int placeablePrice;bool reachable;int capacity;int defaultCapacity;List<string> visitorsIds//////////
 //////SERIALIZABLE:YES/
 
 public class Bench : BuildingAncestor, Saveable
@@ -26,7 +26,7 @@ public class Bench : BuildingAncestor, Saveable
 
         grid = GridManager.instance.GetGrid(transform.position);
         grid.GetBench(_id);
-        
+
         base.FinalPlace();
     }
 

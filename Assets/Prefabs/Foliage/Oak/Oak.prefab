@@ -45,23 +45,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7783d6ea26439045a9c4657051f135a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Oak
+  description: Besides them brightening up the environment, they are also needed
+    for the animals. They influence the mood of the animals depending on the terrain
+    types and the amount.
   placeablePrice: 60
   icon: {fileID: 21300000, guid: 6d48c46be4454164c852897a8b111cec, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
-  foligeVariants:
-  - {fileID: 7592735323962131323, guid: 00113d53c03447e4293a785169341364, type: 3}
-  - {fileID: 447343768588566664, guid: aabfc6d3a81fb3a42a0d3cfeae732c0a, type: 3}
-  - {fileID: 3304529189360452095, guid: b057ddf7bca83de4493b38c32dd61aab, type: 3}
-  - {fileID: 3807643722558190452, guid: bfaece4951126a74f81b6a0ab5e0d4f8, type: 3}
-  - {fileID: 4001717575615986724, guid: 9502df30670dd6a40bc829315c241583, type: 3}
-  - {fileID: 7836089009497665662, guid: 56b0b8d1d3fa6f4479e583da8f9198b5, type: 3}
-  - {fileID: 3832987356137896847, guid: d17d642e76e91e84aa0a9ef3ef379636, type: 3}
-  selectedVariantInstance: {fileID: 0}
+  renderers: []
+  selectedPrefabId: 0
+  xpUnlockLevel: 1
+  xpBonus: 5
+  expense: 0
+  navMeshObstacle: {fileID: 0}
+  terrainPreferred: 0
 --- !u!54 &-9046277886167272794
 Rigidbody:
   m_ObjectHideFlags: 0

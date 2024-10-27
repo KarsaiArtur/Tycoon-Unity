@@ -10,7 +10,7 @@ public class PathInfoPanel : MonoBehaviour
 
     void Start(){
         playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
-        description.text = ((Path)playerControl.curPlaceable).description;
+        description.text = ((PathBuilder)playerControl.curPlaceable).description;
         foreach(var placeableButton in UIMenu.Instance.placeableListPanel.GetComponentsInChildren<PlaceableButton>()){
             placeableButton.m_onDown.AddListener(() => description.text = ((Path)playerControl.curPlaceable).description);
         }

@@ -284,11 +284,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92e4d539a1f85944d87148ae7166fc3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: 
+  description: If fences surround an area, it becomes an exhibit, and animals can
+    only be placed inside them. The more dangerous animals it keeps, the quicker
+    the fence breaks and needs repair by the maintainer.
   placeablePrice: 180
   icon: {fileID: 0}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
+  renderers: []
+  selectedPrefabId: 0
+  xpUnlockLevel: 1
+  xpBonus: 1
+  expense: 0

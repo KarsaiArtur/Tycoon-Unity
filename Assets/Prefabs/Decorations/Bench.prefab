@@ -517,14 +517,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4083b2f23c0ad89418aa13ad4273cf4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _id: 
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Park Bench
+  description: Visitors can sit on them to gain energy.
   placeablePrice: 200
   icon: {fileID: 21300000, guid: 189a4d382ea28f641bd4319593bd72f0, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
-  defaultMaterials: []
+  renderers: []
+  selectedPrefabId: 0
+  xpUnlockLevel: 1
+  xpBonus: 10
+  expense: 0
+  capacity: 2
+  defaultCapacity: 2
+  visitorsIds: []
 --- !u!1 &9214341332946384588
 GameObject:
   m_ObjectHideFlags: 0
