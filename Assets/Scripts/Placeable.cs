@@ -233,6 +233,25 @@ public class Placeable : MonoBehaviour, Clickable
                 newMaterial.SetColor("_Color", customColor);
                 //newMaterial.SetColor("_SpecColor", customColor);
                 break;
+            case 3:
+                //newMaterial.shader = Shader.Find("Standard (Specular setup)");
+                Debug.unityLogger.logEnabled = false;
+                newMaterial.shader = Shader.Find("Standard");
+                Debug.unityLogger.logEnabled = true;
+                //customColor = new Color(0.55f, 0.25f, 0.015f, 1f);
+                customColor = new Color(1f, 0f, 0f, 1f);
+                newMaterial.SetColor("_Color", customColor);
+                //newMaterial.SetColor("_SpecColor", customColor);
+                break;
+            case 4:
+                //newMaterial.shader = Shader.Find("Standard (Specular setup)");
+                Debug.unityLogger.logEnabled = false;
+                newMaterial.shader = Shader.Find("Standard");
+                Debug.unityLogger.logEnabled = true;
+                customColor = new Color(1f, 0.4f, 0f, 1f);
+                newMaterial.SetColor("_Color", customColor);
+                //newMaterial.SetColor("_SpecColor", customColor);
+                break;
         }
         return newMaterial;
     }

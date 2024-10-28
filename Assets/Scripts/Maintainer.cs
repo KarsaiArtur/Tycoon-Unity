@@ -184,6 +184,7 @@ public class Maintainer : Staff, Saveable
         if (job == StaffJob.RepairingFence && fenceToRepair != null)
         {
             fenceToRepair.health = fenceToRepair.maxHealth;
+            fenceToRepair.ChangeMaterial(0);
             fenceToRepair.isBeingFixed = false;
             return true;
         }

@@ -59,6 +59,7 @@ public class Fence : Placeable, Saveable
             if (UnityEngine.Random.Range(0, chance) == 0)
             {
                 health--;
+                ChangeMaterial(health + 2);
             }
 
             if (health <= 0)
