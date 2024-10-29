@@ -61,7 +61,7 @@ MonoBehaviour:
   xpUnlockLevel: 1
   xpBonus: 5
   expense: 0
-  otherVariant: {fileID: 0}
+  otherVariant: {fileID: 7551650816147809122, guid: 4bb8916f5c8620c438c388619bfc5ed6, type: 3}
 --- !u!1 &4549912904737251565
 GameObject:
   m_ObjectHideFlags: 0

@@ -145,7 +145,7 @@ MonoBehaviour:
   xpUnlockLevel: 1
   xpBonus: 2
   expense: 0
-  otherVariant: {fileID: 0}
+  otherVariant: {fileID: 1622757161807058835, guid: 3aba12dcd0dc88a4bbe419c145746f5a, type: 3}
 --- !u!65 &325801438119987265
 BoxCollider:
   m_ObjectHideFlags: 0
