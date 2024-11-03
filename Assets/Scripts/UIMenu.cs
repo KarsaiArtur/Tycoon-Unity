@@ -189,8 +189,8 @@ public class UIMenu : MonoBehaviour
     public PlaceableButton button;
     public void SpawnPlaceables()
     {
-        Placeable[] placeables = curMenu.submenuPrefabs[curSubMenuIndex].subMenuInstance.GetComponent<SubMenu>().placeables;
-        for (int i = 0; i < placeables.Length; i++)
+        List<Placeable> placeables = curMenu.submenuPrefabs[curSubMenuIndex].subMenuInstance.GetComponent<SubMenu>().GetPlaceables();
+        for (int i = 0; i < placeables.Count; i++)
         {
             var b = Instantiate(button, Vector3.zero, Quaternion.identity);
             b.transform.SetParent(placeableListPanel);
@@ -199,7 +199,7 @@ public class UIMenu : MonoBehaviour
                 placeables[i].SetIcon(b.GetComponent<Image>());
             }
         }
-        SetPlaceable(0, placeableListPanel.childCount - placeables.Length);
+        SetPlaceable(0, placeableListPanel.childCount - placeables.Count);
     }
     void DestroyPlaceables()
     {

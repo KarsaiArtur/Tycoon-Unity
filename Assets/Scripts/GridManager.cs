@@ -38,38 +38,86 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         pControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
         terrainWidth += elementWidth * 2;
 
-        if(LoadMenu.loadedGame != null)
-        {
-            LoadMenu.currentManager = this;
-            LoadMenu.instance.LoadData(this);
-            LoadMenu.objectLoadedEvent.Invoke();
-        }
-        else
-        {
-            CreateCoords();
-        }
+        if(!MainMenu.instance.isMapMaker){
+            if(LoadMenu.loadedGame != null)
+            {
+                LoadMenu.currentManager = this;
+                LoadMenu.instance.LoadData(this);
+                LoadMenu.objectLoadedEvent.Invoke();
+            }
+            else
+            {
+                CreateCoords();
+            }
 
+            initializing = true;
+
+            InitializeGrids();
+
+            CreateTerrainElements();
+
+            SetEdgeHeight();
+            SetSpawnHeight();
+            ReloadGrids();
+
+            foreach (Chunk chunk in terrainElements)
+            {
+                chunk.ReRender(int.Parse(chunk.name.Split('_')[0]), int.Parse(chunk.name.Split('_')[1]));
+            }
+
+            pControl.ReloadGuestNavMesh();
+            pControl.ReloadAnimalNavMesh();
+
+            startingGrid = GetGrid(new Vector3(35, 0, 50));
+            initializing = false;
+            edgeChanged = false;
+        }
+        else{
+            MapMaker();
+        }
+    }
+
+    public void MapMaker(){
         initializing = true;
+        if(terrainElements.Length != 0){
+            foreach (Chunk chunk in terrainElements)
+            {
+                if(chunk != null){
+                    
+                    Destroy(chunk.gameObject);
+                }
+            }
+        }
+        CreateCoords();
+        
+        int tilesPerSide = terrainWidth / elementWidth;
+        terrainElements = new Chunk[tilesPerSide * tilesPerSide];
 
-        InitializeGrids();
-
-        CreateTerrainElements();
-
+        int i = 0, z, x;
+        for (i = 0, z = 0; z < tilesPerSide; z++)
+        {
+            for (x = 0; x < tilesPerSide; x++, i++)
+            {
+                Chunk elementInstance;
+                if (x == 0 || z == 0 || z == (tilesPerSide - 1) || x == (tilesPerSide - 1))
+                {
+                }
+                else{
+                    elementInstance = Instantiate(terrainPrefab, this.transform);
+                    elementInstance.Initialize(x, z, coords, coordTypes);
+                    terrainElements[i] = elementInstance;
+                }
+            }
+        }
         SetEdgeHeight();
         SetSpawnHeight();
-        ReloadGrids();
-
         foreach (Chunk chunk in terrainElements)
         {
-            chunk.ReRender(int.Parse(chunk.name.Split('_')[0]), int.Parse(chunk.name.Split('_')[1]));
+            if(chunk != null){
+                chunk.ReRender(int.Parse(chunk.name.Split('_')[0]), int.Parse(chunk.name.Split('_')[1]));
+            }
         }
-
-        pControl.ReloadGuestNavMesh();
-        pControl.ReloadAnimalNavMesh();
-
-        startingGrid = GetGrid(new Vector3(35, 0, 50));
         initializing = false;
-        edgeChanged = false;
     }
 
     public bool GetIsLoaded()
@@ -163,6 +211,8 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         coordTypes = new TerrainType[(terrainWidth + 1) * (terrainWidth + 1)];
 
         float y;
+        float offsetX = UnityEngine.Random.Range(0f, 5000f);
+        float offsetZ = UnityEngine.Random.Range(0f, 5000f);
 
         for (int i = 0, z = 0; z <= terrainWidth; z++)
         {
@@ -174,7 +224,7 @@ public class GridManager : MonoBehaviour, Saveable, Manager
                 }
                 else
                 {
-                    y = Mathf.PerlinNoise((float)x / changeRate, (float)z / changeRate) * height;
+                    y = Mathf.PerlinNoise((float)(x + offsetX) / changeRate, (float)(z + offsetZ) / changeRate) * height;
                     y = Mathf.Floor(y) / 2;
                     //coords[i] = new Vector3(x, y, z);
                 }
@@ -279,14 +329,14 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         return chunks;
     }
 
-    //void OnDrawGizmosSelected()
-    //{
-    //    foreach (Vector3 vec3 in coords)
-    //    {
-    //        Gizmos.color = Color.red;
-    //        Gizmos.DrawSphere(vec3, .1f);
-    //    }
-    //}
+    void OnDrawGizmosSelected()
+    {
+        foreach (Vector3 vec3 in coords)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawSphere(vec3, .1f);
+        }
+    }
 
     private void SetEdgeHeight()
     {
@@ -353,31 +403,57 @@ public class GridManager : MonoBehaviour, Saveable, Manager
 
     private void SetSpawnHeight()
     {
-        for (int i = 32; i < 37; i++)
+        for (int i = 32; i < 38; i++)
         {
-            for (int j = 46; j < 56; j++)
+            for (int j = 46; j < 57; j++)
             {
                 coords[j * (terrainWidth + 1) + i].y = edgeHeight;
-                grids[i - elementWidth, j - elementWidth].isPath = true;
-                TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight + 0.5f, false);
-                TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight - 0.5f, true);
+                if (!initializing)
+                    grids[i - elementWidth, j - elementWidth].isPath = true;
+                //TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight + 0.5f, false);
+                //TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight - 0.5f, true);
+
+                int index = j * (terrainWidth + 1) + i;
+                int[] neighbourIndexes = new int[8];
+                neighbourIndexes[0] = index + 1;
+                neighbourIndexes[1] = index + terrainWidth + 1;
+                neighbourIndexes[2] = index - 1;
+                neighbourIndexes[3] = index - terrainWidth - 1;
+                neighbourIndexes[4] = index - terrainWidth - 2;
+                neighbourIndexes[5] = index - terrainWidth;
+                neighbourIndexes[6] = index + terrainWidth;
+                neighbourIndexes[7] = index + terrainWidth + 2;
+
+                for (int k = 0; k < neighbourIndexes.Count(); k++)
+                {
+                    if (coords[neighbourIndexes[k]].y <= edgeHeight - 1)
+                    {
+                        coords[neighbourIndexes[k]].y = edgeHeight - 0.5f;
+                        TerraformNeighbours(neighbourIndexes[k], edgeHeight - 0.5f, true);
+                    }
+                    else if (coords[neighbourIndexes[k]].y >= edgeHeight + 1)
+                    {
+                        coords[neighbourIndexes[k]].y = edgeHeight + 0.5f;
+                        TerraformNeighbours(neighbourIndexes[k], edgeHeight + 0.5f, false);
+                    }
+                }
             }
         }
     }
 
     public void TerraformNeighbours(int index, float height, bool positive)
     {
-        if (index % (terrainWidth + 1) == terrainWidth - elementWidth || (index > (elementWidth) * (terrainWidth + 1) && index < (elementWidth + 1) * (terrainWidth + 1)) || index % (terrainWidth + 1) == elementWidth || (index < (terrainWidth + 1) * (terrainWidth + 1) - elementWidth * (terrainWidth + 1) && index > (terrainWidth + 1) * (terrainWidth + 1) - (elementWidth + 1) * (terrainWidth + 1)))
+        /*if (index % (terrainWidth + 1) == terrainWidth - elementWidth || (index > (elementWidth) * (terrainWidth + 1) && index < (elementWidth + 1) * (terrainWidth + 1)) || index % (terrainWidth + 1) == elementWidth || (index < (terrainWidth + 1) * (terrainWidth + 1) - elementWidth * (terrainWidth + 1) && index > (terrainWidth + 1) * (terrainWidth + 1) - (elementWidth + 1) * (terrainWidth + 1)))
         {
             edgeChanged = true;
             return;
         }
 
-        if (coords[index].x >= 32 && coords[index].x <= 38 && coords[index].z >= 45 && coords[index].z <= 57)
+        if (!initializing && coords[index].x >= 32 && coords[index].x <= 38 && coords[index].z >= 45 && coords[index].z <= 57)
         {
             edgeChanged = true;
             return;
-        }
+        }*/
 
         if (!initializing)
         {
@@ -405,17 +481,37 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         {
             if (coords[neighbourIndexes[i]].y <= height - 1 && positive)
             {
+                if (!initializing && (neighbourIndexes[i] % (terrainWidth + 1) == terrainWidth - elementWidth 
+                    || (neighbourIndexes[i] > (elementWidth) * (terrainWidth + 1) && neighbourIndexes[i] < (elementWidth + 1) * (terrainWidth + 1)) 
+                    || neighbourIndexes[i] % (terrainWidth + 1) == elementWidth 
+                    || (neighbourIndexes[i] < (terrainWidth + 1) * (terrainWidth + 1) - elementWidth * (terrainWidth + 1) && neighbourIndexes[i] > (terrainWidth + 1) * (terrainWidth + 1) - (elementWidth + 1) * (terrainWidth + 1)) 
+                    || (coords[neighbourIndexes[i]].x >= 32 && coords[neighbourIndexes[i]].x <= 38 && coords[neighbourIndexes[i]].z >= 45 && coords[neighbourIndexes[i]].z <= 57)))
+                {
+                    edgeChanged = true;
+                    return;
+                }
+
                 coords[neighbourIndexes[i]].y = height - 0.5f;
                 TerraformNeighbours(neighbourIndexes[i], height - 0.5f, true);
             }
             else if (coords[neighbourIndexes[i]].y >= height + 1 && !positive)
             {
+                if (!initializing && (neighbourIndexes[i] % (terrainWidth + 1) == terrainWidth - elementWidth
+                    || (neighbourIndexes[i] > (elementWidth) * (terrainWidth + 1) && neighbourIndexes[i] < (elementWidth + 1) * (terrainWidth + 1))
+                    || neighbourIndexes[i] % (terrainWidth + 1) == elementWidth
+                    || (neighbourIndexes[i] < (terrainWidth + 1) * (terrainWidth + 1) - elementWidth * (terrainWidth + 1) && neighbourIndexes[i] > (terrainWidth + 1) * (terrainWidth + 1) - (elementWidth + 1) * (terrainWidth + 1))
+                    || (coords[neighbourIndexes[i]].x >= 32 && coords[neighbourIndexes[i]].x <= 38 && coords[neighbourIndexes[i]].z >= 45 && coords[neighbourIndexes[i]].z <= 57)))
+                {
+                    edgeChanged = true;
+                    return;
+                }
+                
                 coords[neighbourIndexes[i]].y = height + 0.5f;
                 TerraformNeighbours(neighbourIndexes[i], height + 0.5f, false);
             }
         }
 
-        if (coords[index].y == coords[index + terrainWidth].y && coords[index].y != coords[index + terrainWidth + 1].y && coords[index - 1].y == coords[index + terrainWidth + 1].y)
+        /*if (coords[index].y == coords[index + terrainWidth].y && coords[index].y != coords[index + terrainWidth + 1].y && coords[index - 1].y == coords[index + terrainWidth + 1].y)
         {
             coords[index + terrainWidth + 1].y = coords[index].y;
             coords[index - 1].y = coords[index].y;
@@ -452,13 +548,16 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         {
             coords[index - (terrainWidth + 1)].y = coords[index + 1 - (terrainWidth + 1)].y;
             coords[index - 1 - (terrainWidth + 1)].y = coords[index + 1 - (terrainWidth + 1)].y;
-        }
+        }*/
 
-        for (int i = 0; i < 4; i++)
+        if (!initializing)
         {
-            int chunkIndex = (int)(Mathf.Floor(coords[neighbourIndexes[i] + Math.Sign(neighbourIndexes[i] - index)].x / elementWidth) + Mathf.Floor(coords[neighbourIndexes[i] + Math.Sign(neighbourIndexes[i] - index)].z / elementWidth) * (terrainWidth / elementWidth));
-            if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth) && !pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
-                pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+            for (int i = 0; i < 4; i++)
+            {
+                int chunkIndex = (int)(Mathf.Floor(coords[neighbourIndexes[i] + Math.Sign(neighbourIndexes[i] - index)].x / elementWidth) + Mathf.Floor(coords[neighbourIndexes[i] + Math.Sign(neighbourIndexes[i] - index)].z / elementWidth) * (terrainWidth / elementWidth));
+                if (chunkIndex < (terrainWidth / elementWidth) * (terrainWidth / elementWidth) && !pControl.modifiedChunks.Contains(terrainElements[chunkIndex]))
+                    pControl.modifiedChunks.Add(terrainElements[chunkIndex]);
+            }
         }
     }
 

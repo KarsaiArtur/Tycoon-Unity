@@ -53,24 +53,23 @@ static class StaffJobMethods
         switch (s1)
         {
             case StaffJob.HealingAnimal:
-                return "Heal animal";
+                return "Heals animals on low health";
             case StaffJob.PuttingAnimalToSleep:
-                return "Recapture animal";
+                return "Recaptures free animals, so they can be put back to an exhibit";
             case StaffJob.PlacingFood:
-                return "Feed animal";
+                return "Places suitable food for the animals in exhibits";
             case StaffJob.FillingWater:
-                return "Fill water";
+                return "Fills empty waterthroughs";
             case StaffJob.CleaningExhibit:
-                return "Clean exhibit";
+                return "Cleans up animal droppings in exhibits";
             case StaffJob.RepairingFence:
-                return "Repair fence";
+                return "Repairs broken fences";
             case StaffJob.PickingUpTrash:
-                return "Collect trash";
+                return "Collects trash on the ground";
             case StaffJob.EmptyingTrashCan:
-                return "Empty Trash Can";
+                return "Empties full trash cans";
             default:
                 return "";
         }
     }
-
 }

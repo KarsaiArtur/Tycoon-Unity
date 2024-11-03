@@ -17,7 +17,7 @@ public class TerraformCollider : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (playerControl.placedTags.Contains(other.tag))
+        if (playerControl.placedTags.Contains(other.tag) && other.tag != "ZooFence")
         {
             playerControl.terrainCollided = true;
         }

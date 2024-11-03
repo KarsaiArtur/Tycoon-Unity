@@ -2,6 +2,7 @@
   "dependencies": {
     "com.cakeslice.outline-effect": "https://github.com/cakeslice/Outline-Effect.git",
     "com.elringus.spriteglow": "https://github.com/elringus/sprite-glow.git#package",
+    "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation": "1.1.5",
     "com.unity.cinemachine": "2.9.7",
     "com.unity.collab-proxy": "2.2.0",

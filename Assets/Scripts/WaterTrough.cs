@@ -18,7 +18,6 @@ public class WaterTrough : Placeable, AnimalVisitable, Saveable
     private Exhibit exhibit;
     bool waiting = false;
     float time = 0;
-    public string description;
 
     public override void Awake()
     {

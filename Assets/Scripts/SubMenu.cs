@@ -1,4 +1,6 @@
 
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,5 +23,10 @@ public class SubMenu : MonoBehaviour
     void SetSubmenuIndex()
     {
         UIMenu.Instance.SetSubmenu(transform.GetSiblingIndex(), 0);
+    }
+
+    public List<Placeable> GetPlaceables()
+    {
+        return placeables.Where(e => e.xpUnlockLevel <= ZooManager.instance.xpLevel).ToList();
     }
 }

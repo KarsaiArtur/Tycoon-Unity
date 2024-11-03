@@ -5,6 +5,7 @@ using System.Linq;
 using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 /////Saveable Attributes, DONT DELETE
 //////float money;int xp;int xpGoal;int xpLevel;float currentEntranceFee;int allTimeVisitorCount;float allTimeMoneyEarned;List<float> latestVisitorHappinesses;float reputation//////////
@@ -17,6 +18,8 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public int xpGoal = 1000;
     public int xpLevel = 1;
     public TextMeshProUGUI moneyText;
+    public Slider xpBar;
+    public TextMeshProUGUI levelText;
     public Grid entranceGrid;
     Grid exitGrid;
     public float defaultEntranceFee = 20;
@@ -44,6 +47,13 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         }
         moneyText = GameObject.Find("MoneyText").GetComponent<TextMeshProUGUI>();
         moneyText.text = money.ToString() + " $";
+
+        //xpBar = GameObject.Find("XP Bar").GetComponent<Slider>();
+        //levelText = GameObject.Find("LevelText").GetComponent<TextMeshProUGUI>();
+        //xpBar.minValue = 0;
+        //xpBar.maxValue = xpGoal;
+        //xpBar.value = xp;
+        //levelText.text = "Level " + xpLevel;
 
         entranceGrid = GridManager.instance.GetGrid(new Vector3(0 + GridManager.instance.elementWidth, 0, 17 + GridManager.instance.elementWidth));
         exitGrid = GridManager.instance.GetGrid(new Vector3(0 + GridManager.instance.elementWidth, 0, 20 + GridManager.instance.elementWidth));
@@ -130,14 +140,18 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
 
     public void ChangeXp(int xpBonus)
     {
-        xp += xpBonus;
+        //xp += xpBonus;
+        //xpBar.value = xp;
 
-        if (xp >= xpGoal)
-        {
-            xpLevel++;
-            xpGoal *= 5;
-            Debug.Log("Level Up! New Level: " + xpLevel);
-        }
+        //if (xp >= xpGoal)
+        //{
+        //    xpLevel++;
+        //    xpBar.minValue = xpGoal;
+        //    xpGoal *= 5;
+        //    Debug.Log("Level Up! New Level: " + xpLevel);
+        //    xpBar.maxValue = xpGoal;
+        //    levelText.text = "Level " + xpLevel;
+        //}
     }
 
     public void DecideIfReachable() { }
