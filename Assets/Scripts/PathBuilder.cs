@@ -29,6 +29,7 @@ public class PathBuilder : Placeable
                 newPath.selectedPrefabId = pathPrefab.gameObject.GetInstanceID();
                 paths.Add(newPath);
                 paths.ForEach(path => placeablePrice += path.placeablePrice);
+                paths.ForEach(path => xpBonus += path.xpBonus);
             }
             paths[0].CheckTerrain(transform.transform.position); 
             if (playerControl.canBePlaced)
@@ -44,6 +45,7 @@ public class PathBuilder : Placeable
         if (playerControl.isMouseDown && posChanged)
         {
             placeablePrice = 0;
+            xpBonus = 0;
             if (transform.position.x == Path.startingPoint.x && transform.position.z == Path.startingPoint.z)
             {
                 started = false;
@@ -102,6 +104,7 @@ public class PathBuilder : Placeable
                 ChangeMaterial(2);
             }
             paths.ForEach(path => placeablePrice += path.placeablePrice);
+            paths.ForEach(path => xpBonus += path.xpBonus);
         }
     }
 

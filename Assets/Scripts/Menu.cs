@@ -10,6 +10,6 @@ public class Menu : MonoBehaviour
 
     public Placeable GetSelectedPlaceable(int placeableIndex)
     {
-        return submenuPrefabs[UIMenu.Instance.curSubMenuIndex].subMenuInstance.GetComponent<SubMenu>().GetSelectedPlaceable(placeableIndex);
+        return submenuPrefabs[UIMenu.Instance.curSubMenuIndex].subMenuInstance.GetComponent<SubMenu>().GetPlaceable(placeableIndex);
     }
 }

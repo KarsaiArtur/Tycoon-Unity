@@ -148,9 +148,10 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         //    xpLevel++;
         //    xpBar.minValue = xpGoal;
         //    xpGoal *= 5;
-        //    Debug.Log("Level Up! New Level: " + xpLevel);
         //    xpBar.maxValue = xpGoal;
+        //    xpBar.value = xp;
         //    levelText.text = "Level " + xpLevel;
+        //    Debug.Log("Level Up! New Level: " + xpLevel);
         //}
     }
 

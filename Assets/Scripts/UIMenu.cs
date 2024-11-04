@@ -55,7 +55,6 @@ public class UIMenu : MonoBehaviour
     const float defaultMenuButtonHeight = 80;
     const float defaultMenuIconSize = 85;
 
-
     private void Awake()
     {
         Instance = this;
@@ -93,6 +92,7 @@ public class UIMenu : MonoBehaviour
         DestroySubmenus();
         RectTransform curMenuRectTransform;
         RectTransform iconRectTransform;
+
         if (curMenu == newMenu)
         {
             curMenuRectTransform = curMenu.GetComponent<RectTransform>();
@@ -130,6 +130,7 @@ public class UIMenu : MonoBehaviour
             SpawnSubmenus();
             isMenuVisible = true;
         }
+
         gameObject.SetActive(isMenuVisible);
     }
 
@@ -144,7 +145,6 @@ public class UIMenu : MonoBehaviour
         curPrice.text = curPlaceable.GetPrice();
         playerControl.objectTimesRotated = 0;
         playerControl.Spawn(curPlaceable);
-    
     }
 
     public void SetSubmenu(int index, int offset)
@@ -167,7 +167,6 @@ public class UIMenu : MonoBehaviour
             curMenu.submenuPrefabs[i].subMenuInstance.transform.SetParent(submenuPanel);
         }
         SetSubmenu(0, submenuPanel.childCount - curMenu.submenuPrefabs.Length);
-
     }
 
     void SpawnInfoPanel(int index)
@@ -185,8 +184,8 @@ public class UIMenu : MonoBehaviour
         }
     }
 
-
     public PlaceableButton button;
+
     public void SpawnPlaceables()
     {
         List<Placeable> placeables = curMenu.submenuPrefabs[curSubMenuIndex].subMenuInstance.GetComponent<SubMenu>().GetPlaceables();
@@ -201,6 +200,7 @@ public class UIMenu : MonoBehaviour
         }
         SetPlaceable(0, placeableListPanel.childCount - placeables.Count);
     }
+    
     void DestroyPlaceables()
     {
         for (int i = 0; i < placeableListPanel.childCount; i++)
