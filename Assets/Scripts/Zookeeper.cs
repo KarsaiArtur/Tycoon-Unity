@@ -12,14 +12,13 @@ public class Zookeeper : Staff, Saveable
 {
 
     Exhibit exhibitToWorkAt;
-    public StaffJob jobAtExhibit = StaffJob.Nothing;
     int waterTroughIndex = 0;
     public override List<StaffJob> GetJobTypes() => new List<StaffJob> { StaffJob.CleaningExhibit, StaffJob.FillingWater, StaffJob.PlacingFood };
 
     public override void Start()
     {
         base.Start();
-        jobAtExhibit = StaffJob.Nothing;
+        job = StaffJob.Nothing;
     }
 
     public override void FindJob()
@@ -83,17 +82,17 @@ public class Zookeeper : Staff, Saveable
         if (animalNeeds[0].job == StaffJob.PlacingFood)
         {
             exhibitToWorkAt.isGettingFood = true;
-            jobAtExhibit = StaffJob.PlacingFood;
+            job = StaffJob.PlacingFood;
         }
         if (animalNeeds[0].job == StaffJob.FillingWater)
         {
             exhibitToWorkAt.isGettingWater = true;
-            jobAtExhibit = StaffJob.FillingWater;
+            job = StaffJob.FillingWater;
         }
         if (animalNeeds[0].job == StaffJob.CleaningExhibit)
         {
             exhibitToWorkAt.isGettingCleaned = true;
-            jobAtExhibit = StaffJob.CleaningExhibit;
+            job = StaffJob.CleaningExhibit;
         }
 
         destinationExhibit = exhibitToWorkAt;
@@ -120,7 +119,7 @@ public class Zookeeper : Staff, Saveable
 
     public override bool DoJob()
     {
-        if (jobAtExhibit == StaffJob.PlacingFood)
+        if (job == StaffJob.PlacingFood)
         {
             if (exhibitToWorkAt.GetAnimals().Count > 0)
             {
@@ -130,17 +129,17 @@ public class Zookeeper : Staff, Saveable
                 animalFood.FinalPlace();
             }
             exhibitToWorkAt.isGettingFood = false;
-            jobAtExhibit = StaffJob.Nothing;
+            job = StaffJob.Nothing;
             return true;
         }
-        else if (jobAtExhibit == StaffJob.FillingWater)
+        else if (job == StaffJob.FillingWater)
         {
             exhibitToWorkAt.GetWaterPlaces()[waterTroughIndex].FillWithWater();
             exhibitToWorkAt.isGettingWater = false;
-            jobAtExhibit = StaffJob.Nothing;
+            job = StaffJob.Nothing;
             return true;
         }
-        else if (jobAtExhibit == StaffJob.CleaningExhibit)
+        else if (job == StaffJob.CleaningExhibit)
         {
             var temp = exhibitToWorkAt.animalDroppings[0];
             exhibitToWorkAt.RemoveDropping(0);
@@ -149,7 +148,7 @@ public class Zookeeper : Staff, Saveable
             if (exhibitToWorkAt.animalDroppings.Count == 0)
             {
                 exhibitToWorkAt.isGettingCleaned = false;
-                jobAtExhibit = StaffJob.Nothing;
+                job = StaffJob.Nothing;
                 return true;
             }
             return false;
@@ -159,12 +158,12 @@ public class Zookeeper : Staff, Saveable
 
     public override void FindWorkDestination()
     {
-        if (jobAtExhibit == StaffJob.CleaningExhibit)
+        if (job == StaffJob.CleaningExhibit)
         {
             time = 8;
             agent.SetDestination(exhibitToWorkAt.animalDroppings[0].transform.position);
         }
-        else if (jobAtExhibit == StaffJob.FillingWater)
+        else if (job == StaffJob.FillingWater)
         {
             float minWater = 500;
             for (int i = 0; i < exhibitToWorkAt.GetWaterPlaces().Count; i++)
@@ -177,7 +176,7 @@ public class Zookeeper : Staff, Saveable
             }
             agent.SetDestination(exhibitToWorkAt.GetWaterPlaces()[waterTroughIndex].transform.position);
         }
-        else if (jobAtExhibit == StaffJob.PlacingFood)
+        else if (job == StaffJob.PlacingFood)
         {
             Grid destinationGrid = exhibitToWorkAt.gridList[UnityEngine.Random.Range(0, exhibitToWorkAt.gridList.Count)];
             agent.SetDestination(new Vector3(destinationGrid.coords[0].x + UnityEngine.Random.Range(0, 1.0f), destinationGrid.coords[0].y, destinationGrid.coords[0].z + UnityEngine.Random.Range(0, 1.0f)));
@@ -186,14 +185,13 @@ public class Zookeeper : Staff, Saveable
 
     public override string GetCurrentAction()
     {
-        return jobAtExhibit.ToString();
+        return job.ToString();
     }
 
     public override void SetToDefault()
     {
         base.SetToDefault();
         exhibitToWorkAt = null;
-        jobAtExhibit = StaffJob.Nothing;
     }
 
     public override void Remove()
@@ -202,13 +200,13 @@ public class Zookeeper : Staff, Saveable
 
         if (exhibitToWorkAt != null)
         {
-            if (jobAtExhibit == StaffJob.PlacingFood)
+            if (job == StaffJob.PlacingFood)
                 exhibitToWorkAt.isGettingFood = false;
                 
-            else if (jobAtExhibit == StaffJob.FillingWater)
+            else if (job == StaffJob.FillingWater)
                 exhibitToWorkAt.isGettingWater = false;
                 
-            else if (jobAtExhibit == StaffJob.CleaningExhibit)
+            else if (job == StaffJob.CleaningExhibit)
                 exhibitToWorkAt.isGettingCleaned = false;
         }
         

@@ -17,6 +17,7 @@ public abstract class Staff : Placeable
     public bool isAvailable = true;
     public WorkingState workingState;
     public bool destinationReached = false;
+    public StaffJob job = StaffJob.Nothing;
 
     public enum WorkingState
     {
@@ -211,6 +212,7 @@ public abstract class Staff : Placeable
             insideExhibit = null;
         isAvailable = true;
         workingState = WorkingState.Resting;
+        job = StaffJob.Nothing;
     }
 
     public override void ClickedOn()

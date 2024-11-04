@@ -17,7 +17,6 @@ public enum StaffJob
 
 static class StaffJobMethods
 {
-
     public static string GetName(this StaffJob s1)
     {
         switch (s1)

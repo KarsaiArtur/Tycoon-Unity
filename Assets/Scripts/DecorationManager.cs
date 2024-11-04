@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Unity.VisualScripting.Antlr3.Runtime.Collections;
 using UnityEngine;
 using static Decoration;
 
@@ -11,6 +12,7 @@ public class DecorationManager : MonoBehaviour, Manager, Saveable
 {
     static public DecorationManager instance;
     public List<Decoration> decorations;
+    public float monthlyExpenses = 0;
 
     void Start()
     {
@@ -27,6 +29,17 @@ public class DecorationManager : MonoBehaviour, Manager, Saveable
     {
         decorations.Add(decoration);
         decoration.transform.SetParent(DecorationManager.instance.transform);
+        monthlyExpenses += decoration.expense;
+    }
+
+    public void PayExpenses()
+    {
+        ZooManager.instance.ChangeMoney(-monthlyExpenses);
+        monthlyExpenses = 0;
+        foreach (Decoration decoration in decorations)
+        {
+            monthlyExpenses += decoration.expense;
+        }
     }
 
     public bool GetIsLoaded()

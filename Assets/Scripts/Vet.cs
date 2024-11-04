@@ -13,7 +13,6 @@ public class Vet : Staff, Saveable
 {
 
     Animal animalOccupied;
-    public StaffJob job = StaffJob.Nothing;
     public bool aiming = false;
     int shootingDistance = 5;
     IEnumerator coroutine;
@@ -195,7 +194,6 @@ public class Vet : Staff, Saveable
     public override void SetToDefault()
     {
         base.SetToDefault();
-        job = StaffJob.Nothing;
         aiming = false;
             CRRunning = false;
 

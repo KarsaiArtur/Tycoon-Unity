@@ -170,6 +170,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4df82d31a7ab1a043b36aa8bfc0cb67c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 7034067191452911268}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4df82d31a7ab1a043b36aa8bfc0cb67c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9184546180992403395}
   m_SourcePrefab: {fileID: 100100000, guid: 4df82d31a7ab1a043b36aa8bfc0cb67c, type: 3}
 --- !u!1 &2867142855352357859 stripped
 GameObject:
@@ -268,7 +271,7 @@ MonoBehaviour:
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
-  unlockLevel: 1
+  xpUnlockLevel: 1
   xpBonus: 40
   expense: 0
   sadnessReasons: 
@@ -323,6 +326,33 @@ MonoBehaviour:
   destinationVisitableId: 
   matingPartnerId: 
   targetId: 
+--- !u!54 &9184546180992403395
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2867142855352357859}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
 --- !u!4 &3207112213477443929 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4df82d31a7ab1a043b36aa8bfc0cb67c, type: 3}

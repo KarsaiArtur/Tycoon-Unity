@@ -102,31 +102,17 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
 
     public void PayExpenses()
     {
-        foreach (var staff in StaffManager.instance.staffList)
-        {
-            ChangeMoney(-staff.expense);
-        }
-        foreach (var building in BuildingManager.instance.buildingList)
-        {
-            ChangeMoney(-building.expense);
-        }
-        foreach (var decoration in DecorationManager.instance.decorations)
-        {
-            ChangeMoney(-decoration.expense);
-        }
+        StaffManager.instance.PayExpenses();
+        BuildingManager.instance.PayExpenses();
+        DecorationManager.instance.PayExpenses();
     }
 
     public int GetExpenses()
     {
         float sum = 0;
-        foreach (var staff in StaffManager.instance.staffList)
-        {
-            sum += staff.expense;
-        }
-        foreach (var building in BuildingManager.instance.buildingList)
-        {
-            sum += building.expense;
-        }
+        sum += StaffManager.instance.monthlyExpenses;
+        sum += BuildingManager.instance.monthlyExpenses;
+        sum += DecorationManager.instance.monthlyExpenses;
         return (int)sum;
     }
 

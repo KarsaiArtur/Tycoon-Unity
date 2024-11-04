@@ -11,10 +11,9 @@ using UnityEngine.AI;
 
 public class Maintainer : Staff, Saveable
 {
-    Fence fenceToRepair;
+    public Fence fenceToRepair;
     TrashCan trashCanToEmpty;
     Grid gridDestination;
-    public StaffJob job = StaffJob.Nothing;
     
     public override List<StaffJob> GetJobTypes() => new List<StaffJob> { StaffJob.PickingUpTrash, StaffJob.EmptyingTrashCan, StaffJob.RepairingFence };
 
@@ -183,9 +182,7 @@ public class Maintainer : Staff, Saveable
     {
         if (job == StaffJob.RepairingFence && fenceToRepair != null)
         {
-            fenceToRepair.health = fenceToRepair.maxHealth;
-            fenceToRepair.ChangeMaterial(0);
-            fenceToRepair.isBeingFixed = false;
+            fenceToRepair.Heal();
             return true;
         }
         else if (job == StaffJob.EmptyingTrashCan && trashCanToEmpty != null)
@@ -287,8 +284,6 @@ public class Maintainer : Staff, Saveable
         {
             TrashCanManager.instance.trashIsBeingPickedUp = false;
         }
-
-        job = StaffJob.Nothing;
     }
 
     public override void Remove()

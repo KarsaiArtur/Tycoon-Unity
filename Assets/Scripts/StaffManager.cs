@@ -10,6 +10,7 @@ public class StaffManager : MonoBehaviour, Manager, Saveable
 {
     public static StaffManager instance;
     public List<Staff> staffList;
+    public float monthlyExpenses = 0;
 
     void Awake()
     {
@@ -26,6 +27,7 @@ public class StaffManager : MonoBehaviour, Manager, Saveable
     {
         staffList.Add(staff);
         staff.transform.SetParent(StaffManager.instance.transform);
+        monthlyExpenses += staff.expense;
     }
 
     void Update()
@@ -37,6 +39,16 @@ public class StaffManager : MonoBehaviour, Manager, Saveable
                 if (staff.isAvailable)
                     staff.FindJob();
             }
+        }
+    }
+
+    public void PayExpenses()
+    {
+        ZooManager.instance.ChangeMoney(-monthlyExpenses);
+        monthlyExpenses = 0;
+        foreach (Staff staff in staffList)
+        {
+            monthlyExpenses += staff.expense;
         }
     }
 

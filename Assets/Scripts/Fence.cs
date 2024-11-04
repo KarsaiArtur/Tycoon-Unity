@@ -18,6 +18,7 @@ public class Fence : Placeable, Saveable
     public Grid grid1;
     public Grid grid2;
     bool collided = false;
+    Fence fenceCollidedWith = null;
     public int strength = 1;
     public int maxHealth = 3;
     public int health;
@@ -88,7 +89,7 @@ public class Fence : Placeable, Saveable
 
         foreach (RaycastHit hit2 in hits)
         {
-            if (playerControl.placedTags.Contains(hit2.collider.tag) && playerControl.canBePlaced)
+            if (playerControl.placedTags.Contains(hit2.collider.tag) && playerControl.canBePlaced && fenceCollidedWith == null)
             {
                 playerControl.canBePlaced = false;
                 ChangeMaterial(2);
@@ -120,6 +121,13 @@ public class Fence : Placeable, Saveable
 
     public override void FinalPlace()
     {
+        if (fenceCollidedWith != null)
+        {
+            fenceCollidedWith.Heal();
+            Destroy(gameObject);
+            return;
+        }
+
         if (timesRotated == 0)
             grid2 = gridManager.grids[(int)(transform.position.x - 0.5f) - gridManager.elementWidth, (int)(transform.position.z + 0.5f) - gridManager.elementWidth];
         else if (timesRotated == 1)
@@ -215,8 +223,24 @@ public class Fence : Placeable, Saveable
         if (collision.collider.CompareTag("Placed") && !tag.Equals("Placed Fence"))
         {
             collided = true;
+            fenceCollidedWith = null;
             playerControl.canBePlaced = false;
             ChangeMaterial(2);
+        }
+        else if (collision.collider.CompareTag("Placed Fence"))
+        {
+            var placedFence = collision.collider.GetComponent<Fence>();
+            if (placedFence.strength == strength && placedFence.health < placedFence.maxHealth)
+            {
+                collided = false;
+                fenceCollidedWith = placedFence;
+                playerControl.canBePlaced = true;
+                ChangeMaterial(1);
+            }
+        }
+        else
+        {
+            fenceCollidedWith = null;
         }
     }
 
@@ -227,6 +251,7 @@ public class Fence : Placeable, Saveable
             collided = false;
             playerControl.canBePlaced = true;
         }
+        fenceCollidedWith = null;
     }
 
     void CreateExhibitWindow(Exhibit exhibit)
@@ -253,6 +278,29 @@ public class Fence : Placeable, Saveable
     public override float GetSellPrice()
     {
         return Mathf.Floor(placeablePrice * 0.2f * health / maxHealth);
+    }
+
+    public void Heal()
+    {
+        health = maxHealth;
+        ChangeMaterial(0);
+
+        if (isBeingFixed)
+        {
+            foreach (var staff in StaffManager.instance.staffList)
+            {
+                if (staff.job == StaffJob.RepairingFence)
+                {
+                    Maintainer tempStaff = (Maintainer)staff;
+                    if (tempStaff.fenceToRepair == this)
+                    {
+                        staff.SetToDefault();
+                    }
+                }
+            }
+        }
+
+        isBeingFixed = false;
     }
 
     public override void Remove()

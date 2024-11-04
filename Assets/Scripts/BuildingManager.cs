@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Unity.VisualScripting.Antlr3.Runtime.Collections;
 using UnityEngine;
 using static Building;
 
@@ -13,19 +14,34 @@ public class BuildingManager : MonoBehaviour, Saveable, Manager
     static public BuildingManager instance;
     public List<Building> buildingList;
     public int itemsBought = 0;
+    public float monthlyExpenses = 0;
 
-    void Start(){
+    void Start()
+    {
         instance = this;
-        if(LoadMenu.loadedGame != null){
+        if(LoadMenu.loadedGame != null)
+        {
             LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
             LoadMenu.objectLoadedEvent.Invoke();
         }
     }
 
-    public void AddList(Building building){
+    public void AddList(Building building)
+    {
         buildingList.Add(building);
         building.transform.SetParent(BuildingManager.instance.transform);
+        monthlyExpenses += building.expense;
+    }
+
+    public void PayExpenses()
+    {
+        ZooManager.instance.ChangeMoney(-monthlyExpenses);
+        monthlyExpenses = 0;
+        foreach (Building building in buildingList)
+        {
+            monthlyExpenses += building.expense;
+        }
     }
 
     public bool GetIsLoaded()
