@@ -17,6 +17,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public int xp = 0;
     public int xpGoal = 1000;
     public int xpLevel = 1;
+    public float xpMultiplier = 1;
     public TextMeshProUGUI moneyText;
     public Slider xpBar;
     public TextMeshProUGUI levelText;
@@ -48,6 +49,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         moneyText = GameObject.Find("MoneyText").GetComponent<TextMeshProUGUI>();
         moneyText.text = money.ToString() + " $";
 
+        xpGoal = (int)Mathf.Floor((float)xpGoal * xpMultiplier);
         //xpBar = GameObject.Find("XP Bar").GetComponent<Slider>();
         //levelText = GameObject.Find("LevelText").GetComponent<TextMeshProUGUI>();
         //xpBar.minValue = 0;
@@ -127,18 +129,18 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public void ChangeXp(int xpBonus)
     {
         //xp += xpBonus;
-        //xpBar.value = xp;
+        xpBar.value = xp;
 
-        //if (xp >= xpGoal)
-        //{
-        //    xpLevel++;
-        //    xpBar.minValue = xpGoal;
-        //    xpGoal *= 5;
-        //    xpBar.maxValue = xpGoal;
-        //    xpBar.value = xp;
-        //    levelText.text = "Level " + xpLevel;
-        //    Debug.Log("Level Up! New Level: " + xpLevel);
-        //}
+        if (xp >= xpGoal)
+        {
+            xpLevel++;
+            //xpBar.minValue = xpGoal;
+            xpGoal *= 5;
+            //xpBar.maxValue = xpGoal;
+            //xpBar.value = xp;
+            //levelText.text = "Level " + xpLevel;
+            Debug.Log("Level Up! New Level: " + xpLevel);
+        }
     }
 
     public void DecideIfReachable() { }

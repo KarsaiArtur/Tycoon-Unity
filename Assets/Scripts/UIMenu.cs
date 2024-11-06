@@ -58,26 +58,28 @@ public class UIMenu : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
-        gameObject.SetActive(isMenuVisible);
-        foreach(var button in menuButtons.transform.GetComponentsInChildren<Button>())
-        {
-            button.transform.GetComponent<Button>().onClick.AddListener(() =>
+        if(!MainMenu.instance.isMapMaker){
+            playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
+            gameObject.SetActive(isMenuVisible);
+            foreach(var button in menuButtons.transform.GetComponentsInChildren<Button>())
             {
-                ResetButtonOutlines(menuButtons);
-                if (isMenuVisible)
-                    button.transform.GetComponent<Outline>().enabled = true;
-            });
-        }
+                button.transform.GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    ResetButtonOutlines(menuButtons);
+                    if (isMenuVisible)
+                        button.transform.GetComponent<Outline>().enabled = true;
+                });
+            }
 
-        foreach (var button in extraMenuButtons.transform.GetComponentsInChildren<Button>())
-        {
-            button.transform.GetComponent<Button>().onClick.AddListener(() =>
+            foreach (var button in extraMenuButtons.transform.GetComponentsInChildren<Button>())
             {
-                ResetButtonOutlines(extraMenuButtons);
-                if (isExtraMenuVisible)
-                    button.transform.GetComponent<Outline>().enabled = true;
-            });
+                button.transform.GetComponent<Button>().onClick.AddListener(() =>
+                {
+                    ResetButtonOutlines(extraMenuButtons);
+                    if (isExtraMenuVisible)
+                        button.transform.GetComponent<Outline>().enabled = true;
+                });
+            }
         }
     }
 

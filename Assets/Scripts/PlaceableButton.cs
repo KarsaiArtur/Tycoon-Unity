@@ -7,7 +7,6 @@ using UnityEngine.UI;
 
 public class PlaceableButton : Button
 {
-    // Start is called before the first frame update
     override protected void Start()
     {
         base.Start();

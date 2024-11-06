@@ -19,6 +19,7 @@ public class Fence : Placeable, Saveable
     public Grid grid2;
     bool collided = false;
     Fence fenceCollidedWith = null;
+    float defaultPrice = 0;
     public int strength = 1;
     public int maxHealth = 3;
     public int health;
@@ -31,6 +32,7 @@ public class Fence : Placeable, Saveable
     {
         base.Awake();
 
+        defaultPrice = placeablePrice;
         prevDay = CalendarManager.instance.currentDate;
         health = maxHealth;
     }
@@ -124,7 +126,10 @@ public class Fence : Placeable, Saveable
         if (fenceCollidedWith != null)
         {
             fenceCollidedWith.Heal();
-            Destroy(gameObject);
+            xpBonus = 0;
+            tag = "Untagged";
+            transform.position = new Vector3(0, -100, 0);
+            Destroy(gameObject, 3);
             return;
         }
 
@@ -224,6 +229,7 @@ public class Fence : Placeable, Saveable
         {
             collided = true;
             fenceCollidedWith = null;
+            placeablePrice = (int)defaultPrice;
             playerControl.canBePlaced = false;
             ChangeMaterial(2);
         }
@@ -234,6 +240,7 @@ public class Fence : Placeable, Saveable
             {
                 collided = false;
                 fenceCollidedWith = placedFence;
+                placeablePrice = (int)Mathf.Floor(defaultPrice / fenceCollidedWith.maxHealth * fenceCollidedWith.health);
                 playerControl.canBePlaced = true;
                 ChangeMaterial(1);
             }
@@ -241,6 +248,7 @@ public class Fence : Placeable, Saveable
         else
         {
             fenceCollidedWith = null;
+            placeablePrice = (int)defaultPrice;
         }
     }
 
@@ -251,7 +259,9 @@ public class Fence : Placeable, Saveable
             collided = false;
             playerControl.canBePlaced = true;
         }
+
         fenceCollidedWith = null;
+        placeablePrice = (int)defaultPrice;
     }
 
     void CreateExhibitWindow(Exhibit exhibit)

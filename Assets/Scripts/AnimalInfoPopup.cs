@@ -88,8 +88,10 @@ public class AnimalInfoPopup : InfoPopup
 
     public override void DestroyPanel()
     {
-        foreach(var renderer in animal.renderers){
-            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
+        foreach(var renderer in animal.renderers)
+        {
+            if (renderer != null)
+                renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
         }
         base.DestroyPanel();
         animalCam.SetActive(false);

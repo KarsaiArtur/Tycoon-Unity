@@ -59,8 +59,10 @@ public class BuildingInfopopup : InfoPopup
 
     public override void DestroyPanel()
     {
-        foreach(var renderer in building.renderers){
-            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
+        foreach(var renderer in building.renderers)
+        {
+            if (renderer != null)
+                renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
         }
         base.DestroyPanel();
     }

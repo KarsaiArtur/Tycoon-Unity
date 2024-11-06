@@ -86,8 +86,10 @@ public class ExhibitInfopopup : InfoPopup
 
     public override void DestroyPanel()
     {
-        foreach(var renderer in exhibit.renderers){
-            renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
+        foreach(var renderer in exhibit.renderers)
+        {
+            if (renderer != null)
+                renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
         }
         base.DestroyPanel();
     }

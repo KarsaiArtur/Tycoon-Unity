@@ -31,6 +31,7 @@ public class GridManager : MonoBehaviour, Saveable, Manager
     public bool edgeChanged = false;
     public Grid[,] grids;
     public Grid startingGrid;
+    public TerrainType currentTerrainType = TerrainType.Grass;
 
     void Awake()
     {
@@ -38,7 +39,8 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         pControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
         terrainWidth += elementWidth * 2;
 
-        if(!MainMenu.instance.isMapMaker){
+        if(!MainMenu.instance.isMapMaker)
+        {
             if(LoadMenu.loadedGame != null)
             {
                 LoadMenu.currentManager = this;
@@ -60,6 +62,14 @@ public class GridManager : MonoBehaviour, Saveable, Manager
             SetSpawnHeight();
             ReloadGrids();
 
+            for (int i = 32; i < 39; i++)
+            {
+                for (int j = 45; j < 58; j++)
+                {
+                    grids[i - elementWidth, j - elementWidth].isPath = true;
+                }
+            }
+
             foreach (Chunk chunk in terrainElements)
             {
                 chunk.ReRender(int.Parse(chunk.name.Split('_')[0]), int.Parse(chunk.name.Split('_')[1]));
@@ -72,7 +82,8 @@ public class GridManager : MonoBehaviour, Saveable, Manager
             initializing = false;
             edgeChanged = false;
         }
-        else{
+        else
+        {
             MapMaker();
         }
     }
@@ -229,7 +240,7 @@ public class GridManager : MonoBehaviour, Saveable, Manager
                     //coords[i] = new Vector3(x, y, z);
                 }
                 coords[i] = new Vector3(x, y, z);
-                coordTypes[i] = TerrainType.Grass;
+                coordTypes[i] = currentTerrainType;
             }
         }
     }
@@ -403,13 +414,13 @@ public class GridManager : MonoBehaviour, Saveable, Manager
 
     private void SetSpawnHeight()
     {
-        for (int i = 32; i < 38; i++)
+        for (int i = 32; i < 41; i++)
         {
-            for (int j = 46; j < 57; j++)
+            for (int j = 43; j < 60; j++)
             {
                 coords[j * (terrainWidth + 1) + i].y = edgeHeight;
-                if (!initializing)
-                    grids[i - elementWidth, j - elementWidth].isPath = true;
+                //if (!initializing)
+                //    grids[i - elementWidth, j - elementWidth].isPath = true;
                 //TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight + 0.5f, false);
                 //TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight - 0.5f, true);
 
