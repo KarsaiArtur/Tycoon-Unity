@@ -25,14 +25,14 @@ public class PlayerControl : MonoBehaviour
     public Placeable m_Selected = null;
     public Placeable curPlaceable = null;
     int cameraTimesRotated = 0;
-    int maxZoom = 10;
-    int minZoom = 30;
-    int minBase;
-    int maxBase;
-    int minX;
-    int maxX;
-    int minZ;
-    int maxZ;
+    float maxZoom = 10;
+    float minZoom = 30;
+    float minBase;
+    float maxBase;
+    float minX;
+    float maxX;
+    float minZ;
+    float maxZ;
     List<int> offsets;
     private float angle;
     public int objectTimesRotated = 0;
@@ -242,10 +242,10 @@ public class PlayerControl : MonoBehaviour
         gridM = GameObject.FindGameObjectWithTag("GridManager").GetComponent<GridManager>();
         GameCamera.GetComponent<CinemachineBrain>().enabled = false;
 
-        //minX = gridM.elementWidth + 5;
-        //maxX = gridM.terrainWidth - gridM.elementWidth - 5;
-        //minZ = gridM.elementWidth + 5;
-        //maxZ = gridM.terrainWidth - gridM.elementWidth - 5;
+        minTerrainHeight = gridM.edgeHeight - 5;
+        maxTerrainHeight = gridM.edgeHeight + 5;
+        minZoom = gridM.edgeHeight + 26.5f;
+        maxZoom = gridM.edgeHeight + 6.5f;
         minBase = gridM.elementWidth;
         maxBase = gridM.terrainWidth - gridM.elementWidth;
         minX = minBase;
@@ -432,13 +432,13 @@ public class PlayerControl : MonoBehaviour
         }
 
         if (cameraTimesRotated == 0)
-            transform.position = transform.position + new Vector3(move.x * (float)Math.Cos(angle * degToRad) + move.y * (float)Math.Sin(angle * degToRad), 0, move.x * (float)Math.Sin(angle * degToRad) - move.y * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
+            transform.position = transform.position + new Vector3(move.x * (float)Math.Cos(angle * degToRad) + move.y * (float)Math.Sin(angle * degToRad), 0, move.x * (float)Math.Sin(angle * degToRad) - move.y * (float)Math.Cos(angle * degToRad)) * cameraSpeed * Time.deltaTime;
         if (cameraTimesRotated == 1)
-            transform.position = transform.position - new Vector3(move.y * (float)Math.Cos(angle * degToRad) - move.x * (float)Math.Sin(angle * degToRad), 0, move.y * (float)Math.Sin(angle * degToRad) + move.x * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
+            transform.position = transform.position - new Vector3(move.y * (float)Math.Cos(angle * degToRad) - move.x * (float)Math.Sin(angle * degToRad), 0, move.y * (float)Math.Sin(angle * degToRad) + move.x * (float)Math.Cos(angle * degToRad)) * cameraSpeed * Time.deltaTime;
         if (cameraTimesRotated == 2)
-            transform.position = transform.position - new Vector3(move.x * (float)Math.Cos(angle * degToRad) + move.y * (float)Math.Sin(angle * degToRad), 0, move.x * (float)Math.Sin(angle * degToRad) - move.y * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
+            transform.position = transform.position - new Vector3(move.x * (float)Math.Cos(angle * degToRad) + move.y * (float)Math.Sin(angle * degToRad), 0, move.x * (float)Math.Sin(angle * degToRad) - move.y * (float)Math.Cos(angle * degToRad)) * cameraSpeed * Time.deltaTime;
         if (cameraTimesRotated == 3)
-            transform.position = transform.position + new Vector3(move.y * (float)Math.Cos(angle * degToRad) - move.x * (float)Math.Sin(angle * degToRad), 0, move.y * (float)Math.Sin(angle * degToRad) + move.x * (float)Math.Cos(angle * 0.0174532925)) * cameraSpeed * Time.deltaTime;
+            transform.position = transform.position + new Vector3(move.y * (float)Math.Cos(angle * degToRad) - move.x * (float)Math.Sin(angle * degToRad), 0, move.y * (float)Math.Sin(angle * degToRad) + move.x * (float)Math.Cos(angle * degToRad)) * cameraSpeed * Time.deltaTime;
 
         float number = (transform.position.y - 10) / 20 * 12;
         //float number = (transform.position.y / 2);
@@ -623,6 +623,8 @@ public class PlayerControl : MonoBehaviour
         terraformerPriceTag = terraformerPriceTag == null ? Instantiate(GameObject.Find("Placing Price").GetComponent<TextMeshProUGUI>()) : terraformerPriceTag;
         terraformerPriceTag.transform.SetParent(canvas.transform);
         terraformerPriceTag.text = "-" + price + " $";
+        if (ZooManager.money < price)
+            terraformerPriceTag.text = "Not Enough Money!";
         terraformerPriceTag.color = Color.red;
         var zoomIn = transform.position.y / 6.0f;
         var posi = new Vector3(Input.mousePosition.x + (500.0f / zoomIn), Input.mousePosition.y - (150.0f / zoomIn) + 50, 0);
@@ -677,11 +679,16 @@ public class PlayerControl : MonoBehaviour
                 if (ZooManager.money >= price && !gridM.edgeChanged && !terrainCollided)
                 {
                     ZooManager.instance.ChangeMoney(-price);
-                    SetPriceTag(gridM.coords[coordIndex], price);
-                    StartCoroutine(MoveText(2.0f));
                     if (price > 0)
                         QuestManager.instance.terraformerUsed = true;
                 }
+                else
+                {
+                    ResetGrids();
+                }
+
+                SetPriceTag(gridM.coords[coordIndex], price);
+                StartCoroutine(MoveText(2.0f));
             }
 
             terrainHit = false;

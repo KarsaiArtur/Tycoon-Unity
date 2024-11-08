@@ -21,20 +21,6 @@ public class Grid
     public int trashCount = 0;
     public TerrainType terrainType;
 
-    public void CheckTerrainType()
-    {
-        for (int i = 1; i < coords.Length; i++)
-        {
-            if (GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[0])] != GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[i])])
-            {
-                terrainType = TerrainType.Mixed;
-                return;
-            }
-        }
-
-        terrainType = GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[0])];
-    }
-
     public List<TerrainType> GetTerrainTypes()
     {
         List<TerrainType> terrainTypes = new();

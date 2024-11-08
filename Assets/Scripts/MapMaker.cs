@@ -8,15 +8,20 @@ using TMPro;
 using Unity.VisualScripting;
 using UnityEditor.Search;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class MapMaker : MonoBehaviour
 {
-    public const float cameraMinY = 18;
-    public const float cameraYChange = 20.5f;
-    public const float cameraMinSize = 33;
-    public const float cameraSizeChange = 18;
-    public static Camera _camera;
+    const float degToRad = (float)Math.PI / 180.0f;
+    public TerrainType defaultTerrainType;
+    public Vector3 cameraPositionPreset;
+    public Vector3 cameraRotationPreset;
+    public  float cameraMinY = 10;
+    public  float cameraYChange = 20.5f;
+    public float cameraMinSize = 35;
+    public  float cameraSizeChange = 12.5f;
+    public Camera _camera;
     public List<Difficulty> difficulties = 
     new List<Difficulty>()
     {
@@ -122,30 +127,31 @@ public class MapMaker : MonoBehaviour
     }
 
     public void SetTerrainTypeButtons(){
-        foreach(var terrainType in ((TerrainType[])Enum.GetValues(typeof(TerrainType))).Where(element => element != TerrainType.Mixed)){
-            if(terrainType != TerrainType.Mixed){
-                var button = Instantiate(terrainTypeButton).GetComponent<Button>();
-                button.transform.SetParent(terrainTypeButtonsPanel.transform);
+        foreach(var terrainType in (TerrainType[])Enum.GetValues(typeof(TerrainType))){
+            var button = Instantiate(terrainTypeButton).GetComponent<Button>();
+            button.transform.SetParent(terrainTypeButtonsPanel.transform);
 
-                var outline = button.GetComponent<Outline>();
-                defaultOutlineColor = outline.effectColor;
-                outlines.Add(outline);
+            var outline = button.GetComponent<Outline>();
+            defaultOutlineColor = outline.effectColor;
+            outlines.Add(outline);
 
-                button.onClick.AddListener(() => {
-                    GridManager.instance.currentTerrainType = terrainType;
-                    ResetOutlines();
-                    outline.effectColor = Color.red;
-                    GridManager.instance.MapMaker();
-                });
-                var image = button.GetComponent<Image>();
-                image.sprite = terrainType.GetIcon();
-
-                
-                button.transform.localScale = terrainTypeButton.transform.localScale;
-                button.GetComponent<RectTransform>().localPosition = Vector3.zero;
-                button.transform.localRotation = terrainTypeButton.transform.rotation;
-
+            if(defaultTerrainType == terrainType){
+                outline.effectColor = Color.red;
             }
+
+            button.onClick.AddListener(() => {
+                GridManager.instance.SetTerrainType(terrainType);
+                ResetOutlines();
+                outline.effectColor = Color.red;
+                GridManager.instance.RerenderChunks();
+            });
+            var image = button.GetComponent<Image>();
+            image.sprite = terrainType.GetIcon();
+
+            
+            button.transform.localScale = terrainTypeButton.transform.localScale;
+            button.GetComponent<RectTransform>().localPosition = Vector3.zero;
+            button.transform.localRotation = terrainTypeButton.transform.rotation;
         }
     }
 
@@ -166,18 +172,121 @@ public class MapMaker : MonoBehaviour
         return input;
     }
 
+    bool isOverCamera(){
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+        List<RaycastResult> raycastResults = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, raycastResults);
+        foreach (RaycastResult result in raycastResults)
+        {
+            if(result.gameObject.name.Equals("Camera")){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool isRotating = false;
+    bool isMoving = false;
+    Vector3 resetPos;
+
     void Update()
     {
         var lookatPosition = new Vector3(target.position.x + GridManager.instance.terrainWidth / 2, target.position.y, target.position.z + GridManager.instance.terrainWidth / 2);
-        
-        if (Input.GetMouseButton(2))
+        if(Input.GetMouseButtonDown(2) && isOverCamera()){
+            isRotating = true;
+            ResetCamera();
+        }
+        else if(Input.GetMouseButtonUp(2) || !isOverCamera()){
+            isRotating = false;
+        }
+        if (isRotating && isOverCamera())
         {
             float horizontalInput = Input.GetAxis("Mouse X") * rotationSpeed * Time.deltaTime;
 
             transform.RotateAround(lookatPosition, Vector3.up, horizontalInput);
         }
 
-        transform.LookAt(lookatPosition);
+        if(Input.GetMouseButtonDown(0) && isOverCamera() && !isMoving){
+            resetPos = transform.position;
+            isMoving = true;
+        }
+        if (isMoving && isOverCamera())
+        {
+            Move();
+        }
+
+        if(!isMoving){
+            transform.LookAt(lookatPosition);
+        }
+        if(isOverCamera()){
+            Zoom();
+        }
+    }
+
+    void ResetCamera(){
+        transform.position = resetPos;
+        _camera.orthographicSize = cameraMax;
+        isMoving = false;
+    }
+    
+    float zoomSpeed = 70;
+    float cameraMax = 60;
+    float cameraMin = 2.5f;
+    public float dragSpeed = 4;
+    private Vector3 dragOrigin;
+    private Vector3 dragOriginWorldPos;
+    void Zoom()
+    {
+        float zoom = Input.GetAxis("Mouse ScrollWheel");
+        if(zoom != 0){
+            _camera.orthographicSize += (-zoom) * zoomSpeed * _camera.orthographicSize / cameraMax;
+            _camera.orthographicSize = _camera.orthographicSize < cameraMin ? cameraMin : _camera.orthographicSize;
+            _camera.orthographicSize = _camera.orthographicSize > cameraMax ? cameraMax : _camera.orthographicSize;
+        }
+    }
+
+    void Move(){
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            dragOrigin = Input.mousePosition;
+            dragOriginWorldPos = transform.position;
+            return;
+        }
+
+        if (!Input.GetMouseButton(0)) return;
+
+        Vector3 pos = Input.mousePosition - dragOrigin;
+        pos = new Vector3((float)Math.Round(pos.x), (float)Math.Round(pos.y), (float)Math.Round(pos.z));
+        Debug.Log(pos);
+
+        float angle = 90 - transform.eulerAngles.y % 90;
+        pos = new Vector3(-pos.x, pos.y, pos.z);
+
+        if (transform.eulerAngles.y <= 90)
+            transform.position = dragOriginWorldPos - new Vector3(pos.y * (float)Math.Cos(angle * degToRad) - pos.x * (float)Math.Sin(angle * degToRad), 0, pos.y * (float)Math.Sin(angle * degToRad) + pos.x * (float)Math.Cos(angle * degToRad)) / dragSpeed;
+        else if (transform.eulerAngles.y <= 180)
+            transform.position = dragOriginWorldPos + new Vector3(pos.x * (float)Math.Cos(angle * degToRad) + pos.y * (float)Math.Sin(angle * degToRad), 0, pos.x * (float)Math.Sin(angle * degToRad) - pos.y * (float)Math.Cos(angle * degToRad)) / dragSpeed;
+        else if (transform.eulerAngles.y <= 270)
+            transform.position = dragOriginWorldPos + new Vector3(pos.y * (float)Math.Cos(angle * degToRad) - pos.x * (float)Math.Sin(angle * degToRad), 0, pos.y * (float)Math.Sin(angle * degToRad) + pos.x * (float)Math.Cos(angle * degToRad)) / dragSpeed;
+        else
+            transform.position = dragOriginWorldPos - new Vector3(pos.x * (float)Math.Cos(angle * degToRad) + pos.y * (float)Math.Sin(angle * degToRad), 0, pos.x * (float)Math.Sin(angle * degToRad) - pos.y * (float)Math.Cos(angle * degToRad)) / dragSpeed;
+
+        //Vector3 move = new Vector3(pos.x * dragSpeed, 0, pos.y * dragSpeed);
+
+        //transform.Translate(move, Space.World);  
+
+    }
+
+    void SetCamera(float sliderValue){
+        Quaternion rotation = Quaternion.Euler(cameraRotationPreset);
+        _camera.transform.localRotation = rotation;
+        Vector3 newCameraPos = cameraPositionPreset;
+        resetPos = cameraPositionPreset;
+        newCameraPos.y = cameraMinY + (sliderValue - 1) * cameraYChange;
+        _camera.transform.position = newCameraPos;
+        _camera.orthographicSize = cameraMinSize + (sliderValue - 1) * cameraSizeChange; 
     }
 
     void Start(){
@@ -206,6 +315,7 @@ public class MapMaker : MonoBehaviour
             ),
         };
         AddButtons();
+
         
         foreach(var value in values){
             var data = datas.Find(e => e.name.Equals(value.name));
@@ -214,6 +324,7 @@ public class MapMaker : MonoBehaviour
             var intervalCount = ((value.max - value.min) / value.intervals) + 1;
             
             var slider = data.transform.GetChild(1).GetChild(0).GetComponent<Slider>();
+            
             slider.maxValue = intervalCount;
 
             data.transform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = value.min.ToString();
@@ -228,13 +339,17 @@ public class MapMaker : MonoBehaviour
                 data.transform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = (value.min + ((sliderValue - 1) * value.intervals)).ToString();
                 value.setData.Invoke((int)(value.min + ((sliderValue - 1) * value.intervals)));
 
-                Vector3 newCameraPos = _camera.transform.position;
-                newCameraPos.y = cameraMinY + (sliderValue - 1) * cameraYChange;
-                _camera.transform.position = newCameraPos;
-                _camera.orthographicSize = cameraMinSize + (sliderValue - 1) * cameraSizeChange; 
+                if(value.name.Equals("Map size")){
+                     SetCamera(sliderValue);
+                }
 
                 GridManager.instance.MapMaker();
             });
+
+            
+        
+            var mapSize = datas.Find(e => e.name.Equals("Map size"));
+            SetCamera(mapSize.transform.GetChild(1).GetChild(0).GetComponent<Slider>().value);
 
             var intervalPanel = data.transform.GetChild(1).GetChild(1);
             var intervalPrefab = intervalPanel.GetChild(0).gameObject;
@@ -254,6 +369,7 @@ public class MapMaker : MonoBehaviour
         SetDifficultySettings("Normal");
         SetTerrainTypeButtons();
 
+        GridManager.instance.currentTerrainType = defaultTerrainType;
         GridManager.instance.MapMaker();
     }
     void ResetOutlines(){

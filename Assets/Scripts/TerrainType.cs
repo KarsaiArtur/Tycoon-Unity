@@ -13,8 +13,7 @@ public enum TerrainType
     Water,
     Stone,
     Ice,
-    Rainforest,
-    Mixed
+    Rainforest
 }
 
 static class TerrainTypeMethods

@@ -26,6 +26,7 @@ public class GridManager : MonoBehaviour, Saveable, Manager
     public int height = 0;
     public int changeRate = 20;
     public float edgeHeight;
+    float sumHeight = 0;
     private PlayerControl pControl;
     public bool initializing = true;
     public bool edgeChanged = false;
@@ -71,17 +72,21 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         edgeChanged = false;
     }
 
-    public void MapMaker(){
+    public void MapMaker()
+    {
         initializing = true;
-        if(terrainElements.Length != 0){
+
+        if(terrainElements.Length != 0)
+        {
             foreach (Chunk chunk in terrainElements)
             {
-                if(chunk != null){
-                    
+                if(chunk != null)
+                {
                     Destroy(chunk.gameObject);
                 }
             }
         }
+
         CreateCoords();
         
         int tilesPerSide = terrainWidth / elementWidth;
@@ -101,15 +106,30 @@ public class GridManager : MonoBehaviour, Saveable, Manager
                 }
             }
         }
+        
+        edgeHeight = Mathf.Round(sumHeight / coords.Length * 2f) / 2;
         SetEdgeHeight();
         SetSpawnHeight();
+        RerenderChunks();
+        initializing = false;
+    }
+
+    public void RerenderChunks(){
+        
         foreach (Chunk chunk in terrainElements)
         {
             if(chunk != null){
                 chunk.ReRender(int.Parse(chunk.name.Split('_')[0]), int.Parse(chunk.name.Split('_')[1]));
             }
         }
-        initializing = false;
+    }
+
+    public void SetTerrainType(TerrainType newTerrainType){
+        currentTerrainType = newTerrainType;
+        for(int i = 0; i < coordTypes.Length; i++)
+        {
+            coordTypes[i] = currentTerrainType;
+        }
     }
 
     public bool GetIsLoaded()
@@ -199,6 +219,7 @@ public class GridManager : MonoBehaviour, Saveable, Manager
 
     private void CreateCoords()
     {
+        sumHeight = 0;
         coords = new Vector3[(terrainWidth + 1) * (terrainWidth + 1)];
         coordTypes = new TerrainType[(terrainWidth + 1) * (terrainWidth + 1)];
 
@@ -210,16 +231,21 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         {
             for (int x = 0; x <= terrainWidth; x++, i++)
             {
-                if (!((x >= elementWidth && x <= terrainWidth - elementWidth) && (z >= elementWidth && z <= terrainWidth - elementWidth)))
-                {
-                    y = edgeHeight;
-                }
-                else
-                {
-                    y = Mathf.PerlinNoise((float)(x + offsetX) / changeRate, (float)(z + offsetZ) / changeRate) * height;
-                    y = Mathf.Floor(y) / 2;
-                    //coords[i] = new Vector3(x, y, z);
-                }
+                //if (!((x >= elementWidth && x <= terrainWidth - elementWidth) && (z >= elementWidth && z <= terrainWidth - elementWidth)))
+                //{
+                //    y = edgeHeight;
+                //}
+                //else
+                //{
+                //    y = Mathf.PerlinNoise((float)(x + offsetX) / changeRate, (float)(z + offsetZ) / changeRate) * height;
+                //    y = Mathf.Floor(y) / 2;
+                //    //coords[i] = new Vector3(x, y, z);
+                //}
+
+                y = Mathf.PerlinNoise((float)(x + offsetX) / changeRate, (float)(z + offsetZ) / changeRate) * height;
+                y = Mathf.Floor(y) / 2;
+                sumHeight += y;
+
                 coords[i] = new Vector3(x, y, z);
                 coordTypes[i] = currentTerrainType;
             }
@@ -320,19 +346,24 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         return chunks;
     }
 
-    void OnDrawGizmosSelected()
+    /*void OnDrawGizmosSelected()
     {
         foreach (Vector3 vec3 in coords)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawSphere(vec3, .1f);
         }
-    }
+    }*/
 
     private void SetEdgeHeight()
     {
         for (int i = 0; i < coords.Length; i++)
         {
+            if (!(coords[i].x >= elementWidth && coords[i].x <= terrainWidth - elementWidth && coords[i].z >= elementWidth && coords[i].z <= terrainWidth - elementWidth))
+            {
+                coords[i].y = edgeHeight;
+            }
+
             if (i < (terrainWidth + 1) * (terrainWidth + 1) - elementWidth * (terrainWidth + 1) && i > (terrainWidth + 1) * (terrainWidth + 1) - (elementWidth + 1) * (terrainWidth + 1))
             {
                 coords[i].y = edgeHeight;
@@ -445,6 +476,11 @@ public class GridManager : MonoBehaviour, Saveable, Manager
             edgeChanged = true;
             return;
         }*/
+
+        if (initializing && !(coords[index].x >= elementWidth && coords[index].x <= terrainWidth - elementWidth && coords[index].z >= elementWidth && coords[index].z <= terrainWidth - elementWidth))
+        {
+            return;
+        }
 
         if (!initializing)
         {

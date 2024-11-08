@@ -5969,6 +5969,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a03ad980fe771274795699afdbe53cda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  defaultTerrainType: 2
+  cameraPositionPreset: {x: 48.346, y: 51, z: 48.668}
+  cameraRotationPreset: {x: 37.21, y: 45.194, z: 0}
+  cameraMinY: 16
+  cameraYChange: 17.5
+  cameraMinSize: 30
+  cameraSizeChange: 15
+  _camera: {fileID: 0}
   target: {fileID: 1308550916}
   rotationSpeed: 1500
   datas:

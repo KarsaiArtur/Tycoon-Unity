@@ -29,30 +29,24 @@ public class TerrainTypeMenu : ExtraMenu
         playerControl.SetTerraformerSize(1);
         playerControl.ChangeTerrainType();
 
-        foreach(var terrainType in ((TerrainType[])Enum.GetValues(typeof(TerrainType))).Where(element => element != TerrainType.Mixed)){
-            if(terrainType != TerrainType.Mixed){
-                var button = Instantiate(terrainTypeButton).GetComponent<Button>();
-                button.transform.SetParent(terrainTypeButtonsPanel.transform);
+        foreach(var terrainType in (TerrainType[])Enum.GetValues(typeof(TerrainType))){
+            var button = Instantiate(terrainTypeButton).GetComponent<Button>();
+            button.transform.SetParent(terrainTypeButtonsPanel.transform);
 
-                var outline = button.GetComponent<Outline>();
-                defaultOutlineColor = outline.effectColor;
-                outlines.Add(outline);
+            var outline = button.GetComponent<Outline>();
+            defaultOutlineColor = outline.effectColor;
+            outlines.Add(outline);
 
-                button.onClick.AddListener(() => {
-                    playerControl.currentTerrainType = terrainType;
-                    playerControl.currentClickGrid = null;
-                    nameText.SetText(terrainType.GetName());
-                    priceText.SetText(terrainType.GetPrice().ToString() + " $");
-                    ResetOutlines();
-                    outline.effectColor = Color.red;
-                });
-                var image = button.GetComponent<Image>();
-                image.sprite = terrainType.GetIcon();
-
-            }
-        }
-        if(outlines.Count > 0){
-            outlines[0].effectColor = Color.red;
+            button.onClick.AddListener(() => {
+                playerControl.currentTerrainType = terrainType;
+                playerControl.currentClickGrid = null;
+                nameText.SetText(terrainType.GetName());
+                priceText.SetText(terrainType.GetPrice().ToString() + " $");
+                ResetOutlines();
+                outline.effectColor = Color.red;
+            });
+            var image = button.GetComponent<Image>();
+            image.sprite = terrainType.GetIcon();
         }
     }
 
