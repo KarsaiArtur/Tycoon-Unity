@@ -77,7 +77,7 @@ public class Placeable : MonoBehaviour, Clickable
         currentPlacingPriceInstance = currentPlacingPriceInstance == null ? Instantiate(currentPlacingPrice) : currentPlacingPriceInstance;
         currentPlacingPriceInstance.transform.SetParent(playerControl.canvas.transform.GetChild(0).transform);
         currentPlacingPriceInstance.text = "-" + placeablePrice + " $";
-        if (ZooManager.instance.money < placeablePrice)
+        if (ZooManager.money < placeablePrice)
         {
             currentPlacingPriceInstance.text = "Not Enough Money!";
             currentPlacingPriceInstance.color = Color.red;

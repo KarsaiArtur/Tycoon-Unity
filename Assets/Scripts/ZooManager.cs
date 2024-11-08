@@ -13,11 +13,11 @@ using UnityEngine.UI;
 public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
 {
     public static ZooManager instance;
-    public float money = 50000;
+    public static float money = 50000;
     public int xp = 0;
     public int xpGoal = 1000;
     public int xpLevel = 1;
-    public float xpMultiplier = 1;
+    public static float xpMultiplier = 1;
     public TextMeshProUGUI moneyText;
     public Slider xpBar;
     public TextMeshProUGUI levelText;
@@ -31,7 +31,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
 
     public List<float> latestVisitorHappinesses = new();
     int listSizeLimit = 25;
-    public float reputation = 75;
+    public static float reputation = 75;
     public List<Renderer> renderers;
 
     public void Awake()
@@ -128,8 +128,8 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
 
     public void ChangeXp(int xpBonus)
     {
-        //xp += xpBonus;
-        xpBar.value = xp;
+        xp += xpBonus;
+        //xpBar.value = xp;
 
         if (xp >= xpGoal)
         {

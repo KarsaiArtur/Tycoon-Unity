@@ -52,6 +52,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     MeshRenderer photoCamera;
     float time = 0;
     float timeGoal = 0;
+    float timeStuck = 0;
     /////GENERATE
     private Exhibit currentExhibit;
     public Animal lookedAnimal;
@@ -202,12 +203,12 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
                 ChooseDestination();
             }
             //if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1)
-            if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1 && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(destination.x, destination.z)) <= 0.1)
+            if (arrived || (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.2 && Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(destination.x, destination.z)) <= 0.2))
             {
-                agent.isStopped = true;
                 time += Time.deltaTime;
                 if (!arrived)
                 {
+                    agent.isStopped = true;
                     arrived = true;
                     GetDestinationVisitable().Arrived(this);
                 }
@@ -222,10 +223,30 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
             }
             else if (agent.velocity == Vector3.zero)
             {
-                time += Time.deltaTime;
-                if (time > timeGoal)
+                timeStuck += Time.deltaTime;
+                //Debug.Log("stuck time:" + timeStuck);
+                if (timeStuck > 15)
                 {
-                    atDestination = true;
+                    //atDestination = true;
+
+                    happiness -= 10;
+                    GetDestinationVisitable()?.SetCapacity(GetDestinationVisitable().GetCapacity() + 1);
+                    NavMeshPath path = null;
+                    if (agent.isOnNavMesh)
+                    {
+                        //Debug.Log("Path not complete on navmesh");
+                        agent.SetDestination(ZooManager.instance.ChoosePosition(ZooManager.instance.GetPaths()[0]));
+                        path = new NavMeshPath();
+                        agent.CalculatePath(agent.destination, path);
+                    }
+                    if (!agent.isOnNavMesh || path.status != NavMeshPathStatus.PathComplete)
+                    {
+                        //Debug.Log("Path not complete");
+                        happiness -= 10;
+                        ZooManager.instance.Arrived(this);
+                    }
+                    else
+                        ChooseDestination();
                 }
             }
         }
@@ -345,14 +366,18 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         GetDestinationVisitable().AddVisitor(this);
         GetDestinationVisitable().SetCapacity(GetDestinationVisitable().GetCapacity() - 1);
         
-        int randomGridIndex = UnityEngine.Random.Range(0, GetDestinationVisitable().GetPaths().Count);
-        Grid randomGrid = GetDestinationVisitable().GetPaths()[randomGridIndex];
-        destination = GetDestinationVisitable().ChoosePosition(randomGrid);
-        agent.SetDestination(destination);
-        atDestination = false;
-        time = 0;
-        timeGoal = UnityEngine.Random.Range(11, 14);
-        agent.isStopped = false;
+        if (agent.isOnNavMesh)
+        {
+            int randomGridIndex = UnityEngine.Random.Range(0, GetDestinationVisitable().GetPaths().Count);
+            Grid randomGrid = GetDestinationVisitable().GetPaths()[randomGridIndex];
+            destination = GetDestinationVisitable().ChoosePosition(randomGrid);
+            agent.SetDestination(destination);
+            atDestination = false;
+            time = 0;
+            timeStuck = 0;
+            timeGoal = UnityEngine.Random.Range(11, 14);
+            agent.isStopped = false;
+        }
     }
 
     void ChooseDestinationType()

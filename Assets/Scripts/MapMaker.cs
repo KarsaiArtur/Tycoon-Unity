@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using DG.Tweening;
 using TMPro;
 using Unity.VisualScripting;
@@ -11,6 +12,11 @@ using UnityEngine.UI;
 
 public class MapMaker : MonoBehaviour
 {
+    public const float cameraMinY = 18;
+    public const float cameraYChange = 20.5f;
+    public const float cameraMinSize = 33;
+    public const float cameraSizeChange = 18;
+    public static Camera _camera;
     public List<Difficulty> difficulties = 
     new List<Difficulty>()
     {
@@ -45,25 +51,34 @@ public class MapMaker : MonoBehaviour
     };
     public Transform target;
     public float rotationSpeed;
-    public List<(int min, int max, int intervals, string name)> values = new List<(int min, int max, int intervals, string name)>()
+    public List<(int min, int max, int intervals, int defaultValue, string name, Action<int> setData)> values = new List<(int min, int max, int intervals, int defaultValue, string name, Action<int> setData)>()
     {
         (
             10, 
             45,
             5,
-            "Height"
+            20,
+            "Height",
+            (int value) => { GridManager.instance.height = value; }
+
         ),
         (
             2, 
             8,
             1,
-            "Map size"
+            4,
+            "Map size",
+            (int value) => { 
+                GridManager.instance.terrainWidth = (value + 2) * GridManager.instance.elementWidth; 
+            }
         ),
         (
             50, 
             95,
             5,
-            "Change rate"
+            60,
+            "Change rate",
+            (int value) => { GridManager.instance.changeRate = value; }
         ),
     };
 
@@ -166,6 +181,7 @@ public class MapMaker : MonoBehaviour
     }
 
     void Start(){
+        _camera = this.GetComponent<Camera>();
         dataSettings  = new List<(string name, int min, int max)>()
         {
             (
@@ -203,10 +219,20 @@ public class MapMaker : MonoBehaviour
             data.transform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = value.min.ToString();
             currentWindow = windowsPanel.transform.GetChild(0).gameObject;
 
+            
+            data.transform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = value.defaultValue.ToString();
+            slider.value = ((value.defaultValue - value.min) / value.intervals) + 1;
+            value.setData.Invoke(value.defaultValue);
+
             slider.onValueChanged.AddListener((sliderValue) => {
                 data.transform.GetChild(1).GetComponentInChildren<TextMeshProUGUI>().text = (value.min + ((sliderValue - 1) * value.intervals)).ToString();
-                GridManager.instance.height = ((int)datas.Find(e => e.name.Equals("Height")).transform.GetChild(1).GetChild(0).GetComponent<Slider>().value - 1) * 5 + 10;
-                GridManager.instance.changeRate = ((int)datas.Find(e => e.name.Equals("Change rate")).transform.GetChild(1).GetChild(0).GetComponent<Slider>().value - 1) * 5 + 50;
+                value.setData.Invoke((int)(value.min + ((sliderValue - 1) * value.intervals)));
+
+                Vector3 newCameraPos = _camera.transform.position;
+                newCameraPos.y = cameraMinY + (sliderValue - 1) * cameraYChange;
+                _camera.transform.position = newCameraPos;
+                _camera.orthographicSize = cameraMinSize + (sliderValue - 1) * cameraSizeChange; 
+
                 GridManager.instance.MapMaker();
             });
 
@@ -227,11 +253,27 @@ public class MapMaker : MonoBehaviour
 
         SetDifficultySettings("Normal");
         SetTerrainTypeButtons();
+
+        GridManager.instance.MapMaker();
     }
     void ResetOutlines(){
         foreach(var outline in outlines){
             outline.effectColor = defaultOutlineColor;
         }
+    }
+
+    public void StartGame()
+    {
+        ZooManager.money = float.Parse(dataFields[0].text);
+        ZooManager.xpMultiplier = float.Parse(dataFields[1].text) / 50f;
+        ZooManager.reputation = float.Parse(dataFields[2].text);
+        if (float.Parse(dataFields[3].text) > 1)
+            QuestManager.diffMult = float.Parse(dataFields[3].text) / 20f;
+        else
+            QuestManager.diffMult = 1;
+
+        MainMenu.instance.isMapMaker = false;
+        MainMenu.instance.loadGameScene();
     }
 
     void AddButtons(){
@@ -240,7 +282,6 @@ public class MapMaker : MonoBehaviour
                 button.action = () => ChangeValue(int.Parse(button.name), dataSetting);
             }
         }
-        
     }
 
     public void Generate(){

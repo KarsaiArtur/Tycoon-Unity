@@ -12,6 +12,7 @@ public class MainMenu : MonoBehaviour
 
     public void Start(){
         instance = this;
+
     }
 
     public void loadGameScene(){

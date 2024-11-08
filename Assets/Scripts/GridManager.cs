@@ -36,56 +36,39 @@ public class GridManager : MonoBehaviour, Saveable, Manager
     void Awake()
     {
         instance = this;
-        pControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
         terrainWidth += elementWidth * 2;
 
-        if(!MainMenu.instance.isMapMaker)
+        if(LoadMenu.loadedGame != null)
         {
-            if(LoadMenu.loadedGame != null)
-            {
-                LoadMenu.currentManager = this;
-                LoadMenu.instance.LoadData(this);
-                LoadMenu.objectLoadedEvent.Invoke();
-            }
-            else
-            {
-                CreateCoords();
-            }
-
-            initializing = true;
-
-            InitializeGrids();
-
-            CreateTerrainElements();
-
-            SetEdgeHeight();
-            SetSpawnHeight();
-            ReloadGrids();
-
-            for (int i = 32; i < 39; i++)
-            {
-                for (int j = 45; j < 58; j++)
-                {
-                    grids[i - elementWidth, j - elementWidth].isPath = true;
-                }
-            }
-
-            foreach (Chunk chunk in terrainElements)
-            {
-                chunk.ReRender(int.Parse(chunk.name.Split('_')[0]), int.Parse(chunk.name.Split('_')[1]));
-            }
-
-            pControl.ReloadGuestNavMesh();
-            pControl.ReloadAnimalNavMesh();
-
-            startingGrid = GetGrid(new Vector3(35, 0, 50));
-            initializing = false;
-            edgeChanged = false;
+            LoadMenu.currentManager = this;
+            LoadMenu.instance.LoadData(this);
+            LoadMenu.objectLoadedEvent.Invoke();
         }
-        else
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public void StartGame()
+    {
+        pControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
+
+        initializing = true;
+
+        InitializeGrids();
+        CreateTerrainElements();
+
+        for (int i = 32; i < 39; i++)
         {
-            MapMaker();
+            for (int j = 45; j < 58; j++)
+            {
+                grids[i - elementWidth, j - elementWidth].isPath = true;
+            }
         }
+        pControl.ReloadGuestNavMesh();
+        pControl.ReloadAnimalNavMesh();
+
+        startingGrid = GetGrid(new Vector3(35, 0, 50));
+        initializing = false;
+        edgeChanged = false;
     }
 
     public void MapMaker(){
@@ -110,10 +93,8 @@ public class GridManager : MonoBehaviour, Saveable, Manager
             for (x = 0; x < tilesPerSide; x++, i++)
             {
                 Chunk elementInstance;
-                if (x == 0 || z == 0 || z == (tilesPerSide - 1) || x == (tilesPerSide - 1))
+                if (!(x == 0 || z == 0 || z == (tilesPerSide - 1) || x == (tilesPerSide - 1)))
                 {
-                }
-                else{
                     elementInstance = Instantiate(terrainPrefab, this.transform);
                     elementInstance.Initialize(x, z, coords, coordTypes);
                     terrainElements[i] = elementInstance;
@@ -248,7 +229,6 @@ public class GridManager : MonoBehaviour, Saveable, Manager
     private void CreateTerrainElements()
     {
         int tilesPerSide = terrainWidth / elementWidth;
-        terrainElements = new Chunk[tilesPerSide * tilesPerSide];
 
         int i = 0, z, x;
         for (i = 0, z = 0; z < tilesPerSide; z++)
@@ -256,55 +236,55 @@ public class GridManager : MonoBehaviour, Saveable, Manager
             for (x = 0; x < tilesPerSide; x++, i++)
             {
                 Chunk elementInstance;
-                if (x == 0 && z == 0)
-                {
-                    rotationAngle = 0;
-                    elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
+                if (x == 0 || z == 0 || z == (tilesPerSide - 1) || x == (tilesPerSide - 1)){
+                    if (x == 0 && z == 0)
+                    {
+                        rotationAngle = 0;
+                        elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
+                    }
+                    else if (x == 0 && z == (tilesPerSide - 1))
+                    {
+                        rotationAngle = 90;
+                        elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
+                    }
+                    else if (x == (tilesPerSide - 1) && z == (tilesPerSide - 1))
+                    {
+                        rotationAngle = 180;
+                        elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
+                    }
+                    else if (x == (tilesPerSide - 1) && z == 0)
+                    {
+                        rotationAngle = 270;
+                        elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
+                    }
+                    else if (x == 0 && z == 1)
+                    {
+                        rotationAngle = 0;
+                        elementInstance = Instantiate(entranceTerrainPrefab, this.transform);
+                    }
+                    else if (x == 0)
+                    {
+                        rotationAngle = 0;
+                        elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
+                    }
+                    else if (x == (tilesPerSide - 1))
+                    {
+                        rotationAngle = 180;
+                        elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
+                    }
+                    else if (z == 0)
+                    {
+                        rotationAngle = 270;
+                        elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
+                    }
+                    else
+                    {
+                        rotationAngle = 90;
+                        elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
+                    }
+                    elementInstance.Initialize(x, z, coords, coordTypes);
+                    terrainElements[i] = elementInstance;
                 }
-                else if (x == 0 && z == (tilesPerSide - 1))
-                {
-                    rotationAngle = 90;
-                    elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
-                }
-                else if (x == (tilesPerSide - 1) && z == (tilesPerSide - 1))
-                {
-                    rotationAngle = 180;
-                    elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
-                }
-                else if (x == (tilesPerSide - 1) && z == 0)
-                {
-                    rotationAngle = 270;
-                    elementInstance = Instantiate(backgroundTerrainCornerPrefab, this.transform);
-                }
-                else if (x == 0 && z == 1)
-                {
-                    rotationAngle = 0;
-                    elementInstance = Instantiate(entranceTerrainPrefab, this.transform);
-                }
-                else if (x == 0)
-                {
-                    rotationAngle = 0;
-                    elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
-                }
-                else if (x == (tilesPerSide - 1))
-                {
-                    rotationAngle = 180;
-                    elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
-                }
-                else if (z == 0)
-                {
-                    rotationAngle = 270;
-                    elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
-                }
-                else if (z == (tilesPerSide - 1))
-                {
-                    rotationAngle = 90;
-                    elementInstance = Instantiate(backgroundTerrainPrefab, this.transform);
-                }
-                else
-                    elementInstance = Instantiate(terrainPrefab, this.transform);
-                elementInstance.Initialize(x, z, coords, coordTypes);
-                terrainElements[i] = elementInstance;
             }
         }
     }

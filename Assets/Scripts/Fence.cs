@@ -225,7 +225,7 @@ public class Fence : Placeable, Saveable
 
     void OnCollisionStay(Collision collision)
     {
-        if (collision.collider.CompareTag("Placed") && !tag.Equals("Placed Fence"))
+        if ((collision.collider.CompareTag("Placed") || collision.collider.CompareTag("Entrance")) && !tag.Equals("Placed Fence"))
         {
             collided = true;
             fenceCollidedWith = null;

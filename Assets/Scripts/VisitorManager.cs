@@ -43,7 +43,7 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
             SpawnTime = 20;
             if (VisitableManager.instance.GetReachableExhibits().Count > 0)
                 SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(Mathf.Sqrt(VisitableManager.instance.GetReachableExhibits().Count)));
-            SpawnTime = SpawnTime / ZooManager.instance.reputation * 75;
+            SpawnTime = SpawnTime / ZooManager.reputation * 75;
             SpawnTime = SpawnTime * ZooManager.instance.currentEntranceFee / ZooManager.instance.defaultEntranceFee;
             SpawnTime = SpawnTime / animalBonus;
             if (animalBonuses.Count > 0)

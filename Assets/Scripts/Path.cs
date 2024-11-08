@@ -114,8 +114,7 @@ public class Path : Placeable, Saveable
         if (CompareTag("Placed Path"))
         {
             PathManager.instance.pathList.Remove(this);
-            Grid tempGrid = GridManager.instance.GetGrid(transform.position);
-            tempGrid.isPath = false;
+            GridManager.instance.GetGrid(transform.position).isPath = false;
             //foreach (var exhibit in GridManager.instance.exhibits)
             //{
             //    exhibit.RemovePath(this);

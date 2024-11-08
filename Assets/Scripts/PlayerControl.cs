@@ -87,6 +87,7 @@ public class PlayerControl : MonoBehaviour
 
         foreach (Chunk tempChunk in gridM.terrainElements)
         {
+            Debug.Log(tempChunk);
             if (tempChunk.gameObject.CompareTag("Terrain"))
                 tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
         }
@@ -143,9 +144,10 @@ public class PlayerControl : MonoBehaviour
         }
         else
         {
-            foreach(var prefab in LoadMenu.managerPrefabs)
+            GridManager.instance.StartGame();
+            foreach(var prefab in LoadMenu.managerPrefabs.Where(e => !e.name.Equals("Grid Manager")))
             {
-                Instantiate(LoadMenu.managerPrefabs[LoadMenu.currentManagerIndex++]).GetComponent<Manager>();
+                Instantiate(prefab).GetComponent<Manager>();
             }
         }
     }
@@ -258,6 +260,10 @@ public class PlayerControl : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            PauseGame();
+        }
         if (!stopMovement)
         {
             Move();
@@ -292,6 +298,18 @@ public class PlayerControl : MonoBehaviour
             {
                 isMouseDown = false;
             }
+        }
+    }
+
+    public void PauseGame()
+    {
+        if (Time.timeScale == 0)
+        {
+            Time.timeScale = 1;
+        }
+        else
+        {
+            Time.timeScale = 0;
         }
     }
 
@@ -330,7 +348,7 @@ public class PlayerControl : MonoBehaviour
             if(m_Selected != null && m_Selected.tag != "Placed")
             {
                 isMouseDown = false;
-                if (canBePlaced && ZooManager.instance.money >= m_Selected.placeablePrice)
+                if (canBePlaced && ZooManager.money >= m_Selected.placeablePrice)
                 {
                     m_Selected.SetTag("Placed");
                     m_Selected.ChangeMaterial(0);
@@ -656,7 +674,7 @@ public class PlayerControl : MonoBehaviour
                     price += ((3 + i * 2 + currentTerraformSize - 1) * (3 + i * 2 + currentTerraformSize - 1) - 4 * (i)) * 3;
                 }
 
-                if (ZooManager.instance.money >= price && !gridM.edgeChanged && !terrainCollided)
+                if (ZooManager.money >= price && !gridM.edgeChanged && !terrainCollided)
                 {
                     ZooManager.instance.ChangeMoney(-price);
                     SetPriceTag(gridM.coords[coordIndex], price);

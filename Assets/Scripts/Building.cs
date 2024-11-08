@@ -240,12 +240,12 @@ public class Building : BuildingAncestor, Saveable
         {
             visitor.PurchaseItem(purchasableItemInstances[index]);
             BuildingManager.instance.itemsBought++;
-            Debug.Log("Item bought");
+            //Debug.Log("Item bought");
         }
         else
         {
             visitor.happiness = visitor.happiness - 10 > 0 ? visitor.happiness - 10 : 0;
-            Debug.Log("No Item bought!!!!!!!!!!!!!!!!!!!!!");
+            //Debug.Log("No Item bought!!!!!!!!!!!!!!!!!!!!!");
         }
     }
 
@@ -269,7 +269,7 @@ public class Building : BuildingAncestor, Saveable
         probabilities.Add((index, sum));
         var random = UnityEngine.Random.Range(0, sum);
 
-        string str = "";
+        /*string str = "";
         for (int i = 0; i < probabilities.Count - 1; i++)
         {
             if (i == 0)
@@ -291,7 +291,7 @@ public class Building : BuildingAncestor, Saveable
             str += probabilities[probabilities.Count - 1].probability;
         }
         str += "chosen: " + random;
-        Debug.Log(str);
+        Debug.Log(str);*/
 
         return probabilities.SkipWhile(i => i.probability < random).First().index;
     }
@@ -316,7 +316,7 @@ public class Building : BuildingAncestor, Saveable
         probabilities.Add((index, sum));
         var random = UnityEngine.Random.Range(0, sum);
 
-        string str = "";
+        /*string str = "";
         for (int i = 0; i < probabilities.Count - 1; i++)
         {
             if (i == 0)
@@ -338,7 +338,7 @@ public class Building : BuildingAncestor, Saveable
             str += probabilities[probabilities.Count - 1].probability;
         }
         str += "chosen: " + random;
-        Debug.Log(str);
+        Debug.Log(str);*/
 
         return probabilities.SkipWhile(i => i.probability < random).First().index;
     }
@@ -363,7 +363,7 @@ public class Building : BuildingAncestor, Saveable
         probabilities.Add((index, sum));
         var random = UnityEngine.Random.Range(0, sum);
 
-        string str = "";
+        /*string str = "";
         for (int i = 0; i < probabilities.Count - 1; i++)
         {
             if (i == 0)
@@ -385,7 +385,7 @@ public class Building : BuildingAncestor, Saveable
             str += probabilities[probabilities.Count - 1].probability;
         }
         str += "chosen: " + random;
-        Debug.Log(str);
+        Debug.Log(str);*/
 
         return probabilities.SkipWhile(i => i.probability < random).First().index;
     }
@@ -410,7 +410,7 @@ public class Building : BuildingAncestor, Saveable
         probabilities.Add((index, sum));
         var random = UnityEngine.Random.Range(0, sum);
 
-        string str = "";
+        /*string str = "";
         for (int i = 0; i < probabilities.Count - 1; i++)
         {
             if (i == 0)
@@ -432,7 +432,7 @@ public class Building : BuildingAncestor, Saveable
             str += probabilities[probabilities.Count - 1].probability;
         }
         str += "chosen: " + random;
-        Debug.Log(str);
+        Debug.Log(str);*/
 
         return probabilities.SkipWhile(i => i.probability < random).First().index;
     }

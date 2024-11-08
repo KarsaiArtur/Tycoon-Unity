@@ -33,7 +33,7 @@ public class ZooManagerInfopopup : InfoPopup
 
         infoPanelInstance.transform.GetChild(0).Find("Name").GetComponent<TextMeshProUGUI>().text = zooManager.GetName();
         infoPanelInstance.transform.GetChild(0).Find("Expenses").GetComponent<TextMeshProUGUI>().text = "Monthly expenses" + System.Environment.NewLine + zooManager.GetExpenses();
-        infoPanelInstance.transform.GetChild(0).Find("Rep").GetComponent<TextMeshProUGUI>().text = "Current reputation" + System.Environment.NewLine + (int)zooManager.reputation;
+        infoPanelInstance.transform.GetChild(0).Find("Rep").GetComponent<TextMeshProUGUI>().text = "Current reputation" + System.Environment.NewLine + (int)ZooManager.reputation;
         infoPanelInstance.transform.GetChild(0).Find("Visitors").GetComponent<TextMeshProUGUI>().text = "All time visitor count" + System.Environment.NewLine + (int)zooManager.allTimeVisitorCount;
         var entranceFeePanel = infoPanelInstance.transform.GetChild(0).Find("Entrance fee");
         currentPriceText = entranceFeePanel.Find("Current Price").GetComponent<TextMeshProUGUI>();
@@ -59,7 +59,7 @@ public class ZooManagerInfopopup : InfoPopup
         while (true)
         {
             infoPanelInstance.transform.GetChild(0).Find("Expenses").GetComponent<TextMeshProUGUI>().text = "Monthly expenses" + System.Environment.NewLine + zooManager.GetExpenses();
-            infoPanelInstance.transform.GetChild(0).Find("Rep").GetComponent<TextMeshProUGUI>().text = "Current reputation" + System.Environment.NewLine + (int)zooManager.reputation+"/100";
+            infoPanelInstance.transform.GetChild(0).Find("Rep").GetComponent<TextMeshProUGUI>().text = "Current reputation" + System.Environment.NewLine + (int)ZooManager.reputation+"/100";
             infoPanelInstance.transform.GetChild(0).Find("Visitors").GetComponent<TextMeshProUGUI>().text = "All time visitor count" + System.Environment.NewLine + (int)zooManager.allTimeVisitorCount;
             if (staffCount != StaffManager.instance.staffList.Count)
             {
