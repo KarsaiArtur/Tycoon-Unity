@@ -6021,6 +6021,18 @@ MonoBehaviour:
   - {fileID: 1922045841}
   terrainTypeButton: {fileID: 4990073070290941825, guid: 040738664506e4e4ba5269d08ee9f00b, type: 3}
   terrainTypeButtonsPanel: {fileID: 1722967455}
+  dragSpeedX: 6.3
+  dragSpeedZ: 3.8
+  currentDragSpeedX: 6.3
+  currentDragSpeedZ: 3.8
+  leftLimit: 729.6
+  rightLimit: 1881.6
+  currentRight: 1881.6
+  currentLeft: 1881.6
+  currentBottom: 1881.6
+  currentTop: 1881.6
+  topLimit: 162
+  bottomLimit: 918
 --- !u!1 &600385430
 GameObject:
   m_ObjectHideFlags: 0

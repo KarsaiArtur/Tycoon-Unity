@@ -215,6 +215,12 @@ public class MapMaker : MonoBehaviour
         {
             Move();
         }
+        if(isMoving && Input.GetMouseButtonUp(0))
+        {
+            currentX = currentX - currentXOffset;
+            currentY = currentY + currentYOffset;
+            return;
+        }
 
         if(!isMoving){
             transform.LookAt(lookatPosition);
@@ -225,6 +231,7 @@ public class MapMaker : MonoBehaviour
     }
 
     void ResetCamera(){
+        zoomValue = 1;
         transform.position = resetPos;
         _camera.orthographicSize = cameraMax;
         isMoving = false;
@@ -233,21 +240,84 @@ public class MapMaker : MonoBehaviour
     float zoomSpeed = 70;
     float cameraMax = 60;
     float cameraMin = 2.5f;
-    public float dragSpeed = 4;
+    public float dragSpeedX = 7;
+    public float dragSpeedZ = 7;
+    public float currentDragSpeedX = 7;
+    public float currentDragSpeedZ = 7;
     private Vector3 dragOrigin;
     private Vector3 dragOriginWorldPos;
     void Zoom()
     {
         float zoom = Input.GetAxis("Mouse ScrollWheel");
         if(zoom != 0){
+            currentDragSpeedX = dragSpeedX * cameraMax / _camera.orthographicSize;
+            currentDragSpeedZ = dragSpeedZ * cameraMax / _camera.orthographicSize;
+
             _camera.orthographicSize += (-zoom) * zoomSpeed * _camera.orthographicSize / cameraMax;
             _camera.orthographicSize = _camera.orthographicSize < cameraMin ? cameraMin : _camera.orthographicSize;
             _camera.orthographicSize = _camera.orthographicSize > cameraMax ? cameraMax : _camera.orthographicSize;
+
+            zoomValue = cameraMax / _camera.orthographicSize;
+
+            currentX = (zoomValue -1) / (2 * zoomValue);
+            currentW = 1 / zoomValue;
+            
+            currentY = (zoomValue -1) / (2 * zoomValue);
+            currentH = 1 / zoomValue;
+
+            float offsetX = 0;
+            float offsetY = 0;
+            Debug.Log("ZOOM");
+            Debug.Log(currentX);
+            Debug.Log(currentW);
+            if(currentX + currentW > 1){
+                offsetX = currentX + currentW - 1;
+                currentX = 1 - currentW;
+            }
+            else if(currentX < 0){
+                offsetX = currentX;
+                currentX = 0;
+            }
+            if(currentY + currentH > 1){
+                offsetY = currentY + currentH - 1;
+                currentY = 1 - currentH;
+            }
+            else if(currentY < 0){
+                offsetY = currentY;
+                currentY = 0;
+            }
+            if(offsetX != 0 || offsetY != 0){
+                Debug.Log("OFFSET");
+                Debug.Log(offsetX);
+                Debug.Log(offsetY);
+                Vector3 pos = Vector3.zero;
+
+                pos.x = offsetX * (rightLimit - leftLimit) * zoomValue;
+                pos.y = offsetY * (topLimit - bottomLimit) * zoomValue;
+
+                Vector3 dragOffset = new Vector3(-pos.x / currentDragSpeedX, 0, -pos.y / currentDragSpeedZ);
+
+                dragOffset = Quaternion.Euler(0, transform.eulerAngles.y, 0) * dragOffset;
+
+                transform.position = dragOriginWorldPos + dragOffset;
+            }
         }
     }
 
-    void Move(){
+    public float leftLimit = 729.6f;
+    public float rightLimit = 1881.6f;
+    public float topLimit = 918;
+    public float bottomLimit = 162;
+    public float currentX = 0;
+    public float currentY = 0;
+    public float currentW = 1;
+    public float currentH = 1;
+    public float currentXOffset = 0;
+    public float currentYOffset = 0;
+    float zoomValue = 1;
 
+    void Move()
+    {
         if (Input.GetMouseButtonDown(0))
         {
             dragOrigin = Input.mousePosition;
@@ -258,24 +328,32 @@ public class MapMaker : MonoBehaviour
         if (!Input.GetMouseButton(0)) return;
 
         Vector3 pos = Input.mousePosition - dragOrigin;
-        pos = new Vector3((float)Math.Round(pos.x), (float)Math.Round(pos.y), (float)Math.Round(pos.z));
-        Debug.Log(pos);
+        currentXOffset = pos.x / (rightLimit - leftLimit) / zoomValue;
+        currentYOffset = pos.y / (topLimit - bottomLimit) / zoomValue;
 
-        float angle = 90 - transform.eulerAngles.y % 90;
-        pos = new Vector3(-pos.x, pos.y, pos.z);
+        Debug.Log(currentXOffset);
+        if(currentX - currentXOffset < 0 && pos.x > 0){
+            currentXOffset = currentX;
+        }
+        else if(currentX + currentW - currentXOffset > 1  && currentXOffset < 0){
+            currentXOffset = -(1 - (currentX + currentW));
+        }
 
-        if (transform.eulerAngles.y <= 90)
-            transform.position = dragOriginWorldPos - new Vector3(pos.y * (float)Math.Cos(angle * degToRad) - pos.x * (float)Math.Sin(angle * degToRad), 0, pos.y * (float)Math.Sin(angle * degToRad) + pos.x * (float)Math.Cos(angle * degToRad)) / dragSpeed;
-        else if (transform.eulerAngles.y <= 180)
-            transform.position = dragOriginWorldPos + new Vector3(pos.x * (float)Math.Cos(angle * degToRad) + pos.y * (float)Math.Sin(angle * degToRad), 0, pos.x * (float)Math.Sin(angle * degToRad) - pos.y * (float)Math.Cos(angle * degToRad)) / dragSpeed;
-        else if (transform.eulerAngles.y <= 270)
-            transform.position = dragOriginWorldPos + new Vector3(pos.y * (float)Math.Cos(angle * degToRad) - pos.x * (float)Math.Sin(angle * degToRad), 0, pos.y * (float)Math.Sin(angle * degToRad) + pos.x * (float)Math.Cos(angle * degToRad)) / dragSpeed;
-        else
-            transform.position = dragOriginWorldPos - new Vector3(pos.x * (float)Math.Cos(angle * degToRad) + pos.y * (float)Math.Sin(angle * degToRad), 0, pos.x * (float)Math.Sin(angle * degToRad) - pos.y * (float)Math.Cos(angle * degToRad)) / dragSpeed;
+        if(currentY + currentYOffset < 0 && currentYOffset < 0){
+            currentYOffset = -currentY;
+        }
+        else if(currentY + currentH + currentYOffset > 1  && currentYOffset > 0){
+            currentYOffset = 1 - (currentY + currentH);
+        }
 
-        //Vector3 move = new Vector3(pos.x * dragSpeed, 0, pos.y * dragSpeed);
+        pos.x = currentXOffset * (rightLimit - leftLimit) * zoomValue;
+        pos.y = currentYOffset * (topLimit - bottomLimit) * zoomValue;
 
-        //transform.Translate(move, Space.World);  
+        Vector3 dragOffset = new Vector3(-pos.x / currentDragSpeedX, 0, -pos.y / currentDragSpeedZ);
+
+        dragOffset = Quaternion.Euler(0, transform.eulerAngles.y, 0) * dragOffset;
+
+        transform.position = dragOriginWorldPos + dragOffset;
 
     }
 
