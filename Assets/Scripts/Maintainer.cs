@@ -256,7 +256,6 @@ public class Maintainer : Staff, Saveable
         agent.CalculatePath(agent.destination, path);
         if (path.status != NavMeshPathStatus.PathComplete)
         {
-            Debug.Log("Path not complete");
             SetToDefault();
         }
     }

@@ -224,24 +224,19 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
             else if (agent.velocity == Vector3.zero)
             {
                 timeStuck += Time.deltaTime;
-                //Debug.Log("stuck time:" + timeStuck);
                 if (timeStuck > 15)
                 {
-                    //atDestination = true;
-
                     happiness -= 10;
                     GetDestinationVisitable()?.SetCapacity(GetDestinationVisitable().GetCapacity() + 1);
                     NavMeshPath path = null;
                     if (agent.isOnNavMesh)
                     {
-                        //Debug.Log("Path not complete on navmesh");
                         agent.SetDestination(ZooManager.instance.ChoosePosition(ZooManager.instance.GetPaths()[0]));
                         path = new NavMeshPath();
                         agent.CalculatePath(agent.destination, path);
                     }
                     if (!agent.isOnNavMesh || path.status != NavMeshPathStatus.PathComplete)
                     {
-                        //Debug.Log("Path not complete");
                         happiness -= 10;
                         ZooManager.instance.Arrived(this);
                     }

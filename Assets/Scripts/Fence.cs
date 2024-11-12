@@ -67,6 +67,7 @@ public class Fence : Placeable, Saveable
 
             if (health <= 0)
             {
+                UIMenu.Instance.NewNotification("Fence broke!");
                 Remove();
             }
         }

@@ -7,6 +7,7 @@ using Unity.AI.Navigation;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using static Cinemachine.DocumentationSortingAttribute;
 
 /////Saveable Attributes, DONT DELETE
 //////string _id;Vector3 position;Quaternion rotation;Vector3 localScale;int selectedPrefabId;string tag;int placeablePrice;string placeableName;string exhibitId;float hunger;float thirst;float restroomNeeds;float happiness;float health;DateTime prevDay;bool isSick;float age;bool isMale;bool isPregnant;float pregnancyTimeMonth;int fertility;float terrainBonusMultiplier;float natureBonusMultiplier//////////
@@ -491,7 +492,6 @@ public class Animal : Placeable, Saveable
         if (attackCooldown >= 3)
         {
             GetTarget().health = GetTarget().health - 20 * dangerLevel / GetTarget().dangerLevel;
-            Debug.Log(placeableName + " damaged");
             if (GetTarget().health <= 0)
             {
                 GetTarget().Die();
@@ -519,7 +519,6 @@ public class Animal : Placeable, Saveable
         {
             isPregnant = true;
             pregnancyTimeMonth = 0;
-            Debug.Log(placeableName + " is pregnant");
             //notification
         }
     }
@@ -635,7 +634,7 @@ public class Animal : Placeable, Saveable
 
                 ZooManager.instance.ChangeXp(xpBonus * 2);
                 AnimalManager.instance.babiesBorn++;
-                Debug.Log(numberOfBabies + " " + placeableName + " babies born");
+                UIMenu.Instance.NewNotification(numberOfBabies + " new " + placeableName + " babies born");
             }
         }
     }
@@ -677,6 +676,14 @@ public class Animal : Placeable, Saveable
         }
 
         ChooseDestination();
+    }
+
+    public void Sleep()
+    {
+        isSlept = true;
+        sleptPosition = transform.position;
+        timeGoal = UnityEngine.Random.Range(110, 130);
+        UIMenu.Instance.NewNotification(placeableName + " slept!");
     }
 
     void CheckDestination()

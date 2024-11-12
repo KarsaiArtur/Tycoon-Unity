@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
+using static Cinemachine.DocumentationSortingAttribute;
 
 /////Saveable Attributes, DONT DELETE
 //////string _id;Vector3 position;int selectedPrefabId;Quaternion rotation;int placeablePrice;string tag//////////
@@ -169,11 +170,8 @@ public class Vet : Staff, Saveable
             aiming = false;
             CRRunning = false;
             animalOccupied.isOccupiedByVet = false;
-            animalOccupied.isSlept = true;
-            animalOccupied.sleptPosition = animalOccupied.transform.position;
-            animalOccupied.timeGoal = UnityEngine.Random.Range(110, 130);
+            animalOccupied.Sleep();
             SetToDefault();
-            Debug.Log("Animal slept");
         }
         return true;
     }

@@ -87,7 +87,6 @@ public class PlayerControl : MonoBehaviour
 
         foreach (Chunk tempChunk in gridM.terrainElements)
         {
-            Debug.Log(tempChunk);
             if (tempChunk.gameObject.CompareTag("Terrain"))
                 tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
         }

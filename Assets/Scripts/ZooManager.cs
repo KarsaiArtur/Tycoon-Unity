@@ -50,12 +50,12 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         moneyText.text = money.ToString() + " $";
 
         xpGoal = (int)Mathf.Floor((float)xpGoal * xpMultiplier);
-        //xpBar = GameObject.Find("XP Bar").GetComponent<Slider>();
-        //levelText = GameObject.Find("LevelText").GetComponent<TextMeshProUGUI>();
-        //xpBar.minValue = 0;
-        //xpBar.maxValue = xpGoal;
-        //xpBar.value = xp;
-        //levelText.text = "Level " + xpLevel;
+        xpBar = GameObject.Find("XP Bar").GetComponent<Slider>();
+        levelText = GameObject.Find("LevelText").GetComponent<TextMeshProUGUI>();
+        xpBar.minValue = 0;
+        xpBar.maxValue = xpGoal;
+        xpBar.value = xp;
+        levelText.text = "Level " + xpLevel;
 
         entranceGrid = GridManager.instance.GetGrid(new Vector3(0 + GridManager.instance.elementWidth, 0, 17 + GridManager.instance.elementWidth));
         exitGrid = GridManager.instance.GetGrid(new Vector3(0 + GridManager.instance.elementWidth, 0, 20 + GridManager.instance.elementWidth));
@@ -129,17 +129,17 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
     public void ChangeXp(int xpBonus)
     {
         xp += xpBonus;
-        //xpBar.value = xp;
+        xpBar.value = xp;
 
         if (xp >= xpGoal)
         {
             xpLevel++;
-            //xpBar.minValue = xpGoal;
+            xpBar.minValue = xpGoal;
             xpGoal *= 5;
-            //xpBar.maxValue = xpGoal;
-            //xpBar.value = xp;
-            //levelText.text = "Level " + xpLevel;
-            Debug.Log("Level Up! New Level: " + xpLevel);
+            xpBar.maxValue = xpGoal;
+            xpBar.value = xp;
+            levelText.text = "Level " + xpLevel;
+            UIMenu.Instance.NewNotification("Level Up!" + System.Environment.NewLine + "New Level: " + xpLevel);
         }
     }
 
