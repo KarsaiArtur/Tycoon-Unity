@@ -13,6 +13,7 @@ public class TrashCanManager : MonoBehaviour, Manager, Saveable
     public List<GameObject> trashOnTheGround;
     public Vector3[] trashOnTheGroundCoords = new Vector3[0];
     public bool trashIsBeingPickedUp = false;
+    public List<string> trashOnTheGroundNames = new List<string>() { "crushed_can" };
     
     void Start()
     {
@@ -72,7 +73,7 @@ public class TrashCanManager : MonoBehaviour, Manager, Saveable
         foreach (var trashPos in trashOnTheGroundCoords)
         {
             var playerControl = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<PlayerControl>();
-            var tempTrashOnTheGround = Instantiate(playerControl.trashOnTheGroundPrefabs[Random.Range(0, playerControl.trashOnTheGroundPrefabs.Count)], trashPos, Quaternion.identity);
+            var tempTrashOnTheGround = Instantiate(PrefabManager.instance.GetPrefabByName(trashOnTheGroundNames[Random.Range(0, trashOnTheGroundNames.Count)]), trashPos, Quaternion.identity);
             tempTrashOnTheGround.tag = "Placed";
             trashOnTheGround.Add(tempTrashOnTheGround);
         }

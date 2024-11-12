@@ -14,7 +14,7 @@ using UnityEngine.UI;
 public class MapMaker : MonoBehaviour
 {
     const float degToRad = (float)Math.PI / 180.0f;
-    public TerrainType defaultTerrainType;
+    public TerrainType currentTerrainType;
     public Vector3 cameraPositionPreset;
     public Vector3 cameraRotationPreset;
     public  float cameraMinY = 10;
@@ -100,6 +100,7 @@ public class MapMaker : MonoBehaviour
     public GameObject terrainTypeButtonsPanel;
     List<Outline> outlines = new List<Outline>();
     Color defaultOutlineColor;
+    public static MapMaker instance;
 
     List<(string name, int min, int max)> dataSettings;
 
@@ -127,7 +128,15 @@ public class MapMaker : MonoBehaviour
     }
 
     public void SetTerrainTypeButtons(){
-        foreach(var terrainType in (TerrainType[])Enum.GetValues(typeof(TerrainType))){
+        var choosableTerrainTypes = ((TerrainType[])Enum.GetValues(typeof(TerrainType))).ToList();
+        biomeCards.ForEach(e => choosableTerrainTypes.Remove(e.GetChosenTerrainType()));
+
+        foreach(var button in terrainTypeButtonsPanel.GetComponentsInChildren<Button>()){
+            Destroy(button.gameObject);
+        }
+        outlines.Clear();
+        
+        foreach(var terrainType in choosableTerrainTypes){
             var button = Instantiate(terrainTypeButton).GetComponent<Button>();
             button.transform.SetParent(terrainTypeButtonsPanel.transform);
 
@@ -135,15 +144,17 @@ public class MapMaker : MonoBehaviour
             defaultOutlineColor = outline.effectColor;
             outlines.Add(outline);
 
-            if(defaultTerrainType == terrainType){
+            if(currentTerrainType == terrainType){
                 outline.effectColor = Color.red;
             }
 
             button.onClick.AddListener(() => {
                 GridManager.instance.SetTerrainType(terrainType);
+                currentTerrainType = terrainType;
                 ResetOutlines();
                 outline.effectColor = Color.red;
-                GridManager.instance.RerenderChunks();
+                GenerateBiome();
+                UpdateBiomeOptions();
             });
             var image = button.GetComponent<Image>();
             image.sprite = terrainType.GetIcon();
@@ -195,7 +206,9 @@ public class MapMaker : MonoBehaviour
         var lookatPosition = new Vector3(target.position.x + GridManager.instance.terrainWidth / 2, target.position.y, target.position.z + GridManager.instance.terrainWidth / 2);
         if(Input.GetMouseButtonDown(2) && isOverCamera()){
             isRotating = true;
-            ResetCamera();
+            if(isMoving){
+                ResetCamera();
+            }
         }
         else if(Input.GetMouseButtonUp(2) || !isOverCamera()){
             isRotating = false;
@@ -231,6 +244,11 @@ public class MapMaker : MonoBehaviour
     }
 
     void ResetCamera(){
+        currentY = 0;
+        currentX = 0;
+        currentW = 1;
+        currentH = 1;
+
         zoomValue = 1;
         transform.position = resetPos;
         _camera.orthographicSize = cameraMax;
@@ -259,17 +277,16 @@ public class MapMaker : MonoBehaviour
 
             zoomValue = cameraMax / _camera.orthographicSize;
 
-            currentX = (zoomValue -1) / (2 * zoomValue);
+            var tempW = currentW;
             currentW = 1 / zoomValue;
+            currentX += (tempW - currentW) / 2;
             
-            currentY = (zoomValue -1) / (2 * zoomValue);
+            var tempH = currentH;
             currentH = 1 / zoomValue;
+            currentY += (tempH - currentH) / 2;
 
             float offsetX = 0;
             float offsetY = 0;
-            Debug.Log("ZOOM");
-            Debug.Log(currentX);
-            Debug.Log(currentW);
             if(currentX + currentW > 1){
                 offsetX = currentX + currentW - 1;
                 currentX = 1 - currentW;
@@ -279,27 +296,25 @@ public class MapMaker : MonoBehaviour
                 currentX = 0;
             }
             if(currentY + currentH > 1){
-                offsetY = currentY + currentH - 1;
+                offsetY = -(currentY + currentH - 1);
                 currentY = 1 - currentH;
             }
             else if(currentY < 0){
-                offsetY = currentY;
+                offsetY = -currentY;
                 currentY = 0;
             }
             if(offsetX != 0 || offsetY != 0){
-                Debug.Log("OFFSET");
-                Debug.Log(offsetX);
-                Debug.Log(offsetY);
                 Vector3 pos = Vector3.zero;
 
-                pos.x = offsetX * (rightLimit - leftLimit) * zoomValue;
-                pos.y = offsetY * (topLimit - bottomLimit) * zoomValue;
+                pos.x = offsetX * (rightLimit - leftLimit) * zoomValue * 1.25f;
+                pos.y = offsetY * (topLimit - bottomLimit) * zoomValue * 1.25f;
 
                 Vector3 dragOffset = new Vector3(-pos.x / currentDragSpeedX, 0, -pos.y / currentDragSpeedZ);
 
                 dragOffset = Quaternion.Euler(0, transform.eulerAngles.y, 0) * dragOffset;
 
-                transform.position = dragOriginWorldPos + dragOffset;
+                
+                transform.position = transform.position + dragOffset;
             }
         }
     }
@@ -331,8 +346,7 @@ public class MapMaker : MonoBehaviour
         currentXOffset = pos.x / (rightLimit - leftLimit) / zoomValue;
         currentYOffset = pos.y / (topLimit - bottomLimit) / zoomValue;
 
-        Debug.Log(currentXOffset);
-        if(currentX - currentXOffset < 0 && pos.x > 0){
+        if(currentX - currentXOffset < 0 && currentXOffset > 0){
             currentXOffset = currentX;
         }
         else if(currentX + currentW - currentXOffset > 1  && currentXOffset < 0){
@@ -345,7 +359,6 @@ public class MapMaker : MonoBehaviour
         else if(currentY + currentH + currentYOffset > 1  && currentYOffset > 0){
             currentYOffset = 1 - (currentY + currentH);
         }
-
         pos.x = currentXOffset * (rightLimit - leftLimit) * zoomValue;
         pos.y = currentYOffset * (topLimit - bottomLimit) * zoomValue;
 
@@ -368,6 +381,7 @@ public class MapMaker : MonoBehaviour
     }
 
     void Start(){
+        instance = this;
         _camera = this.GetComponent<Camera>();
         dataSettings  = new List<(string name, int min, int max)>()
         {
@@ -422,6 +436,10 @@ public class MapMaker : MonoBehaviour
                 }
 
                 GridManager.instance.MapMaker();
+                foreach(var biomeCard in biomeCards){
+                    Destroy(biomeCard.gameObject);
+                }
+                RemoveAllBiomes();
             });
 
             
@@ -447,7 +465,7 @@ public class MapMaker : MonoBehaviour
         SetDifficultySettings("Normal");
         SetTerrainTypeButtons();
 
-        GridManager.instance.currentTerrainType = defaultTerrainType;
+        GridManager.instance.currentTerrainType = currentTerrainType;
         GridManager.instance.MapMaker();
     }
     void ResetOutlines(){
@@ -478,11 +496,6 @@ public class MapMaker : MonoBehaviour
         }
     }
 
-    public void Generate(){
-        GridManager.instance.height = ((int)datas.Find(e => e.name.Equals("Height")).transform.GetChild(1).GetChild(0).GetComponent<Slider>().value - 1) * 5 + 10;
-        GridManager.instance.changeRate = ((int)datas.Find(e => e.name.Equals("Change rate")).transform.GetChild(1).GetChild(0).GetComponent<Slider>().value - 1) * 5 + 50;
-    }
-
     public void ChangeValue(int number, (string name, int min, int max) dataSetting){
         SelectDifficulty(difficultyTabs.Find(e => e.name.Equals("Custom")));
         var field = dataFields.Where(e => e.transform.parent.parent.parent.name.Equals(dataSetting.name)).First();
@@ -501,7 +514,123 @@ public class MapMaker : MonoBehaviour
         return value;
     }
 
+    public BiomeCard biomeCardPrefab;
+    public static List<BiomeCard> biomeCards = new List<BiomeCard>();
+    public Button addBiomeButton;
+    
+    public void AddBiome(){
+        var newBiome = Instantiate(biomeCardPrefab);
+        newBiome.transform.SetParent(currentWindow.transform);
+        newBiome.transform.localScale = biomeCardPrefab.transform.localScale;
+        newBiome.transform.localRotation = biomeCardPrefab.transform.localRotation ;
+        newBiome.GetComponent<RectTransform>().localPosition = Vector3.zero;
 
+        newBiome.removeButton.onClick.AddListener(() => RemoveBiome(newBiome));
+        
+        biomeCards.Add(newBiome);
+
+        newBiome.transform.SetSiblingIndex(biomeCards.Count - 1);
+        if(biomeCards.Count == 3){
+            addBiomeButton.gameObject.SetActive(false);
+        }
+        GenerateBiome(newBiome);
+
+        UpdateBiomeOptions();
+    }
+
+    public void RemoveBiome(BiomeCard biome){
+        RemoveLayer(biome);
+        addBiomeButton.gameObject.SetActive(true);
+        biomeCards.Remove(biome);
+        UpdateBiomeOptions();
+        Destroy(biome.gameObject);
+    }
+
+    public static void UpdateBiomeOptions(){
+        foreach(var b in biomeCards){
+            var text = b.terrainTypeDropdown.captionText.text;
+            var sprite = b.terrainTypeDropdown.captionImage.sprite;
+            b.SetOptions();
+            b.terrainTypeDropdown.captionText.text = text;
+            b.terrainTypeDropdown.captionImage.sprite = sprite;
+        }
+        instance.SetTerrainTypeButtons();
+    }
+
+    //public List<TerrainType[]> terrainTypeLayers = new List<TerrainType[]>();
+    public static List<BiomeCard>[] terrainTypeLayers;
+    
+    public static void GenerateBiome(BiomeCard biomeCard = null)
+    {
+        terrainTypeLayers = terrainTypeLayers ?? new List<BiomeCard>[(GridManager.instance.terrainWidth + 1) * (GridManager.instance.terrainWidth + 1)];
+
+        for (int i = 0, z = 0; z <= GridManager.instance.terrainWidth; z++)
+        {
+            for (int x = 0; x <= GridManager.instance.terrainWidth; x++, i++)
+            {
+                terrainTypeLayers[i] = terrainTypeLayers[i] ?? new List<BiomeCard>(){};
+            
+                if(biomeCard != null){
+                    if (Mathf.PerlinNoise((float)(x + biomeCard.offsetX) * biomeCard.frequency.value, (float)(z + biomeCard.offsetZ) * biomeCard.frequency.value) > biomeCard.area.value){
+                        if(!terrainTypeLayers[i].Contains(biomeCard)){
+                            if (terrainTypeLayers[i].Count() == 0)
+                                terrainTypeLayers[i].Add(biomeCard);
+                            else
+                            {
+                                foreach (var card in terrainTypeLayers[i])
+                                {
+                                    if (biomeCards.IndexOf(card) > biomeCards.IndexOf(biomeCard))
+                                    {
+                                        terrainTypeLayers[i].Insert(terrainTypeLayers[i].IndexOf(card), biomeCard);
+                                        break;
+                                    }
+                                }
+                                if (!terrainTypeLayers[i].Contains(biomeCard))
+                                    terrainTypeLayers[i].Add(biomeCard);
+                            }
+                        }
+                    }
+                    else{
+                        if(terrainTypeLayers[i].Contains(biomeCard)){
+                            terrainTypeLayers[i].Remove(biomeCard);
+                        }
+                    }
+                }
+                var highestTerrainTypeLayer = terrainTypeLayers[i].Count == 0 ? GridManager.instance.currentTerrainType : terrainTypeLayers[i].Last().GetChosenTerrainType();
+                GridManager.instance.coordTypes[i] = highestTerrainTypeLayer;
+            }
+        }
+
+        Rerender();
+    }
+
+    void RemoveLayer(BiomeCard biomeCard){
+        for (int i = 0, z = 0; z <= GridManager.instance.terrainWidth; z++)
+        {
+            for (int x = 0; x <= GridManager.instance.terrainWidth; x++, i++)
+            {
+                if(terrainTypeLayers[i].Contains(biomeCard)){
+                    terrainTypeLayers[i].Remove(biomeCard);
+                }
+                var highestTerrainTypeLayer = terrainTypeLayers[i].Count == 0 ? GridManager.instance.currentTerrainType : terrainTypeLayers[i].Last().GetChosenTerrainType();
+                GridManager.instance.coordTypes[i] = highestTerrainTypeLayer;
+            }
+        }
+
+        Rerender();
+
+    }
+
+    public static void Rerender(){
+        Debug.Log("OK");
+        foreach (Chunk tempChunk in GridManager.instance.terrainElements)
+        {
+           if(tempChunk != null)
+           {
+             tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
+           }
+        }
+    }
     public class Difficulty{
         public string name { get; set; }
         public int startingMoney { get; set; }
@@ -516,5 +645,70 @@ public class MapMaker : MonoBehaviour
             this.startingReputation = startingReputation;
             this.questDifficulty = questDifficulty;
         }
+    }
+
+    public Image imgPrefab;
+    public GameObject panel;
+    public float frequency;
+    public float threshold;
+    public Image[,] imgMap = new Image[100, 100];
+    
+
+    public Color[,] GenerateIslandMap(int width, int height, float frequency)
+    {
+        Color[,] map = new Color[width, height];
+
+        // Alap szín minden cellában fehér
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                map[x, y] = Color.white;
+            }
+        }
+
+        // Perlin zaj alapján fekete szigetek létrehozása
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                // Zaj érték kiszámítása adott frekvenciával
+                float noiseValue = Mathf.PerlinNoise(x * frequency, y * frequency);
+
+                // Ha a zaj értéke magasabb a küszöbértéknél, akkor szigetnek jelöljük
+                if (noiseValue > threshold)  
+                {
+                    map[x, y] = Color.black; // Sziget (fekete szín)
+                }
+            }
+        }
+
+        return map;
+    }
+
+    public void PrintMap(Color[,] map)
+    {
+        int width = map.GetLength(0);
+        int height = map.GetLength(1);
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                if(imgMap[x,y] == null){
+                    var img = Instantiate(imgPrefab);
+                    img.transform.SetParent(panel.transform);
+                    imgMap[x,y] = img;
+                }
+                imgMap[x,y].color = map[x, y];
+            }
+        }
+    }
+
+    void RemoveAllBiomes(){
+        biomeCards.Clear();
+        terrainTypeLayers = null;
+        UpdateBiomeOptions();
+        addBiomeButton.gameObject.SetActive(true);
     }
 }

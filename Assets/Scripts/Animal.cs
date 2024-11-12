@@ -506,7 +506,7 @@ public class Animal : Placeable, Saveable
 
     void Poop()
     {
-        var animalDropping = Instantiate(playerControl.animalDroppingPrefab, transform.position, transform.rotation);
+        var animalDropping = Instantiate(PrefabManager.instance.GetPrefabByName("dropping"), transform.position, transform.rotation);
         animalDropping.tag = "Placed";
         GetExhibit().AddDropping(animalDropping);
         restroomNeeds = UnityEngine.Random.Range(75f, 100f);

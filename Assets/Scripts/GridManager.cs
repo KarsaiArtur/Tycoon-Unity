@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 /////Saveable Attributes, DONT DELETE
-//////Vector3[] coords;TerrainType[] coordTypes//////////
+//////Vector3[] coords;TerrainType[] coordTypes;int terrainWidth//////////
 
 public class GridManager : MonoBehaviour, Saveable, Manager
 {
@@ -114,22 +114,20 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         initializing = false;
     }
 
-    public void RerenderChunks(){
-        
+    public void RerenderChunks()
+    {
         foreach (Chunk chunk in terrainElements)
         {
-            if(chunk != null){
+            if(chunk != null)
+            {
                 chunk.ReRender(int.Parse(chunk.name.Split('_')[0]), int.Parse(chunk.name.Split('_')[1]));
             }
         }
     }
 
-    public void SetTerrainType(TerrainType newTerrainType){
+    public void SetTerrainType(TerrainType newTerrainType)
+    {
         currentTerrainType = newTerrainType;
-        for(int i = 0; i < coordTypes.Length; i++)
-        {
-            coordTypes[i] = currentTerrainType;
-        }
     }
 
     public bool GetIsLoaded()

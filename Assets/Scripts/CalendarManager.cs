@@ -27,7 +27,6 @@ public class CalendarManager : MonoBehaviour, Saveable
     public static List<GameObject> backgroundLights = new List<GameObject>();
 
     const int sunRise = 6;
-    
     const int sunSet = 20;
 
     private void Awake()

@@ -550,7 +550,7 @@ public class Exhibit : Placeable, Visitable, Saveable
 
         foreach (var droppingPos in animalDroppingCoords)
         {
-            var animalDropping = Instantiate(playerControl.animalDroppingPrefab, droppingPos, Quaternion.identity);
+            var animalDropping = Instantiate(PrefabManager.instance.GetPrefabByName("dropping"), droppingPos, Quaternion.identity);
             animalDropping.tag = "Placed";
             animalDroppings.Add(animalDropping);
         }

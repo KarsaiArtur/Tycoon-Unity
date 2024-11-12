@@ -302,7 +302,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
 
     public void ThrowTrash()
     {
-        var trashOnTheGround = Instantiate(playerControl.trashOnTheGroundPrefabs[UnityEngine.Random.Range(0, playerControl.trashOnTheGroundPrefabs.Count)], transform.position, transform.rotation);
+        var trashOnTheGround = Instantiate(PrefabManager.instance.GetPrefabByName(TrashCanManager.instance.trashOnTheGroundNames[UnityEngine.Random.Range(0, TrashCanManager.instance.trashOnTheGroundNames.Count)]), transform.position, transform.rotation);
         trashOnTheGround.tag = "Placed";
         TrashCanManager.instance.AddTrashOnTheGround(trashOnTheGround);
         LowerTrash(UnityEngine.Random.Range(40, 60));
