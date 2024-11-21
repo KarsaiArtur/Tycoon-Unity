@@ -8,25 +8,26 @@ public class PurchasableItemUi : MonoBehaviour
     PurchasableItems purchasableItem;
     float changePrice = 0f;
     float minAndMaxPriceLimit = 0f;
-    TextMeshProUGUI currentPriceText;
+    TMP_InputField currentPriceText;
     Button raiseButton;
     Button lowerButton;
 
     public void SetItem(PurchasableItems purchasableItem)
     {
         this.purchasableItem = purchasableItem;
-        transform.Find("Name").GetComponent<TextMeshProUGUI>().text = purchasableItem.itemName;
-        currentPriceText = transform.Find("Name").Find("Current Price").GetComponent<TextMeshProUGUI>();
+        transform.Find("Counter").Find("Name").GetComponent<TextMeshProUGUI>().text = purchasableItem.itemName;
+        currentPriceText = transform.Find("Counter").Find("Counter").Find("Text").GetChild(0).GetComponent<TMP_InputField>();
         currentPriceText.text = purchasableItem.currentPrice.ToString() + "$";
 
+        transform.Find("Image").GetComponent<Image>().sprite = purchasableItem.icon;
 
         minAndMaxPriceLimit = TwoDecimal(purchasableItem.defaultPrice * PurchasableItems.minAndMaxPriceLimit);
         changePrice = TwoDecimal(minAndMaxPriceLimit / PurchasableItems.changingLimit);
 
-        transform.Find("Lower").GetComponent<TextMeshProUGUI>().text = "-" + changePrice + "$";
-        transform.Find("Raise").GetComponent<TextMeshProUGUI>().text = "+" + changePrice + "$";
-        lowerButton = transform.Find("Lower").Find("Button").GetComponent<Button>();
-        raiseButton = transform.Find("Raise").Find("Button").GetComponent<Button>();
+        transform.Find("Counter").Find("Counter").Find("Lower").GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "-" + changePrice + "$";
+        transform.Find("Counter").Find("Counter").Find("Raise").GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "+" + changePrice + "$";
+        lowerButton = transform.Find("Counter").Find("Counter").Find("Lower").GetComponent<Button>();
+        raiseButton = transform.Find("Counter").Find("Counter").Find("Raise").GetComponent<Button>();
         lowerButton.onClick.AddListener(LowerPrice);
         raiseButton.onClick.AddListener(RaisePrice);
 

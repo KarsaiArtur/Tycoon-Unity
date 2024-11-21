@@ -23,11 +23,7 @@ public class Grid
 
     public List<TerrainType> GetTerrainTypes()
     {
-        List<TerrainType> terrainTypes = new();
-        for (int i = 0; i < coords.Length; i++)
-        {
-            terrainTypes.Add(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coords[i])]);
-        }
+        List<TerrainType> terrainTypes = coords.Select(coord => GridManager.instance.coordTypes[(int)(Mathf.Floor(coord.x) + Mathf.Floor(coord.z) * (GridManager.instance.terrainWidth + 1))]).ToList();
         return terrainTypes;
     }
 

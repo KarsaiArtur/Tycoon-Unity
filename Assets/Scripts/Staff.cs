@@ -278,7 +278,10 @@ public abstract class Staff : Placeable
         StaffManager.instance.staffList.Remove(this);
     }
 
-    public abstract string GetCurrentAction();
+    public StaffJob GetCurrentAction()
+    {
+        return job;
+    }
 
     public override void Remove()
     {

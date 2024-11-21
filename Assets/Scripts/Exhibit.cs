@@ -20,6 +20,7 @@ public class Exhibit : Placeable, Visitable, Saveable
     /////GENERATE
     private List<Nature> foliages;
     public List<GameObject> animalDroppings = new();
+    public List<(TerrainType terrainType, float count)> terrainTypePercents = new();
     public Vector3[] animalDroppingCoords = new Vector3[0];
     public Grid exitGrid;
     public Grid entranceGrid;
@@ -51,6 +52,7 @@ public class Exhibit : Placeable, Visitable, Saveable
     public bool isMixed = false;
     /////GENERATE
     private List<Visitor> visitors;
+    public float navMeshObstacleOffset;
 
     override public void Awake()
     {
@@ -112,14 +114,44 @@ public class Exhibit : Placeable, Visitable, Saveable
         }
     }
 
-    public float CalculateTerrainPercent(TerrainType terrainType)
+    public void CalculateTerrainPercent()
     {
-        List<TerrainType> terrainTypes = new();
         foreach (var grid in gridList)
         {
-            terrainTypes.AddRange(grid.GetTerrainTypes());
+            foreach(var tType in grid.GetTerrainTypes())
+            {
+                var index = terrainTypePercents.FindIndex((element) => element.terrainType == tType);
+
+                if (index > -1)
+                {
+                    terrainTypePercents[index] = (tType, terrainTypePercents[index].count + 1);
+                }
+                else
+                {
+                    terrainTypePercents.Add((tType, 1));
+                }
+            }
         }
-        return (float)terrainTypes.Count(t => t == terrainType) / terrainTypes.Count * 100;
+    }
+
+    public void ChangeTerrainPercent(List<TerrainType> prevTypes, List<TerrainType> newTypes)
+    {
+        foreach (var tType in prevTypes)
+        {
+            var index = terrainTypePercents.FindIndex((element) => element.terrainType == tType);
+            terrainTypePercents[index] = (tType, terrainTypePercents[index].count - 1);
+        }
+
+        foreach (var tType in newTypes)
+        {
+            var index = terrainTypePercents.FindIndex((element) => element.terrainType == tType);
+            if (index == -1)
+                terrainTypePercents.Add((tType, 1));
+            else
+                terrainTypePercents[index] = (tType, terrainTypePercents[index].count + 1);
+        }
+
+        CalculateAnimalsTerrainBonus();
     }
 
     public void CalculateAnimalsTerrainBonus()
@@ -276,7 +308,7 @@ public class Exhibit : Placeable, Visitable, Saveable
         {
             var gateObstacle = gameObject.GetComponent<NavMeshObstacle>();
             GetComponentInChildren<Animator>().Play("Open");
-            gateObstacle.center = new Vector3(gateObstacleCenter.x - 0.6f, gateObstacle.center.y, gateObstacle.center.z);
+            gateObstacle.center = new Vector3(gateObstacleCenter.x - navMeshObstacleOffset, gateObstacle.center.y, gateObstacle.center.z);
             isOpen = true;
         }
     }
@@ -443,11 +475,8 @@ public class Exhibit : Placeable, Visitable, Saveable
                 }
             }
 
-            foreach (var animal in GetAnimals())
-            {
-                animal.CalculateTerrainBonus();
-                animal.CalculateNatureBonus();
-            }
+            CalculateTerrainPercent();
+            CalculateAnimalsTerrainBonus();
         }
     }
 
@@ -467,6 +496,7 @@ public class Exhibit : Placeable, Visitable, Saveable
         {
             GetAnimals()[i].GetExhibit("");
             AnimalManager.instance.freeAnimals.Add(GetAnimals()[i]);
+            GetAnimals()[i].ChooseDestination();
         }
         
         size = GetStaffs().Count;
@@ -557,6 +587,7 @@ public class Exhibit : Placeable, Visitable, Saveable
 
         paths = new List<Grid>();
         FindPaths();
+        CalculateTerrainPercent();
         LoadMenu.objectLoadedEvent.Invoke();
     }
 

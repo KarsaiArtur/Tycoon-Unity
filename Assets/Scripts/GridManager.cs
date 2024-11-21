@@ -57,9 +57,9 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         InitializeGrids();
         CreateTerrainElements();
 
-        for (int i = 32; i < 39; i++)
+        for (int i = 32; i < 37; i++)
         {
-            for (int j = 45; j < 58; j++)
+            for (int j = 46; j < 56; j++)
             {
                 grids[i - elementWidth, j - elementWidth].isPath = true;
             }

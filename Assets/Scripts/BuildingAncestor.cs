@@ -7,7 +7,7 @@ public abstract class BuildingAncestor : Placeable, Visitable
 {
     protected bool collided = false;
     protected float curY = -100;
-    public int capacity = 2;
+    protected int capacity = 2;
     public int defaultCapacity = 10;
     public List<Grid> paths;
     /////GENERATE
@@ -141,7 +141,7 @@ public abstract class BuildingAncestor : Placeable, Visitable
 
     public int GetCapacity()
     {
-        return capacity;
+        return defaultCapacity - GetVisitors().Count;
     }
 
     public void SetCapacity(int newCapacity)
@@ -152,7 +152,7 @@ public abstract class BuildingAncestor : Placeable, Visitable
         else if (capacity > defaultCapacity)
             capacity = defaultCapacity;
     }
-
+    
     public void AddVisitor(Visitor visitor)
     {
         AddVisitors(visitor);

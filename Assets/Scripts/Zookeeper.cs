@@ -37,13 +37,13 @@ public class Zookeeper : Staff, Saveable
             {
                 if (!exhibit.unreachableForStaff)
                 {
-                    if (!exhibit.isGettingFood && !float.IsNaN(exhibit.food / (exhibit.GetAnimals().Count * 50)) && exhibit.food / (exhibit.GetAnimals().Count * 50) * 100 < 75)
+                    if (!exhibit.isGettingFood && !float.IsNaN(exhibit.food / (exhibit.GetAnimals().Count * 100)) && exhibit.food / (exhibit.GetAnimals().Count * 100) * 100 < 75)
                     {
-                        animalNeeds.Add((exhibit, StaffJob.PlacingFood, exhibit.food / (exhibit.GetAnimals().Count * 50) * 100));
+                        animalNeeds.Add((exhibit, StaffJob.PlacingFood, exhibit.food / (exhibit.GetAnimals().Count * 100) * 100));
                         if (insideExhibit != null && insideExhibit == exhibit)
                         {
                             animalNeeds.Remove(animalNeeds[animalNeeds.Count - 1]);
-                            animalNeeds.Add((exhibit, StaffJob.PlacingFood, exhibit.food / (exhibit.GetAnimals().Count * 50) * 100 - 10));
+                            animalNeeds.Add((exhibit, StaffJob.PlacingFood, exhibit.food / (exhibit.GetAnimals().Count * 100) * 100 - 10));
                         }
                     }
                     if (!exhibit.isGettingWater && !float.IsNaN(exhibit.water / exhibit.waterCapacity) && exhibit.water / exhibit.waterCapacity * 100 < 75)
@@ -181,11 +181,6 @@ public class Zookeeper : Staff, Saveable
             Grid destinationGrid = exhibitToWorkAt.gridList[UnityEngine.Random.Range(0, exhibitToWorkAt.gridList.Count)];
             agent.SetDestination(new Vector3(destinationGrid.coords[0].x + UnityEngine.Random.Range(0, 1.0f), destinationGrid.coords[0].y, destinationGrid.coords[0].z + UnityEngine.Random.Range(0, 1.0f)));
         }
-    }
-
-    public override string GetCurrentAction()
-    {
-        return job.ToString();
     }
 
     public override void SetToDefault()

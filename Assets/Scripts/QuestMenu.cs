@@ -3,14 +3,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class QuestMenu : ExtraMenu
 {
-    public TextMeshProUGUI progression;
+    public Slider progression;
     public TextMeshProUGUI questName;
-    public TextMeshProUGUI difficulty;
+    public Image difficulty;
     public TextMeshProUGUI description;
-    public TextMeshProUGUI currentQuestProgression;
+    public Slider currentQuestProgression;
     public TextMeshProUGUI reward;
 
     public PlayerControl playerControl;
@@ -48,11 +49,13 @@ public class QuestMenu : ExtraMenu
 
     public override void UpdateWindow()
     {
-        progression.text = questManager.numberOfDoneQuests + "/" + (questManager.questsPerDifficutly * 3);
+        progression.value = questManager.numberOfDoneQuests / (questManager.questsPerDifficutly * 3f);
+        progression.GetComponent<Tooltip>().tooltipText = questManager.numberOfDoneQuests + "/" + (questManager.questsPerDifficutly * 3);
         questName.text = questManager.findCurrentQuest().questName;
-        difficulty.text = questManager.findCurrentQuest().difficulty;
+        difficulty.sprite = UIMenu.Instance.difficultySprites.Find(e => e.name.ToLower().Equals(questManager.findCurrentQuest().difficulty.ToLower()));
         description.text = questManager.findCurrentQuest().description;
-        currentQuestProgression.text = questManager.findCurrentQuest().progression.Invoke() + "/" + questManager.findCurrentQuest().goal;
+        currentQuestProgression.value = questManager.findCurrentQuest().progression.Invoke()/questManager.findCurrentQuest().goal;
+        currentQuestProgression.GetComponent<Tooltip>().tooltipText = questManager.findCurrentQuest().progression.Invoke() + "/" + questManager.findCurrentQuest().goal;
         reward.text = "Reward: "+questManager.findCurrentQuest().moneyReward+" $";
     }
 }

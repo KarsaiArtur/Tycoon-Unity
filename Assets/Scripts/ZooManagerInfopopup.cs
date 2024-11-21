@@ -16,7 +16,7 @@ public class ZooManagerInfopopup : InfoPopup
     float changePrice;
     Button raiseButton;
     Button lowerButton;
-    TextMeshProUGUI currentPriceText;
+    TMP_InputField currentPriceText;
     public static float minAndMaxFeeLimit = 0.5f;
     public static float changingLimit = 10f;
 
@@ -33,20 +33,21 @@ public class ZooManagerInfopopup : InfoPopup
 
         infoPanelInstance.transform.GetChild(0).Find("Name").GetComponent<TextMeshProUGUI>().text = zooManager.GetName();
         infoPanelInstance.transform.GetChild(0).Find("Expenses").GetComponent<TextMeshProUGUI>().text = "Monthly expenses" + System.Environment.NewLine + zooManager.GetExpenses();
-        infoPanelInstance.transform.GetChild(0).Find("Rep").GetComponent<TextMeshProUGUI>().text = "Current reputation" + System.Environment.NewLine + (int)ZooManager.reputation;
+        infoPanelInstance.transform.GetChild(0).Find("Rep").GetChild(0).GetComponent<Slider>().value = ZooManager.reputation / 100f;
+        infoPanelInstance.transform.GetChild(0).Find("Rep").GetChild(0).GetComponent<Tooltip>().tooltipText = $"{(int)ZooManager.reputation}/100";
         infoPanelInstance.transform.GetChild(0).Find("Visitors").GetComponent<TextMeshProUGUI>().text = "All time visitor count" + System.Environment.NewLine + (int)zooManager.allTimeVisitorCount;
         var entranceFeePanel = infoPanelInstance.transform.GetChild(0).Find("Entrance fee");
-        currentPriceText = entranceFeePanel.Find("Current Price").GetComponent<TextMeshProUGUI>();
-        currentPriceText.text = "Current Entrance Fee" + System.Environment.NewLine + zooManager.currentEntranceFee.ToString() + "$";
+        currentPriceText = entranceFeePanel.Find("Current Price").GetChild(0).GetComponent<TMP_InputField>();
+        currentPriceText.text = zooManager.currentEntranceFee.ToString();
 
 
         minAndMaxPriceLimit = TwoDecimal(zooManager.defaultEntranceFee * minAndMaxFeeLimit);
         changePrice = TwoDecimal(minAndMaxPriceLimit / changingLimit);
 
-        entranceFeePanel.Find("Lower").GetComponent<TextMeshProUGUI>().text = "-" + changePrice + "$";
-        entranceFeePanel.Find("Raise").GetComponent<TextMeshProUGUI>().text = "+" + changePrice + "$";
-        lowerButton = entranceFeePanel.Find("Lower").Find("Button").GetComponent<Button>();
-        raiseButton = entranceFeePanel.Find("Raise").Find("Button").GetComponent<Button>();
+        lowerButton = entranceFeePanel.Find("Lower").GetComponent<Button>();
+        raiseButton = entranceFeePanel.Find("Raise").GetComponent<Button>();
+        lowerButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "-" + changePrice;
+        raiseButton.transform.GetChild(0).GetChild(0).GetComponent<TextMeshProUGUI>().text = "+" + changePrice;
         lowerButton.onClick.AddListener(LowerPrice);
         raiseButton.onClick.AddListener(RaisePrice);
 
@@ -59,7 +60,9 @@ public class ZooManagerInfopopup : InfoPopup
         while (true)
         {
             infoPanelInstance.transform.GetChild(0).Find("Expenses").GetComponent<TextMeshProUGUI>().text = "Monthly expenses" + System.Environment.NewLine + zooManager.GetExpenses();
-            infoPanelInstance.transform.GetChild(0).Find("Rep").GetComponent<TextMeshProUGUI>().text = "Current reputation" + System.Environment.NewLine + (int)ZooManager.reputation+"/100";
+            infoPanelInstance.transform.GetChild(0).Find("Rep").GetChild(0).GetComponent<Slider>().value = ZooManager.reputation / 100f;
+            SetColor(infoPanelInstance.transform.GetChild(0).Find("Rep").GetChild(0).GetComponent<Slider>());
+            infoPanelInstance.transform.GetChild(0).Find("Rep").GetChild(0).GetComponent<Tooltip>().tooltipText = $"{(int)ZooManager.reputation}/100";
             infoPanelInstance.transform.GetChild(0).Find("Visitors").GetComponent<TextMeshProUGUI>().text = "All time visitor count" + System.Environment.NewLine + (int)zooManager.allTimeVisitorCount;
             if (staffCount != StaffManager.instance.staffList.Count)
             {
@@ -69,6 +72,23 @@ public class ZooManagerInfopopup : InfoPopup
             staffCount = StaffManager.instance.staffList.Count;
             yield return new WaitForSeconds(1);
         }
+    }
+
+    void SetColor(Slider slider){
+        Color c = new Color();
+        float greenPercentage;
+        if (slider.value >= 0.5f)
+        {
+            greenPercentage = (slider.value - 0.5f) / 0.5f;
+            c = new Color((1f - greenPercentage), 1, 0);
+        }
+        else
+        {
+            greenPercentage = slider.value / 0.5f;
+            c = new Color(1f, greenPercentage, 0);
+        }
+
+        slider.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = c;
     }
 
     public void CreateStaffInfos()
@@ -100,7 +120,7 @@ public class ZooManagerInfopopup : InfoPopup
         {
             raiseButton.enabled = false;
         }
-        currentPriceText.text = "Current Entrance Fee" + System.Environment.NewLine + zooManager.currentEntranceFee.ToString() + "$";
+        currentPriceText.text = zooManager.currentEntranceFee.ToString();
     }
 
     void LowerPrice()
@@ -111,7 +131,7 @@ public class ZooManagerInfopopup : InfoPopup
         {
             lowerButton.enabled = false;
         }
-        currentPriceText.text = "Current Entrance Fee" + System.Environment.NewLine + zooManager.currentEntranceFee.ToString() + "$";
+        currentPriceText.text = zooManager.currentEntranceFee.ToString();
     }
 
     public static float TwoDecimal(float value)

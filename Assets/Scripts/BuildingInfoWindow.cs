@@ -95,7 +95,7 @@ public class BuildingInfoWindow: MonoBehaviour, IDragHandler, IBeginDragHandler,
         buildingName.text = building.placeableName;
         description.text = building.description;
 
-        capacity.text = building.capacity+ " persons";
+        capacity.text = building.GetCapacity()+ " persons";
         monthlyExpenses.text = building.expense+ " $ / Month";
 
         nextButton.SetActive(building.purchasableItemPrefabs.Count > 1);

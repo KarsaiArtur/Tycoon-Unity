@@ -37,6 +37,33 @@ static class StaffJobMethods
                 return "Collect trash";
             case StaffJob.EmptyingTrashCan:
                 return "Empty Trash Can";
+            case StaffJob.Nothing:
+                return "Nothing";
+            default:
+                return "";
+        }
+    }
+
+    public static string GetText(this StaffJob s1)
+    {
+        switch (s1)
+        {
+            case StaffJob.HealingAnimal:
+                return "Healing an animal";
+            case StaffJob.PuttingAnimalToSleep:
+                return "Recapturing animal";
+            case StaffJob.PlacingFood:
+                return "Feeding animals";
+            case StaffJob.FillingWater:
+                return "Filling up water";
+            case StaffJob.CleaningExhibit:
+                return "Cleaning up";
+            case StaffJob.RepairingFence:
+                return "Repairing a fence";
+            case StaffJob.PickingUpTrash:
+                return "Collecting trash";
+            case StaffJob.EmptyingTrashCan:
+                return "Emptying a trash can";
             default:
                 return "";
         }

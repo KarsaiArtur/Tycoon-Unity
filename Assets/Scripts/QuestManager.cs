@@ -40,8 +40,8 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
         easyQuests.Add(new Quest("Sculptor's Touch", "Use the terraformer tool", 100, 10, "Easy", () => { return terraformerUsed; }, () => { return terraformerUsed ? 1 : 0; }, 1));
         easyQuests.Add(new Quest("Make Space, Make Money", "Use the delete tool, to sell something", 100, 10, "Easy", () => { return deleteUsed; }, () => { return deleteUsed ? 1 : 0; }, 1));
         easyQuests.Add(new Quest("Spreading Smiles", "Have a visitor with 90 happiness", 1000, 100, "Easy",
-            () => { var happiness = 0.0f; foreach (var visitor in VisitorManager.instance.visitorList) { if (visitor.happiness > happiness) { happiness = visitor.happiness; } } return happiness >= 90; },
-            () => { var happiness = 0.0f; foreach (var visitor in VisitorManager.instance.visitorList) { if (visitor.happiness > happiness) { happiness = visitor.happiness; } } return happiness; }, 90));
+            () => { var happiness = 0.0f; foreach (var visitor in VisitorManager.instance.visitorList) { if (visitor.maxHappiness > happiness) { happiness = visitor.maxHappiness; } } return happiness >= 90; },
+            () => { var happiness = 0.0f; foreach (var visitor in VisitorManager.instance.visitorList) { if (visitor.maxHappiness > happiness) { happiness = visitor.maxHappiness; } } return happiness; }, 90));
 
         mediumQuests.Add(new Quest("Expand Your Dream Team", "Have " + Mathf.Floor(5 * diffMult) + " staff members of any kind", 5000, 500, "Medium", () => { return StaffManager.instance.staffList.Count >= Mathf.Floor(5 * diffMult); }, () => { return StaffManager.instance.staffList.Count; }, Mathf.Floor(5 * diffMult)));
         mediumQuests.Add(new Quest("Add More Fascinating Creatures", "Have " + Mathf.Floor(25 * diffMult) + " animals of any species", 5000, 500, "Medium", () => { return AnimalManager.instance.animalList.Count >= Mathf.Floor(25 * diffMult); }, () => { return AnimalManager.instance.animalList.Count; }, Mathf.Floor(25 * diffMult)));
@@ -51,8 +51,8 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
         mediumQuests.Add(new Quest("Merchandising Magic", "Sell " + Mathf.Floor(250 * diffMult) + " items in your buildings", 5000, 500, "Medium", () => { return BuildingManager.instance.itemsBought >= Mathf.Floor(250 * diffMult); }, () => { return BuildingManager.instance.itemsBought; }, Mathf.Floor(250 * diffMult)));
         mediumQuests.Add(new Quest("Witness New Life", "Have one of your animals give birth", 5000, 500, "Medium", () => { return AnimalManager.instance.babiesBorn >= 1; }, () => { return AnimalManager.instance.babiesBorn; }, 1));
         mediumQuests.Add(new Quest("Blissful Sanctuary", "Have a visitor with 100 happiness", 5000, 500, "Medium",
-            () => { var happiness = 0.0f; foreach (var visitor in VisitorManager.instance.visitorList) { if (visitor.happiness > happiness) { happiness = visitor.happiness; } } return happiness >= 100; },
-            () => { var happiness = 0.0f; foreach (var visitor in VisitorManager.instance.visitorList) { if (visitor.happiness > happiness) { happiness = visitor.happiness; } } return happiness; }, 100));
+            () => { var happiness = 0.0f; foreach (var visitor in VisitorManager.instance.visitorList) { if (visitor.maxHappiness > happiness) { happiness = visitor.maxHappiness; } } return happiness >= 100; },
+            () => { var happiness = 0.0f; foreach (var visitor in VisitorManager.instance.visitorList) { if (visitor.maxHappiness > happiness) { happiness = visitor.maxHappiness; } } return happiness; }, 100));
         mediumQuests.Add(new Quest("Content Creature", "Have an animal with 90 happiness", 5000, 500, "Medium",
             () => { var happiness = 0.0f; foreach (var animal in AnimalManager.instance.animalList) { if (animal.happiness > happiness) { happiness = animal.happiness; } } return happiness >= 90; },
             () => { var happiness = 0.0f; foreach (var animal in AnimalManager.instance.animalList) { if (animal.happiness > happiness) { happiness = animal.happiness; } } return happiness; }, 90));

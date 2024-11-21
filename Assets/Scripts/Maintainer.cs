@@ -260,11 +260,6 @@ public class Maintainer : Staff, Saveable
         }
     }
 
-    public override string GetCurrentAction()
-    {
-        return job.ToString();
-    }
-
     public override void SetToDefault()
     {
         base.SetToDefault();

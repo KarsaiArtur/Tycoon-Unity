@@ -17,28 +17,28 @@ public class BuildingInfopopup : InfoPopup
         infoPanelInstance = Instantiate(UIMenu.Instance.buildingInfoPanelPrefab);
         base.Initialize();
         purchasableItemsUI = new List<PurchasableItemUi>();
-        infoPanelInstance.transform.GetChild(0).Find("Name").GetComponent<TextMeshProUGUI>().text = building.GetName();
+        infoPanelInstance.transform.GetChild(0).GetChild(0).Find("Name").GetChild(0).GetComponent<TextMeshProUGUI>().text = building.GetName();
 
         foreach (PurchasableItems purchasableItem in building.purchasableItemInstances)
         {
             purchasableItemsUI.Add(AddPurchasableItemToUI(purchasableItem));
         }
         infoPanelInstance.transform.GetChild(0).Find("Items").gameObject.active = purchasableItemsUI.Count == 0 ? false : true;
-        infoPanelInstance.transform.Find("Sell").GetComponent<Button>().onClick.AddListener(() => {
+        infoPanelInstance.transform.GetChild(0).GetChild(0).Find("Sell").GetComponent<Button>().onClick.AddListener(() => {
             building.Remove();
             DestroyPanel();
         });
         infoPanelInstance.transform.GetChild(0).Find("Info Panel").Find("Restroom").GetComponent<Image>().sprite = building.hasRestroom ? UIMenu.Instance.hasRestroom : UIMenu.Instance.noRestroom;
         infoPanelInstance.transform.GetChild(0).Find("Info Panel").Find("Monthly Fee").GetComponent<TextMeshProUGUI>().text = "Maintance Expenses" + Environment.NewLine + building.expense + "$";
         capacity = infoPanelInstance.transform.GetChild(0).Find("Info Panel").Find("Capacity").GetComponent<TextMeshProUGUI>();
-        capacity.text = "Capacity" + Environment.NewLine + (building.defaultCapacity - building.capacity) + "/" + building.defaultCapacity;
+        capacity.text = "Capacity" + Environment.NewLine + (building.defaultCapacity - building.GetCapacity()) + "/" + building.defaultCapacity;
         StartCoroutine(CheckCapacity());
     }
     IEnumerator CheckCapacity()
     {
         while (true)
         {
-            capacity.text = "Capacity" + Environment.NewLine + (building.defaultCapacity - building.capacity) + "/" + building.defaultCapacity;
+            capacity.text = "Capacity" + Environment.NewLine + (building.defaultCapacity - building.GetCapacity()) + "/" + building.defaultCapacity;
             yield return new WaitForSeconds(1);
         }
     }

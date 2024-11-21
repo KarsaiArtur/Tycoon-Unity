@@ -50,6 +50,9 @@ public class UIMenu : MonoBehaviour
     public List<Sprite> animalBackgroundSprites;
     public List<Sprite> sceneryTypeSprites;
     public List<Sprite> staffJobSprites;
+    public List<Sprite> animalHealthAndSadnessSprites;
+    public List<Sprite> difficultySprites;
+    public Image sadnessHealthIcon;
 
     const float defaultMenuButtonWidth = 113;
     const float defaultMenuButtonHeight = 80;
@@ -253,6 +256,14 @@ public class UIMenu : MonoBehaviour
         {
             outline.enabled = false;
         }
+    }
+
+    SaveMenu escapeMenu;
+    public void CreateEscapeMenu(){
+        escapeMenu = Instantiate(MenuPrefabs.instance.saveMenuPrefab, Vector3.zero, Quaternion.identity);
+    }
+    public void DestroyEscapeMenu(){
+        escapeMenu.DestroyWindow();
     }
 
 }

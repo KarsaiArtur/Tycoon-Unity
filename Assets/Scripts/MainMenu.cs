@@ -2,11 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class MainMenu : MonoBehaviour
 {
     public string gameSceneName;
     public string mapMakerSceneName;
+    public string mainMenuSceneName;
     static public MainMenu instance;
     public bool isMapMaker = false;
 
@@ -16,13 +18,25 @@ public class MainMenu : MonoBehaviour
     }
 
     public void loadGameScene(){
-        SceneManager.LoadScene(gameSceneName);
-        
+        LoadingScreen.instance.sceneLoading = SceneManager.LoadSceneAsync(gameSceneName);
     }
 
     public void loadMapMaker(){
         isMapMaker = true;
-        SceneManager.LoadScene(mapMakerSceneName);
+        LoadingScreen.instance.sceneLoading = SceneManager.LoadSceneAsync(mapMakerSceneName);
+    }
+
+    public void loadMainMenuScene(){
+        isMapMaker = false;
+        LoadingScreen.instance.sceneLoading = SceneManager.LoadSceneAsync(mainMenuSceneName);
+    }
+
+    public void loadScreen(){
+        LoadingScreen.instance.loadScene();
+    }
+
+    public void exitGame(){
+        Application.Quit();
     }
 
 }

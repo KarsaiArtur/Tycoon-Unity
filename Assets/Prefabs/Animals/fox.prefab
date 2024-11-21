@@ -856,10 +856,10 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0.8
-    y: 0.465
+    y: 0.21
     width: 0.199
     height: 0.2
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 26
   orthographic: 0
@@ -1651,12 +1651,13 @@ MonoBehaviour:
   sleptPosition: {x: 0, y: 0, z: 0}
   requiredExhibitSpace: 9
   continents: 050000000200000003000000
-  terrainsPreferred: 0000000001000000
+  terrainsPreferred: 000000000100000002000000
   terrainsPreferredPercents:
-  - 50
-  - 50
+  - 33
+  - 33
+  - 33
   terrainBonusMultiplier: 0
-  naturePreferredCount: 1
+  naturePreferredCount: 0.1
   natureBonusMultiplier: 1
   age: 0
   lifeExpectancy: 4
@@ -1670,6 +1671,8 @@ MonoBehaviour:
   fertility: 100
   isAgressive: 1
   dangerLevel: 2
+  isTooMuchFoliage: 0
+  badTerrainTypes: 
   exhibitId: 
   destinationVisitableId: 
   matingPartnerId: 

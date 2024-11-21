@@ -60,10 +60,10 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0.8
-    y: 0.465
+    y: 0.21
     width: 0.199
     height: 0.2
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 26
   orthographic: 0
@@ -93,15 +93,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 1b80231ca7c7b154a8adb80b7048ba7c, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.07
+      value: 0.045000006
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1b80231ca7c7b154a8adb80b7048ba7c, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.07
+      value: 0.045000006
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1b80231ca7c7b154a8adb80b7048ba7c, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.07
+      value: 0.045000006
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 1b80231ca7c7b154a8adb80b7048ba7c, type: 3}
       propertyPath: m_LocalPosition.x
@@ -280,6 +280,8 @@ MonoBehaviour:
   fertility: 100
   isAgressive: 1
   dangerLevel: 5
+  isTooMuchFoliage: 0
+  badTerrainTypes: 
   exhibitId: 
   destinationVisitableId: 
   matingPartnerId: 
@@ -291,7 +293,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7247211120697438837}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: -334000983
   m_Radius: 3
   m_Speed: 0.3

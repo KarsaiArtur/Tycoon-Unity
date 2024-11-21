@@ -9,7 +9,7 @@ public class TerraformerMenu : ExtraMenu
 {
     public Button plus;
     public Button minus;
-    public TextMeshProUGUI price;
+    public TMP_InputField price;
     public Slider slider;
     public TextMeshProUGUI currentSize;
     public PlayerControl playerControl;
@@ -86,6 +86,11 @@ public class TerraformerMenu : ExtraMenu
 
     public override void UpdateWindow()
     {
-        
+        if(playerControl.terraFormCalculatePrice){
+            price.text = MapMaker.Format(playerControl.CalculateTerraformerPrice().ToString());
+        }
+        else{
+            price.text = "0";
+        }
     }
 }

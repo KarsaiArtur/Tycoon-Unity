@@ -16,13 +16,14 @@ public class LoadMenu : MonoBehaviour
     public GameObject listPanel;
     
     public static LoadMenu instance;
-
+    public DirectoryInfo saveFolder;
     static public UnityEvent objectLoadedEvent = new UnityEvent();
     public List<GameObject> managerPrefabs1;
     static public List<GameObject> managerPrefabs = new List<GameObject>();
     static public Manager currentManager;
     static public int currentManagerIndex = 0;
     static public int loadedObjects = 0;
+    public GameObject selectedItemForDelete;
 
     void Start(){
     
@@ -54,7 +55,7 @@ public class LoadMenu : MonoBehaviour
     void LoadSavesList(){;
         //var folders = AssetDatabase.GetSubFolders("Assets"+System.IO.Path.AltDirectorySeparatorChar+"Saves");
         var appPath = Application.dataPath;
-        var saveFolder = Directory.CreateDirectory(appPath+System.IO.Path.AltDirectorySeparatorChar+"Saves");
+        saveFolder = Directory.CreateDirectory(appPath+System.IO.Path.AltDirectorySeparatorChar+"Saves");
         var folders = saveFolder.GetDirectories();
         foreach(var folder in folders){
             var listItem = Instantiate(saveItemPrefab, Vector3.zero, Quaternion.identity);

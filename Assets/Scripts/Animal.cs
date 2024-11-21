@@ -26,25 +26,6 @@ public class Animal : Placeable, Saveable
         Nothing
     }
 
-    public enum SadnessReason
-    {
-        TerrainType,
-        Foliage,
-        Space,
-        Hunger,
-        Thirst,
-        Health
-    }
-
-    public enum HealthReason
-    {
-        Hunger,
-        Thirst,
-        Happiness,
-        Droppings,
-        Sickness
-    }
-
     public List<SadnessReason> sadnessReasons = new();
     public List<HealthReason> healthReasons = new();
     public Material[] materials;
@@ -119,6 +100,8 @@ public class Animal : Placeable, Saveable
     private Animal target;
     Vector3 dangerPos;
     float attackCooldown = 2;
+    public bool isTooMuchFoliage = false;
+    public List<TerrainType> badTerrainTypes = new List<TerrainType>();
 
     public override void Place(Vector3 mouseHit)
     {
@@ -357,16 +340,6 @@ public class Animal : Placeable, Saveable
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
                 sadnessReasons.Add(SadnessReason.Space);
             }
-            if (hunger < 33)
-            {
-                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
-                sadnessReasons.Add(SadnessReason.Hunger);
-            }
-            if (thirst < 33)
-            {
-                happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
-                sadnessReasons.Add(SadnessReason.Thirst);
-            }
             if (health < 33)
             {
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
@@ -428,10 +401,23 @@ public class Animal : Placeable, Saveable
         if (GetExhibit() != null)
         {
             float likedTerrainPercent = 0;
+            badTerrainTypes = new List<TerrainType>();
 
             for (int i = 0; i < terrainsPreferred.Count; i++)
             {
-                var percent = GetExhibit().CalculateTerrainPercent(terrainsPreferred[i]);
+                float percent = 0;
+                var index = GetExhibit().terrainTypePercents.FindIndex((element) => element.terrainType == terrainsPreferred[i]);
+
+                if (index > -1)
+                {
+                    percent = GetExhibit().terrainTypePercents[index].count / GetExhibit().gridList.Count / 4 * 100;
+                }
+
+                if(percent < terrainsPreferredPercents[i] - 10 || percent > terrainsPreferredPercents[i] + 10)
+                {
+                    badTerrainTypes.Add(terrainsPreferred[i]);
+                }
+
                 likedTerrainPercent += percent < (terrainsPreferredPercents[i] + 10) ? percent : (terrainsPreferredPercents[i] + 10);
             }
 
@@ -464,6 +450,15 @@ public class Animal : Placeable, Saveable
             else
                 natureBonusMultiplier = natureBonusMultiplier / (1 * gridCount * 0.5f) * 2;
             natureBonusMultiplier = natureBonusMultiplier < -2 ? -2 : natureBonusMultiplier;
+
+            if (tempList1.Count > naturePreferredCount * gridCount * 1.5)
+            {
+                isTooMuchFoliage = true;
+            }
+            else
+            {
+                isTooMuchFoliage = false;
+            }
         }
     }
 
@@ -482,8 +477,7 @@ public class Animal : Placeable, Saveable
         if(playerControl.currentInfopopup != null)
             playerControl.currentInfopopup.DestroyPanel();
             
-        //notification
-        //corpse?
+        UIMenu.Instance.NewNotification("A " + placeableName + " died");
         Remove();
     }
 
@@ -519,7 +513,6 @@ public class Animal : Placeable, Saveable
         {
             isPregnant = true;
             pregnancyTimeMonth = 0;
-            //notification
         }
     }
 
@@ -628,8 +621,6 @@ public class Animal : Placeable, Saveable
                     baby.age = 0;
                     baby.defaultScale = defaultScale;
                     baby.SetSize();
-                    //notification
-                    //anination?
                 }
 
                 ZooManager.instance.ChangeXp(xpBonus * 2);
@@ -729,7 +720,6 @@ public class Animal : Placeable, Saveable
                         timeGoal = time + 5;
                         Mate();
                     }
-                    //animation?
                 }
                 else
                     timeGoal = 30;
@@ -772,20 +762,16 @@ public class Animal : Placeable, Saveable
         }
     }
 
-    void ChooseDestination()
+    public void ChooseDestination()
     {
         if (isSlept)
             return;
 
-        if (GridManager.instance.GetGrid(transform.position).GetExhibit() != null && GetExhibit() == null)
-        {
-            GetExhibit(GridManager.instance.GetGrid(transform.position).GetExhibit()._id);
-            GetExhibit().AddAnimal(this);
-        }
         else if (GridManager.instance.GetGrid(transform.position).GetExhibit() == null && GetExhibit() != null)
         {
             GetExhibit().RemoveAnimal(this);
             GetExhibit("");
+            AnimalManager.instance.freeAnimals.Add(this);
         }
 
         if (action != Action.Mating && action != Action.Fleeing && action != Action.Attacking)
@@ -871,15 +857,17 @@ public class Animal : Placeable, Saveable
 
         if (GetExhibit() != null && GetExhibit().food > 0)
         {
-            sum += (100 - hunger);
+            //sum += (100 - hunger);
+            sum += hunger < 75 ? 110 - hunger : 0;
             probabilities.Add((Action.Food, sum));
         }
         if (GetExhibit() != null && GetExhibit().water > 0)
         {
-            sum += (100 - thirst);
+            //sum += (100 - thirst);
+            sum += thirst < 75 ? 110 - thirst : 0;
             probabilities.Add((Action.Drink, sum));
         }
-        sum += 50;
+        sum += 25;
         probabilities.Add((Action.Wander, sum));
 
         var random = UnityEngine.Random.Range(0, sum);

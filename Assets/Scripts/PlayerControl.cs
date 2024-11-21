@@ -8,6 +8,7 @@ using Cinemachine;
 using System.Linq;
 using TMPro;
 using System.Collections;
+using UnityEngine.Rendering.PostProcessing;
 
 /////Attributes, DONT DELETE
 //////Vector3 position;Quaternion rotation//////////
@@ -40,6 +41,7 @@ public class PlayerControl : MonoBehaviour
     public int fenceIndex = 0;
     public bool canBePlaced = true;
     public bool terraForming = false;
+    public bool terraFormCalculatePrice = false;
     public bool deleting = false;
     public bool terrainType = false;
     public bool isMouseDown = false;
@@ -194,6 +196,24 @@ public class PlayerControl : MonoBehaviour
             if(isMouseDown && grid != currentClickGrid)
             {
                 int ind = 0;
+                List<List<TerrainType>> prevTerrainTypes = new();
+                if (grid.GetExhibit() != null)
+                {
+                    prevTerrainTypes.Add(grid.GetTerrainTypes());
+                }
+
+                for (int i = 0; i < 4; i++)
+                {
+                    if (grid.trueNeighbours[i] != null && grid.trueNeighbours[i].GetExhibit() != null)
+                    {
+                        prevTerrainTypes.Add(grid.trueNeighbours[i].GetTerrainTypes());
+                    }
+                    if (grid.trueNeighbours[i] != null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4] != null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit() != null)
+                    {
+                        prevTerrainTypes.Add(grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetTerrainTypes());
+                    }
+                }
+
                 foreach(var coord in grid.coords)
                 {
                     if(GridManager.instance.coordTypes[GridManager.instance.coords.ToList().IndexOf(coord)] != currentTerrainType)
@@ -210,22 +230,34 @@ public class PlayerControl : MonoBehaviour
                     tempChunk.ReRender(int.Parse(tempChunk.name.Split('_')[0]), int.Parse(tempChunk.name.Split('_')[1]));
                 }
 
+                int idx = 0;
+                List<TerrainType> newTerrainTypes = new();
                 if (grid.GetExhibit() != null)
                 {
-                    grid.GetExhibit().CalculateAnimalsTerrainBonus();
+                    newTerrainTypes = grid.GetTerrainTypes();
+                    if (!prevTerrainTypes[idx].SequenceEqual(newTerrainTypes))
+                        grid.GetExhibit().ChangeTerrainPercent(prevTerrainTypes[idx], newTerrainTypes);
+                    idx++;
                 }
 
                 for (int i = 0; i < 4; i++)
                 {
-                    if (grid.trueNeighbours[i] != null && grid.neighbours[i] == null && grid.trueNeighbours[i].GetExhibit() != null)
+                    if (grid.trueNeighbours[i] != null && grid.trueNeighbours[i].GetExhibit() != null)
                     {
-                        grid.trueNeighbours[i].GetExhibit().CalculateAnimalsTerrainBonus();
+                        newTerrainTypes = grid.trueNeighbours[i].GetTerrainTypes();
+                        if (!prevTerrainTypes[idx].SequenceEqual(newTerrainTypes))
+                            grid.trueNeighbours[i].GetExhibit().ChangeTerrainPercent(prevTerrainTypes[idx], newTerrainTypes);
+                        idx++;
                     }
-                    if (grid.trueNeighbours[i] != null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4] != null && grid.trueNeighbours[i].neighbours[(i + 1) % 4] == null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit() != null)
+                    if (grid.trueNeighbours[i] != null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4] != null && grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit() != null)
                     {
-                        grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit().CalculateAnimalsTerrainBonus();
+                        newTerrainTypes = grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetTerrainTypes();
+                        if (!prevTerrainTypes[idx].SequenceEqual(newTerrainTypes))
+                            grid.trueNeighbours[i].trueNeighbours[(i + 1) % 4].GetExhibit().ChangeTerrainPercent(prevTerrainTypes[idx], newTerrainTypes);
+                        idx++;
                     }
                 }
+
                 currentClickGrid = grid;
             }
         }
@@ -305,11 +337,15 @@ public class PlayerControl : MonoBehaviour
         if (Time.timeScale == 0)
         {
             Time.timeScale = 1;
+            UIMenu.Instance.DestroyEscapeMenu();
         }
         else
         {
             Time.timeScale = 0;
+            UIMenu.Instance.CreateEscapeMenu();
         }
+        var ppVolume = GetComponent<PostProcessVolume>();
+        ppVolume.enabled = !ppVolume.enabled;
     }
 
     public void PlaceObject()
@@ -664,16 +700,13 @@ public class PlayerControl : MonoBehaviour
     {
         if (Input.GetMouseButtonUp(0))
         {
+            terraFormCalculatePrice = false;
+            UIMenu.Instance.curExtraMenu?.UpdateWindow();
             gridM.ReloadGrids();
 
             if (startingHeight > -10 && coordIndex != 0 && terrainHit)
             {
-                int price = 0;
-
-                for (int i = 0; i < Mathf.Abs(startingHeight - gridM.coords[coordIndex].y) * 2; i++)
-                {
-                    price += ((3 + i * 2 + currentTerraformSize - 1) * (3 + i * 2 + currentTerraformSize - 1) - 4 * (i)) * 3;
-                }
+                int price = CalculateTerraformerPrice();
 
                 if (ZooManager.money >= price && !gridM.edgeChanged && !terrainCollided)
                 {
@@ -701,6 +734,7 @@ public class PlayerControl : MonoBehaviour
 
         if (Input.GetMouseButtonDown(0))
         {
+            terraFormCalculatePrice = true;
             var ray = GameCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit) && hit.collider.gameObject.CompareTag("Terrain"))
@@ -723,6 +757,7 @@ public class PlayerControl : MonoBehaviour
             mouseDistnace += Input.GetAxis("Mouse Y");
             if (Input.GetAxis("Mouse Y") > 0)
             {
+                UIMenu.Instance.curExtraMenu?.UpdateWindow();
                 if (mouseDistnace > 0.6f && gridM.coords[coordIndex].y <= maxTerrainHeight)
                 {
                     mouseDistnace = 0;
@@ -895,6 +930,16 @@ public class PlayerControl : MonoBehaviour
                 prevHit = hit2.point;
             }
         }
+    }
+
+    public int CalculateTerraformerPrice(){
+        int price = 0;
+
+        for (int i = 0; i < Mathf.Abs(startingHeight - gridM.coords[coordIndex].y) * 2; i++)
+        {
+            price += ((3 + i * 2 + currentTerraformSize - 1) * (3 + i * 2 + currentTerraformSize - 1) - 4 * (i)) * 3;
+        }
+        return price;
     }
 
     Vector3? prevHit = null;

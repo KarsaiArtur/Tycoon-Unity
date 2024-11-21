@@ -116,6 +116,7 @@ MonoBehaviour:
   isGettingCleaned: 0
   occupiedSpace: 0
   isMixed: 0
+  navMeshObstacleOffset: 0.5
   animalsIds: []
   foliagesIds: []
   staffsIds: []

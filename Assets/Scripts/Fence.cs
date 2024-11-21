@@ -130,7 +130,7 @@ public class Fence : Placeable, Saveable
             xpBonus = 0;
             tag = "Untagged";
             transform.position = new Vector3(0, -100, 0);
-            Destroy(gameObject, 3);
+            Destroy(gameObject, 4);
             return;
         }
 
@@ -226,30 +226,33 @@ public class Fence : Placeable, Saveable
 
     void OnCollisionStay(Collision collision)
     {
-        if ((collision.collider.CompareTag("Placed") || collision.collider.CompareTag("Entrance")) && !tag.Equals("Placed Fence"))
+        if (!tag.Equals("Placed Fence"))
         {
-            collided = true;
-            fenceCollidedWith = null;
-            placeablePrice = (int)defaultPrice;
-            playerControl.canBePlaced = false;
-            ChangeMaterial(2);
-        }
-        else if (collision.collider.CompareTag("Placed Fence"))
-        {
-            var placedFence = collision.collider.GetComponent<Fence>();
-            if (placedFence.strength == strength && placedFence.health < placedFence.maxHealth)
+            if (collision.collider.CompareTag("Placed") || collision.collider.CompareTag("Entrance"))
             {
-                collided = false;
-                fenceCollidedWith = placedFence;
-                placeablePrice = (int)Mathf.Floor(defaultPrice / fenceCollidedWith.maxHealth * fenceCollidedWith.health);
-                playerControl.canBePlaced = true;
-                ChangeMaterial(1);
+                collided = true;
+                fenceCollidedWith = null;
+                placeablePrice = (int)defaultPrice;
+                playerControl.canBePlaced = false;
+                ChangeMaterial(2);
             }
-        }
-        else
-        {
-            fenceCollidedWith = null;
-            placeablePrice = (int)defaultPrice;
+            else if (collision.collider.CompareTag("Placed Fence"))
+            {
+                var placedFence = collision.collider.GetComponent<Fence>();
+                if (placedFence.strength == strength && placedFence.health < placedFence.maxHealth)
+                {
+                    collided = false;
+                    fenceCollidedWith = placedFence;
+                    placeablePrice = (int)Mathf.Floor(defaultPrice / fenceCollidedWith.maxHealth * fenceCollidedWith.health);
+                    playerControl.canBePlaced = true;
+                    ChangeMaterial(1);
+                }
+            }
+            else
+            {
+                fenceCollidedWith = null;
+                placeablePrice = (int)defaultPrice;
+            }
         }
     }
 

@@ -41,7 +41,7 @@ public class TerrainTypeMenu : ExtraMenu
                 playerControl.currentTerrainType = terrainType;
                 playerControl.currentClickGrid = null;
                 nameText.SetText(terrainType.GetName());
-                priceText.SetText(terrainType.GetPrice().ToString() + " $");
+                priceText.SetText(terrainType.GetPrice().ToString());
                 ResetOutlines();
                 outline.effectColor = Color.red;
             });

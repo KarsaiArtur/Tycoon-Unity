@@ -220,7 +220,7 @@ public class MapMaker : MonoBehaviour
             transform.RotateAround(lookatPosition, Vector3.up, horizontalInput);
         }
 
-        if(Input.GetMouseButtonDown(0) && isOverCamera() && !isMoving){
+        if(Input.GetMouseButtonDown(0) && isOverCamera() && !isMoving && !isRotating){
             resetPos = transform.position;
             isMoving = true;
         }
@@ -477,7 +477,7 @@ public class MapMaker : MonoBehaviour
     public void StartGame()
     {
         ZooManager.money = float.Parse(dataFields[0].text);
-        ZooManager.xpMultiplier = float.Parse(dataFields[1].text) / 50f;
+        ZooManager.xpMultiplier = (101f - float.Parse(dataFields[1].text)) / 50f;
         ZooManager.reputation = float.Parse(dataFields[2].text);
         if (float.Parse(dataFields[3].text) > 1)
             QuestManager.diffMult = float.Parse(dataFields[3].text) / 20f;
@@ -486,6 +486,7 @@ public class MapMaker : MonoBehaviour
 
         MainMenu.instance.isMapMaker = false;
         MainMenu.instance.loadGameScene();
+        LoadingScreen.instance.loadScene();
     }
 
     void AddButtons(){
@@ -505,7 +506,7 @@ public class MapMaker : MonoBehaviour
         field.text = Format(value);
     }
 
-    string Format(string value){
+    public static string Format(string value){
         value = value.Replace(" ", "");
         value = value.Length >= 4 ? value.Insert(value.Length - 3, " ") : value;
         for(int i = 1; i <= Math.Floor((value.Replace(" ", "").Length - 4) / 3f); i++){
@@ -710,5 +711,10 @@ public class MapMaker : MonoBehaviour
         terrainTypeLayers = null;
         UpdateBiomeOptions();
         addBiomeButton.gameObject.SetActive(true);
+    }
+
+    public void GoToMainMenu(){
+        MainMenu.instance.loadMainMenuScene();
+        LoadingScreen.instance.loadScene();
     }
 }

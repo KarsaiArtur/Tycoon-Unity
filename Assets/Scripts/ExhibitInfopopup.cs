@@ -12,6 +12,7 @@ public class ExhibitInfopopup : InfoPopup
     GameObject scrollArea;
     int animalCount;
     List<GameObject> animalInfos;
+    const float rescourceNeededPerAnimal = 100f;
 
     public override void Initialize()
     {
@@ -22,8 +23,8 @@ public class ExhibitInfopopup : InfoPopup
         CreateAnimalInfos();
 
         infoPanelInstance.transform.GetChild(0).Find("Name").GetComponent<TextMeshProUGUI>().text = exhibit.GetName();
-        infoPanelInstance.transform.GetChild(0).Find("Water").GetComponent<TextMeshProUGUI>().text = "Water supply" + System.Environment.NewLine + (int)exhibit.water;
-        infoPanelInstance.transform.GetChild(0).Find("Food").GetComponent<TextMeshProUGUI>().text = "Food supply" + System.Environment.NewLine + (int)exhibit.food;
+        infoPanelInstance.transform.GetChild(0).Find("Water").GetComponent<TextMeshProUGUI>().text = "Water supply";
+        infoPanelInstance.transform.GetChild(0).Find("Food").GetComponent<TextMeshProUGUI>().text = "Food supply";
         StartCoroutine(CheckInfos());
     }
 
@@ -32,8 +33,13 @@ public class ExhibitInfopopup : InfoPopup
         while (true)
         {
             infoPanelInstance.transform.GetChild(0).Find("Name").GetComponent<TextMeshProUGUI>().text = exhibit.GetName();
-            infoPanelInstance.transform.GetChild(0).Find("Water").GetComponent<TextMeshProUGUI>().text = "Water supply" + System.Environment.NewLine + (int)exhibit.water;
-            infoPanelInstance.transform.GetChild(0).Find("Food").GetComponent<TextMeshProUGUI>().text = "Food supply" + System.Environment.NewLine + (int)exhibit.food; 
+            var maxRescource = (exhibit.animalsIds.Count * rescourceNeededPerAnimal) == 0 ? 1f : (exhibit.animalsIds.Count * rescourceNeededPerAnimal);
+            infoPanelInstance.transform.GetChild(0).Find("Water").GetChild(0).GetComponent<Slider>().value = exhibit.water / maxRescource;
+            infoPanelInstance.transform.GetChild(0).Find("Water").GetComponent<Tooltip>().tooltipText = ((int)exhibit.water).ToString();
+            infoPanelInstance.transform.GetChild(0).Find("Food").GetComponent<Tooltip>().tooltipText = ((int)exhibit.food).ToString();
+            infoPanelInstance.transform.GetChild(0).Find("Food").GetChild(0).GetComponent<Slider>().value = exhibit.food / maxRescource;
+            SetColor(infoPanelInstance.transform.GetChild(0).Find("Water").GetChild(0).GetComponent<Slider>());
+            SetColor(infoPanelInstance.transform.GetChild(0).Find("Food").GetChild(0).GetComponent<Slider>());
             if (animalCount != exhibit.GetAnimals().Count)
             {
                 DestroyAnimalInfos();
@@ -56,6 +62,23 @@ public class ExhibitInfopopup : InfoPopup
             }
             yield return new WaitForSeconds(1);
         }
+    }
+
+    void SetColor(Slider slider){
+        Color c = new Color();
+        float greenPercentage;
+        if (slider.value >= 0.5f)
+        {
+            greenPercentage = (slider.value - 0.5f) / 0.5f;
+            c = new Color((1f - greenPercentage), 1, 0);
+        }
+        else
+        {
+            greenPercentage = slider.value / 0.5f;
+            c = new Color(1f, greenPercentage, 0);
+        }
+
+        slider.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = c;
     }
 
     public void CreateAnimalInfos()

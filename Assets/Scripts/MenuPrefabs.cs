@@ -6,11 +6,10 @@ public class MenuPrefabs : MonoBehaviour
 {
     public SaveMenu saveMenuPrefab;
     public LoadMenu loadMenuPrefab;
+    public static MenuPrefabs instance;
 
-    public void CrateSaveMenu(){
-        Instantiate(saveMenuPrefab, Vector3.zero, Quaternion.identity);
+    void Start(){
+        instance = this;
     }
-    public void CrateLoadMenu(){
-        Instantiate(loadMenuPrefab, Vector3.zero, Quaternion.identity);
-    }
+
 }

@@ -71,6 +71,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
     float happinessDetriment = 0.25f;
     float trashDetriment = 0.25f;
 
+    public float maxHappiness = 0;
     public Action action;
     bool isFleeing = false;
     public int dangerLevel = 3;
@@ -135,6 +136,9 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         {
             sadnessReasons.Clear();
 
+            if (happiness > maxHappiness)
+                maxHappiness = happiness;
+
             hunger = hunger > hungerDetriment ? hunger - hungerDetriment : 0;
             thirst = thirst > thirstDetriment ? thirst - thirstDetriment : 0;
             energy = energy > energyDetriment ? energy - energyDetriment : 0;
@@ -144,22 +148,22 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
             if (GetComponent<NavMeshAgent>().enabled && !arrived)
                 energy = energy > energyDetriment ? energy - energyDetriment : 0;
 
-            if (hunger < 33)
+            if (hunger < 20)
             {
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
                 sadnessReasons.Add(SadnessReason.Hunger);
             }
-            if (thirst < 33)
+            if (thirst < 20)
             {
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
                 sadnessReasons.Add(SadnessReason.Thirst);
             }
-            if (energy < 33)
+            if (energy < 20)
             {
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
                 sadnessReasons.Add(SadnessReason.Energy);
             }
-            if (restroomNeeds < 33)
+            if (restroomNeeds < 20)
             {
                 happiness = happiness > happinessDetriment ? happiness - happinessDetriment : 0;
                 sadnessReasons.Add(SadnessReason.Restroom);
@@ -227,7 +231,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
                 if (timeStuck > 15)
                 {
                     happiness -= 10;
-                    GetDestinationVisitable()?.SetCapacity(GetDestinationVisitable().GetCapacity() + 1);
+                    //GetDestinationVisitable()?.SetCapacity(GetDestinationVisitable().GetCapacity() + 1);
                     NavMeshPath path = null;
                     if (agent.isOnNavMesh)
                     {
@@ -308,7 +312,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         photoCamera.enabled = false;
         arrived = false;
         SetIsVisible(true);
-        GetDestinationVisitable()?.SetCapacity(GetDestinationVisitable().GetCapacity() + 1);
+        //GetDestinationVisitable()?.SetCapacity(GetDestinationVisitable().GetCapacity() + 1);
         GetDestinationVisitable()?.RemoveVisitor(this);
 
         ChooseDestinationType();
@@ -359,7 +363,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         }
 
         GetDestinationVisitable().AddVisitor(this);
-        GetDestinationVisitable().SetCapacity(GetDestinationVisitable().GetCapacity() - 1);
+        //GetDestinationVisitable().SetCapacity(GetDestinationVisitable().GetCapacity() - 1);
         
         if (agent.isOnNavMesh)
         {
@@ -414,7 +418,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
             probabilities.Add((Action.Happiness, sum));
         }
         if (VisitableManager.instance.GetReachableExhibits().Count == 0 || VisitableManager.instance.GetReachableExhibits().Count - GetUnvisitedExhibits().Count > 0)
-            sum += (100 + 50 * ((VisitableManager.instance.GetReachableExhibits().Count + 1 - GetUnvisitedExhibits().Count) / (VisitableManager.instance.GetReachableExhibits().Count + 1)) - happiness);
+            sum += (50 + 50 * ((VisitableManager.instance.GetReachableExhibits().Count + 1 - GetUnvisitedExhibits().Count) / (VisitableManager.instance.GetReachableExhibits().Count + 1)) - happiness);
         
         if (GetUnvisitedExhibits().Count == 0)
             sum += 100;

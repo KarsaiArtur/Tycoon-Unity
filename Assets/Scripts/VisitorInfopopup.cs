@@ -102,7 +102,6 @@ public class VisitorInfoPopup : InfoPopup
     public override void AddOutline()
     {
         foreach(var renderer in visitor.renderers){
-            Debug.Log(renderer);
             renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = true;
         }
     }

@@ -1,0 +1,386 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1513938346992439337
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1934614265076212001}
+  - component: {fileID: 1076759987083505839}
+  m_Layer: 0
+  m_Name: AnimalCam
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1934614265076212001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513938346992439337}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.022395827, y: -0.97759193, z: 0.15046577, w: -0.14550802}
+  m_LocalPosition: {x: -0.245, y: 0.603, z: 0.961}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6989744957149221017}
+  m_LocalEulerAnglesHint: {x: 17.5, y: 164.44, z: 0}
+--- !u!20 &1076759987083505839
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1513938346992439337}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0.8
+    y: 0.21
+    width: 0.199
+    height: 0.2
+  near clip plane: 0.01
+  far clip plane: 1000
+  field of view: 26
+  orthographic: 1
+  orthographic size: 0.3
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!1 &4135460144383853640
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6989744957149221017}
+  - component: {fileID: 429402676547291710}
+  - component: {fileID: 137237419355237438}
+  - component: {fileID: -3511705671797708402}
+  - component: {fileID: 6595779134716126065}
+  m_Layer: 0
+  m_Name: red deer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6989744957149221017
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4135460144383853640}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 12.9983225, y: 1.7380786, z: 14.921225}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1934614265076212001}
+  - {fileID: 118645471613726680}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!195 &429402676547291710
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4135460144383853640}
+  m_Enabled: 1
+  m_AgentTypeID: -334000983
+  m_Radius: 0.17
+  m_Speed: 0.25
+  m_Acceleration: 0.5
+  avoidancePriority: 50
+  m_AngularSpeed: 1000
+  m_StoppingDistance: 0.1
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 0.72
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &137237419355237438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4135460144383853640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 375d94d5519830348ab7ecd7abaf41cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  playerControl: {fileID: 0}
+  gridManager: {fileID: 0}
+  placeableName: Red Deer
+  description: Red foxes are omnivores, eating fish, birds, insects, and fruits.
+    They are usually solitary, hunting and living alone, except during mating or
+    while raising their young. Red foxes are highly adaptable and can be found in
+    diverse habitats, including forests, grasslands, mountains, and urban areas.
+    They are native to North America, Europe, Asia, and parts of North Africa, thriving
+    in a variety of ecosystems.
+  placeablePrice: 800
+  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  currentPlacingPrice: {fileID: 0}
+  currentPlacingPriceInstance: {fileID: 0}
+  renderers: []
+  selectedPrefabId: 0
+  xpUnlockLevel: 1
+  xpBonus: 30
+  expense: 0
+  sadnessReasons: 
+  healthReasons: 
+  materials:
+  - {fileID: 2100000, guid: e8eee43141a377848a3027dbe52e5f3e, type: 2}
+  - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
+  surface: {fileID: 0}
+  agent: {fileID: 429402676547291710}
+  animator: {fileID: 9086398896033959482}
+  atDestination: 1
+  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  reputationBonus: 0.03
+  timeGoal: 0
+  destinationReached: 0
+  action: 0
+  hunger: 100
+  thirst: 100
+  restroomNeeds: 100
+  happiness: 100
+  health: 100
+  hungerDetriment: 0.25
+  thirstDetriment: 0.5
+  restroomNeedsDetriment: 0.25
+  happinessDetriment: 0.25
+  healthDetriment: 0.25
+  isSick: 0
+  isOccupiedByVet: 0
+  isSlept: 0
+  sleptPosition: {x: 0, y: 0, z: 0}
+  requiredExhibitSpace: 9
+  continents: 050000000200000003000000
+  terrainsPreferred: 000000000100000002000000
+  terrainsPreferredPercents:
+  - 33
+  - 33
+  - 33
+  terrainBonusMultiplier: 0
+  naturePreferredCount: 0.1
+  natureBonusMultiplier: 1
+  age: 0
+  lifeExpectancy: 4
+  fullGrownAgeMonth: 12
+  isMale: 1
+  reproductionAgeMonth: 1
+  pregnancyDurationMonth: 2
+  isPregnant: 0
+  pregnancyTimeMonth: 0
+  averageNumberOfBabies: 5
+  fertility: 100
+  isAgressive: 1
+  dangerLevel: 2
+  isTooMuchFoliage: 0
+  badTerrainTypes: 
+  exhibitId: 
+  destinationVisitableId: 
+  matingPartnerId: 
+  targetId: 
+--- !u!65 &-3511705671797708402
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4135460144383853640}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.13446464, y: 0.71, z: 0.68}
+  m_Center: {x: 0.0050301924, y: 0.33, z: 0.06}
+--- !u!54 &6595779134716126065
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4135460144383853640}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
+--- !u!1001 &445638732738185267
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6989744957149221017}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.12
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      propertyPath: m_Name
+      value: red deer
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 9086398896033959482}
+  m_SourcePrefab: {fileID: 100100000, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+--- !u!4 &118645471613726680 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+  m_PrefabInstance: {fileID: 445638732738185267}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &787659073751283042 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 96819ba7a50342242a7771de110845ef, type: 3}
+  m_PrefabInstance: {fileID: 445638732738185267}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &9086398896033959482
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 787659073751283042}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 0b373dd84a604cc41806e35f37338d76, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
