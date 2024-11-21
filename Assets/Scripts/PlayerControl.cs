@@ -61,7 +61,7 @@ public class PlayerControl : MonoBehaviour
     public List<Chunk> modifiedChunks = new List<Chunk>();
     public GameObject TerraformColliderPrefab;
     public bool terrainCollided = false;
-    float startingHeight = -10;
+    float startingHeight = -100;
     public int currentTerraformSize = 1;
     public Vector3[] startingCoords;
     bool terrainHit = false;
@@ -704,7 +704,7 @@ public class PlayerControl : MonoBehaviour
             UIMenu.Instance.curExtraMenu?.UpdateWindow();
             gridM.ReloadGrids();
 
-            if (startingHeight > -10 && coordIndex != 0 && terrainHit)
+            if (startingHeight > -100 && coordIndex != 0 && terrainHit)
             {
                 int price = CalculateTerraformerPrice();
 
@@ -768,8 +768,8 @@ public class PlayerControl : MonoBehaviour
                         for (int j = 0; j < zWidth + 1; j++)
                         {
                             height += gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
-                            if (gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y < startingHeight)
-                                startingHeight = gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
+                            //if (gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y < startingHeight)
+                            //    startingHeight = gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
                         }
                     }
 
@@ -800,6 +800,7 @@ public class PlayerControl : MonoBehaviour
             }
             else
             {
+                UIMenu.Instance.curExtraMenu?.UpdateWindow();
                 if (mouseDistnace < -0.6f && gridM.coords[coordIndex].y >= minTerrainHeight)
                 {
                     mouseDistnace = 0;
@@ -810,8 +811,8 @@ public class PlayerControl : MonoBehaviour
                         for (int j = 0; j < zWidth + 1; j++)
                         {
                             height += gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
-                            if (gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y > startingHeight)
-                                startingHeight = gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
+                            //if (gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y > startingHeight)
+                            //    startingHeight = gridM.coords[coordIndex + i + j * (gridM.terrainWidth + 1)].y;
                         }
                     }
 
