@@ -283,7 +283,7 @@ Camera:
   m_NormalizedViewPortRect:
     serializedVersion: 2
     x: 0.8
-    y: 0.465
+    y: 0.21
     width: 0.199
     height: 0.2
   near clip plane: 0.3
@@ -1906,6 +1906,8 @@ MonoBehaviour:
   fertility: 100
   isAgressive: 0
   dangerLevel: 2
+  isTooMuchFoliage: 0
+  badTerrainTypes: 
   exhibitId: 
   destinationVisitableId: 
   matingPartnerId: 

@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 /////Saveable Attributes, DONT DELETE
-//////Vector3[] coords;TerrainType[] coordTypes;int terrainWidth//////////
+//////Vector3[] coords;TerrainType[] coordTypes;int terrainWidth;float edgeHeight//////////
 
 public class GridManager : MonoBehaviour, Saveable, Manager
 {
@@ -43,7 +43,30 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         {
             LoadMenu.currentManager = this;
             LoadMenu.instance.LoadData(this);
+
             LoadMenu.objectLoadedEvent.Invoke();
+
+
+
+            initializing = true;
+
+            int tilesPerSide = terrainWidth / elementWidth;
+            terrainElements = new Chunk[tilesPerSide * tilesPerSide];
+            int l = 0, z, x;
+            for (l = 0, z = 0; z < tilesPerSide; z++)
+            {
+                for (x = 0; x < tilesPerSide; x++, l++)
+                {
+                    Chunk elementInstance;
+                    if (!(x == 0 || z == 0 || z == (tilesPerSide - 1) || x == (tilesPerSide - 1)))
+                    {
+                        elementInstance = Instantiate(terrainPrefab, this.transform);
+                        elementInstance.Initialize(x, z, coords, coordTypes);
+                        terrainElements[l] = elementInstance;
+                    }
+                }
+            }
+            StartGame();
         }
         DontDestroyOnLoad(gameObject);
     }
@@ -229,17 +252,6 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         {
             for (int x = 0; x <= terrainWidth; x++, i++)
             {
-                //if (!((x >= elementWidth && x <= terrainWidth - elementWidth) && (z >= elementWidth && z <= terrainWidth - elementWidth)))
-                //{
-                //    y = edgeHeight;
-                //}
-                //else
-                //{
-                //    y = Mathf.PerlinNoise((float)(x + offsetX) / changeRate, (float)(z + offsetZ) / changeRate) * height;
-                //    y = Mathf.Floor(y) / 2;
-                //    //coords[i] = new Vector3(x, y, z);
-                //}
-
                 y = Mathf.PerlinNoise((float)(x + offsetX) / changeRate, (float)(z + offsetZ) / changeRate) * height;
                 y = Mathf.Floor(y) / 2;
                 sumHeight += y;
@@ -428,11 +440,7 @@ public class GridManager : MonoBehaviour, Saveable, Manager
             for (int j = 43; j < 60; j++)
             {
                 coords[j * (terrainWidth + 1) + i].y = edgeHeight;
-                //if (!initializing)
-                //    grids[i - elementWidth, j - elementWidth].isPath = true;
-                //TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight + 0.5f, false);
-                //TerraformNeighbours(j * (terrainWidth + 1) + i, edgeHeight - 0.5f, true);
-
+                
                 int index = j * (terrainWidth + 1) + i;
                 int[] neighbourIndexes = new int[8];
                 neighbourIndexes[0] = index + 1;
@@ -463,18 +471,6 @@ public class GridManager : MonoBehaviour, Saveable, Manager
 
     public void TerraformNeighbours(int index, float height, bool positive)
     {
-        /*if (index % (terrainWidth + 1) == terrainWidth - elementWidth || (index > (elementWidth) * (terrainWidth + 1) && index < (elementWidth + 1) * (terrainWidth + 1)) || index % (terrainWidth + 1) == elementWidth || (index < (terrainWidth + 1) * (terrainWidth + 1) - elementWidth * (terrainWidth + 1) && index > (terrainWidth + 1) * (terrainWidth + 1) - (elementWidth + 1) * (terrainWidth + 1)))
-        {
-            edgeChanged = true;
-            return;
-        }
-
-        if (!initializing && coords[index].x >= 32 && coords[index].x <= 38 && coords[index].z >= 45 && coords[index].z <= 57)
-        {
-            edgeChanged = true;
-            return;
-        }*/
-
         if (initializing && !(coords[index].x >= elementWidth && coords[index].x <= terrainWidth - elementWidth && coords[index].z >= elementWidth && coords[index].z <= terrainWidth - elementWidth))
         {
             return;
@@ -489,7 +485,6 @@ public class GridManager : MonoBehaviour, Saveable, Manager
             terraformCollider.center = new Vector3(coords[index].x, coords[index].y, coords[index].z);
 
             Destroy(terraformCollider.gameObject, 0.3f);
-            //Destroy(terraformCollider.gameObject, 50);
         }
 
         int[] neighbourIndexes = new int[8];
@@ -535,45 +530,6 @@ public class GridManager : MonoBehaviour, Saveable, Manager
                 TerraformNeighbours(neighbourIndexes[i], height + 0.5f, false);
             }
         }
-
-        /*if (coords[index].y == coords[index + terrainWidth].y && coords[index].y != coords[index + terrainWidth + 1].y && coords[index - 1].y == coords[index + terrainWidth + 1].y)
-        {
-            coords[index + terrainWidth + 1].y = coords[index].y;
-            coords[index - 1].y = coords[index].y;
-        }
-        if (coords[index].y == coords[index + terrainWidth + 2].y && coords[index].y != coords[index + terrainWidth + 1].y && coords[index + 1].y == coords[index + terrainWidth + 1].y)
-        {
-            coords[index + terrainWidth + 1].y = coords[index].y;
-            coords[index + 1].y = coords[index].y;
-        }
-        if (coords[index].y == coords[index - terrainWidth].y && coords[index].y != coords[index - (terrainWidth + 1)].y && coords[index + 1].y == coords[index - (terrainWidth + 1)].y)
-        {
-            coords[index - (terrainWidth + 1)].y = coords[index].y;
-            coords[index + 1].y = coords[index].y;
-        }
-        if (coords[index].y == coords[index - (terrainWidth + 2)].y && coords[index].y != coords[index - (terrainWidth + 1)].y && coords[index - 1].y == coords[index - (terrainWidth + 1)].y)
-        {
-            coords[index - (terrainWidth + 1)].y = coords[index].y;
-            coords[index - 1].y = coords[index].y;
-        }
-
-        if (coords[index + 1].y != coords[index + 1 + 1].y && coords[index + terrainWidth + 1 + 1].y == coords[index + 1 + 1].y && coords[index - 1 + 1].y == coords[index + 1 + 1].y && coords[index - (terrainWidth + 1) + 1].y == coords[index + 1 + 1].y)
-        {
-            coords[index + 1].y = coords[index + 1 + 1].y;
-        }
-        if (coords[index - 1].y != coords[index + 1 - 1].y && coords[index + terrainWidth + 1 - 1].y == coords[index + 1 - 1].y && coords[index - 1 - 1].y == coords[index + 1 - 1].y && coords[index - (terrainWidth + 1) - 1].y == coords[index + 1 - 1].y)
-        {
-            coords[index - 1].y = coords[index + 1 - 1].y;
-        }
-        if (coords[index + terrainWidth + 1].y != coords[index + 1 + terrainWidth + 1].y && coords[index + terrainWidth + 1 + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y && coords[index - 1 + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y && coords[index - (terrainWidth + 1) + terrainWidth + 1].y == coords[index + 1 + terrainWidth + 1].y)
-        {
-            coords[index + terrainWidth + 1].y = coords[index + 1 + terrainWidth + 1].y;
-        }
-        if (coords[index - (terrainWidth + 1)].y != coords[index + 1 - (terrainWidth + 1)].y && coords[index + terrainWidth + 1 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index + terrainWidth + 2 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - 2 - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - (terrainWidth + 1) - (terrainWidth + 1)].y == coords[index + 1 - (terrainWidth + 1)].y && coords[index - (terrainWidth + 1) - (terrainWidth + 1) - 1].y == coords[index + 1 - (terrainWidth + 1)].y)
-        {
-            coords[index - (terrainWidth + 1)].y = coords[index + 1 - (terrainWidth + 1)].y;
-            coords[index - 1 - (terrainWidth + 1)].y = coords[index + 1 - (terrainWidth + 1)].y;
-        }*/
 
         if (!initializing)
         {
@@ -655,18 +611,22 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         [JsonConverter(typeof(Vector3ArrayConverter))]
         public Vector3[] coords;
         public TerrainType[] coordTypes;
+        public int terrainWidth;
+        public float edgeHeight;
 
-        public GridManagerData(Vector3[] coordsParam, TerrainType[] coordTypesParam)
+        public GridManagerData(Vector3[] coordsParam, TerrainType[] coordTypesParam, int terrainWidthParam, float edgeHeightParam)
         {
            coords = coordsParam;
            coordTypes = coordTypesParam;
+           terrainWidth = terrainWidthParam;
+           edgeHeight = edgeHeightParam;
         }
     }
 
     GridManagerData data; 
     
     public string DataToJson(){
-        GridManagerData data = new GridManagerData(coords, coordTypes);
+        GridManagerData data = new GridManagerData(coords, coordTypes, terrainWidth, edgeHeight);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -678,16 +638,18 @@ public class GridManager : MonoBehaviour, Saveable, Manager
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data.coords, data.coordTypes);
+        SetData(data.coords, data.coordTypes, data.terrainWidth, data.edgeHeight);
     }
     
     public string GetFileName(){
         return "GridManager.json";
     }
     
-    void SetData(Vector3[] coordsParam, TerrainType[] coordTypesParam){ 
+    void SetData(Vector3[] coordsParam, TerrainType[] coordTypesParam, int terrainWidthParam, float edgeHeightParam){ 
         
            coords = coordsParam;
            coordTypes = coordTypesParam;
+           terrainWidth = terrainWidthParam;
+           edgeHeight = edgeHeightParam;
     }
 }

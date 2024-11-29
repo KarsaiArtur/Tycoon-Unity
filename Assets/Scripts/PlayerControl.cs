@@ -459,7 +459,7 @@ public class PlayerControl : MonoBehaviour
     void Move()
     {
         Vector2 move = new Vector2(Input.GetAxis("Vertical"), Input.GetAxis("Horizontal"));
-        if(move!= Vector2.zero)
+        if (move != Vector2.zero)
         {
             GameCamera.GetComponent<CinemachineBrain>().enabled = false;
             if(currentInfopopup != null)
@@ -475,17 +475,17 @@ public class PlayerControl : MonoBehaviour
         if (cameraTimesRotated == 3)
             transform.position = transform.position + new Vector3(move.y * (float)Math.Cos(angle * degToRad) - move.x * (float)Math.Sin(angle * degToRad), 0, move.y * (float)Math.Sin(angle * degToRad) + move.x * (float)Math.Cos(angle * degToRad)) * cameraSpeed * Time.deltaTime;
 
-        float number = (transform.position.y - 10) / 20 * 12;
+        float borderMult = (transform.position.y - 10) / 20 * 12;
         //float number = (transform.position.y / 2);
 
-        if (transform.position.x < minX + Math.Sign(cameraTimesRotated - 1.5) * number)
-            transform.position = new Vector3(minX + Math.Sign(cameraTimesRotated - 1.5) * number, transform.position.y, transform.position.z);
-        if (transform.position.x > maxX + Math.Sign(cameraTimesRotated - 1.5) * number)
-            transform.position = new Vector3(maxX + Math.Sign(cameraTimesRotated - 1.5) * number, transform.position.y, transform.position.z);
-        if (transform.position.z < minZ - number + Math.Sign(cameraTimesRotated % 3) * 2 * number)
-            transform.position = new Vector3(transform.position.x, transform.position.y, minZ - number + Math.Sign(cameraTimesRotated % 3) * 2 * number);
-        if (transform.position.z > maxZ - number + Math.Sign(cameraTimesRotated % 3) * 2 * number)
-            transform.position = new Vector3(transform.position.x, transform.position.y, maxZ - number + Math.Sign(cameraTimesRotated % 3) * 2 * number);
+        if (transform.position.x < minX + Math.Sign(cameraTimesRotated - 1.5) * borderMult)
+            transform.position = new Vector3(minX + Math.Sign(cameraTimesRotated - 1.5) * borderMult, transform.position.y, transform.position.z);
+        if (transform.position.x > maxX + Math.Sign(cameraTimesRotated - 1.5) * borderMult)
+            transform.position = new Vector3(maxX + Math.Sign(cameraTimesRotated - 1.5) * borderMult, transform.position.y, transform.position.z);
+        if (transform.position.z < minZ - borderMult + Math.Sign(cameraTimesRotated % 3) * 2 * borderMult)
+            transform.position = new Vector3(transform.position.x, transform.position.y, minZ - borderMult + Math.Sign(cameraTimesRotated % 3) * 2 * borderMult);
+        if (transform.position.z > maxZ - borderMult + Math.Sign(cameraTimesRotated % 3) * 2 * borderMult)
+            transform.position = new Vector3(transform.position.x, transform.position.y, maxZ - borderMult + Math.Sign(cameraTimesRotated % 3) * 2 * borderMult);
 
         MovementSpeedChange();
     }

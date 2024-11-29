@@ -198,9 +198,10 @@ public class Bench : BuildingAncestor, Saveable
         public int placeablePrice;
         public bool reachable;
         public int capacity;
+        public int defaultCapacity;
         public List<string> visitorsIds;
 
-        public BenchData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam)
+        public BenchData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, int defaultCapacityParam, List<string> visitorsIdsParam)
         {
            _id = _idParam;
            position = positionParam;
@@ -210,6 +211,7 @@ public class Bench : BuildingAncestor, Saveable
            placeablePrice = placeablePriceParam;
            reachable = reachableParam;
            capacity = capacityParam;
+           defaultCapacity = defaultCapacityParam;
            visitorsIds = visitorsIdsParam;
         }
     }
@@ -217,7 +219,7 @@ public class Bench : BuildingAncestor, Saveable
     BenchData data; 
     
     public string DataToJson(){
-        BenchData data = new BenchData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds);
+        BenchData data = new BenchData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, defaultCapacity, visitorsIds);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -229,14 +231,14 @@ public class Bench : BuildingAncestor, Saveable
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.visitorsIds);
+        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.defaultCapacity, data.visitorsIds);
     }
     
     public string GetFileName(){
         return "Bench.json";
     }
     
-    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam){ 
+    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, int defaultCapacityParam, List<string> visitorsIdsParam){ 
         
            _id = _idParam;
            transform.position = positionParam;
@@ -246,11 +248,12 @@ public class Bench : BuildingAncestor, Saveable
            placeablePrice = placeablePriceParam;
            reachable = reachableParam;
            capacity = capacityParam;
+           defaultCapacity = defaultCapacityParam;
            visitorsIds = visitorsIdsParam;
     }
     
     public BenchData ToData(){
-        return new BenchData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds);
+        return new BenchData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, defaultCapacity, visitorsIds);
     }
     
     public void FromData(BenchData data){
@@ -263,6 +266,7 @@ public class Bench : BuildingAncestor, Saveable
            placeablePrice = data.placeablePrice;
            reachable = data.reachable;
            capacity = data.capacity;
+           defaultCapacity = data.defaultCapacity;
            visitorsIds = data.visitorsIds;
     }
 }

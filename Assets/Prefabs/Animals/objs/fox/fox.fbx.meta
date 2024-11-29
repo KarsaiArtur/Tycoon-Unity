@@ -33,8 +33,8 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: Armature|Eating
-      takeName: Armature|Eating
+      name: Eating
+      takeName: Armature|Armature|Armature|Eating
       internalID: -3715609151880130241
       firstFrame: 0
       lastFrame: 9
@@ -62,8 +62,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Idle
-      takeName: Armature|Idle
+      name: Idle
+      takeName: Armature|Armature|Armature|0Default
       internalID: -8945691123924629249
       firstFrame: 0
       lastFrame: 0
@@ -91,8 +91,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Start Eating
-      takeName: Armature|Start Eating
+      name: Start Eating
+      takeName: Armature|Armature|Armature|Start Eating
       internalID: -5691611726766497555
       firstFrame: 0
       lastFrame: 20
@@ -120,8 +120,8 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: Armature|Walk.002
-      takeName: Armature|Walk.002
+      name: Walk
+      takeName: Armature|Armature|Armature|Walk.002
       internalID: 2847642367013452201
       firstFrame: 0
       lastFrame: 40

@@ -148,7 +148,7 @@ public class Fence : Placeable, Saveable
         grid2.neighbours[timesRotated] = null;
 
         if ((grid1.GetExhibit() == null || grid2.GetExhibit() == null) && GridManager.instance.ExhibitFinderBFS(grid1, grid2) != null && (GridManager.instance.ExhibitFinderBFS(grid1, gridManager.startingGrid) == null || GridManager.instance.ExhibitFinderBFS(grid2, gridManager.startingGrid) == null))
-{
+        {
             HashSet<Grid> tempGrids = GridManager.instance.ExhibitFinderBFS(grid1, gridManager.startingGrid);
             GameObject gateInstance = Instantiate(playerControl.gates[playerControl.fenceIndex], playerControl.m_Selected.transform.position, transform.rotation);
             Exhibit exhibit = gateInstance.GetComponent<Exhibit>();
@@ -276,10 +276,10 @@ public class Fence : Placeable, Saveable
         exhibitCreateWindow.transform.SetParent(playerControl.canvas.transform);
         exhibitCreateWindow.transform.localPosition = Vector3.zero;
 
-        var placeholder = exhibitCreateWindow.transform.GetChild(0).Find("Inputfield").Find("Text Area").Find("Placeholder").GetComponent<TextMeshProUGUI>();
+        var placeholder = exhibitCreateWindow.transform.Find("Panel").Find("Inputfield").Find("Text Area").Find("Placeholder").GetComponent<TextMeshProUGUI>();
         placeholder.text = "Exhibit" + Exhibit.exhibitCount++;
-        var inputfield = exhibitCreateWindow.transform.GetChild(0).Find("Inputfield").GetComponent<TMP_InputField>();
-        exhibitCreateWindow.transform.GetChild(0).Find("Submit").GetComponent<Button>().
+        var inputfield = exhibitCreateWindow.transform.Find("Panel").Find("Inputfield").GetComponent<TMP_InputField>();
+        exhibitCreateWindow.transform.Find("Panel").Find("Submit").GetComponent<Button>().
             onClick.AddListener(
             () => {
                 exhibit.exhibitName = String.IsNullOrWhiteSpace(inputfield.text) ? placeholder.text : inputfield.text;

@@ -225,7 +225,7 @@ public class Exhibit : Placeable, Visitable, Saveable
     {
         if (GetAnimals().Count > 0)
             foreach (var animal in GetAnimals())
-                visitor.happiness = visitor.happiness + animal.happiness / 25 > 100 ? 100 : visitor.happiness + animal.happiness / 25;
+                visitor.happiness = visitor.happiness + animal.happiness / 20f > 100 ? 100 : visitor.happiness + animal.happiness / 20f;
         visitor.GetCurrentExhibit(_id);
         visitor.TakePictures();
     }

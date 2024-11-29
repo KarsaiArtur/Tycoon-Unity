@@ -14,11 +14,20 @@ public class BiomeCard : MonoBehaviour
     public TMP_Dropdown terrainTypeDropdown;
     public Slider frequency;
     public Slider area;
+    public TextMeshProUGUI frequencyText;
+    public TextMeshProUGUI areaText;
+    public float areaValue;
+    const float areaMax = 1f;
+    const float areaMin = 0.5f;
+    const float frequenyMax = 0.3f;
 
     public float offsetX;
     public float offsetZ;
 
     void Awake(){
+        areaText.text = Math.Round(area.value / areaMax * 100f).ToString();
+        areaValue = areaMax - (area.value - areaMin);
+            frequencyText.text = Math.Round(frequency.value / frequenyMax * 100f).ToString();
        SetOptions();
        GenerateOffsets();
 
@@ -28,9 +37,12 @@ public class BiomeCard : MonoBehaviour
         });
        frequency.onValueChanged.AddListener((value) => {
             GenerateOffsets();
+            frequencyText.text = Math.Round(value / frequenyMax * 100f).ToString();
             MapMaker.GenerateBiome(this);
        });
        area.onValueChanged.AddListener((value) => {
+            areaText.text = Math.Round(value / areaMax * 100f).ToString();
+            areaValue = areaMax - (value - areaMin);
             MapMaker.GenerateBiome(this);
        });
     }

@@ -10,7 +10,6 @@ using UnityEngine;
 
 public class Zookeeper : Staff, Saveable
 {
-
     Exhibit exhibitToWorkAt;
     int waterTroughIndex = 0;
     public override List<StaffJob> GetJobTypes() => new List<StaffJob> { StaffJob.CleaningExhibit, StaffJob.FillingWater, StaffJob.PlacingFood };

@@ -42,13 +42,12 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
             timeTillSpawn = UnityEngine.Random.Range(SpawnTime - 3 < 1 ? 1 : SpawnTime - 3, SpawnTime + 3);
             SpawnTime = 20;
             if (VisitableManager.instance.GetReachableExhibits().Count > 0)
-                SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(Mathf.Sqrt(VisitableManager.instance.GetReachableExhibits().Count)));
+                SpawnTime /= Mathf.Sqrt(Mathf.Sqrt(Mathf.Sqrt(VisitableManager.instance.GetReachableExhibits().Count)));
             SpawnTime = SpawnTime / ZooManager.reputation * 75;
             SpawnTime = SpawnTime * ZooManager.instance.currentEntranceFee / ZooManager.instance.defaultEntranceFee;
-            SpawnTime = SpawnTime / animalBonus;
+            SpawnTime /= animalBonus;
             if (animalBonuses.Count > 0)
-                SpawnTime = SpawnTime / Mathf.Sqrt(Mathf.Sqrt(animalBonuses.Count));
-            //timeTillSpawn = 0.1f;
+                SpawnTime /= Mathf.Sqrt(Mathf.Sqrt(animalBonuses.Count));
 
             for (int i = 0; i <= numberOfVisitors[UnityEngine.Random.Range(0, numberOfVisitors.Count)]; i++)
                 SpawnVisitor();

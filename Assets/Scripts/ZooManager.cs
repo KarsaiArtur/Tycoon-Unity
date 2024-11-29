@@ -81,7 +81,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
         if (latestVisitorHappinesses.Count > listSizeLimit)
         {
             reputation -= latestVisitorHappinesses[0] / listSizeLimit;
-            reputation += visitor.maxHappiness / listSizeLimit;
+            reputation += (visitor.maxHappiness / 2 + visitor.happiness / 2) / listSizeLimit;
             latestVisitorHappinesses.RemoveAt(0);
         }
 

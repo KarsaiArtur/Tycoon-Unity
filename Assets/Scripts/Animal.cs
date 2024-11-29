@@ -855,19 +855,17 @@ public class Animal : Placeable, Saveable
         var probabilities = new List<(Action action, float probability)>();
         float sum = 0;
 
-        if (GetExhibit() != null && GetExhibit().food > 0)
+        if (GetExhibit() != null && GetExhibit().food > 0 && hunger < 75)
         {
-            //sum += (100 - hunger);
-            sum += hunger < 75 ? 110 - hunger : 0;
+            sum += 110f - hunger;
             probabilities.Add((Action.Food, sum));
         }
-        if (GetExhibit() != null && GetExhibit().water > 0)
+        if (GetExhibit() != null && GetExhibit().water > 0 && thirst < 75)
         {
-            //sum += (100 - thirst);
-            sum += thirst < 75 ? 110 - thirst : 0;
+            sum += 110f - thirst;
             probabilities.Add((Action.Drink, sum));
         }
-        sum += 25;
+        sum += 25f;
         probabilities.Add((Action.Wander, sum));
 
         var random = UnityEngine.Random.Range(0, sum);

@@ -578,6 +578,7 @@ public class Building : BuildingAncestor, Saveable
         public int placeablePrice;
         public bool reachable;
         public int capacity;
+        public int defaultCapacity;
         public List<string> visitorsIds;
         public int x;
         public int z;
@@ -585,7 +586,7 @@ public class Building : BuildingAncestor, Saveable
         public Vector3 startingGridIndex;
         public List<PurchasableItemsData> purchasableItemInstancesData;
 
-        public BuildingData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int xParam, int zParam, Vector3 startingGridIndexParam, List<PurchasableItemsData> purchasableItemInstancesDataParam)
+        public BuildingData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, int defaultCapacityParam, List<string> visitorsIdsParam, int xParam, int zParam, Vector3 startingGridIndexParam, List<PurchasableItemsData> purchasableItemInstancesDataParam)
         {
            _id = _idParam;
            position = positionParam;
@@ -595,6 +596,7 @@ public class Building : BuildingAncestor, Saveable
            placeablePrice = placeablePriceParam;
            reachable = reachableParam;
            capacity = capacityParam;
+           defaultCapacity = defaultCapacityParam;
            visitorsIds = visitorsIdsParam;
            x = xParam;
            z = zParam;
@@ -606,7 +608,7 @@ public class Building : BuildingAncestor, Saveable
     BuildingData data; 
     
     public string DataToJson(){
-        BuildingData data = new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, x, z, startingGridIndex, purchasableItemInstancesData);
+        BuildingData data = new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, defaultCapacity, visitorsIds, x, z, startingGridIndex, purchasableItemInstancesData);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -618,14 +620,14 @@ public class Building : BuildingAncestor, Saveable
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.visitorsIds, data.x, data.z, data.startingGridIndex, data.purchasableItemInstancesData);
+        SetData(data._id, data.position, data.rotation, data.selectedPrefabId, data.tag, data.placeablePrice, data.reachable, data.capacity, data.defaultCapacity, data.visitorsIds, data.x, data.z, data.startingGridIndex, data.purchasableItemInstancesData);
     }
     
     public string GetFileName(){
         return "Building.json";
     }
     
-    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, List<string> visitorsIdsParam, int xParam, int zParam, Vector3 startingGridIndexParam, List<PurchasableItemsData> purchasableItemInstancesDataParam){ 
+    void SetData(string _idParam, Vector3 positionParam, Quaternion rotationParam, int selectedPrefabIdParam, string tagParam, int placeablePriceParam, bool reachableParam, int capacityParam, int defaultCapacityParam, List<string> visitorsIdsParam, int xParam, int zParam, Vector3 startingGridIndexParam, List<PurchasableItemsData> purchasableItemInstancesDataParam){ 
         
            _id = _idParam;
            transform.position = positionParam;
@@ -635,6 +637,7 @@ public class Building : BuildingAncestor, Saveable
            placeablePrice = placeablePriceParam;
            reachable = reachableParam;
            capacity = capacityParam;
+           defaultCapacity = defaultCapacityParam;
            visitorsIds = visitorsIdsParam;
            x = xParam;
            z = zParam;
@@ -644,7 +647,7 @@ public class Building : BuildingAncestor, Saveable
     
     public BuildingData ToData(){
         SaveHelper();
-        return new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, visitorsIds, x, z, startingGridIndex, purchasableItemInstancesData);
+        return new BuildingData(_id, transform.position, transform.rotation, selectedPrefabId, tag, placeablePrice, reachable, capacity, defaultCapacity, visitorsIds, x, z, startingGridIndex, purchasableItemInstancesData);
     }
     
     public void FromData(BuildingData data){
@@ -657,6 +660,7 @@ public class Building : BuildingAncestor, Saveable
            placeablePrice = data.placeablePrice;
            reachable = data.reachable;
            capacity = data.capacity;
+           defaultCapacity = data.defaultCapacity;
            visitorsIds = data.visitorsIds;
            x = data.x;
            z = data.z;

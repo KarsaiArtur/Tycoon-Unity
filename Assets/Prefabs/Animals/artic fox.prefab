@@ -1,0 +1,386 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1734319418734664986
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8401121583033416095}
+  - component: {fileID: 5735866821185231654}
+  - component: {fileID: 1445866051124704181}
+  - component: {fileID: -5438985215552027139}
+  - component: {fileID: -8801767657992567976}
+  m_Layer: 0
+  m_Name: artic fox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8401121583033416095
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734319418734664986}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 243589415468048268}
+  - {fileID: 7892387794633617705}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!195 &5735866821185231654
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734319418734664986}
+  m_Enabled: 1
+  m_AgentTypeID: -334000983
+  m_Radius: 0.055
+  m_Speed: 0.25
+  m_Acceleration: 0.5
+  avoidancePriority: 50
+  m_AngularSpeed: 1000
+  m_StoppingDistance: 0.1
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 0
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
+--- !u!114 &1445866051124704181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734319418734664986}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 375d94d5519830348ab7ecd7abaf41cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _id: 
+  playerControl: {fileID: 0}
+  gridManager: {fileID: 0}
+  placeableName: Artic Fox
+  description: Red foxes are omnivores, eating fish, birds, insects, and fruits.
+    They are usually solitary, hunting and living alone, except during mating or
+    while raising their young. Red foxes are highly adaptable and can be found in
+    diverse habitats, including forests, grasslands, mountains, and urban areas.
+    They are native to North America, Europe, Asia, and parts of North Africa, thriving
+    in a variety of ecosystems.
+  placeablePrice: 800
+  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  currentPlacingPrice: {fileID: 0}
+  currentPlacingPriceInstance: {fileID: 0}
+  renderers: []
+  selectedPrefabId: 0
+  xpUnlockLevel: 1
+  xpBonus: 30
+  expense: 0
+  sadnessReasons: 
+  healthReasons: 
+  materials:
+  - {fileID: 2100000, guid: e8eee43141a377848a3027dbe52e5f3e, type: 2}
+  - {fileID: 2100000, guid: 351683a990679b54f97af7434d1ad6ae, type: 2}
+  surface: {fileID: 0}
+  agent: {fileID: 5735866821185231654}
+  animator: {fileID: 772872661960881581}
+  atDestination: 1
+  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  reputationBonus: 0.03
+  timeGoal: 0
+  destinationReached: 0
+  action: 0
+  hunger: 100
+  thirst: 100
+  restroomNeeds: 100
+  happiness: 100
+  health: 100
+  hungerDetriment: 0.25
+  thirstDetriment: 0.5
+  restroomNeedsDetriment: 0.25
+  happinessDetriment: 0.25
+  healthDetriment: 0.25
+  isSick: 0
+  isOccupiedByVet: 0
+  isSlept: 0
+  sleptPosition: {x: 0, y: 0, z: 0}
+  requiredExhibitSpace: 9
+  continents: 050000000200000003000000
+  terrainsPreferred: 000000000100000002000000
+  terrainsPreferredPercents:
+  - 33
+  - 33
+  - 33
+  terrainBonusMultiplier: 0
+  naturePreferredCount: 0.1
+  natureBonusMultiplier: 1
+  age: 0
+  lifeExpectancy: 4
+  fullGrownAgeMonth: 12
+  isMale: 1
+  reproductionAgeMonth: 1
+  pregnancyDurationMonth: 2
+  isPregnant: 0
+  pregnancyTimeMonth: 0
+  averageNumberOfBabies: 5
+  fertility: 100
+  isAgressive: 1
+  dangerLevel: 2
+  isTooMuchFoliage: 0
+  badTerrainTypes: 
+  exhibitId: 
+  destinationVisitableId: 
+  matingPartnerId: 
+  targetId: 
+--- !u!54 &-5438985215552027139
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734319418734664986}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
+--- !u!65 &-8801767657992567976
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734319418734664986}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.0726964, y: 0.1721273, z: 0.2901718}
+  m_Center: {x: 0.00059752166, y: 0.0837753, z: 0.0025027096}
+--- !u!1 &7130030067154054347
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 243589415468048268}
+  - component: {fileID: 1236161000039676730}
+  m_Layer: 0
+  m_Name: AnimalCam
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &243589415468048268
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7130030067154054347}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.039395124, y: 0.96058047, z: -0.1910713, w: 0.1980527}
+  m_LocalPosition: {x: -0.126, y: 0.221, z: 0.338}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8401121583033416095}
+  m_LocalEulerAnglesHint: {x: 22.5, y: 156.7, z: 0}
+--- !u!20 &1236161000039676730
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7130030067154054347}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_Iso: 200
+  m_ShutterSpeed: 0.005
+  m_Aperture: 16
+  m_FocusDistance: 10
+  m_FocalLength: 50
+  m_BladeCount: 5
+  m_Curvature: {x: 2, y: 11}
+  m_BarrelClipping: 0.25
+  m_Anamorphism: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0.8
+    y: 0.21
+    width: 0.199
+    height: 0.2
+  near clip plane: 0.01
+  far clip plane: 1000
+  field of view: 30
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!1001 &7642007819004057282
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 8401121583033416095}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.05
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      propertyPath: m_Name
+      value: artic fox
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 772872661960881581}
+  m_SourcePrefab: {fileID: 100100000, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+--- !u!1 &7407493737077779347 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+  m_PrefabInstance: {fileID: 7642007819004057282}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &772872661960881581
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7407493737077779347}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 981b55f8c6b4d5c4c919b41e04b426f8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!4 &7892387794633617705 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: e3ded95bb11b125448d87a2d6ca2f43d, type: 3}
+  m_PrefabInstance: {fileID: 7642007819004057282}
+  m_PrefabAsset: {fileID: 0}

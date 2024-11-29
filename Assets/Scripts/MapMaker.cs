@@ -64,7 +64,7 @@ public class MapMaker : MonoBehaviour
             5,
             20,
             "Height",
-            (int value) => { GridManager.instance.height = value; }
+            value => { GridManager.instance.height = value; }
 
         ),
         (
@@ -73,7 +73,7 @@ public class MapMaker : MonoBehaviour
             1,
             4,
             "Map size",
-            (int value) => { 
+            value => { 
                 GridManager.instance.terrainWidth = (value + 2) * GridManager.instance.elementWidth; 
             }
         ),
@@ -83,7 +83,10 @@ public class MapMaker : MonoBehaviour
             5,
             60,
             "Change rate",
-            (int value) => { GridManager.instance.changeRate = value; }
+            value => { 
+                var rate = MapMaker.instance.values.Find(e => e.name.Equals("Change rate"));
+                GridManager.instance.changeRate = rate.max - (value - rate.min); 
+            }
         ),
     };
 
@@ -377,6 +380,7 @@ public class MapMaker : MonoBehaviour
         resetPos = cameraPositionPreset;
         newCameraPos.y = cameraMinY + (sliderValue - 1) * cameraYChange;
         _camera.transform.position = newCameraPos;
+        cameraMax = cameraMinSize + (sliderValue - 1) * cameraSizeChange;
         _camera.orthographicSize = cameraMinSize + (sliderValue - 1) * cameraSizeChange; 
     }
 
@@ -572,7 +576,7 @@ public class MapMaker : MonoBehaviour
                 terrainTypeLayers[i] = terrainTypeLayers[i] ?? new List<BiomeCard>(){};
             
                 if(biomeCard != null){
-                    if (Mathf.PerlinNoise((float)(x + biomeCard.offsetX) * biomeCard.frequency.value, (float)(z + biomeCard.offsetZ) * biomeCard.frequency.value) > biomeCard.area.value){
+                    if (Mathf.PerlinNoise((float)(x + biomeCard.offsetX) * biomeCard.frequency.value, (float)(z + biomeCard.offsetZ) * biomeCard.frequency.value) > biomeCard.areaValue){
                         if(!terrainTypeLayers[i].Contains(biomeCard)){
                             if (terrainTypeLayers[i].Count() == 0)
                                 terrainTypeLayers[i].Add(biomeCard);
@@ -623,7 +627,6 @@ public class MapMaker : MonoBehaviour
     }
 
     public static void Rerender(){
-        Debug.Log("OK");
         foreach (Chunk tempChunk in GridManager.instance.terrainElements)
         {
            if(tempChunk != null)
@@ -648,64 +651,6 @@ public class MapMaker : MonoBehaviour
         }
     }
 
-    public Image imgPrefab;
-    public GameObject panel;
-    public float frequency;
-    public float threshold;
-    public Image[,] imgMap = new Image[100, 100];
-    
-
-    public Color[,] GenerateIslandMap(int width, int height, float frequency)
-    {
-        Color[,] map = new Color[width, height];
-
-        // Alap szín minden cellában fehér
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                map[x, y] = Color.white;
-            }
-        }
-
-        // Perlin zaj alapján fekete szigetek létrehozása
-        for (int x = 0; x < width; x++)
-        {
-            for (int y = 0; y < height; y++)
-            {
-                // Zaj érték kiszámítása adott frekvenciával
-                float noiseValue = Mathf.PerlinNoise(x * frequency, y * frequency);
-
-                // Ha a zaj értéke magasabb a küszöbértéknél, akkor szigetnek jelöljük
-                if (noiseValue > threshold)  
-                {
-                    map[x, y] = Color.black; // Sziget (fekete szín)
-                }
-            }
-        }
-
-        return map;
-    }
-
-    public void PrintMap(Color[,] map)
-    {
-        int width = map.GetLength(0);
-        int height = map.GetLength(1);
-
-        for (int y = 0; y < height; y++)
-        {
-            for (int x = 0; x < width; x++)
-            {
-                if(imgMap[x,y] == null){
-                    var img = Instantiate(imgPrefab);
-                    img.transform.SetParent(panel.transform);
-                    imgMap[x,y] = img;
-                }
-                imgMap[x,y].color = map[x, y];
-            }
-        }
-    }
-
     void RemoveAllBiomes(){
         biomeCards.Clear();
         terrainTypeLayers = null;
@@ -715,6 +660,8 @@ public class MapMaker : MonoBehaviour
 
     public void GoToMainMenu(){
         MainMenu.instance.loadMainMenuScene();
+        ResetCamera();
+        Destroy(GridManager.instance.gameObject);
         LoadingScreen.instance.loadScene();
     }
 }

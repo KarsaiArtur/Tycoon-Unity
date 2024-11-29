@@ -58,7 +58,7 @@ public class Vector3ArrayConverter : JsonConverter<Vector3[]>
     {
         writer.WriteStartArray();
 
-        // Minden Vector3 elemet egyenként serializálunk
+        
         foreach (var vector in value)
         {
             writer.WriteStartObject();
@@ -78,7 +78,7 @@ public class Vector3ArrayConverter : JsonConverter<Vector3[]>
     {
         var vectorList = new System.Collections.Generic.List<Vector3>();
 
-        // Olvassuk be a JSON tömböt
+        
         while (reader.Read())
         {
             if (reader.TokenType == JsonToken.StartObject)
@@ -111,7 +111,7 @@ public class Vector3ArrayConverter : JsonConverter<Vector3[]>
                     }
                 }
 
-                // Hozzáadjuk a Vector3 elemet a listához
+                
                 vectorList.Add(new Vector3(x, y, z));
             }
             else if (reader.TokenType == JsonToken.EndArray)

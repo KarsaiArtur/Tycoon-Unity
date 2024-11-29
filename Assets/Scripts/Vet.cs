@@ -12,7 +12,6 @@ using static Cinemachine.DocumentationSortingAttribute;
 
 public class Vet : Staff, Saveable
 {
-
     Animal animalOccupied;
     public bool aiming = false;
     int shootingDistance = 5;

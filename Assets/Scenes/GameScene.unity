@@ -5488,6 +5488,7 @@ MonoBehaviour:
   fenceIndex: 0
   canBePlaced: 1
   terraForming: 0
+  terraFormCalculatePrice: 0
   deleting: 0
   terrainType: 0
   isMouseDown: 0

@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 
 /////Saveable Attributes, DONT DELETE
-//////int currentQuestId;int numberOfDoneQuests;List<int> questPoolIds;bool questsCompleted;bool terrainTypeUsed;bool terraformerUsed;bool deleteUsed//////////
+//////int currentQuestId;int numberOfDoneQuests;List<int> questPoolIds;bool questsCompleted;bool terrainTypeUsed;bool terraformerUsed;bool deleteUsed;float diffMult//////////
 
 public class QuestManager : MonoBehaviour, Saveable, Manager
 {
@@ -105,7 +105,6 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
         return currentQuest;
     }
 
-
     void Update()
     {
         if (questsCompleted)
@@ -167,8 +166,9 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
         public bool terrainTypeUsed;
         public bool terraformerUsed;
         public bool deleteUsed;
+        public float diffMult;
 
-        public QuestManagerData(int currentQuestIdParam, int numberOfDoneQuestsParam, List<int> questPoolIdsParam, bool questsCompletedParam, bool terrainTypeUsedParam, bool terraformerUsedParam, bool deleteUsedParam)
+        public QuestManagerData(int currentQuestIdParam, int numberOfDoneQuestsParam, List<int> questPoolIdsParam, bool questsCompletedParam, bool terrainTypeUsedParam, bool terraformerUsedParam, bool deleteUsedParam, float diffMultParam)
         {
            currentQuestId = currentQuestIdParam;
            numberOfDoneQuests = numberOfDoneQuestsParam;
@@ -177,13 +177,14 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
            terrainTypeUsed = terrainTypeUsedParam;
            terraformerUsed = terraformerUsedParam;
            deleteUsed = deleteUsedParam;
+           diffMult = diffMultParam;
         }
     }
 
     QuestManagerData data; 
     
     public string DataToJson(){
-        QuestManagerData data = new QuestManagerData(currentQuestId, numberOfDoneQuests, questPoolIds, questsCompleted, terrainTypeUsed, terraformerUsed, deleteUsed);
+        QuestManagerData data = new QuestManagerData(currentQuestId, numberOfDoneQuests, questPoolIds, questsCompleted, terrainTypeUsed, terraformerUsed, deleteUsed, diffMult);
         return JsonConvert.SerializeObject(data, new JsonSerializerSettings
         {
             TypeNameHandling = TypeNameHandling.Auto
@@ -195,14 +196,14 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
         {
             TypeNameHandling = TypeNameHandling.Auto
         });
-        SetData(data.currentQuestId, data.numberOfDoneQuests, data.questPoolIds, data.questsCompleted, data.terrainTypeUsed, data.terraformerUsed, data.deleteUsed);
+        SetData(data.currentQuestId, data.numberOfDoneQuests, data.questPoolIds, data.questsCompleted, data.terrainTypeUsed, data.terraformerUsed, data.deleteUsed, data.diffMult);
     }
     
     public string GetFileName(){
         return "QuestManager.json";
     }
     
-    void SetData(int currentQuestIdParam, int numberOfDoneQuestsParam, List<int> questPoolIdsParam, bool questsCompletedParam, bool terrainTypeUsedParam, bool terraformerUsedParam, bool deleteUsedParam){ 
+    void SetData(int currentQuestIdParam, int numberOfDoneQuestsParam, List<int> questPoolIdsParam, bool questsCompletedParam, bool terrainTypeUsedParam, bool terraformerUsedParam, bool deleteUsedParam, float diffMultParam){ 
         
            currentQuestId = currentQuestIdParam;
            numberOfDoneQuests = numberOfDoneQuestsParam;
@@ -211,5 +212,6 @@ public class QuestManager : MonoBehaviour, Saveable, Manager
            terrainTypeUsed = terrainTypeUsedParam;
            terraformerUsed = terraformerUsedParam;
            deleteUsed = deleteUsedParam;
+           diffMult = diffMultParam;
     }
 }

@@ -384,44 +384,42 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         var probabilities = new List<(Action action, float probability)>();
         float sum = 0;
 
-        //sum += (110 - trash);
-        sum += trash < 50 ? 110 - trash : 0;
-        probabilities.Add((Action.Trash, sum));
-
-        if (VisitableManager.instance.GetReachableFoodBuildings().Count > 0)
+        if (trash < 50)
         {
-            //sum += (110 - hunger);
-            sum += hunger < 75 ? 110 - hunger : 0;
+            sum += 110f - trash;
+            probabilities.Add((Action.Trash, sum));
+        }
+
+        if (VisitableManager.instance.GetReachableFoodBuildings().Count > 0 && hunger < 75)
+        {
+            sum += 110f - hunger;
             probabilities.Add((Action.Food, sum));
         }
-        if (VisitableManager.instance.GetReachableDrinkBuildings().Count > 0)
+        if (VisitableManager.instance.GetReachableDrinkBuildings().Count > 0 && thirst < 75)
         {
-            //sum += (110 - thirst);
-            sum += thirst < 75 ? 110 - thirst : 0;
+            sum += 110f - thirst;
             probabilities.Add((Action.Drink, sum));
         }
-        if (VisitableManager.instance.GetReachableEnergyBuildings().Count > 0)
+        if (VisitableManager.instance.GetReachableEnergyBuildings().Count > 0 && energy < 75)
         {
-            //sum += (110 - energy);
-            sum += energy < 75 ? 110 - energy : 0;
+            sum += 110f - energy;
             probabilities.Add((Action.Energy, sum));
         }
-        if (VisitableManager.instance.GetReachableRestroomBuildings().Count > 0)
+        if (VisitableManager.instance.GetReachableRestroomBuildings().Count > 0 && restroomNeeds < 75)
         {
-            //sum += (110 - restroomNeeds);
-            sum += restroomNeeds < 75 ? 110 - restroomNeeds : 0;
+            sum += 110f - restroomNeeds;
             probabilities.Add((Action.Restroom, sum));
         }
         if (GetUnvisitedExhibits().Count > 0 || VisitableManager.instance.GetReachableHappinessBuildings().Count > 0)
         {
-            sum += (200 - happiness);
+            sum += 200f - happiness;
             probabilities.Add((Action.Happiness, sum));
         }
         if (VisitableManager.instance.GetReachableExhibits().Count == 0 || VisitableManager.instance.GetReachableExhibits().Count - GetUnvisitedExhibits().Count > 0)
-            sum += (50 + 50 * ((VisitableManager.instance.GetReachableExhibits().Count + 1 - GetUnvisitedExhibits().Count) / (VisitableManager.instance.GetReachableExhibits().Count + 1)) - happiness);
-        
+            sum += (50f + 50f * ((VisitableManager.instance.GetReachableExhibits().Count + 1 - GetUnvisitedExhibits().Count) / (VisitableManager.instance.GetReachableExhibits().Count + 1)) - happiness);
+
         if (GetUnvisitedExhibits().Count == 0)
-            sum += 100;
+            sum += 100f;
         probabilities.Add((Action.Leave, sum));
 
         var random = UnityEngine.Random.Range(0, sum);
@@ -444,7 +442,7 @@ public class Visitor : MonoBehaviour, Clickable, Saveable
         {
             if (visitable.GetCapacity() > 0 && (action != Action.Trash || (action == Action.Trash && Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0] + new Vector3(0.5f, 0, 0.5f)) < 5)))
             {
-                sum += (maxDistance + 10 - Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0]));
+                sum += (maxDistance + 10f - Vector3.Distance(transform.position, visitable.GetStartingGrid().coords[0]));
                 VisitableDistances.Add((visitable, sum));
             }
         }

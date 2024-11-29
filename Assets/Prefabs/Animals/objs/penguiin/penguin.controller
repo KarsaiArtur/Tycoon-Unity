@@ -21,7 +21,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -3715609151880130241, guid: 4a154d64c86493c498085fe85613b89f, type: 3}
+  m_Motion: {fileID: 8980401706749873883, guid: 5e8afdf0c54bd5146836917a367d67af, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -129,7 +129,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -8945691123924629249, guid: 4a154d64c86493c498085fe85613b89f, type: 3}
+  m_Motion: {fileID: -7681441007365279422, guid: 5e8afdf0c54bd5146836917a367d67af, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -141,7 +141,7 @@ AnimatorController:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: New Animator Controller
+  m_Name: penguin
   serializedVersion: 5
   m_AnimatorParameters:
   - m_Name: vertical
@@ -149,7 +149,7 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -209,7 +209,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 2847642367013452201, guid: 4a154d64c86493c498085fe85613b89f, type: 3}
+  m_Motion: {fileID: 8349542763059015795, guid: 5e8afdf0c54bd5146836917a367d67af, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
@@ -284,7 +284,7 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -5691611726766497555, guid: 4a154d64c86493c498085fe85613b89f, type: 3}
+  m_Motion: {fileID: 4229678310728619793, guid: 5e8afdf0c54bd5146836917a367d67af, type: 3}
   m_Tag: 
   m_SpeedParameter: 
   m_MirrorParameter: 
