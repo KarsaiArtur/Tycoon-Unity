@@ -138,7 +138,7 @@ MonoBehaviour:
   placeableName: Bighorn Sheep
   description: 
   placeablePrice: 700
-  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  icon: {fileID: 21300000, guid: 6981dd74184ea61469eed83a9ba82e49, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -176,7 +176,7 @@ MonoBehaviour:
   sleptPosition: {x: 0, y: 0, z: 0}
   requiredExhibitSpace: 9
   continents: 050000000200000003000000
-  terrainsPreferred: 0100000006000000
+  terrainsPreferred: 0700000000000000
   terrainsPreferredPercents:
   - 80
   - 20

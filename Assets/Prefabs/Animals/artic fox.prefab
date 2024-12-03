@@ -82,7 +82,7 @@ MonoBehaviour:
     They are native to North America, Europe, Asia, and parts of North Africa, thriving
     in a variety of ecosystems.
   placeablePrice: 800
-  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  icon: {fileID: 21300000, guid: 509352cf20cbc0d46800f96253101c4b, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -120,10 +120,9 @@ MonoBehaviour:
   sleptPosition: {x: 0, y: 0, z: 0}
   requiredExhibitSpace: 9
   continents: 050000000200000003000000
-  terrainsPreferred: 000000000100000002000000
+  terrainsPreferred: 0300000001000000
   terrainsPreferredPercents:
-  - 33
-  - 33
+  - 66
   - 33
   terrainBonusMultiplier: 0
   naturePreferredCount: 0.1

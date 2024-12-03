@@ -228,7 +228,7 @@ MonoBehaviour:
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
-  xpUnlockLevel: 2
+  xpUnlockLevel: 1
   xpBonus: 60
   expense: 0
   sadnessReasons: 

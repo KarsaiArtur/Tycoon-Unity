@@ -9,19 +9,19 @@
   },
   "packageFolders": {
     "C:\\Users\\artur\\.nuget\\packages\\": {},
-    "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\IdToObjectCodeGenerator\\SaveableCodeGenerator.csproj",
-      "projectName": "SaveableCodeGenerator",
-      "projectPath": "D:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\IdToObjectCodeGenerator\\SaveableCodeGenerator.csproj",
+      "projectUniqueName": "C:\\Users\\artur\\Desktop\\egyetem\\6. félév\\önlab\\Tycoon-Unity\\CodeGenerator\\IdToObjectCodeGenerator\\IdToObjectCodeGenerator.csproj",
+      "projectName": "IdToObjectCodeGenerator",
+      "projectPath": "C:\\Users\\artur\\Desktop\\egyetem\\6. félév\\önlab\\Tycoon-Unity\\CodeGenerator\\IdToObjectCodeGenerator\\IdToObjectCodeGenerator.csproj",
       "packagesPath": "C:\\Users\\artur\\.nuget\\packages\\",
-      "outputPath": "D:\\egyetem\\egyetem\\önlab\\Tycoon-Unity\\Tycoon-Unity\\CodeGenerator\\IdToObjectCodeGenerator\\obj\\",
+      "outputPath": "C:\\Users\\artur\\Desktop\\egyetem\\6. félév\\önlab\\Tycoon-Unity\\CodeGenerator\\IdToObjectCodeGenerator\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
-        "D:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
         "C:\\Users\\artur\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -71,7 +71,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

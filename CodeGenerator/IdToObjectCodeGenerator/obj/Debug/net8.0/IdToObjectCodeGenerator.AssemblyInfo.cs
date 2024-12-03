@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("IdToObjectCodeGenerator")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2f8e3f2e00d5e72f11dd1972cb39e524f987f38e")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+13031000cf95f7305196814c24f7c8ef2229402f")]
 [assembly: System.Reflection.AssemblyProductAttribute("IdToObjectCodeGenerator")]
 [assembly: System.Reflection.AssemblyTitleAttribute("IdToObjectCodeGenerator")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
