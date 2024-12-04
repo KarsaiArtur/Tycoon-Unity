@@ -13,7 +13,7 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
     public List<Visitor> visitorList;
     public List<Visitor> visitorPrefabs;
     private float timeTillSpawn = 0;
-    public float SpawnTime = 20;
+    public float SpawnTime = 30;
     List<int> numberOfVisitors;
     float animalBonus = 1;
     List<AnimalBonus> animalBonuses = new List<AnimalBonus>();
@@ -40,7 +40,7 @@ public class VisitorManager : MonoBehaviour, Saveable, Manager
         if (timeTillSpawn <= 0 && VisitableManager.instance.CanOpen())
         {
             timeTillSpawn = UnityEngine.Random.Range(SpawnTime - 3 < 1 ? 1 : SpawnTime - 3, SpawnTime + 3);
-            SpawnTime = 20;
+            SpawnTime = 30;
             if (VisitableManager.instance.GetReachableExhibits().Count > 0)
                 SpawnTime /= Mathf.Sqrt(Mathf.Sqrt(Mathf.Sqrt(VisitableManager.instance.GetReachableExhibits().Count)));
             SpawnTime = SpawnTime / ZooManager.reputation * 75;

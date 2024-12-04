@@ -137,14 +137,14 @@ MonoBehaviour:
   gridManager: {fileID: 0}
   placeableName: Bighorn Sheep
   description: 
-  placeablePrice: 700
   icon: {fileID: 21300000, guid: 6981dd74184ea61469eed83a9ba82e49, type: 3}
+  placeablePrice: 750
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
   xpUnlockLevel: 1
-  xpBonus: 20
+  xpBonus: 75
   expense: 0
   sadnessReasons: 
   healthReasons: 
@@ -156,7 +156,7 @@ MonoBehaviour:
   animator: {fileID: 804606048716368189}
   atDestination: 1
   foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
-  reputationBonus: 0.02
+  reputationBonus: 0.015
   timeGoal: 0
   destinationReached: 0
   action: 0
@@ -174,24 +174,24 @@ MonoBehaviour:
   isOccupiedByVet: 0
   isSlept: 0
   sleptPosition: {x: 0, y: 0, z: 0}
-  requiredExhibitSpace: 9
-  continents: 050000000200000003000000
+  requiredExhibitSpace: 10
+  continents: 05000000
   terrainsPreferred: 0700000000000000
   terrainsPreferredPercents:
-  - 80
-  - 20
+  - 50
+  - 50
   terrainBonusMultiplier: 0
   naturePreferredCount: 0.1
   natureBonusMultiplier: 1
   age: 0
-  lifeExpectancy: 14
-  fullGrownAgeMonth: 24
+  lifeExpectancy: 17
+  fullGrownAgeMonth: 12
   isMale: 1
-  reproductionAgeMonth: 36
-  pregnancyDurationMonth: 3
+  reproductionAgeMonth: 48
+  pregnancyDurationMonth: 6
   isPregnant: 0
   pregnancyTimeMonth: 0
-  averageNumberOfBabies: 3
+  averageNumberOfBabies: 1
   fertility: 100
   isAgressive: 0
   dangerLevel: 2

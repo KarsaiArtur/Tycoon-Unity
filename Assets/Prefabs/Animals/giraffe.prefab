@@ -222,14 +222,14 @@ MonoBehaviour:
   gridManager: {fileID: 0}
   placeableName: Giraffe
   description: 
-  placeablePrice: 1200
+  placeablePrice: 900
   icon: {fileID: 21300000, guid: 1791e5e638c2f3a45a8defb7bc3fef6f, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
-  xpUnlockLevel: 1
-  xpBonus: 70
+  xpUnlockLevel: 2
+  xpBonus: 180
   expense: 0
   sadnessReasons: 
   healthReasons: 
@@ -241,7 +241,7 @@ MonoBehaviour:
   animator: {fileID: 4010818604138102683}
   atDestination: 1
   foodPrefab: {fileID: 8474453306234765502, guid: 19cada2424b7e1e49b0bb22e29124f17, type: 3}
-  reputationBonus: 0.07
+  reputationBonus: 0.018
   timeGoal: 0
   destinationReached: 0
   action: 0
@@ -265,17 +265,17 @@ MonoBehaviour:
   terrainsPreferredPercents:
   - 100
   terrainBonusMultiplier: 0
-  naturePreferredCount: 0
+  naturePreferredCount: 0.1
   natureBonusMultiplier: 1
   age: 0
   lifeExpectancy: 25
-  fullGrownAgeMonth: 12
+  fullGrownAgeMonth: 24
   isMale: 1
-  reproductionAgeMonth: 1
+  reproductionAgeMonth: 48
   pregnancyDurationMonth: 14
   isPregnant: 0
   pregnancyTimeMonth: 0
-  averageNumberOfBabies: 3
+  averageNumberOfBabies: 1
   fertility: 100
   isAgressive: 0
   dangerLevel: 4

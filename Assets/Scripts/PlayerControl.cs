@@ -559,7 +559,7 @@ public class PlayerControl : MonoBehaviour
         if (!stopMovement)
         {
             curPlaceable = placeable;
-            var newSelected = Instantiate(placeable, new Vector3(Round(Input.mousePosition.x), 5, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
+            var newSelected = Instantiate(placeable, new Vector3(Round(Input.mousePosition.x), Input.mousePosition.y, Round(Input.mousePosition.z)), new Quaternion(0, 0, 0, 0));
             newSelected.selectedPrefabId = placeable.gameObject.GetInstanceID();
             m_Selected = newSelected;
             canBePlaced = true;

@@ -222,14 +222,14 @@ MonoBehaviour:
     animals. Jaguars live in dense rainforests, wetlands, and savannas, typically
     near water sources, thriving in tropical and subtropical environments across
     Central and South America.
-  placeablePrice: 1000
+  placeablePrice: 950
   icon: {fileID: 21300000, guid: 1db7d2b5370c46b4f99d51ba34c9bbd7, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
-  xpUnlockLevel: 1
-  xpBonus: 60
+  xpUnlockLevel: 2
+  xpBonus: 190
   expense: 0
   sadnessReasons: 
   healthReasons: 
@@ -241,7 +241,7 @@ MonoBehaviour:
   animator: {fileID: 6091641609604937966}
   atDestination: 1
   foodPrefab: {fileID: -6171456068034794058, guid: 23b12887481305549a503723ba52a206, type: 3}
-  reputationBonus: 0.06
+  reputationBonus: 0.019
   timeGoal: 0
   destinationReached: 0
   action: 0
@@ -259,20 +259,20 @@ MonoBehaviour:
   isOccupiedByVet: 0
   isSlept: 0
   sleptPosition: {x: 0, y: 0, z: 0}
-  requiredExhibitSpace: 22
-  continents: 0500000001000000
-  terrainsPreferred: 0200000009000000
+  requiredExhibitSpace: 30
+  continents: 0500000006000000
+  terrainsPreferred: 0000000009000000
   terrainsPreferredPercents:
-  - 49
-  - 51
+  - 40
+  - 60
   terrainBonusMultiplier: 0
-  naturePreferredCount: 0
+  naturePreferredCount: 0.2
   natureBonusMultiplier: 1
   age: 0
-  lifeExpectancy: 14
-  fullGrownAgeMonth: 12
+  lifeExpectancy: 20
+  fullGrownAgeMonth: 24
   isMale: 1
-  reproductionAgeMonth: 1
+  reproductionAgeMonth: 48
   pregnancyDurationMonth: 3
   isPregnant: 0
   pregnancyTimeMonth: 0

@@ -105,6 +105,7 @@ public class Animal : Placeable, Saveable
 
     public override void Place(Vector3 mouseHit)
     {
+        agent.enabled = false;
         if (tag != "Placed")
         {
             base.Place(mouseHit);

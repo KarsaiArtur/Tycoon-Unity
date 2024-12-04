@@ -158,20 +158,15 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Red Deer
-  description: Red foxes are omnivores, eating fish, birds, insects, and fruits.
-    They are usually solitary, hunting and living alone, except during mating or
-    while raising their young. Red foxes are highly adaptable and can be found in
-    diverse habitats, including forests, grasslands, mountains, and urban areas.
-    They are native to North America, Europe, Asia, and parts of North Africa, thriving
-    in a variety of ecosystems.
-  placeablePrice: 800
   icon: {fileID: 21300000, guid: 5c5ef51fe80d2454684844ec54ea087d, type: 3}
+  description: 
+  placeablePrice: 600
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
   xpUnlockLevel: 1
-  xpBonus: 30
+  xpBonus: 60
   expense: 0
   sadnessReasons: 
   healthReasons: 
@@ -183,7 +178,7 @@ MonoBehaviour:
   animator: {fileID: 9086398896033959482}
   atDestination: 1
   foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
-  reputationBonus: 0.03
+  reputationBonus: 0.012
   timeGoal: 0
   destinationReached: 0
   action: 0
@@ -201,27 +196,28 @@ MonoBehaviour:
   isOccupiedByVet: 0
   isSlept: 0
   sleptPosition: {x: 0, y: 0, z: 0}
-  requiredExhibitSpace: 9
-  continents: 050000000200000003000000
-  terrainsPreferred: 0100000003000000
+  requiredExhibitSpace: 15
+  continents: 0300000002000000
+  terrainsPreferred: 000000000100000002000000
   terrainsPreferredPercents:
-  - 75
-  - 25
+  - 34
+  - 33
+  - 33
   terrainBonusMultiplier: 0
   naturePreferredCount: 0.1
   natureBonusMultiplier: 1
   age: 0
-  lifeExpectancy: 4
-  fullGrownAgeMonth: 12
+  lifeExpectancy: 20
+  fullGrownAgeMonth: 48
   isMale: 1
-  reproductionAgeMonth: 1
-  pregnancyDurationMonth: 2
+  reproductionAgeMonth: 36
+  pregnancyDurationMonth: 7
   isPregnant: 0
   pregnancyTimeMonth: 0
-  averageNumberOfBabies: 5
+  averageNumberOfBabies: 1
   fertility: 100
-  isAgressive: 1
-  dangerLevel: 2
+  isAgressive: 0
+  dangerLevel: 3
   isTooMuchFoliage: 0
   badTerrainTypes: 
   exhibitId: 

@@ -271,8 +271,8 @@ MonoBehaviour:
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
-  xpUnlockLevel: 1
-  xpBonus: 40
+  xpUnlockLevel: 2
+  xpBonus: 170
   expense: 0
   sadnessReasons: 
   healthReasons: 
@@ -284,7 +284,7 @@ MonoBehaviour:
   animator: {fileID: 7856306232705164593}
   atDestination: 1
   foodPrefab: {fileID: 63179339203581416, guid: 9a447cd8e61c9004aa147f1ba2c6ec5c, type: 3}
-  reputationBonus: 0.04
+  reputationBonus: 0.017
   timeGoal: 0
   destinationReached: 0
   action: 0
@@ -302,19 +302,19 @@ MonoBehaviour:
   isOccupiedByVet: 0
   isSlept: 0
   sleptPosition: {x: 0, y: 0, z: 0}
-  requiredExhibitSpace: 53
-  continents: 0100000006000000
-  terrainsPreferred: 02000000
+  requiredExhibitSpace: 5
+  continents: 06000000
+  terrainsPreferred: 09000000
   terrainsPreferredPercents:
   - 100
   terrainBonusMultiplier: 0
-  naturePreferredCount: 0
+  naturePreferredCount: 0.2
   natureBonusMultiplier: 1
   age: 0
   lifeExpectancy: 20
   fullGrownAgeMonth: 12
   isMale: 1
-  reproductionAgeMonth: 1
+  reproductionAgeMonth: 36
   pregnancyDurationMonth: 5
   isPregnant: 0
   pregnancyTimeMonth: 0

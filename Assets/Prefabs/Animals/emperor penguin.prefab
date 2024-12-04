@@ -158,20 +158,15 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Emperor Penguin
-  description: Red foxes are omnivores, eating fish, birds, insects, and fruits.
-    They are usually solitary, hunting and living alone, except during mating or
-    while raising their young. Red foxes are highly adaptable and can be found in
-    diverse habitats, including forests, grasslands, mountains, and urban areas.
-    They are native to North America, Europe, Asia, and parts of North Africa, thriving
-    in a variety of ecosystems.
-  placeablePrice: 800
   icon: {fileID: 21300000, guid: fb4374aa36c40f441a4876d6391af7bb, type: 3}
+  description: 
+  placeablePrice: 1800
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
-  xpUnlockLevel: 1
-  xpBonus: 30
+  xpUnlockLevel: 4
+  xpBonus: 720
   expense: 0
   sadnessReasons: 
   healthReasons: 
@@ -183,7 +178,7 @@ MonoBehaviour:
   animator: {fileID: 7593002656511698904}
   atDestination: 1
   foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
-  reputationBonus: 0.03
+  reputationBonus: 0.036
   timeGoal: 0
   destinationReached: 0
   action: 0
@@ -201,27 +196,27 @@ MonoBehaviour:
   isOccupiedByVet: 0
   isSlept: 0
   sleptPosition: {x: 0, y: 0, z: 0}
-  requiredExhibitSpace: 9
-  continents: 050000000200000003000000
+  requiredExhibitSpace: 5
+  continents: 00000000
   terrainsPreferred: 0800000003000000
   terrainsPreferredPercents:
-  - 65
-  - 35
+  - 50
+  - 50
   terrainBonusMultiplier: 0
-  naturePreferredCount: 0.1
+  naturePreferredCount: 0
   natureBonusMultiplier: 1
   age: 0
-  lifeExpectancy: 4
-  fullGrownAgeMonth: 12
+  lifeExpectancy: 25
+  fullGrownAgeMonth: 36
   isMale: 1
-  reproductionAgeMonth: 1
+  reproductionAgeMonth: 48
   pregnancyDurationMonth: 2
   isPregnant: 0
   pregnancyTimeMonth: 0
-  averageNumberOfBabies: 5
+  averageNumberOfBabies: 1
   fertility: 100
-  isAgressive: 1
-  dangerLevel: 2
+  isAgressive: 0
+  dangerLevel: 1
   isTooMuchFoliage: 0
   badTerrainTypes: 
   exhibitId: 

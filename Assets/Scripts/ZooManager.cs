@@ -76,7 +76,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
 
     public void Arrived(Visitor visitor)
     {
-        latestVisitorHappinesses.Add(visitor.maxHappiness);
+        latestVisitorHappinesses.Add(visitor.maxHappiness / 2 + visitor.happiness / 2);
 
         if (latestVisitorHappinesses.Count > listSizeLimit)
         {
@@ -91,7 +91,7 @@ public class ZooManager : MonoBehaviour, Visitable, Clickable, Saveable
                 playerControl.DestroyCurrentInfopopup();
         }
 
-        ChangeXp((int)MathF.Floor(visitor.maxHappiness / 10));
+        ChangeXp((int)MathF.Floor((visitor.maxHappiness / 2 + visitor.happiness / 2) / 10));
         VisitorManager.instance.visitorList.Remove(visitor);
 
         Destroy(visitor.gameObject);

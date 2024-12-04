@@ -75,20 +75,15 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Ostrich
-  description: Red foxes are omnivores, eating fish, birds, insects, and fruits.
-    They are usually solitary, hunting and living alone, except during mating or
-    while raising their young. Red foxes are highly adaptable and can be found in
-    diverse habitats, including forests, grasslands, mountains, and urban areas.
-    They are native to North America, Europe, Asia, and parts of North Africa, thriving
-    in a variety of ecosystems.
-  placeablePrice: 800
+  description: 
+  placeablePrice: 1600
   icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
   selectedPrefabId: 0
-  xpUnlockLevel: 1
-  xpBonus: 30
+  xpUnlockLevel: 4
+  xpBonus: 640
   expense: 0
   sadnessReasons: 
   healthReasons: 
@@ -100,7 +95,7 @@ MonoBehaviour:
   animator: {fileID: 8819568079328454400}
   atDestination: 1
   foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
-  reputationBonus: 0.03
+  reputationBonus: 0.032
   timeGoal: 0
   destinationReached: 0
   action: 0
@@ -118,28 +113,26 @@ MonoBehaviour:
   isOccupiedByVet: 0
   isSlept: 0
   sleptPosition: {x: 0, y: 0, z: 0}
-  requiredExhibitSpace: 9
-  continents: 050000000200000003000000
-  terrainsPreferred: 000000000100000002000000
+  requiredExhibitSpace: 15
+  continents: 01000000
+  terrainsPreferred: 02000000
   terrainsPreferredPercents:
-  - 33
-  - 33
-  - 33
+  - 100
   terrainBonusMultiplier: 0
   naturePreferredCount: 0.1
   natureBonusMultiplier: 1
   age: 0
-  lifeExpectancy: 4
-  fullGrownAgeMonth: 12
+  lifeExpectancy: 50
+  fullGrownAgeMonth: 36
   isMale: 1
-  reproductionAgeMonth: 1
+  reproductionAgeMonth: 36
   pregnancyDurationMonth: 2
   isPregnant: 0
   pregnancyTimeMonth: 0
-  averageNumberOfBabies: 5
+  averageNumberOfBabies: 12
   fertility: 100
-  isAgressive: 1
-  dangerLevel: 2
+  isAgressive: 0
+  dangerLevel: 4
   isTooMuchFoliage: 0
   badTerrainTypes: 
   exhibitId: 
