@@ -158,9 +158,15 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Red Deer
-  icon: {fileID: 21300000, guid: 5c5ef51fe80d2454684844ec54ea087d, type: 3}
-  description: 
+  description: 'Red deer are herbivores, feeding on grasses, leaves, bark, and shrubs.
+    They are social animals, often living in herds, with males and females forming
+    separate groups except during the mating season. Known for their impressive antlers,
+    which males grow and shed annually, red deer are highly adaptable and thrive
+    in diverse habitats, including forests, and grasslands. Native to Europe, Asia,
+    and parts of North Africa, they have also been introduced to other areas, thriving
+    in a variety of ecosystems.  '
   placeablePrice: 600
+  icon: {fileID: 21300000, guid: 5c5ef51fe80d2454684844ec54ea087d, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -177,7 +183,7 @@ MonoBehaviour:
   agent: {fileID: 429402676547291710}
   animator: {fileID: 9086398896033959482}
   atDestination: 1
-  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  foodPrefab: {fileID: 9184344747100557400, guid: 50a5bb31bf8c81b408585712da1c257c, type: 3}
   reputationBonus: 0.012
   timeGoal: 0
   destinationReached: 0
@@ -198,11 +204,10 @@ MonoBehaviour:
   sleptPosition: {x: 0, y: 0, z: 0}
   requiredExhibitSpace: 15
   continents: 0300000002000000
-  terrainsPreferred: 000000000100000002000000
+  terrainsPreferred: 0000000001000000
   terrainsPreferredPercents:
-  - 34
-  - 33
-  - 33
+  - 60
+  - 40
   terrainBonusMultiplier: 0
   naturePreferredCount: 0.1
   natureBonusMultiplier: 1

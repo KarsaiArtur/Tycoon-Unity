@@ -60,7 +60,7 @@ public class CalendarManager : MonoBehaviour, Saveable
 
         timeOfDay += Time.deltaTime / 7;
         timeOfDay %= secondsPerDay;
-        //UpdateLighting(timeOfDay / secondsPerDay);
+        UpdateLighting(timeOfDay / secondsPerDay);
         if (!lightsOn && (int)(totalSeconds / 7) % 24 == sunSet)
         {
             lightsOn = true;

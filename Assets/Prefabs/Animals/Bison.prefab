@@ -158,9 +158,15 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Bison
-  description: 
+  description: Bisons are herbivores, grazing on grasses, shrubs, and plants throughout
+    the year. They are social animals, typically forming large herds led by dominant
+    females, while males may travel alone or in smaller groups. Known for their strength
+    and resilience, bisons play a key role in maintaining grassland ecosystems by
+    controlling vegetation growth. Native to North America and Europe, they thrive
+    in prairies, grasslands, and open woodlands, where they adapt to seasonal changes
+    and harsh conditions.
   placeablePrice: 1000
-  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  icon: {fileID: 21300000, guid: 7ba795817a35c0f4cbb7e02135d8c8d4, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -177,7 +183,7 @@ MonoBehaviour:
   agent: {fileID: 7735883684473391835}
   animator: {fileID: 4311821800553086605}
   atDestination: 1
-  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  foodPrefab: {fileID: 9184344747100557400, guid: 50a5bb31bf8c81b408585712da1c257c, type: 3}
   reputationBonus: 0.02
   timeGoal: 0
   destinationReached: 0
@@ -200,8 +206,8 @@ MonoBehaviour:
   continents: 0500000002000000
   terrainsPreferred: 000000000300000001000000
   terrainsPreferredPercents:
-  - 34
   - 33
+  - 34
   - 33
   terrainBonusMultiplier: 0
   naturePreferredCount: 0.1

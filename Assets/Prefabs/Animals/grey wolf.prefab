@@ -158,9 +158,14 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Grey Wolf
-  description: 
+  description: Grey wolves are carnivores, primarily hunting deer, elk, moose, and
+    smaller mammals, though they also scavenge and occasionally eat berries. They
+    are highly social animals, living in packs led by an alpha pair that cooperates
+    to raise pups and hunt. Grey wolves are adaptable predators, thriving in diverse
+    habitats, including forests, and grasslands. Native to North America, Europe,
+    and Asia, they play a crucial role in maintaining the balance of their ecosystems.
   placeablePrice: 700
-  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  icon: {fileID: 21300000, guid: e086b9eeaa0d0204bb3fd6d30f530c6f, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -177,7 +182,7 @@ MonoBehaviour:
   agent: {fileID: 4938863064820413189}
   animator: {fileID: 5064011274873728506}
   atDestination: 1
-  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  foodPrefab: {fileID: -6171456068034794058, guid: 23b12887481305549a503723ba52a206, type: 3}
   reputationBonus: 0.014
   timeGoal: 0
   destinationReached: 0

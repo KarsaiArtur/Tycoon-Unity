@@ -75,9 +75,14 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Raccoon
-  description: 
+  description: 'Raccoons are omnivores, eating fruits, nuts, insects, fish, and small
+    animals. Recognizable by their masked faces and dexterous paws, they are highly
+    adaptable and skilled foragers, often active at night. Raccoons are generally
+    solitary but may gather in small groups, especially in urban areas. Found across
+    mainly North America and parts of Asia and Europe, they thrive in diverse habitats,
+    including forests, wetlands, and cities, showing remarkable resilience and resourcefulness.  '
   placeablePrice: 500
-  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  icon: {fileID: 21300000, guid: 125c658139e7405498d820fcba70a337, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -94,7 +99,7 @@ MonoBehaviour:
   agent: {fileID: -7576995003214938374}
   animator: {fileID: 2866928905590390952}
   atDestination: 1
-  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  foodPrefab: {fileID: 63179339203581416, guid: 9a447cd8e61c9004aa147f1ba2c6ec5c, type: 3}
   reputationBonus: 0.01
   timeGoal: 0
   destinationReached: 0

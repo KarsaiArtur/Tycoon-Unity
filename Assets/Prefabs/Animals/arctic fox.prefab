@@ -75,7 +75,11 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Arctic Fox
-  description: 
+  description: "Arctic foxes are omnivores, eating lemmings, birds, fish, insects,
+    and berries. Adapted to cold climates, their fur changes color for camouflage\u2014white
+    in winter and brown in summer. They are mostly solitary but pair up during breeding
+    to raise pups. Found in Arctic regions, they thrive in tundra and coastal habitats
+    despite harsh conditions."
   placeablePrice: 1200
   icon: {fileID: 21300000, guid: 509352cf20cbc0d46800f96253101c4b, type: 3}
   currentPlacingPrice: {fileID: 0}
@@ -115,7 +119,7 @@ MonoBehaviour:
   sleptPosition: {x: 0, y: 0, z: 0}
   requiredExhibitSpace: 10
   continents: 050000000200000003000000
-  terrainsPreferred: 02000000
+  terrainsPreferred: 03000000
   terrainsPreferredPercents:
   - 100
   terrainBonusMultiplier: 0

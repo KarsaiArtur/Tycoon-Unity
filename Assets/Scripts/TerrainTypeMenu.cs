@@ -38,16 +38,23 @@ public class TerrainTypeMenu : ExtraMenu
             outlines.Add(outline);
 
             button.onClick.AddListener(() => {
-                playerControl.currentTerrainType = terrainType;
-                playerControl.currentClickGrid = null;
-                nameText.SetText(terrainType.GetName());
-                priceText.SetText(terrainType.GetPrice().ToString());
-                ResetOutlines();
-                outline.effectColor = Color.red;
+                SetTerrainType(terrainType, outline);
             });
             var image = button.GetComponent<Image>();
             image.sprite = terrainType.GetIcon();
+            if(terrainType == playerControl.currentTerrainType){
+                SetTerrainType(terrainType, outline);
+            }
         }
+    }
+
+    void SetTerrainType(TerrainType terrainType, Outline outline){
+            playerControl.currentTerrainType = terrainType;
+            playerControl.currentClickGrid = null;
+            nameText.SetText(terrainType.GetName());
+            priceText.SetText(terrainType.GetPrice().ToString());
+            ResetOutlines();
+            outline.effectColor = Color.red;
     }
 
     void ResetOutlines(){

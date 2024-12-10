@@ -224,6 +224,15 @@ public class Fence : Placeable, Saveable
         base.RotateY(angle);
     }
 
+    public override void ChangeMaterial(int index)
+    {
+        if(index == 0 && health != maxHealth)
+        {
+            index = health + 2;
+        }
+        base.ChangeMaterial(index);
+    }
+
     void OnCollisionStay(Collision collision)
     {
         if (!tag.Equals("Placed Fence"))

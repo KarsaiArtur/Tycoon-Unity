@@ -221,7 +221,12 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Giraffe
-  description: 
+  description: Giraffes are herbivores, feeding on leaves, flowers, and fruits, primarily
+    from acacia trees. Their long necks and tongues allow them to reach foliage that
+    other animals cannot. Giraffes are social, living in loose herds, though males
+    may compete for mates using their necks in a behaviour called "necking." Native
+    to Africa, they thrive in savannas, playing an essential role in shaping their
+    ecosystems by pruning trees and dispersing seeds.
   placeablePrice: 900
   icon: {fileID: 21300000, guid: 1791e5e638c2f3a45a8defb7bc3fef6f, type: 3}
   currentPlacingPrice: {fileID: 0}

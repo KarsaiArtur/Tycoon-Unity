@@ -158,9 +158,15 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Emperor Penguin
-  icon: {fileID: 21300000, guid: fb4374aa36c40f441a4876d6391af7bb, type: 3}
-  description: 
+  description: Emperor penguins are carnivores, primarily feeding on fish, squid,
+    and krill. They are highly social birds, forming large colonies to breed and
+    survive the harsh Antarctic winters. Known for their remarkable adaptations,
+    they can endure extreme cold and travel long distances to find food. Emperor
+    penguins are excellent swimmers, using their streamlined bodies to dive deep
+    underwater in search of prey. Native to Antarctica, they thrive in the icy waters
+    and frozen landscapes of their environment.
   placeablePrice: 1800
+  icon: {fileID: 21300000, guid: fb4374aa36c40f441a4876d6391af7bb, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []

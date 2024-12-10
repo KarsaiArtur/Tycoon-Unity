@@ -141,15 +141,30 @@ public class BuildingInfoWindow: MonoBehaviour, IDragHandler, IBeginDragHandler,
     }
 
     void SetPurchasableItem(){
-        purchasableItemImage.sprite = building.purchasableItemPrefabs[curIndex].icon;
-        purchasableItemName.text = building.purchasableItemPrefabs[curIndex].name;
+        bool isVisible = true;
+        if(building.purchasableItemPrefabs.Count != 0){
+            purchasableItemImage.sprite = building.purchasableItemPrefabs[curIndex].icon;
+            purchasableItemName.text = building.purchasableItemPrefabs[curIndex].name;
+
+            foreach(var element in scaleAttributes){
+                element.slider.gameObject.SetActive(true);
+                element.slider.value = Math.Abs(element.scaleNumber());
+                element.slider.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = element.scaleNumber() < 0 ? Color.red : element.scaleColor;
+                
+                element.slider.transform.GetComponent<Tooltip>().tooltipText = element.toolTipText();
+            }
+        }
+        else{
+            isVisible = false;
+        }
+        purchasableItemImage.gameObject.SetActive(isVisible);
+        purchasableItemName.gameObject.SetActive(isVisible);
 
         foreach(var element in scaleAttributes){
-            element.slider.value = Math.Abs(element.scaleNumber());
-            element.slider.transform.GetChild(0).GetChild(0).GetComponent<Image>().color = element.scaleNumber() < 0 ? Color.red : element.scaleColor;
             
-            element.slider.transform.GetComponent<Tooltip>().tooltipText = element.toolTipText();
+            element.slider.gameObject.SetActive(isVisible);
         }
+        
     }
 
     public void NextPurchasableItem(){

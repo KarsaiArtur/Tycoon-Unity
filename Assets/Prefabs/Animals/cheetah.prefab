@@ -75,9 +75,14 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Cheetah
-  description: 
+  description: Cheetahs are carnivores, primarily hunting small to medium-sized ungulates
+    like gazelles and impalas. They are solitary or live in small family groups,
+    with males often forming coalitions while females remain independent. Known for
+    their incredible speed, cheetahs rely on short, high-speed chases to catch prey.
+    Native to Africa and parts of the Middle East, they thrive in savannas, and open
+    plains, where their speed gives them a competitive advantage as hunters.
   placeablePrice: 1100
-  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  icon: {fileID: 21300000, guid: 9da712d92071f5c4990aa00ee9b1f88e, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -94,7 +99,7 @@ MonoBehaviour:
   agent: {fileID: 7647872848011228269}
   animator: {fileID: 8153755198669785421}
   atDestination: 1
-  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  foodPrefab: {fileID: -6171456068034794058, guid: 23b12887481305549a503723ba52a206, type: 3}
   reputationBonus: 0.022
   timeGoal: 0
   destinationReached: 0

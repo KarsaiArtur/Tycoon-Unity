@@ -75,9 +75,14 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Ostrich
-  description: 
+  description: Ostriches are omnivores, feeding on plants, seeds, insects, and small
+    animals. They are flightless birds but are strong runners, capable of reaching
+    speeds up to 60 miles per hour to escape predators. Ostriches are social animals,
+    often living in groups called flocks for protection and companionship. Native
+    to Africa, they thrive in savannas, and arid regions, playing an important role
+    in their ecosystem by dispersing seeds and maintaining grassland habitats.
   placeablePrice: 1600
-  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  icon: {fileID: 21300000, guid: 061b6af3f9ee86949b4d67b80bd64a77, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -94,7 +99,7 @@ MonoBehaviour:
   agent: {fileID: -941770173899239192}
   animator: {fileID: 8819568079328454400}
   atDestination: 1
-  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  foodPrefab: {fileID: 9184344747100557400, guid: 50a5bb31bf8c81b408585712da1c257c, type: 3}
   reputationBonus: 0.032
   timeGoal: 0
   destinationReached: 0

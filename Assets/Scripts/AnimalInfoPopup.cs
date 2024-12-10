@@ -170,7 +170,8 @@ public class AnimalInfoPopup : InfoPopup
                 renderer.gameObject.gameObject.GetComponent<cakeslice.Outline>().enabled = false;
         }
         base.DestroyPanel();
-        animalCam.SetActive(false);
+        if (animalCam != null)
+            animalCam.SetActive(false);
     }
 
     public override void AddOutline()

@@ -136,9 +136,14 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Bighorn Sheep
-  description: 
-  icon: {fileID: 21300000, guid: 6981dd74184ea61469eed83a9ba82e49, type: 3}
+  description: Bighorn sheep are herbivores, grazing on grasses, shrubs, and herbs,
+    with their diet varying by season. Known for their large, curved horns, males
+    use them in dramatic headbutting contests to establish dominance. Bighorn sheep
+    are social, living in separate groups of rams and ewes except during mating season.
+    Found in North America, they thrive in mountainous and rocky habitats, using
+    their agility and climbing skills to evade predators and navigate rugged terrain.
   placeablePrice: 750
+  icon: {fileID: 21300000, guid: 6981dd74184ea61469eed83a9ba82e49, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -155,7 +160,7 @@ MonoBehaviour:
   agent: {fileID: 3638422677446438231}
   animator: {fileID: 804606048716368189}
   atDestination: 1
-  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  foodPrefab: {fileID: 9184344747100557400, guid: 50a5bb31bf8c81b408585712da1c257c, type: 3}
   reputationBonus: 0.015
   timeGoal: 0
   destinationReached: 0
@@ -178,8 +183,8 @@ MonoBehaviour:
   continents: 05000000
   terrainsPreferred: 0700000000000000
   terrainsPreferredPercents:
-  - 50
-  - 50
+  - 70
+  - 30
   terrainBonusMultiplier: 0
   naturePreferredCount: 0.1
   natureBonusMultiplier: 1

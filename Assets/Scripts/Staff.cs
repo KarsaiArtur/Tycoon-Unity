@@ -18,6 +18,7 @@ public abstract class Staff : Placeable
     public WorkingState workingState;
     public bool destinationReached = false;
     public StaffJob job = StaffJob.Nothing;
+    public Animator animator;
 
     public enum WorkingState
     {
@@ -39,8 +40,11 @@ public abstract class Staff : Placeable
 
     public virtual void Update()
     {
+        animator.SetFloat("vertical", agent.velocity.magnitude / agent.speed);
         if (placed)
         {
+            if (destinationExhibit != null && !destinationExhibit.GetStaffs().Contains(this))
+                destinationExhibit.AddStaffs(this);
             if (Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(agent.destination.x, agent.destination.z)) <= 0.1)
             {
                 destinationReached = true;

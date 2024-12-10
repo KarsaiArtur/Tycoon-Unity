@@ -75,9 +75,15 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Panda
-  description: 
+  description: Pandas are herbivores, primarily feeding on bamboo, though they may
+    also eat fruits, vegetables, and small mammals. They are mostly solitary, with
+    each adult maintaining its own territory except during mating season. Pandas
+    are known for their distinctive black-and-white markings and their calm, gentle
+    nature. Native to China, they thrive in mountainous forests with dense bamboo
+    forests, relying on their strong jaws to break down tough bamboo stalks. They
+    are a symbol of conservation efforts worldwide.
   placeablePrice: 2000
-  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  icon: {fileID: 21300000, guid: 6d17c9ddcd8d517458519e7dbbee3bdb, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -94,7 +100,7 @@ MonoBehaviour:
   agent: {fileID: 2732713053035112265}
   animator: {fileID: 5603345280503131244}
   atDestination: 1
-  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  foodPrefab: {fileID: 7246706349961505426, guid: 2ea0f503d3c72194d9b740e56146466e, type: 3}
   reputationBonus: 0.04
   timeGoal: 0
   destinationReached: 0

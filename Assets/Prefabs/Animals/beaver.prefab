@@ -1816,9 +1816,14 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Bober
-  description: 
+  description: Beavers are herbivores, feeding on tree bark, leaves, aquatic plants,
+    and shrubs. Known for their engineering skills, they build dams and lodges to
+    create safe habitats. Beavers are social animals, living in family groups and
+    working together to maintain their structures. Found in North America, Europe,
+    and parts of Asia, they thrive in freshwater habitats like rivers, streams, and
+    wetlands, playing a key role in ecosystem health.
   placeablePrice: 550
-  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  icon: {fileID: 21300000, guid: 5ffacf711b5f7a84ea3229ed5af6d89a, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -1835,7 +1840,7 @@ MonoBehaviour:
   agent: {fileID: -2512646395626865214}
   animator: {fileID: 8300302900722721995}
   atDestination: 1
-  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  foodPrefab: {fileID: 9184344747100557400, guid: 50a5bb31bf8c81b408585712da1c257c, type: 3}
   reputationBonus: 0.011
   timeGoal: 0
   destinationReached: 0

@@ -158,9 +158,15 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Black Bear
-  description: 
+  description: Black bears are omnivores, eating fruits, nuts, insects, fish, and
+    small mammals, with their diet varying by season and availability. Solitary by
+    nature, they typically roam and forage alone, except during mating season or
+    when females are raising cubs. Adaptable and resourceful, black bears thrive
+    in diverse habitats, but mainly in forests. Native to North America, they are
+    found across the continent, from Canada to Mexico, playing an essential role
+    in their ecosystems.
   placeablePrice: 800
-  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  icon: {fileID: 21300000, guid: b7bd060e789f8c048beeb977cfe48a33, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -200,8 +206,8 @@ MonoBehaviour:
   continents: 05000000
   terrainsPreferred: 0000000001000000
   terrainsPreferredPercents:
-  - 60
   - 40
+  - 60
   terrainBonusMultiplier: 0
   naturePreferredCount: 0.1
   natureBonusMultiplier: 1

@@ -158,9 +158,14 @@ MonoBehaviour:
   playerControl: {fileID: 0}
   gridManager: {fileID: 0}
   placeableName: Elephant
-  description: 
+  description: Elephants are herbivores, feeding on grass, leaves, fruits, and bark.
+    They are highly social animals, living in close-knit family groups led by a matriarch,
+    while males often live alone or in smaller bachelor groups. Known for their intelligence,
+    memory, and strong social bonds, elephants play a vital role in their ecosystems
+    by creating paths and dispersing seeds. Native to Africa and Asia, they thrive
+    in savannas.
   placeablePrice: 1300
-  icon: {fileID: 21300000, guid: 488fd44db9d24b1478af08b7d2f38c9a, type: 3}
+  icon: {fileID: 21300000, guid: 5b771ee8aa2d79b42a32038196d725b1, type: 3}
   currentPlacingPrice: {fileID: 0}
   currentPlacingPriceInstance: {fileID: 0}
   renderers: []
@@ -177,7 +182,7 @@ MonoBehaviour:
   agent: {fileID: 7508131362743118045}
   animator: {fileID: 8037699864049783634}
   atDestination: 1
-  foodPrefab: {fileID: 63179339203581416, guid: c706b7c8fd1b8b74c8bebc1c73f5c393, type: 3}
+  foodPrefab: {fileID: 9184344747100557400, guid: 50a5bb31bf8c81b408585712da1c257c, type: 3}
   reputationBonus: 0.026
   timeGoal: 0
   destinationReached: 0
@@ -280,15 +285,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 2dd2533feca5cdf46a22473f0f5c1e93, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.13
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2dd2533feca5cdf46a22473f0f5c1e93, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.13
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2dd2533feca5cdf46a22473f0f5c1e93, type: 3}
       propertyPath: m_LocalScale.z
-      value: 0.13
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2dd2533feca5cdf46a22473f0f5c1e93, type: 3}
       propertyPath: m_LocalPosition.x

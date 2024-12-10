@@ -72,6 +72,7 @@ public class PlayerControl : MonoBehaviour
     public TerrainType currentTerrainType;
     float terrainTypeCost = 0;
     public bool isMale = true;
+    bool isGamePaused = false;
 
     public void ChangeTerraformer()
     {
@@ -193,7 +194,7 @@ public class PlayerControl : MonoBehaviour
                 currentMouseGrid = grid;
             }
 
-            if(isMouseDown && grid != currentClickGrid)
+            if (isMouseDown && grid != currentClickGrid && ZooManager.money >= currentTerrainType.GetPrice())
             {
                 int ind = 0;
                 List<List<TerrainType>> prevTerrainTypes = new();
@@ -297,9 +298,12 @@ public class PlayerControl : MonoBehaviour
         }
         if (!stopMovement)
         {
-            Move();
-            Rotate();
-            RotateObject();
+            if (!isGamePaused)
+            {
+                Move();
+                Rotate();
+                RotateObject();
+            }
 
             if (!MouseOverUI())
             {
@@ -336,11 +340,13 @@ public class PlayerControl : MonoBehaviour
     {
         if (Time.timeScale == 0)
         {
+            isGamePaused = false;
             Time.timeScale = 1;
             UIMenu.Instance.DestroyEscapeMenu();
         }
         else
         {
+            isGamePaused = true;
             Time.timeScale = 0;
             UIMenu.Instance.CreateEscapeMenu();
         }
@@ -363,6 +369,15 @@ public class PlayerControl : MonoBehaviour
         //        }
         //    }
         //}
+        var ray2 = GameCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit[] hits2 = Physics.RaycastAll(ray2);
+        foreach (RaycastHit hit in hits2)
+        {
+            if (!(hit.point.x >= GridManager.instance.elementWidth && hit.point.x <= GridManager.instance.terrainWidth - GridManager.instance.elementWidth && hit.point.z >= GridManager.instance.elementWidth && hit.point.z <= GridManager.instance.terrainWidth - GridManager.instance.elementWidth))
+            {
+                return;
+            }
+        }
         if (Input.GetMouseButtonDown(1))
         {
             if (m_Selected != null && m_Selected.tag == "Placed")
@@ -1039,6 +1054,8 @@ public class PlayerControl : MonoBehaviour
                 }
                 if (Input.GetMouseButtonDown(0))
                 {
+                    if (currentInfopopup != null)
+                        currentInfopopup.DestroyPanel();
                     StartCoroutine(chosenForDelete.MoveText(2f));
                     chosenForDelete.Remove();
                     QuestManager.instance.deleteUsed = true;
